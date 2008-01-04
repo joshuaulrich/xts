@@ -41,6 +41,11 @@ function(x,dateFormat='Date',...) {
 
 `as.xts.xts` <-
 function(x,...) {
+  # Cannot use 'zoo()' on objects of class 'zoo' or '.CLASS' (etc.?)
+  # Is the equivalent of a 'coredata.xts' needed? - jmu
+  yy <- coredata(x)
+  attr(yy, ".CLASS") <- NULL
+  
   xx <- xts(x,
             order.by=index(x),
             .CLASS='xts',
@@ -50,7 +55,7 @@ function(x,...) {
 
 `as.xts.zoo` <-
 function(x,order.by=index(x),frequency=NULL,...) {
-  xx <- xts(x,
+  xx <- xts(coredata(x),          # Cannot use 'zoo()' on objects of class 'zoo' - jmu
             order.by=order.by,
             frequency=frequency,
             .CLASS='zoo',
@@ -60,6 +65,8 @@ function(x,order.by=index(x),frequency=NULL,...) {
 
 `as.xts.data.frame` <-
 function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
+  # Should allow 'order.by' to be a vector of dates or a scaler
+  # representing the column number to use.
   if(missing(order.by)) 
     order.by <- do.call(paste('as',dateFormat,sep='.'),list(rownames(x)))
   xx <- xts(x,
@@ -80,8 +87,18 @@ function(x,...) {
 }
 
 `as.xts.matrix` <-
-function(x,order.by,frequency=NULL,...) {
-  if(missing(order.by)) stop("order.by must be specified")
+function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
+  # Should allow 'order.by' to be a vector of dates or a scaler
+  # representing the column number to use.
+  if(missing(order.by)) {
+    # The 'index' of zoo objects is set to 'rownames' when converted with 'as.matrix',
+    # but it is of class 'Date', not 'POSIXct'... - jmu
+    if(is.null(rownames(x)))
+      stop("order.by must be either 'rownames()' or otherwise specified")
+    else
+      order.by <- do.call(paste('as',dateFormat,sep='.'),list(rownames(x)))
+  }
+  
   xx <- xts(x,
             order.by=order.by,
             frequency=frequency,
@@ -93,6 +110,8 @@ function(x,order.by,frequency=NULL,...) {
 `re.timeSeries` <-
 function(x,...) {
   stopifnot("package:fCalendar" %in% search() || require("fCalendar", quietly=TRUE))
+
+  # strip all non-'core' attributes so they're not attached to the Data slot
   x.attr <- attributes(x)
   xx <- structure(x,dimnames=x.attr$dimnames,index=x.attr$index)
   original.attr <- attributes(x)[!names(attributes(x)) %in% 
