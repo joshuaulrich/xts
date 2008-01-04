@@ -28,29 +28,63 @@ function(x,...) {
   UseMethod('as.xts')
 }
 
+`re.ts` <-
+function(x,...) {
+  ts(coredata(x),
+     start=as.numeric(start(x)),
+     end=as.numeric(end(x)),
+     frequency=attr(x,'frequency'),
+     names=colnames(x))
+}
+
 `as.xts.ts` <-
-function(x,dateFormat='Date',...) {
-  x.mat <- as.matrix(x)
-  order.by <- do.call(paste('as',dateFormat,sep='.'),list(index(x.mat)))
-  xx <- xts(as.matrix(x),
+function(x,dateFormat,...) {
+  x.mat <- structure(as.matrix(x),dimnames=dimnames(x))
+  colnames(x.mat) <- colnames(x)
+
+  # quick hueristic - if numeric index is larger than one
+  # full day of seconds (60*60*24) than use POSIXct, otherwise
+  # assume we are counting my days, not seconds, and use Date -jar
+  if(missing(dateFormat)) {
+    dateFormat <- ifelse(max(time(x)) > 86400,'POSIXct','Date')
+  }
+
+  # added '...' to call for handling of tz params -jar
+  # now using time() to extract time from tsp
+  order.by <- do.call(paste('as',dateFormat,sep='.'),list(as.numeric(time(x)),...))
+  xx <- xts(x.mat,
             order.by=order.by,
+            frequency=frequency(x),
             .CLASS='ts',
             ...)
   xx
+}
+
+`re.xts` <-
+function(x,...) {
+  return(x)
 }
 
 `as.xts.xts` <-
 function(x,...) {
   # Cannot use 'zoo()' on objects of class 'zoo' or '.CLASS' (etc.?)
   # Is the equivalent of a 'coredata.xts' needed? - jmu
-  yy <- coredata(x)
-  attr(yy, ".CLASS") <- NULL
+  #yy <- coredata(x)
+  #attr(yy, ".CLASS") <- NULL
+  # using new coredata.xts method - jar
   
-  xx <- xts(x,
+  xx <- xts(coredata(x),
             order.by=index(x),
             .CLASS='xts',
             ...)
   xx
+}
+
+`re.zoo` <-
+function(x,...) {
+  zoo(coredata(x),
+      order.by=index(x),
+      ...)
 }
 
 `as.xts.zoo` <-
@@ -63,18 +97,31 @@ function(x,order.by=index(x),frequency=NULL,...) {
   xx
 }
 
+`re.data.frame` <-
+function(x,...) {
+  data.frame(x,...)
+}
+
 `as.xts.data.frame` <-
 function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
   # Should allow 'order.by' to be a vector of dates or a scaler
   # representing the column number to use.
-  if(missing(order.by)) 
-    order.by <- do.call(paste('as',dateFormat,sep='.'),list(rownames(x)))
+  if(missing(order.by)) # added '...' args to allow for tz specification
+    order.by <- do.call(paste('as',dateFormat,sep='.'),list(rownames(x),...))
   xx <- xts(x,
             order.by=order.by,
             frequency=frequency,
             .CLASS='data.frame',
             ...)
   xx
+}
+
+`re.its` <-
+function(x, ...) {
+  stopifnot("package:its" %in% search() || require("its",quietly=TRUE))
+  xx <- coredata(x)
+  dates <- attr(x,'index')
+  its(xx,dates=dates,...)
 }
 
 `as.xts.its` <-
@@ -84,6 +131,11 @@ function(x,...) {
             .CLASS='its',
             ...)
   xx
+}
+
+`re.matrix` <-
+function(x,...) {
+  as.matrix(x,...)
 }
 
 `as.xts.matrix` <-
@@ -96,7 +148,8 @@ function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
     if(is.null(rownames(x)))
       stop("order.by must be either 'rownames()' or otherwise specified")
     else
-      order.by <- do.call(paste('as',dateFormat,sep='.'),list(rownames(x)))
+      # added '...' args to allow for tz specification
+      order.by <- do.call(paste('as',dateFormat,sep='.'),list(rownames(x),...))
   }
   
   xx <- xts(x,
@@ -109,7 +162,7 @@ function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
 
 `re.timeSeries` <-
 function(x,...) {
-  stopifnot("package:fCalendar" %in% search() || require("fCalendar", quietly=TRUE))
+  stopifnot("package:fSeries" %in% search() || require("fSeries", quietly=TRUE))
 
   # strip all non-'core' attributes so they're not attached to the Data slot
   x.attr <- attributes(x)

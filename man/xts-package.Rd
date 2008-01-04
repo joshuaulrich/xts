@@ -1,42 +1,38 @@
 \name{xts-package}
 \alias{xts-package}
-\alias{xts}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+xts: extensible time-series
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+Extensible time series class and methods, extending and behaving
+like zoo.
 }
 \details{
 \tabular{ll}{
 Package: \tab xts\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2007-12-28\cr
-License: \tab What license is it under?\cr
+Version: \tab 0.0-3\cr
+Date: \tab 2008-01-03\cr
+License: \tab GPL-3\cr
 }
-~~ An overview of how to use the package, including the most important ~~
-~~ functions ~~
+Easily convert one of \R's many time-series (and non-time-series)
+classes to a true time based object which inherits all of zoo's
+methods, while allowing for new time-based tools where appropriate.
+
+Additionally, one may use \pkg{xts} to create new objects which
+can contain arbitrary attributes named during creation as name=value
+pairs.
 }
 \author{
-Who wrote it
+Jeffrey A. Ryan and Josh M. Ulrich
 
-Maintainer: Who to complain to <yourfault@somewhere.net>
-~~ The author and/or maintainer of the package ~~
+Maintainer: Jeffrey A. Ryan <jeff.a.ryan@gmail.com>
 }
-\references{
-~~ Literature or other references for background information ~~
-}
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
-~~ the R documentation directory ~~
 \keyword{ package }
 \seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
-}
-\examples{
-~~ simple examples of the most important functions ~~
+   \code{\link{xts}}
+   \code{\link{as.xts}}
+   \code{\link{reclass}}
+   \code{\link[zoo:zoo-package]{zoo}}
 }

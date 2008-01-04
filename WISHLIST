@@ -1,0 +1,70 @@
+**********************************************************************************
+**********************************************************************************
+** 
+**  WISHLIST: 2008-01-02 for xts
+**
+**********************************************************************************
+**********************************************************************************
+
+* Write more test cases to better 'test' the functions
+
+* Add subsetting by 'time'.  Partial implementation exists in [.xts, but
+  very untested and not fully developed yet.
+
+  *** some sort of range operator :: (partially implemented)
+      ideally behaves like python:
+        '2007::2008' #all of 2007 and 2008 in data set
+        '::2008'     #all data from beginning up to 2008
+        '2007::'     #data from 2007 to end of data set
+
+  *** add the ability to short specify dates - e.g. 
+      '1997-01' should be interpreted as all obs. within the
+       month of January 1997
+
+  *** similarly (same solution as above??) add the ability
+      to subset HF data by day without requiring higher
+      resolution specification or ranges
+
+
+* Add time() and time<- method for xts - to extract the index
+
+
+* [.xts<- replacement method
+
+
+* possibly cbind/rbind changes if required to maintain xts object
+
+
+* aggregate.xts (dispatch to NextMethod or call aggregate.zoo and
+  re 'xts' results
+
+ 
+* diff.xts method
+
+
+* index<- method to check for time-date requirement
+
+
+* add irts methods (irts is in tseries)
+
+
+* as.data.frame.xts, as.matrix.xts
+  as.zoo.xts, as.ts.xts, as.its.xts,
+  as.timeSeries.xts, as.irts.xts
+
+
+* as.POSIXct.xts, as.Date.xts, as.POSIXlt.xts, as.timeDate.xts
+  as.yearmon.xts, as.yearqtr.xts
+
+
+* look into chron, dates, and timeDate for indexing options
+
+
+* create a matrix of time-series types and attributes for comparison
+  documentation
+
+
+* write an introductory vignette for 'xts'
+
+
+* a generic extension function ?extend.xts?
