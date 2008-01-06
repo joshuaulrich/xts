@@ -1,38 +1,45 @@
 **********************************************************************************
 **********************************************************************************
 ** 
-**  WISHLIST: 2008-01-02 for xts
+**  WISHLIST: 2008-01-05 for xts
 **
 **********************************************************************************
 **********************************************************************************
 
-* Write more test cases to better 'test' the functions
+* Write more test cases to better 'test' the functions, specifically tests
+  to check on xts class persistence
 
 * Add subsetting by 'time'.  Partial implementation exists in [.xts, but
-  very untested and not fully developed yet.
+  very untested and not fully developed yet. All the below require
+  a mechanism to identify the detail present in th requested time frame, and
+  adjust the object's index accordingly
 
   *** some sort of range operator :: (partially implemented)
       ideally behaves like python:
-        '2007::2008' #all of 2007 and 2008 in data set
-        '::2008'     #all data from beginning up to 2008
-        '2007::'     #data from 2007 to end of data set
+        x['2007::2008'] #all of 2007 and 2008 in data set
+        x['::2008']     #all data from beginning up to 2008
+        x['2007::']     #data from 2007 to end of data set
 
   *** add the ability to short specify dates - e.g. 
       '1997-01' should be interpreted as all obs. within the
        month of January 1997
+        x['1997-01']   # expands to x['1997-01-01::1997-01-31']
+        x['1997']      # expands to x['1997-01-01::1997-12-31']
+
 
   *** similarly (same solution as above??) add the ability
       to subset HF data by day without requiring higher
       resolution specification or ranges
+        HFx['1997']   # expands to x['1997-01-01 00:00:00::1997-12-31 23:59:59']
 
 
-* Add time() and time<- method for xts - to extract the index
+* time<- method for xts - to extract the index
 
 
 * [.xts<- replacement method
 
 
-* possibly cbind/rbind changes if required to maintain xts object
+* cbind/rbind changes required to maintain xts object
 
 
 * aggregate.xts (dispatch to NextMethod or call aggregate.zoo and
@@ -52,19 +59,39 @@
   as.zoo.xts, as.ts.xts, as.its.xts,
   as.timeSeries.xts, as.irts.xts
 
+  above should handle clean coercion to the requested classes,
+  so that it would be possible to do the following:
+    x # a timeSeries object
+    identical(as.timeSeries(as.xts(x)),x)
+
+     -- or --
+
+    as.ts(as.xts(x))
+
+  possibly rely on zoo methods instead, though may be able to do better in
+  certain cases.
+
+  The most compelling reason is to allow for temporary conversion
+  to class type required by particular functions - esp. functions
+  in PerformanceAnalytics and the Rmetrics bundle, though a reliable
+  coversion to 'ts' for many base functions would be also useful
 
 * as.POSIXct.xts, as.Date.xts, as.POSIXlt.xts, as.timeDate.xts
   as.yearmon.xts, as.yearqtr.xts
+  
+  above to convert index attribute into the appropriate format/class
 
 
 * look into chron, dates, and timeDate for indexing options
-
+  -- this can't be extensible, as we couldn't test for time nature...
+  -- but we *should* cover all *known* date handling in R at any given time
 
 * create a matrix of time-series types and attributes for comparison
   documentation
 
 
-* write an introductory vignette for 'xts'
+* write an introductory vignette for 'xts', possibly an article for R news
 
+* web page on R-Forge
 
 * a generic extension function ?extend.xts?
