@@ -16,7 +16,7 @@ S3method(as.xts,its)
 S3method('[',xts)
 S3method(print,xts)
 
-#export(endpoints,startof,endof)
+#export(endpoints,startof,endof,firstof,lastof)
 
 #export(tindex)
 #S3method(tindex,default)

@@ -23,27 +23,33 @@ function(x, i, j, drop = TRUE, ...)
     if (is.character(i)) {
       # enables subsetting by date style strings
       # must be able to process - and then allow for operations???
-      # supported formats:
-      #   CCYY-MM-DD
-      #   CCYY/MM/DD
+
+      POSIXindex <- tindex(x,'POSIXct')
+
       if(!identical(grep("::",i),integer(0))) {
         # range operator
         dates <- strsplit(i,'::')[[1]]
-        by <- ifelse(length(dates)==3,dates[3],median(diff(time(x))))
-        if(inherits(index(x),'Date')) {
-          dates <- as.Date(dates)
-        } else dates <- do.call(paste('as',class(index(x))[2],sep='.'),list(dates))
-        dates <- seq(dates[1],dates[2],by=by)
+        
+        # test for single side range operation
+        first.time <- ifelse(dates[1]=="",
+                             POSIXindex[1],
+                             do.call('firstof',
+                                      as.list(as.numeric(strsplit(dates[1],':|-|/| ')[[1]]))))
+        last.time <- ifelse(length(dates)==1,
+                             POSIXindex[length(POSIXindex)],
+                             do.call('lastof',
+                                      as.list(as.numeric(strsplit(dates[2],':|-|/| ')[[1]]))))
       } else {
         # if single date is given - get start and end points if resolution of
         # series is greater than the time specified
         dates <- i
-        if(inherits(index(x),'Date')) {
-          dates <- as.Date(dates)
-        } else dates <- do.call(paste('as',class(index(x))[2],sep='.'),list(dates))
+        first.time <- do.call('firstof',
+                              as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]])))
+        last.time <- do.call('lastof',
+                              as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]])))
       }      
       
-      i <- which(index(x) %in% dates)
+      i <- which(POSIXindex <= last.time & POSIXindex >= first.time)
     }
 
 
