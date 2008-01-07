@@ -9,29 +9,6 @@
 * Write more test cases to better 'test' the functions, specifically tests
   to check on xts class persistence
 
-* Add subsetting by 'time'.  Partial implementation exists in [.xts, but
-  very untested and not fully developed yet. All the below require
-  a mechanism to identify the detail present in th requested time frame, and
-  adjust the object's index accordingly
-
-  *** some sort of range operator :: (partially implemented)
-      ideally behaves like python:
-        x['2007::2008'] #all of 2007 and 2008 in data set
-        x['::2008']     #all data from beginning up to 2008
-        x['2007::']     #data from 2007 to end of data set
-
-  *** add the ability to short specify dates - e.g. 
-      '1997-01' should be interpreted as all obs. within the
-       month of January 1997
-        x['1997-01']   # expands to x['1997-01-01::1997-01-31']
-        x['1997']      # expands to x['1997-01-01::1997-12-31']
-
-
-  *** similarly (same solution as above??) add the ability
-      to subset HF data by day without requiring higher
-      resolution specification or ranges
-        HFx['1997']   # expands to x['1997-01-01 00:00:00::1997-12-31 23:59:59']
-
 
 * time<- method for xts - to extract the index
 
@@ -46,7 +23,7 @@
   re 'xts' results
 
  
-* diff.xts method
+* diff.xts method  [not needed: jar]
 
 
 * index<- method to check for time-date requirement
