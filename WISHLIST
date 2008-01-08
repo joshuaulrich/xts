@@ -66,6 +66,9 @@
 * create a matrix of time-series types and attributes for comparison
   documentation
 
+* documentation for all as.xts methods individually as S3 methods
+
+* documentation for [.xts method
 
 * write an introductory vignette for 'xts', possibly an article for R news
 
