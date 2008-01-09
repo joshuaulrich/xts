@@ -1,19 +1,45 @@
-\name{as.xts}
-\alias{as.xts}
-\alias{reclass}
+\name{as.xts.methods}
+\alias{as.xts.methods}
+\alias{as.xts.timeSeries}
+\alias{as.xts.its}
+\alias{as.xts.xts}
+\alias{as.xts.zoo}
+\alias{as.xts.ts}
+\alias{as.xts.data.frame}
+\alias{as.xts.matrix}
 \title{ Convert Object To And From Class xts }
 \description{
-Conversion functions to coerce data objects of
+Conversion S3 methods to coerce data objects of
 arbitrary classes to class \code{xts} and back, without
 losing any attributes of the original format.
 }
 \usage{
-as.xts(x, ...)
+\method{as.xts}{xts}(x,...)
 
-reclass(x)
+
+\method{as.xts}{timeSeries}(x,dateFormat="POSIXct", FinCenter, recordIDs, title, documentation, ...)
+
+\method{as.xts}{its}(x,...)
+
+\method{as.xts}{zoo}(x, order.by = index(x), frequency = NULL, ...) 
+
+\method{as.xts}{ts}(x,dateFormat,...)
+
+\method{as.xts}{data.frame}(x, order.by, dateFormat = "POSIXct", frequency = NULL, 
+    ...) 
+
+\method{as.xts}{matrix}(x, order.by, dateFormat = "POSIXct", frequency = NULL, 
+    ...) 
 }
 \arguments{
   \item{x}{ data object to convert. See details for supported types }
+  \item{dateFormat}{what format should the dates be converted to}
+  \item{FinCenter}{see timeSeries help}
+  \item{recordIDs}{see timeSeries help}
+  \item{title}{see timeSeries help}
+  \item{documentation}{see timeSeries help}
+  \item{order.by}{see zoo help}
+  \item{frequency}{see zoo help}
   \item{\dots}{ additional parameters or attributes }
 }
 \details{
@@ -23,9 +49,6 @@ objects into a uniform format for use within \R.
 It is possible with a call to \code{as.xts} to
 convert objects of class \code{timeSeries},\code{ts},
 \code{its},\code{matrix},\code{data.frame}, and \code{zoo}.
-
-The help file \code{as.xts.methods} lists all available
-xts methods and arguments specific to each coercible type.
 
 Additional name=value pairs may be passed to the function
 to be added to the new object. A special print.xts method
@@ -46,7 +69,7 @@ as there would be no available storage slot/attribute.
 An S3 object of class \code{xts}.
 }
 \author{ Jeffrey A. Ryan }
-\seealso{ \code{\link{xts}},\code{\link{as.xts.methods}} }
+\seealso{ \code{\link{xts}} }
 \examples{
 
 }

@@ -1,20 +1,40 @@
-#exportPattern("^[[:alpha:]]+")
-importFrom(zoo,coredata)
-S3method(coredata,xts)
-
+# user visible core xts functions
 export(xts)
 export(as.xts)
 export(is.xts)
 export(reclass)
-S3method(as.xts,ts)
+
+# xts methods
+importFrom(zoo,coredata)
+S3method(coredata,xts)
 S3method(as.xts,xts)
-S3method(as.xts,zoo)
-S3method(as.xts,data.frame)
-S3method(as.xts,matrix)
-S3method(as.xts,timeSeries)
-S3method(as.xts,its)
 S3method('[',xts)
 S3method(print,xts)
+
+# ts specific methods
+S3method(as.xts,ts)
+
+# zoo specific methods
+importFrom(zoo,as.zoo)
+S3method(as.xts,zoo)
+S3method(as.zoo,xts)
+
+# data.frame specific methods
+S3method(as.xts,data.frame)
+
+# matrix specific methods
+S3method(as.xts,matrix)
+
+# timeSeries (package:fSeries) specific methods
+#export(xts.as.timeSeries)
+S3method(as.xts,timeSeries)
+
+# its (package:its) specific methods
+#export(xts.as.its)
+S3method(as.xts,its)
+
+
+## currently unexported functions that _may_ be exported at some point
 
 #export(endpoints,startof,endof,firstof,lastof)
 

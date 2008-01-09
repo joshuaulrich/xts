@@ -451,7 +451,3 @@ Testing as.xts.its:
 
 > 
 > rm(sample.ts,sample.its,sample.zoo,sample.timeSeries,sample.matrix,sample.data.frame)
-> 
-> proc.time()
-   user  system elapsed 
-  1.773   0.183   2.133 
