@@ -3,6 +3,11 @@ export(xts)
 export(as.xts)
 export(is.xts)
 export(reclass)
+export(endpoints)
+export(CLASS)
+export('CLASS<-')
+export(indexType)
+export('indexType<-')
 
 # xts methods
 importFrom(zoo,coredata)
@@ -10,11 +15,7 @@ S3method(coredata,xts)
 S3method(as.xts,xts)
 S3method('[',xts)
 S3method(print,xts)
-export(CLASS)
-export('CLASS<-')
 S3method('CLASS<-',xts)
-export(indexType)
-export('indexType<-')
 S3method('indexType<-',xts)
 
 # ts specific methods
@@ -42,7 +43,7 @@ S3method(as.xts,its)
 
 ## currently unexported functions that _may_ be exported at some point
 
-#export(endpoints,startof,endof,firstof,lastof)
+#export(startof,endof,firstof,lastof)
 
 #export(tindex)
 #S3method(tindex,default)
