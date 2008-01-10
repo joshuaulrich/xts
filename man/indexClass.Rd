@@ -1,14 +1,14 @@
-\name{indexType}
-\alias{indexType}
-\alias{indexType<-}
+\name{indexClass}
+\alias{indexClass}
+\alias{indexClass<-}
 \title{ Extracting/Replacing the Class of an xts Index }
 \description{
 Generic functions to extract and replace the class of the index
 of an xts object.
 }
 \usage{
-indexType(x, ...)
-indexType(x) <- value
+indexClass(x, ...)
+indexClass(x) <- value
 }
 \arguments{
   \item{x}{ xts object }
@@ -17,7 +17,7 @@ indexType(x) <- value
 }
 \details{
 It is possible to view and set the class of the time-index
-of a given \code{xts} object via the \code{indexType} function.
+of a given \code{xts} object via the \code{indexClass} function.
 
 The specified format must be one of \code{Date}, \code{POSIXct},
 \code{POSIXlt}, or \code{timeDate}.

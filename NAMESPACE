@@ -6,8 +6,8 @@ export(reclass)
 export(endpoints)
 export(CLASS)
 export('CLASS<-')
-export(indexType)
-export('indexType<-')
+export(indexClass)
+export('indexClass<-')
 
 # xts methods
 importFrom(zoo,coredata)
@@ -16,7 +16,7 @@ S3method(as.xts,xts)
 S3method('[',xts)
 S3method(print,xts)
 S3method('CLASS<-',xts)
-S3method('indexType<-',xts)
+S3method('indexClass<-',xts)
 
 # ts specific methods
 S3method(as.xts,ts)
