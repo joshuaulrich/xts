@@ -11,6 +11,7 @@ function(x,...) {
 `[.xts` <-
 function(x, i, j, drop = TRUE, ...) 
 {
+    original.class <- class(x)
     original.cols <- ncol(x)
     original.names <- colnames(x)
     original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
@@ -60,7 +61,7 @@ function(x, i, j, drop = TRUE, ...)
             attr(x,names(original.attr)[i]) <- original.attr[[i]]
           }
         }
-        class(x) <- c("xts", "zoo")
+        class(x) <- original.class
         j <- 1:original.cols
     }
     else {
@@ -72,7 +73,7 @@ function(x, i, j, drop = TRUE, ...)
             attr(x,names(original.attr)[i]) <- original.attr[[i]]
           }
         }
-        class(x) <- c("xts", "zoo")
+        class(x) <- original.class
     }
     if (!is.null(dim(x))) 
         colnames(x) <- original.names[j]
