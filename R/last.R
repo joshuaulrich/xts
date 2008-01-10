@@ -29,7 +29,6 @@ function(x,n=1,keep=FALSE,...)
     }
   }
 }
-
 `last.zoo` <-
 function(x,n=1,keep=FALSE,...)
 {
@@ -47,16 +46,7 @@ function(x,n=1,keep=FALSE,...)
     rpu <- np[length(np)]
     rpf <- ifelse(length(np) > 1, as.numeric(np[1]), 1)
     if(rpu == sp$unit) {
-      n <- rpf
-    } else {
-
-    # series periodicity
-    sp <- periodicity(x)
-    # requested periodicity$units
-    rpu <- np[length(np)]
-    rpf <- ifelse(length(np) > 1, as.numeric(np[1]), 1)
-    if(rpu == sp$unit) {
-      n <- rpf
+      n <- rpf    
     } else {
       # if singular - add an s to make it work
       if(substr(rpu,length(strsplit(rpu,'')[[1]]),length(strsplit(rpu,'')[[1]])) != 's')
@@ -73,32 +63,32 @@ function(x,n=1,keep=FALSE,...)
         stop(paste("At present, without some sort of magic, it isn't possible",
              "to resolve",rpu,"from",sp$scale,"data"))
       }
-      ep <- breakpoints(x,dt,TRUE)
+      ep <- endpoints(x,dt)
       if(rpf > length(ep)-1) {
         rpf <- length(ep)-1
         warning("requested length is greater than original")
       }
       if(rpf > 0) {
-        n <- ep[rpf+1]
-        xx <- (x[1:n])
-        if(keep) xx <- structure(xx,keep=x[(ep[-(-rpf)+1]+1):NROW(x)])
+        n <- ep[length(ep)-rpf]+1
+        xx <- x[n:NROW(x)]
+        if(keep) xx <- structure(xx,keep=x[1:(ep[length(ep)+(-rpf)])])
         return(xx)
       } else {
-        n <- ep[-rpf+1]+1
-        xx <- (x[n:NROW(x)])
-        if(keep) xx <- structure(xx,keep=x[1:(ep[-rpf+1])])
+        n <- ep[length(ep)+rpf]
+        xx <- x[1:n]
+        if(keep) xx <- structure(xx,keep=x[(ep[length(ep)-(-rpf)]+1):NROW(x)])
         return(xx)
       }
     }
   }
   if(length(n) != 1) stop("n must be of length 1")
   if(n > 0) {
-    xx <- x[1:n]
-    if(keep) xx <- structure(xx,keep=x[(-(-n)+1):NROW(x)])
+    xx <- x[((NROW(x)-n+1):NROW(x))]
+    if(keep) xx <- structure(xx,keep=x[1:(NROW(x)+(-n))])
     xx
   } else {
-    xx <- x[(-n+1):NROW(x)]
-    if(keep) xx <- structure(xx,keep=x[1:(-n)])
+    xx <- x[1:(NROW(x)+n)]
+    if(keep) xx <- structure(xx,keep=x[((NROW(x)-(-n)+1):NROW(x))])
     xx
   }
 }
