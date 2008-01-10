@@ -42,6 +42,24 @@ a standard zoo object, while providing an mechanism to customise
 the object's meta-data, as well as create custom methods to handle
 the object in a manner required by the user.
 
+Most, if not all, standard zoo methods will work without change.  Where
+changes where required (to return an xts object) new methods have been
+written. At present these modified methods include \sQuote("["), \sQuote{codedata},
+
+[add more here]
+
+Subsetting via "[" methods offers the ability to specify dates by
+range, if they are enclosed in quotes.  The style borrows from
+python by creating ranges with a double colon "::" operator.  Each side of
+the operator may be left blank, which would then default to the beginning
+and end of the data, respectively.  To specify a subset of times,
+it is only required that the time specified be in standard ISO format, with
+some form of seperation between the elements. The time must be \sQuote{left-filled},
+that is to specify a full year one needs only to provide the year, a month would require
+the full year and the integer of the month requested - e.g. '1999-01'.
+This format would extend all the way down to seconds - e.g. '1999-01-01 08:35:23'.
+Leading zeros are not necessary.  See the examples for more detail.
+
 Users may also extend the \code{xts} class to new classes to
 allow for method overloading.
 
@@ -79,5 +97,12 @@ str(sample.xts)
 
 head(sample.xts)  # attribute 'descr' hidden from view
 attr(sample.xts,'descr')
+
+sample.xts['2007']  # all of 2007
+sample.xts['2007-03::']  # March 2007 to the end of the data set
+sample.xts['2007-03::2007']  # March 2007 to the end of 2007
+sample.xts['::'] # the whole data set
+sample.xts['::2007'] # the beginning of the data through 2007
+sample.xts['2007-01-03'] # just the 3rd of January 2007
 }
 \keyword{ utilities }
