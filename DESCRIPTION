@@ -8,5 +8,6 @@ Depends: zoo
 Suggests: fSeries,tseries,its
 LazyLoad: yes
 Maintainer: Jeffrey A. Ryan <jeff.a.ryan@gmail.com>
-Description: Provide for uniform handling of R's different time-based data classes, maximizing native format information preservation and allowing for user level customization and extension, while simplifying cross-class interoperability.
+Description: Provide for uniform handling of R's different time-based data classes by extending zoo, maximizing native format information preservation and allowing for user level customization and extension, while simplifying cross-class interoperability.
 License: GPL-3
+URL: http://r-forge.r-project.org/projects/xts/

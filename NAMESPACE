@@ -13,6 +13,9 @@ S3method(print,xts)
 export(CLASS)
 export('CLASS<-')
 S3method('CLASS<-',xts)
+export(indexType)
+export('indexType<-')
+S3method('indexType<-',xts)
 
 # ts specific methods
 S3method(as.xts,ts)

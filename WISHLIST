@@ -16,7 +16,7 @@
 * [.xts<- replacement method
 
 
-* cbind/rbind changes required to maintain xts object
+* cbind/rbind xts methods required to maintain xts object
 
 
 * aggregate.xts (dispatch to NextMethod or call aggregate.zoo and
@@ -53,11 +53,12 @@
   in PerformanceAnalytics and the Rmetrics bundle, though a reliable
   coversion to 'ts' for many base functions would be also useful
 
-* as.POSIXct.xts, as.Date.xts, as.POSIXlt.xts, as.timeDate.xts
+* new timeFormat function and replacement function to convert series
+  indexing to different formats:
+
+  as.POSIXct.xts, as.Date.xts, as.POSIXlt.xts, as.timeDate.xts
   as.yearmon.xts, as.yearqtr.xts
   
-  above to convert index attribute into the appropriate format/class
-
 
 * look into chron, dates, and timeDate for indexing options
   -- this can't be extensible, as we couldn't test for time nature...
@@ -66,9 +67,7 @@
 * create a matrix of time-series types and attributes for comparison
   documentation
 
-* documentation for all as.xts methods individually as S3 methods
-
-* documentation for [.xts method
+* documentation for [.xts method (add to main xts docs, like zoo does)
 
 * write an introductory vignette for 'xts', possibly an article for R news
 
