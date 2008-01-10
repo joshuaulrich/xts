@@ -29,6 +29,22 @@ function(x) {
   do.call(paste('re',old.class,sep='.'),list(x))
 }
 
+`CLASS` <-
+function(x) {
+  attr(x,'.CLASS')
+}
+
+`CLASS<-` <-
+function(x,value) {
+  UseMethod("CLASS<-")
+}
+
+`CLASS<-.xts` <-
+function(x,value) {
+  attr(x,".CLASS") <- value
+  x
+}
+
 `is.xts` <-
 function(x) {
   inherits(x,'xts')

@@ -10,6 +10,9 @@ S3method(coredata,xts)
 S3method(as.xts,xts)
 S3method('[',xts)
 S3method(print,xts)
+export(CLASS)
+export('CLASS<-')
+S3method('CLASS<-',xts)
 
 # ts specific methods
 S3method(as.xts,ts)
