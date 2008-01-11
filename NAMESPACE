@@ -1,3 +1,6 @@
+# load fortran symbol table
+useDynLib(xts)
+
 # user visible core xts functions
 export(xts)
 export(as.xts)
@@ -8,6 +11,9 @@ export(CLASS)
 export('CLASS<-')
 export(indexClass)
 export('indexClass<-')
+export(to.period)
+export(xtsAttributes)
+export('xtsAttributes<-')
 
 # xts methods
 importFrom(zoo,coredata)
@@ -17,6 +23,7 @@ S3method('[',xts)
 S3method(print,xts)
 S3method('CLASS<-',xts)
 S3method('indexClass<-',xts)
+S3method('xtsAttributes<-',xts)
 
 # ts specific methods
 S3method(as.xts,ts)

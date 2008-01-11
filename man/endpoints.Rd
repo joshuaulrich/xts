@@ -6,11 +6,12 @@ Extract index values of a given \code{xts} object corresponding
 to the \emph{last} observations given a period specified by \code{on}
 }
 \usage{
-endpoints(x, on = "months")
+endpoints(x, on = "months", k = 1)
 }
 \arguments{
   \item{x}{ an xts object }
   \item{on}{ the periods endpoints to find as a character string }
+  \item{k}{ the number of aggregation points??? }
 }
 \details{
 \code{endpoints} returns a numeric vector corresponding to the

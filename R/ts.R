@@ -2,11 +2,7 @@
 
 `re.ts` <-
 function(x,...) {
-  ts(coredata(x),
-     start=as.numeric(start(x)),
-     end=as.numeric(end(x)),
-     frequency=attr(x,'frequency'),
-     names=colnames(x))
+  as.ts(x)
 }
 
 `as.xts.ts` <-
@@ -37,8 +33,8 @@ function(x,dateFormat,...) {
   xx
 }
 
-`as.ts.xts` <-
-function(x,...) {
-  if(attr(x,'.CLASS')=='ts') return(re.ts(x,...))
-  ts(coredata(x),...)
-}
+#`as.ts.xts` <-
+#function(x,...) {
+#  if(attr(x,'.CLASS')=='ts') return(re.ts(x,...))
+#  ts(coredata(x),...)
+#}

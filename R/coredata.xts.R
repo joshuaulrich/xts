@@ -14,3 +14,25 @@ function(x,...) {
 
   return(xx)
 }
+
+`xtsAttributes` <-
+function(x) {
+  # get all additional attributes not standard to xts object
+  stopifnot(is.xts(x))
+  x.attr <- attributes(x)
+  x.attr[!names(x.attr) %in% c('dim','dimnames','index','class','.CLASS')]
+}
+
+`xtsAttributes<-` <-
+function(x,value) {
+  UseMethod('xtsAttributes<-')
+}
+
+`xtsAttributes<-.xts` <-
+function(x,value) {
+  for(nv in names(value)) {
+    if(!nv %in% c('dim','dimnames','index','class','.CLASS'))
+      attr(x,nv) <- value[[nv]]
+  }
+  x
+}

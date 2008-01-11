@@ -13,7 +13,7 @@ function(x,...) {
     attr(xx,i) <- NULL
   }
 
-  timeSeries(xx,charvec=rownames(xx),format=x.attr$format,
+  timeSeries(xx,charvec=as.character(index(xx)),format=x.attr$format,
              zone=x.attr$FinCenter,FinCenter=x.attr$FinCenter,
              recordIDs=x.attr$recordIDs,title=x.attr$title,
              documentation=x.attr$documentation,...)

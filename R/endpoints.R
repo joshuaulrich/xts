@@ -1,5 +1,5 @@
 `endpoints` <-
-function(x,on='months') {
+function(x,on='months',k=1) {
   x <- as.xts(x)
   if(on=='quarters') {
     xi <- (as.POSIXlt(index(x))$mon%/%3) + 1
@@ -8,7 +8,9 @@ function(x,on='months') {
     on.opts <- list(secs='%S',seconds='%S',mins='%M',minutes='%M',
                     hours='%H',days='%j',
                     weeks='%W',months='%m',years='%y')
-    c(0,which(diff(as.numeric(format(index(x),on.opts[[on]]))) != 0),NROW(x))
+    if(on %in% c('seconds','minutes')) {
+      c(0,which((diff(as.numeric(format(index(x),"%M"))%/%k + 1) != 0)),NROW(x))
+    } else c(0,which(diff(as.numeric(format(index(x),on.opts[[on]]))) != 0),NROW(x))
   }
 }
 

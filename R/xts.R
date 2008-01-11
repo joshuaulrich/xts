@@ -25,8 +25,10 @@ function(x,order.by=index(x),frequency=NULL,...) {
 
 `reclass` <-
 function(x) {
-  old.class <- attr(x,'.CLASS')
-  do.call(paste('re',old.class,sep='.'),list(x))
+  old.class <- CLASS(x)
+  if(!is.null(old.class)) {
+    do.call(paste('re',old.class,sep='.'),list(x))
+  } else x
 }
 
 `CLASS` <-
