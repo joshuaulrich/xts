@@ -77,49 +77,49 @@ function(x,period='months',k=1,name=NULL,...)
 function(x)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minutes',name)
+  to.period(x,'minute',name=name)
 }
 `to.minutes3` <-
 function(x)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minutes3',name)
+  to.period(x,'minutes',k=3,name=name)
 }
 `to.minutes5` <-
 function(x)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minutes5',name)
+  to.period(x,'minutes',k=5,name=name)
 }
 `to.minutes10` <-
 function(x)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minutes10',name)
+  to.period(x,'minutes',k=10,name=name)
 }
 `to.minutes15` <-
 function(x)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minutes15',name)
+  to.period(x,'minutes',k=15,name=name)
 }
 `to.minutes30` <-
 function(x)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minutes30',name)
+  to.period(x,'minutes',k=30,name=name)
 }
 `to.hourly` <-
 function(x)
 {
   name <- deparse(substitute(x))
-  to.period(x,'hours',name)
+  to.period(x,'hours',name=name)
 }
 `to.daily` <-
 function(x,drop.time=TRUE)
 {
   name <- deparse(substitute(x))
-  x <- to.period(x,'days',name)
+  x <- to.period(x,'days',name=name)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
@@ -127,7 +127,7 @@ function(x,drop.time=TRUE)
 function(x,drop.time=TRUE)
 {
   name <- deparse(substitute(x))
-  x <- to.period(x,'weeks',name)
+  x <- to.period(x,'weeks',name=name)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
@@ -135,7 +135,7 @@ function(x,drop.time=TRUE)
 function(x,drop.time=TRUE)
 {
   name <- deparse(substitute(x))
-  x <- to.period(x,'months',name)
+  x <- to.period(x,'months',name=name)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
@@ -143,7 +143,7 @@ function(x,drop.time=TRUE)
 function(x,drop.time=TRUE)
 {
   name <- deparse(substitute(x))
-  x <- to.period(x,'quarters',name)
+  x <- to.period(x,'quarters',name=name)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
@@ -151,20 +151,16 @@ function(x,drop.time=TRUE)
 function(x,drop.time=TRUE)
 {
   name <- deparse(substitute(x))
-  x <- to.period(x,'years',name)
+  x <- to.period(x,'years',name=name)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
 `.drop.time` <-
 function(x) {
   # function to remove HHMMSS portion of time index
-  if("timeSeries" %in% class(x)) {
-    if("package:fSeries" %in% search() || require("fSeries",
-        quietly=TRUE)) {
-      x <- as.timeSeries(zoo(seriesData(x),as.Date(rownames(x),origin='1970-01-01')))
-    }
-  } else {
-    index(x) <- as.Date(index(x),origin='1970-01-01')
-  }
-  return(x)
+  if(!inherits(x,"its")) {
+    x <- as.xts(x)
+    indexClass(x) <- "Date"
+    reclass(x)
+  } else x
 }
