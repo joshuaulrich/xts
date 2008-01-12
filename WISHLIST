@@ -10,7 +10,10 @@
   to check on xts class persistence
 
 
-* time<- method for xts - to extract the index
+* time<- method for xts - alias for index<-
+
+
+* index<- method to check for time-date requirement
 
 
 * [.xts<- replacement method
@@ -26,14 +29,11 @@
 * diff.xts method  [not needed: jar]
 
 
-* index<- method to check for time-date requirement
-
-
 * add irts methods (irts is in tseries)
 
 
 * as.data.frame.xts, as.matrix.xts
-  as.zoo.xts, as.ts.xts, as.its.xts,
+  as.zoo.xts, as.its.xts,
   as.timeSeries.xts, as.irts.xts
 
   above should handle clean coercion to the requested classes,
@@ -46,28 +46,34 @@
     as.ts(as.xts(x))
 
   possibly rely on zoo methods instead, though may be able to do better in
-  certain cases.
+  certain cases. timeSeries may be the tough one - as it has unique attributes
+  automatically generated, that *should* just be copied.
+
+  'as.ts' is a bad idea to rewrite.  The current method works great
+  (as.ts.default or as.ts.zoo???)
 
   The most compelling reason is to allow for temporary conversion
   to class type required by particular functions - esp. functions
   in PerformanceAnalytics and the Rmetrics bundle, though a reliable
   coversion to 'ts' for many base functions would be also useful
 
-* new timeFormat function and replacement function to convert series
-  indexing to different formats:
+* indexClass and indexClass<- methods allow for changing index class,
+  at present only simple conversions work, as no additional args
+  are passed to as.POSIXct,etc methods.  Need to fix this.
 
-  as.POSIXct.xts, as.Date.xts, as.POSIXlt.xts, as.timeDate.xts
-  as.yearmon.xts, as.yearqtr.xts
+  Additionally indexing to different formats needs to be done:
+
+      as.yearmon.xts, as.yearqtr.xts
+
+* per suggestions from Brian Peterson automatically
+  handle mon/qtr as yearmon and yearqtr 
   
-
-* look into chron, dates, and timeDate for indexing options
+* look into chron, dates (& yearmon, yearqtr)
   -- this can't be extensible, as we couldn't test for time nature...
   -- but we *should* cover all *known* date handling in R at any given time
 
 * create a matrix of time-series types and attributes for comparison
   documentation
-
-* documentation for [.xts method (add to main xts docs, like zoo does)
 
 * write an introductory vignette for 'xts', possibly an article for R news
 
