@@ -8,6 +8,19 @@ function(x,...) {
                             dim=dim(x),dimnames=dimnames(x)),...)
 }
 
+`str.xts` <-
+function(object,...) {
+  cat(paste("An",sQuote('xts'),"object containing:\n"))
+  cat(paste("  Data:"))
+  str(coredata(object),...)
+  cat(paste("  Indexed by: "))
+  str(index(object),...)
+  if(!is.null(CLASS(object)))
+    cat(paste("  Original class: '",CLASS(object),"' ",sep=""),"\n")
+  cat(paste("  xts Attributes: "),"\n")
+  str(xtsAttributes(object),...)
+}
+
 `[.xts` <-
 function(x, i, j, drop = TRUE, ...) 
 {
@@ -17,7 +30,6 @@ function(x, i, j, drop = TRUE, ...)
     original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
     if(length(original.attr) < 1) original.attr <- NULL
 
-    class(x) <- "zoo"
 
     if (missing(i)) 
         i <- 1:nrow(x)
@@ -25,7 +37,9 @@ function(x, i, j, drop = TRUE, ...)
       # enables subsetting by date style strings
       # must be able to process - and then allow for operations???
 
-      POSIXindex <- tindex(x,'POSIXct')
+      #POSIXindex <- tindex(x,'POSIXct')  attempt to remove tindex...
+      indexClass(x) <- "POSIXct"
+      POSIXindex <- index(x)
 
       if(!identical(grep("::",i),integer(0))) {
         # range operator
@@ -53,6 +67,7 @@ function(x, i, j, drop = TRUE, ...)
       i <- which(POSIXindex <= last.time & POSIXindex >= first.time)
     }
 
+    class(x) <- "zoo"
 
     if (missing(j)) {
         x <- x[i = i, drop = drop, ...]

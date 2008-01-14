@@ -17,10 +17,16 @@ function(x,period='months',k=1,name=NULL,...)
   if(is.null(name)) name <- deparse(substitute(x))
 
   # test if is class 'xts', if not, convert to 'xts'
-  if(!is.xts(x)) x <- as.xts(x)
+  if(!is.xts(x)) {
+    x <- as.xts(x)
+    RECLASS <- TRUE
+  } else RECLASS <- FALSE
   
-  is.na(x)
-  x <- na.omit(x)  # can't calculate aggregation with NA values  ??? any suggestions
+  
+  if(any(is.na(x))) {
+    x <- na.omit(x)  # can't calculate aggregation with NA values  ??? any suggestions
+    warning("missing values removed from data")
+  }
 
   # is this an OHLC object already?
   # if so, treat differently then single column object
@@ -50,7 +56,6 @@ function(x,period='months',k=1,name=NULL,...)
     # copy any old xts attributes to new object
     xtsAttributes(tz) <- xtsAttributes(x)
     # return whichever object was originally passed in
-    reclass(tz)
   } else
   if(NCOL(x)==1) {
     ep <- endpoints(x, period)
@@ -66,11 +71,12 @@ function(x,period='months',k=1,name=NULL,...)
     # copy any old xts attributes to new object
     xtsAttributes(tz) <- xtsAttributes(x)
     # return whichever object was originally passed in
-    reclass(tz)
   }
   else {
     stop("'x' must be a single column or an OHLC type object")
   }
+  if(RECLASS) return(reclass(tz))
+  tz
 }
 
 `to.minutes` <-

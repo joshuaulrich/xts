@@ -20,7 +20,7 @@ function(x,...) {
 `xts.as.its` <-
 function(x,...) {
   if(!is.xts(x)) stop('not an "xts" object')
-  if(!inherits(class(index(x)),'POSIXct')) index(x) <- tindex(x,"POSIXct")
+  if(!inherits(class(index(x)),'POSIXct')) indexClass(x) <- "POSIXct"
   re.its(x,...)
 }
 

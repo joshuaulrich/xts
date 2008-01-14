@@ -7,7 +7,7 @@ export(as.xts)
 export(is.xts)
 export(reclass)
 export(endpoints)
-export(CLASS)
+export(CLASS,unCLASS)
 export('CLASS<-')
 export(indexClass)
 export('indexClass<-')
@@ -20,6 +20,7 @@ importFrom(zoo,coredata)
 S3method(coredata,xts)
 S3method(as.xts,xts)
 S3method('[',xts)
+S3method(str,xts)
 S3method(print,xts)
 S3method('CLASS<-',xts)
 S3method('indexClass<-',xts)
@@ -46,6 +47,9 @@ S3method(as.xts,timeSeries)
 # its (package:its) specific methods
 #export(xts.as.its)
 S3method(as.xts,its)
+
+# irts (package:tseries) specific methods
+S3method(as.xts,irts)
 
 
 ## currently unexported functions that _may_ be exported at some point

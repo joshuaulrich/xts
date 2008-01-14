@@ -1,7 +1,7 @@
 **********************************************************************************
 **********************************************************************************
 ** 
-**  WISHLIST: 2008-01-05 for xts
+**  WISHLIST: 2008-01-13 for xts
 **
 **********************************************************************************
 **********************************************************************************
@@ -29,9 +29,6 @@
 * diff.xts method  [not needed: jar]
 
 
-* add irts methods (irts is in tseries)
-
-
 * as.data.frame.xts, as.matrix.xts
   as.zoo.xts, as.its.xts,
   as.timeSeries.xts, as.irts.xts
@@ -56,6 +53,9 @@
   to class type required by particular functions - esp. functions
   in PerformanceAnalytics and the Rmetrics bundle, though a reliable
   coversion to 'ts' for many base functions would be also useful
+
+  essentially a mechanism to allow for the same conversion as.* is
+  used for elsewhere.
 
 * indexClass and indexClass<- methods allow for changing index class,
   at present only simple conversions work, as no additional args

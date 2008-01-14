@@ -36,6 +36,11 @@ function(x) {
   attr(x,'.CLASS')
 }
 
+`unCLASS` <-
+function(x) {
+  attr(x,'.CLASS') <- NULL
+}
+
 `CLASS<-` <-
 function(x,value) {
   UseMethod("CLASS<-")
