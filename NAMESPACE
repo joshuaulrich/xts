@@ -55,13 +55,3 @@ S3method(as.xts,irts)
 ## currently unexported functions that _may_ be exported at some point
 
 #export(startof,endof,firstof,lastof)
-
-#export(tindex)
-#S3method(tindex,default)
-#S3method(tindex,its)
-#S3method(tindex,ts)
-#S3method(tindex,timeSeries)
-
-#export(timeformat)
-#S3method(Ops,timeformat)
-#S3method(print,timeformat)
