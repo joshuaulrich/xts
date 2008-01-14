@@ -32,6 +32,11 @@ function(x,value) {
 
 `xtsAttributes<-.xts` <-
 function(x,value) {
+  if(is.null(value)) {
+    for(nm in names(xtsAttributes(x))) {
+      attr(x,nm) <- NULL
+    }
+  } else
   for(nv in names(value)) {
     if(!nv %in% c('dim','dimnames','index','class','.CLASS'))
       attr(x,nv) <- value[[nv]]
