@@ -12,7 +12,7 @@
 # endpoints needs to be able to handle 'k' arguments to minutes...
 
 `to.period` <-
-function(x,period='months',k=1,name=NULL,...)
+function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
 {
   if(is.null(name)) name <- deparse(substitute(x))
 
@@ -75,89 +75,126 @@ function(x,period='months',k=1,name=NULL,...)
   else {
     stop("'x' must be a single column or an OHLC type object")
   }
+
+  # allow for nice and user specifiable formatting of dates - per Brian Peterson
+  if(!is.null(indexAt)) {
+    if(indexAt %in% c('yearmon','yearqtr')) {
+      indexClass(tz) <- as.character(indexAt)
+    }
+    if(indexAt=='startof') {
+      index(tz) <- index(x)[startof(x,by=period)]
+    }
+    if(indexAt=='endof') {
+      index(tz) <- index(x)[endof(x,by=period)]
+    }
+    if(indexAt=='firstof') {
+      if(period %in% c('months','quarters')) {
+        if(period=='months') {
+          indexClass(tz) <- 'yearmon'
+        } else indexClass(tz) <- 'yearqtr'
+      # convert year* to POSIXct
+      indexClass(tz) <- 'POSIXct'
+      }
+    }
+    if(indexAt=='lastof') {
+      if(period %in% c('months','quarters')) {
+        if(period=='months') {
+          indexClass(tz) <- 'yearmon'
+        } else indexClass(tz) <- 'yearqtr'
+      # add one period and subtract a day
+      padv <- ifelse(period=='months',1,3)
+      index(tz) <- (index(tz)+padv/12)
+      # convert year* to POSIXct
+      indexClass(tz) <- 'POSIXct'
+      index(tz) <- index(tz)-86400
+      }
+    }
+  }
+
   if(RECLASS) return(reclass(tz))
   tz
+
 }
 
 `to.minutes` <-
-function(x)
+function(x,...)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minute',name=name)
+  to.period(x,'minute',name=name,...)
 }
 `to.minutes3` <-
-function(x)
+function(x,...)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minutes',k=3,name=name)
+  to.period(x,'minutes',k=3,name=name,...)
 }
 `to.minutes5` <-
-function(x)
+function(x,...)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minutes',k=5,name=name)
+  to.period(x,'minutes',k=5,name=name,...)
 }
 `to.minutes10` <-
-function(x)
+function(x,...)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minutes',k=10,name=name)
+  to.period(x,'minutes',k=10,name=name,...)
 }
 `to.minutes15` <-
-function(x)
+function(x,...)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minutes',k=15,name=name)
+  to.period(x,'minutes',k=15,name=name,...)
 }
 `to.minutes30` <-
-function(x)
+function(x,...)
 {
   name <- deparse(substitute(x))
-  to.period(x,'minutes',k=30,name=name)
+  to.period(x,'minutes',k=30,name=name,...)
 }
 `to.hourly` <-
-function(x)
+function(x,...)
 {
   name <- deparse(substitute(x))
-  to.period(x,'hours',name=name)
+  to.period(x,'hours',name=name,...)
 }
 `to.daily` <-
-function(x,drop.time=TRUE)
+function(x,drop.time=TRUE,...)
 {
   name <- deparse(substitute(x))
-  x <- to.period(x,'days',name=name)
+  x <- to.period(x,'days',name=name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
 `to.weekly` <-
-function(x,drop.time=TRUE)
+function(x,drop.time=TRUE,...)
 {
   name <- deparse(substitute(x))
-  x <- to.period(x,'weeks',name=name)
+  x <- to.period(x,'weeks',name=name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
 `to.monthly` <-
-function(x,drop.time=TRUE)
+function(x,indexAt='yearmon',drop.time=FALSE,...)
 {
   name <- deparse(substitute(x))
-  x <- to.period(x,'months',name=name)
+  x <- to.period(x,'months',indexAt=indexAt,name=name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
 `to.quarterly` <-
-function(x,drop.time=TRUE)
+function(x,indexAt='yearqtr',drop.time=FALSE,...)
 {
   name <- deparse(substitute(x))
-  x <- to.period(x,'quarters',name=name)
+  x <- to.period(x,'quarters',indexAt=indexAt,name=name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
 `to.yearly` <-
-function(x,drop.time=TRUE)
+function(x,drop.time=TRUE,...)
 {
   name <- deparse(substitute(x))
-  x <- to.period(x,'years',name=name)
+  x <- to.period(x,'years',name=name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }

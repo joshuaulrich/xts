@@ -28,25 +28,26 @@ If volume for a period was available, the new volume will also be
 calculated.
 }
 \usage{
-to.minutes(x)
-%to.minutes3(x)
-%to.minutes5(x)
-%to.minutes10(x)
-%to.minutes15(x)
-%to.minutes30(x)
-to.hourly(x)
-to.daily(x,drop.time=TRUE)
+to.minutes(x,...)
+%to.minutes3(x,...)
+%to.minutes5(x,...)
+%to.minutes10(x,...)
+%to.minutes15(x,...)
+%to.minutes30(x,...)
+to.hourly(x,...)
+to.daily(x,drop.time=TRUE,...)
 
-to.weekly(x,drop.time=TRUE)
-to.monthly(x,drop.time=TRUE)
-to.quarterly(x,drop.time=TRUE)
-to.yearly(x,drop.time=TRUE)
+to.weekly(x,drop.time=TRUE,...)
+to.monthly(x,indexAt='yearmon',drop.time=FALSE,...)
+to.quarterly(x,indexAt='yearqtr',drop.time=FALSE,...)
+to.yearly(x,drop.time=TRUE,...)
 
-to.period(x, period = months, k = 1, name=NULL, ...)
+to.period(x, period = months, k = 1, indexAt, name=NULL, ...)
 }
 \arguments{
   \item{x}{ OHLC type object } 
   \item{period}{ period to convert to }
+  \item{indexAt}{ convert final index to new class or date. see details }
   \item{drop.time}{ remove time component of POSIX datestamp (if any) }
   \item{k}{ number of sub periods to aggregate on (only for minutes and seconds) }
   \item{name}{ override column names }
@@ -61,6 +62,14 @@ e.g. the row corresponding to August 2007 would become
 from yahoo as a monthly series - as yahoo illogically using the
 \emph{beginning} of the month to signify a month - i.e. the first
 date available, not the 1st!
+
+To adjust the final indexing style, it is possible to set
+\code{indexAt} to one of the following: \sQuote{yearmon},
+\sQuote{yearqtr}, \sQuote{firstof}, \sQuote{lastof},
+\sQuote{startof}, or \sQuote{endof}.  The final index will
+then be \code{yearmon}, \code{yearqtr}, the first time of the period,
+the last time of the period, the starting time in the data for that
+period, or the ending time in the data for that period, respectively.
 
 It is also possible to pass a single time series, such as
 a univariate exchange rate, and return an OHLC object of

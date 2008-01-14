@@ -12,14 +12,14 @@ function(x,value) {
 `indexClass<-.xts` <-
 function(x,value) {
   if(!is.list(value)) value <- as.list(value)
-  if(!value[[1]] %in% c('POSIXlt','POSIXct','Date','timeDate') )
+  if(!value[[1]] %in% c('POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr') )
        stop(paste('illegal',sQuote('indexClass'),'value:',as.character(value[[1]])))
 
   if(value[[1]]=='timeDate') {
     stopifnot('package:fSeries' %in% search() | require('fSeries',quietly=TRUE))
     index(x) <- do.call(paste('as',value[[1]],sep='.'),list(index(x)))
   } 
-  else if(value[[1]] %in% c('POSIXct','POSIXlt')) {
+  else if(value[[1]] %in% c('POSIXct','POSIXlt','yearmon','yearqtr')) {
     index(x) <- do.call(paste('as',value[[1]],sep='.'),list(index(x)))
   } else index(x) <- do.call("as.Date",list(index(x)))
   x

@@ -12,9 +12,11 @@
 `xts` <-
 function(x,order.by=index(x),frequency=NULL,...) {
   if(!inherits(order.by,'Date') 
-     & !inherits(order.by,'POSIXct'))
+     & !inherits(order.by,'POSIXct')
+     & !inherits(order.by,'timeDate')
+     & !inherits(order.by,'yearmon') & !inherits(order.by,'yearqtr'))
   {
-    stop("order.by requires a time-based object of either class POSIXct or Date")
+    stop("order.by requires a time-based object of class POSIXct or Date")
   }
 
   z <- zoo(x=x,order.by=order.by,frequency=frequency)
@@ -33,7 +35,13 @@ function(x) {
 
 `CLASS` <-
 function(x) {
-  attr(x,'.CLASS')
+  cl <- attr(x,'.CLASS')
+  return(structure(cl,class='CLASS'))
+}
+
+`print.CLASS` <-
+function(x,...) {
+  cat(paste("previous class:",x),"\n")
 }
 
 `CLASS<-` <-
