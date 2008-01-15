@@ -79,7 +79,7 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
   # allow for nice and user specifiable formatting of dates - per Brian Peterson
   if(!is.null(indexAt)) {
     if(indexAt %in% c('yearmon','yearqtr')) {
-      if('timeSeries' %in% CLASS(x)) {
+      if(CLASS(x) %in% c('ts','its','timeSeries')) {
         # timeSeries can't handle either of these time-based indexes,
         # so default to startof rather than ugly <NA>
         indexAt <- 'firstof'
