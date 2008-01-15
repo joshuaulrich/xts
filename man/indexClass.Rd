@@ -12,7 +12,7 @@ indexClass(x) <- value
 }
 \arguments{
   \item{x}{ xts object }
-  \item{value}{ desired new class. see details }
+  \item{value}{ desired new class. See details }
   \item{\dots}{ unused }
 }
 \details{

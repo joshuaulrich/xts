@@ -15,7 +15,7 @@
 \alias{OHLC}
 \title{ Convert time series data to an OHLC series }
 \description{
-Convert an OHLC or univariate zoo object to a specified periodicity lower
+Convert an OHLC or univariate xts object to a specified periodicity lower
 than the given data object. For example, convert a daily
 series to a monthly series, or a monthly series to an yearly one,
 or a one minute series to an hourly series.
@@ -35,19 +35,19 @@ to.minutes(x,...)
 %to.minutes15(x,...)
 %to.minutes30(x,...)
 to.hourly(x,...)
-to.daily(x,drop.time=TRUE,...)
+to.daily(x, drop.time=TRUE, ...)
 
-to.weekly(x,drop.time=TRUE,...)
-to.monthly(x,indexAt='yearmon',drop.time=FALSE,...)
-to.quarterly(x,indexAt='yearqtr',drop.time=FALSE,...)
-to.yearly(x,drop.time=TRUE,...)
+to.weekly(x, drop.time=TRUE, ...)
+to.monthly(x, indexAt="yearmon", drop.time=FALSE, ...)
+to.quarterly(x, indexAt="yearqtr", drop.time=FALSE, ...)
+to.yearly(x, drop.time=TRUE, ...)
 
 to.period(x, period = months, k = 1, indexAt, name=NULL, ...)
 }
 \arguments{
   \item{x}{ OHLC type object } 
   \item{period}{ period to convert to }
-  \item{indexAt}{ convert final index to new class or date. see details }
+  \item{indexAt}{ convert final index to new class or date. See details }
   \item{drop.time}{ remove time component of POSIX datestamp (if any) }
   \item{k}{ number of sub periods to aggregate on (only for minutes and seconds) }
   \item{name}{ override column names }
@@ -59,7 +59,7 @@ into any commonly required periodicity. It is important to note
 that all dates will be aligned to the \emph{end} of each period,
 e.g. the row corresponding to August 2007 would become
 '2007-08-31'.  This is different than what would be downloaded
-from yahoo as a monthly series - as yahoo illogically using the
+from yahoo as a monthly series - as yahoo illogically uses the
 \emph{beginning} of the month to signify a month - i.e. the first
 date available, not the 1st!
 

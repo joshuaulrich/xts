@@ -18,7 +18,7 @@ xtsAttributes(x) <- value
 }
 \details{
 Since \code{xts} objects are S3 objects with special
-attributes, a method is nessasary to properly assign
+attributes, a method is necessary to properly assign
 and view the user-added attributes.
 
 A call to \code{attributes} from the \pkg{base} package
@@ -26,7 +26,7 @@ will return all attributes, including those specific
 to the \code{xts} class.
 }
 \value{
-A named list of user settable attributes
+A named list of user settable attributes.
 }
 \author{ Jeffrey A. Ryan }
 \seealso{ \code{\link{attributes}}}

@@ -17,19 +17,20 @@ losing any attributes of the original format.
 \method{as.xts}{xts}(x,...)
 
 
-\method{as.xts}{timeSeries}(x,dateFormat="POSIXct", FinCenter, recordIDs, title, documentation, ...)
+\method{as.xts}{timeSeries}(x, dateFormat="POSIXct", FinCenter, recordIDs,
+    title, documentation, ...)
 
 \method{as.xts}{its}(x,...)
 
-\method{as.xts}{zoo}(x, order.by = index(x), frequency = NULL, ...) 
+\method{as.xts}{zoo}(x, order.by=index(x), frequency=NULL, ...) 
 
-\method{as.xts}{ts}(x,dateFormat,...)
+\method{as.xts}{ts}(x, dateFormat,...)
 
-\method{as.xts}{data.frame}(x, order.by, dateFormat = "POSIXct", frequency = NULL, 
-    ...) 
+\method{as.xts}{data.frame}(x, order.by, dateFormat="POSIXct",
+    frequency=NULL, ...) 
 
-\method{as.xts}{matrix}(x, order.by, dateFormat = "POSIXct", frequency = NULL, 
-    ...) 
+\method{as.xts}{matrix}(x, order.by, dateFormat="POSIXct",
+    frequency=NULL, ...) 
 }
 \arguments{
   \item{x}{ data object to convert. See details for supported types }
@@ -47,8 +48,8 @@ A simple and reliable way to convert many different
 objects into a uniform format for use within \R.
 
 It is possible with a call to \code{as.xts} to
-convert objects of class \code{timeSeries},\code{ts},
-\code{its},\code{matrix},\code{data.frame}, and \code{zoo}.
+convert objects of class \code{timeSeries}, \code{ts},
+\code{its}, \code{matrix}, \code{data.frame}, and \code{zoo}.
 
 Additional name=value pairs may be passed to the function
 to be added to the new object. A special print.xts method
@@ -56,7 +57,7 @@ will assure that the attributes are hidden from view, but will
 be available via \R's standard \code{attr} function.
 
 The returned object will preserve all relevant attribute/slot
-data within itself, allowing for tempory conversion to use
+data within itself, allowing for temporary conversion to use
 zoo and xts compatible methods. A call to \code{reclass}
 returns the object to its original class, with all original
 attributes intact - unless otherwise changed.

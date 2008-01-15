@@ -21,8 +21,8 @@ A simple and reliable way to convert many different
 objects into a uniform format for use within \R.
 
 It is possible with a call to \code{as.xts} to
-convert objects of class \code{timeSeries},\code{ts},
-\code{its},\code{matrix},\code{data.frame}, and \code{zoo}.
+convert objects of class \code{timeSeries}, \code{ts},
+\code{its}, \code{matrix}, \code{data.frame}, and \code{zoo}.
 
 The help file \code{as.xts.methods} lists all available
 xts methods and arguments specific to each coercible type.
@@ -33,7 +33,7 @@ will assure that the attributes are hidden from view, but will
 be available via \R's standard \code{attr} function.
 
 The returned object will preserve all relevant attribute/slot
-data within itself, allowing for tempory conversion to use
+data within itself, allowing for temporary conversion to use
 zoo and xts compatible methods. A call to \code{reclass}
 returns the object to its original class, with all original
 attributes intact - unless otherwise changed.

@@ -6,7 +6,7 @@ Extract index values of a given \code{xts} object corresponding
 to the \emph{last} observations given a period specified by \code{on}
 }
 \usage{
-endpoints(x, on = "months", k = 1)
+endpoints(x, on="months", k=1)
 }
 \arguments{
   \item{x}{ an xts object }

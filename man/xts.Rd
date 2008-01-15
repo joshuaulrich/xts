@@ -8,7 +8,7 @@ Constructor function for creating an extensible time-series object.
 \code{xts} is used to create an \code{xts} object from raw data inputs.
 }
 \usage{
-xts(x, order.by = index(x), frequency = NULL, ...)
+xts(x, order.by=index(x), frequency=NULL, ...)
 
 is.xts(x)
 }
@@ -38,13 +38,13 @@ for keeping track of data sources, last update times, financial
 instrument descriptions or details.
 
 The idea behind \code{xts} is to offer the user the ability to utilize
-a standard zoo object, while providing an mechanism to customise
+a standard zoo object, while providing an mechanism to customize
 the object's meta-data, as well as create custom methods to handle
 the object in a manner required by the user.
 
 Most, if not all, standard zoo methods will work without change.  Where
 changes where required (to return an xts object) new methods have been
-written. At present these modified methods include \sQuote("["), \sQuote{codedata},
+written. At present these modified methods include \code{"["}, \code{coredata},
 
 [add more here]
 
@@ -54,7 +54,7 @@ python by creating ranges with a double colon "::" operator.  Each side of
 the operator may be left blank, which would then default to the beginning
 and end of the data, respectively.  To specify a subset of times,
 it is only required that the time specified be in standard ISO format, with
-some form of seperation between the elements. The time must be \sQuote{left-filled},
+some form of separation between the elements. The time must be \sQuote{left-filled},
 that is to specify a full year one needs only to provide the year, a month would require
 the full year and the integer of the month requested - e.g. '1999-01'.
 This format would extend all the way down to seconds - e.g. '1999-01-01 08:35:23'.
