@@ -3,7 +3,7 @@
 `re.zoo` <-
 function(x,...) {
   xx <- coredata(x)
-  rownames(xx) <- attr(x,'zoo.rownames')
+#  rownames(xx) <- attr(x,'zoo.rownames')
   zoo(xx,
       order.by=index(x),
       ...)
@@ -15,7 +15,7 @@ function(x,order.by=index(x),frequency=NULL,...) {
             order.by=order.by,
             frequency=frequency,
             .CLASS='zoo',
-            zoo.rownames=rownames(x),
+#            zoo.rownames=rownames(x),
             ...)
   xx
 }

@@ -5,7 +5,7 @@ function(x,...) {
   stopifnot("package:tseries" %in% search() || require("tseries",quietly=TRUE))
   indexClass(x) <- "POSIXct"
   xx <- coredata(x)
-  rownames(xx) <- attr(x,'irts.rownames')
+#  rownames(xx) <- attr(x,'irts.rownames')
   irts(index(x),xx)
 }
 
@@ -15,7 +15,7 @@ function(x,order.by,frequency=NULL,...) {
             order.by=x$time,
             frequency=frequency,
             .CLASS='irts',
-            irts.rownames=rownames(x$value),
+#            irts.rownames=rownames(x$value),
             ...)
   xx
 }

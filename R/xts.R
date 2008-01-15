@@ -24,7 +24,7 @@ function(x,order.by=index(x),frequency=NULL,...) {
   }
 
   z <- zoo(x=x,order.by=order.by,frequency=frequency)
-  rownames(z) <- as.character(as.POSIXct(order.by))
+#  rownames(z) <- as.character(as.POSIXct(order.by))
   z <- structure(z,class=c('xts','zoo'),...)
 
   return(z)
