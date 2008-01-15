@@ -79,7 +79,11 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
   # allow for nice and user specifiable formatting of dates - per Brian Peterson
   if(!is.null(indexAt)) {
     if(indexAt %in% c('yearmon','yearqtr')) {
-      indexClass(tz) <- as.character(indexAt)
+      if('timeSeries' %in% CLASS(x)) {
+        # timeSeries can't handle either of these time-based indexes,
+        # so default to startof rather than ugly <NA>
+        indexAt <- 'firstof'
+      } else indexClass(tz) <- as.character(indexAt)
     }
     if(indexAt=='startof') {
       index(tz) <- index(x)[startof(x,by=period)]
