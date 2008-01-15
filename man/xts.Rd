@@ -8,7 +8,7 @@ Constructor function for creating an extensible time-series object.
 \code{xts} is used to create an \code{xts} object from raw data inputs.
 }
 \usage{
-xts(x, order.by=index(x), frequency=NULL, ...)
+xts(x, order.by = index(x),frequency = NULL, ...)
 
 is.xts(x)
 }
@@ -16,7 +16,7 @@ is.xts(x)
 \arguments{
   \item{x}{ an object containing the time series data }
   \item{order.by}{ a corresponding vector of unique times/dates - must be
-of class \code{Date} or \code{POSIXct}. }
+of a known time-based class. See details. }
   \item{frequency}{ numeric indicating frequency of \code{order.by}. See details. }
   \item{\dots}{ additional attributes to be added. See details. }
 }
@@ -25,8 +25,10 @@ An \code{xts} object extends the S3 class \code{zoo} from the package of the
 same name.
 
 The first difference in this extension provides for a requirement
-that the index values not only be unique, but also must be of class
-\code{POSIXct} or \code{Date}, or coercible to such.
+that the index values not only be unique and ordered, but also must be of
+a time-based class. Currently acceptable classes include: \sQuote{Date},
+\sQuote{POSIXct}, \sQuote{timeDate}, as well as \sQuote{yearmon} and
+\sQuote{yearqtr} where the index values remain unique.
 
 The second difference is that the object may now carry additional
 attributes that may be desired in individual time-series handling.
@@ -34,8 +36,8 @@ This includes the ability to augment the objects data with
 meta-data otherwise not cleanly attachable to a standard zoo object.
 
 Examples of usage from finance may include the addition of data
-for keeping track of data sources, last update times, financial
-instrument descriptions or details.
+for keeping track of sources, last-update times, financial
+instrument descriptions or details, etc.
 
 The idea behind \code{xts} is to offer the user the ability to utilize
 a standard zoo object, while providing an mechanism to customize
@@ -43,7 +45,7 @@ the object's meta-data, as well as create custom methods to handle
 the object in a manner required by the user.
 
 Most, if not all, standard zoo methods will work without change.  Where
-changes where required (to return an xts object) new methods have been
+changes where required (e.g. to return an xts object) new methods have been
 written. At present these modified methods include \code{"["}, \code{coredata},
 
 [add more here]
@@ -73,8 +75,8 @@ structure. See those functions for more detail.
 \value{
 An S3 object of class \code{xts}. As it inherits and extends
 the zoo class, all zoo methods remain valid.  Additional
-attributes assigned may be extracted via the R function
-\code{attr}.
+attributes may be assigned and extracted via
+\code{xtsAttributes}.
 }
 \references{ \pkg{zoo}: }
 \author{ Jeffrey A. Ryan and Josh M. Ulrich }
@@ -84,7 +86,8 @@ Most users will benefit the most by using the
 automagically handle \emph{all} data abjects
 as one would handle a \code{zoo} object.
 }
-\seealso{ \code{\link{as.xts}}, \code{\link{reclass}} }
+\seealso{ \code{\link{as.xts}}, \code{\link{reclass}},
+          \code{\link{xtsAttributes}} }
 \examples{
 
 library(tseries)

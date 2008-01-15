@@ -1,7 +1,7 @@
 # xts core functions
 #   additional methods are in correspondingly named .R files
 #   current conversions include:
-#     timeSeries, its, ts, matrix, data.frame, and zoo
+#     timeSeries, its, irts, ts, matrix, data.frame, and zoo
 #
 #  this file includes the main xts constructor as well as the reclass
 #  function.
@@ -16,10 +16,15 @@ function(x,order.by=index(x),frequency=NULL,...) {
      & !inherits(order.by,'timeDate')
      & !inherits(order.by,'yearmon') & !inherits(order.by,'yearqtr'))
   {
+    #if(length(order.by)==1) { # a number indicating the column, or column name
+      #order.by <- x[,order.by]
+    #}
+    #order.by <- do.call(paste('as',indexClass,sep='.'),list(order.by,...))
     stop("order.by requires a time-based object of class POSIXct or Date")
   }
 
   z <- zoo(x=x,order.by=order.by,frequency=frequency)
+  rownames(z) <- as.character(as.POSIXct(order.by))
   z <- structure(z,class=c('xts','zoo'),...)
 
   return(z)

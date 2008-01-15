@@ -266,14 +266,6 @@ Type 'q()' to quit R.
 > # load data
 > library(xts)
 Loading required package: zoo
-
-Attaching package: 'zoo'
-
-
-	The following object(s) are masked from package:base :
-
-	 rapply 
-
 > 
 > sample.zoo <- sample.ts
 > 
@@ -425,8 +417,7 @@ Attaching package: 'Hmisc'
 	 format.pval,
 	 round.POSIXt,
 	 trunc.POSIXt,
-	 units,
-	 units<- 
+	 units 
 
 > cat("Testing as.xts.its:\n")
 Testing as.xts.its:
@@ -450,4 +441,49 @@ Testing as.xts.its:
 
 
 > 
-> rm(sample.ts,sample.its,sample.zoo,sample.timeSeries,sample.matrix,sample.data.frame)
+> library(tseries)
+Loading required package: quadprog
+> sample.irts <- irts(as.POSIXct(index(sample.zoo)),coredata(sample.zoo))
+> cat("Testing as.xts.irts:\n")
+Testing as.xts.irts:
+> cat("  is.irts(sample.irts): ")
+  is.irts(sample.irts): > if(is.irts(sample.irts)) {
++   cat("\t\tOK")
++ } else cat("ERROR")
+		OK> cat("\n")
+
+> cat("  as.xts(sample.irts): ")
+  as.xts(sample.irts): > if(is.xts(as.xts(sample.irts))) {
++   cat("\t\t\tOK")
++ } else cat("ERROR")
+			OK> cat("\n")
+
+> cat("  reclass(as.xts(sample.irts)): ")
+  reclass(as.xts(sample.irts)): > if(identical(reclass(as.xts(sample.irts)),sample.irts)) {
++   cat("\tOK")
++ } else cat("ERROR")
+	OK> cat("\n\n")
+
+
+> 
+> rm(sample.ts,sample.its,sample.irts,sample.zoo,sample.timeSeries,sample.matrix,sample.data.frame)
+> rm(convert.time.series)
+> detach('package:zoo')
+> detach('package:xts')
+> detach('package:robustbase')
+> detach('package:MASS')
+> detach('package:RUnit')
+> detach('package:spatial')
+> detach('package:tcltk')
+> detach('package:fUtilities')
+> detach('package:fEcofin')
+> detach('package:fCalendar')
+> detach('package:fSeries')
+> detach('package:Hmisc')
+> detach('package:its')
+> detach('package:quadprog')
+> detach('package:tseries')
+> 
+> proc.time()
+   user  system elapsed 
+  2.511   0.219   3.091 

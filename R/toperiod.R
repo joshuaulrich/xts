@@ -117,83 +117,84 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
 }
 
 `to.minutes` <-
-function(x,...)
+function(x,k,name,...)
 {
-  name <- deparse(substitute(x))
-  to.period(x,'minute',name=name,...)
+  if(missing(name)) name <- deparse(substitute(x))
+  if(missing(k)) k <- 1
+  to.period(x,'minutes',k=k,name=name,...)
 }
 `to.minutes3` <-
-function(x,...)
+function(x,name,...)
 {
-  name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'minutes',k=3,name=name,...)
 }
 `to.minutes5` <-
-function(x,...)
+function(x,name,...)
 {
-  name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'minutes',k=5,name=name,...)
 }
 `to.minutes10` <-
-function(x,...)
+function(x,name,...)
 {
-  name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'minutes',k=10,name=name,...)
 }
 `to.minutes15` <-
-function(x,...)
+function(x,name,...)
 {
-  name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'minutes',k=15,name=name,...)
 }
 `to.minutes30` <-
-function(x,...)
+function(x,name,...)
 {
-  name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'minutes',k=30,name=name,...)
 }
 `to.hourly` <-
-function(x,...)
+function(x,name,...)
 {
-  name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'hours',name=name,...)
 }
 `to.daily` <-
-function(x,drop.time=TRUE,...)
+function(x,drop.time=TRUE,name,...)
 {
-  name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
   x <- to.period(x,'days',name=name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
 `to.weekly` <-
-function(x,drop.time=TRUE,...)
+function(x,drop.time=TRUE,name,...)
 {
-  name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
   x <- to.period(x,'weeks',name=name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
 `to.monthly` <-
-function(x,indexAt='yearmon',drop.time=FALSE,...)
+function(x,indexAt='yearmon',drop.time=FALSE,name,...)
 {
-  name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
   x <- to.period(x,'months',indexAt=indexAt,name=name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
 `to.quarterly` <-
-function(x,indexAt='yearqtr',drop.time=FALSE,...)
+function(x,indexAt='yearqtr',drop.time=FALSE,name,...)
 {
-  name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
   x <- to.period(x,'quarters',indexAt=indexAt,name=name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
 `to.yearly` <-
-function(x,drop.time=TRUE,...)
+function(x,drop.time=TRUE,name,...)
 {
-  name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
   x <- to.period(x,'years',name=name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)

@@ -24,6 +24,7 @@ function(object,...) {
 `[.xts` <-
 function(x, i, j, drop = TRUE, ...) 
 {
+    original.indexclass <- indexClass(x)
     original.class <- class(x)
     original.cols <- ncol(x)
     original.names <- colnames(x)
@@ -88,10 +89,12 @@ function(x, i, j, drop = TRUE, ...)
             attr(x,names(original.attr)[i]) <- original.attr[[i]]
           }
         }
+        # handle future xts extensions without [. method rewrite
         class(x) <- original.class
     }
     if (!is.null(dim(x))) 
         colnames(x) <- original.names[j]
+    indexClass(x) <- original.indexclass
     x
 }
 

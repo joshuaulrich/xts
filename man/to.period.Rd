@@ -1,11 +1,11 @@
 \name{to.period}
 \alias{to.period}
 \alias{to.minutes}
-%\alias{to.minutes3}
-%\alias{to.minutes5}
-%\alias{to.minutes10}
-%\alias{to.minutes15}
-%\alias{to.minutes30}
+\alias{to.minutes3}
+\alias{to.minutes5}
+\alias{to.minutes10}
+\alias{to.minutes15}
+\alias{to.minutes30}
 \alias{to.hourly}
 \alias{to.daily}
 \alias{to.weekly}
@@ -28,19 +28,19 @@ If volume for a period was available, the new volume will also be
 calculated.
 }
 \usage{
-to.minutes(x,...)
-%to.minutes3(x,...)
-%to.minutes5(x,...)
-%to.minutes10(x,...)
-%to.minutes15(x,...)
-%to.minutes30(x,...)
-to.hourly(x,...)
-to.daily(x, drop.time=TRUE, ...)
+to.minutes(x,k,name,...)
+to.minutes3(x,name,...)
+to.minutes5(x,name,...)
+to.minutes10(x,name,...)
+to.minutes15(x,name,...)
+to.minutes30(x,name,...)
+to.hourly(x,name,...)
+to.daily(x,drop.time=TRUE,name,...)
 
-to.weekly(x, drop.time=TRUE, ...)
-to.monthly(x, indexAt="yearmon", drop.time=FALSE, ...)
-to.quarterly(x, indexAt="yearqtr", drop.time=FALSE, ...)
-to.yearly(x, drop.time=TRUE, ...)
+to.weekly(x,drop.time=TRUE,name,...)
+to.monthly(x,indexAt='yearmon',drop.time=FALSE,name,...)
+to.quarterly(x,indexAt='yearqtr',drop.time=FALSE,name,...)
+to.yearly(x,drop.time=TRUE,name,...)
 
 to.period(x, period = months, k = 1, indexAt, name=NULL, ...)
 }
