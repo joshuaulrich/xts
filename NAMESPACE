@@ -26,6 +26,19 @@ export(to.period,
        to.yearly)
 export(xtsAttributes)
 export('xtsAttributes<-')
+export(periodicity)
+export(period.apply)
+export(first,
+       last)
+export(apply.daily,
+       apply.weekly,
+       apply.monthly,
+       apply.quarterly,
+       apply.yearly)
+S3method(first,default)
+S3method(last,default)
+S3method(first,zoo)
+S3method(last,zoo)
 
 # xts methods
 importFrom(zoo,coredata)

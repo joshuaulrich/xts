@@ -13,12 +13,20 @@
 `periodicity` <-
 function (x, ...) 
 {
-    x <- as.xts(x)
+    if(!is.xts(x)) x <- as.xts(x)
+
+    # convert if necessary to usable format
+    if(!indexClass(x)[[1]] %in% c('Date','POSIXt')) indexClass(x) <- "POSIXct"
+
+    # this takes a long time on big data - possibly use some sort of sampling instead???
     p <- median(diff(time(x)))
+
     if (is.na(p)) 
         stop("cannot calculate periodicity from one observation")
+
     p.numeric <- as.numeric(p)
     units <- attr(p, "units")
+
     if (units == "secs") {
         scale <- "seconds"
     }
@@ -38,10 +46,11 @@ function (x, ...)
         if (p.numeric > 91) 
             scale <- "yearly"
     }
-    xx <- list(difftime = p, frequency = p.numeric, start = index(first(x)), 
-        end = index(last(x)), units = units, scale = scale)
-    class(xx) <- "periodicity"
-    xx
+
+    structure(list(difftime = p, frequency = p.numeric, start = index(first(x)), 
+        end = index(last(x)), units = units, scale = scale),class="periodicity")
+#    class(xx) <- "periodicity"
+#    xx  # used when structure was assigned to xx, useless now, remain until testing is done though -jar
 }
 
 `print.periodicity` <-

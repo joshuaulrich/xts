@@ -89,7 +89,7 @@ as one would handle a \code{zoo} object.
 \seealso{ \code{\link{as.xts}}, \code{\link{reclass}},
           \code{\link{xtsAttributes}} }
 \examples{
-
+\dontrun{
 library(tseries)
 yhoo <- get.hist.quote("YHOO")
 
@@ -107,5 +107,6 @@ sample.xts['2007-03::2007']  # March 2007 to the end of 2007
 sample.xts['::'] # the whole data set
 sample.xts['::2007'] # the beginning of the data through 2007
 sample.xts['2007-01-03'] # just the 3rd of January 2007
+}
 }
 \keyword{ utilities }

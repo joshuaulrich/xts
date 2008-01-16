@@ -15,13 +15,13 @@
 \alias{OHLC}
 \title{ Convert time series data to an OHLC series }
 \description{
-Convert an OHLC or univariate xts object to a specified periodicity lower
+Convert an OHLC or univariate object to a specified periodicity lower
 than the given data object. For example, convert a daily
-series to a monthly series, or a monthly series to an yearly one,
+series to a monthly series, or a monthly series to a yearly one,
 or a one minute series to an hourly series.
 
 The result will contain the open and close for the
-given period, as well as the maximum and minimum prices over the
+given period, as well as the maximum and minimum over the
 new period, reflected in the new high and low, respectively.
 
 If volume for a period was available, the new volume will also be
@@ -42,11 +42,11 @@ to.monthly(x,indexAt='yearmon',drop.time=FALSE,name,...)
 to.quarterly(x,indexAt='yearqtr',drop.time=FALSE,name,...)
 to.yearly(x,drop.time=TRUE,name,...)
 
-to.period(x, period = months, k = 1, indexAt, name=NULL, ...)
+to.period(x, period = 'months', k = 1, indexAt, name=NULL, ...)
 }
 \arguments{
-  \item{x}{ OHLC type object } 
-  \item{period}{ period to convert to }
+  \item{x}{ a univariate or OHLC type time-series object } 
+  \item{period}{ period to convert to. See details. }
   \item{indexAt}{ convert final index to new class or date. See details }
   \item{drop.time}{ remove time component of POSIX datestamp (if any) }
   \item{k}{ number of sub periods to aggregate on (only for minutes and seconds) }
@@ -54,14 +54,18 @@ to.period(x, period = months, k = 1, indexAt, name=NULL, ...)
   \item{\dots}{ additional arguments }
 }
 \details{
-Essentially an easy and reliable way to convert daily data
-into any commonly required periodicity. It is important to note
-that all dates will be aligned to the \emph{end} of each period,
-e.g. the row corresponding to August 2007 would become
-'2007-08-31'.  This is different than what would be downloaded
-from yahoo as a monthly series - as yahoo illogically uses the
-\emph{beginning} of the month to signify a month - i.e. the first
-date available, not the 1st!
+Essentially an easy and reliable way to convert one periodicity of data
+into any new periodicity. It is important to note
+that all dates will be aligned to the \emph{end} of each period
+by default - with the exception of \code{to.monthly} and \code{to.quarterly},
+which index by \sQuote{yearmon} and \sQuote{yearqtr} from the \pkg{zoo}
+package, respectively.
+
+Valid period character strings include: \code{"seconds"}, 
+\code{"minutes"}, \code{"hours"}, \code{"days"}, \code{"weeks"},
+\code{"months"}, \code{"quarters"}, and \code{"years"}. These are
+calclated internally via \code{endpoints}. See that function's help
+page for further details.
 
 To adjust the final indexing style, it is possible to set
 \code{indexAt} to one of the following: \sQuote{yearmon},
@@ -87,6 +91,25 @@ require magic.
 }
 \value{
 An object of the original type, with new periodicity.
+}
+\note{
+This method should work on almost all time-series-like
+objects. Including \sQuote{timeSeries}, \sQuote{zoo},
+\sQuote{ts}, \sQuote{its}, and \sQuote{irts}. It is even likely
+to work well for other data structures - including \sQuote{data.frames}
+and \sQuote{matrix} objects.
+
+Internally a call to \code{as.xts} converts the original \code{x}
+into the universal \code{xts} format, and then re-converts back
+to the original type.
+
+A special note with respect to \sQuote{ts} objects. As these are
+strictly regular they may include \code{NA} values.  These are
+stripped for aggregation purposes, though replaced before returning.
+This inevitably leads to many, many additional \sQuote{NA} values
+in the data. It is more beneficial to consider using an \sQuote{xts}
+object originally, or converting to one in the function call by means
+of \code{as.xts}.
 }
 \examples{
 \dontrun{

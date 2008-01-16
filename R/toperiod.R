@@ -82,6 +82,7 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
       if(CLASS(x) %in% c('ts','its','timeSeries')) {
         # timeSeries can't handle either of these time-based indexes,
         # so default to startof rather than ugly <NA>
+        # ts causes malloc issues when passed a non-numeric index - BAD!
         indexAt <- 'firstof'
       } else indexClass(tz) <- as.character(indexAt)
     }
@@ -97,11 +98,13 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
           indexClass(tz) <- 'yearmon'
         } else indexClass(tz) <- 'yearqtr'
       # convert year* to POSIXct
-      indexClass(tz) <- 'POSIXct'
+      #indexClass(tz) <- 'POSIXct'
+      indexClass(tz) <- indexClass(x)
       }
     }
     if(indexAt=='lastof') {
       if(period %in% c('months','quarters')) {
+      # use yearmon/yearqtr as shortcuts to 1rst of month :)
         if(period=='months') {
           indexClass(tz) <- 'yearmon'
         } else indexClass(tz) <- 'yearqtr'

@@ -78,7 +78,7 @@ function(x, i, j, drop = TRUE, ...)
           }
         }
         class(x) <- original.class
-        j <- 1:original.cols
+        if(!is.null(original.cols)) j <- 1:original.cols
     }
     else {
         x <- x[i = i, j = j, drop = drop, ...]

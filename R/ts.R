@@ -2,6 +2,8 @@
 
 `re.ts` <-
 function(x,...) {
+  if(periodicity(x)$units == 'days' & indexClass(x) != "Date")
+    indexClass(x) <- "Date"
   as.ts(x)
 }
 
