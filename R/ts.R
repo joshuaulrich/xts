@@ -28,7 +28,7 @@ function(x,dateFormat,...) {
   # now using time() to extract time from tsp
   # still have not figured out a great way to convert
   # removig as.numeric preserves time class, which may facilitate
-  order.by <- do.call(paste('as',dateFormat,sep='.'),list(time(x),...))
+  order.by <- do.call(paste('as',dateFormat,sep='.'),list(as.numeric(time(x)),...))
   xx <- xts(x.mat,
             order.by=order.by,
             frequency=frequency(x),
