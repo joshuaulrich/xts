@@ -2,8 +2,9 @@
 
 `re.ts` <-
 function(x,...) {
-  if(periodicity(x)$units == 'days' & indexClass(x) != "Date")
+  if(periodicity(x)$units == 'days' & !inherits(indexClass(x),"Date"))
     indexClass(x) <- "Date"
+  # major issue with quick reclass.  Basically fails on data < 1970...
   as.ts(x)
 }
 
@@ -28,7 +29,8 @@ function(x,dateFormat,...) {
   # now using time() to extract time from tsp
   # still have not figured out a great way to convert
   # removig as.numeric preserves time class, which may facilitate
-  order.by <- do.call(paste('as',dateFormat,sep='.'),list(as.numeric(time(x)),...))
+  order.by <- do.call(paste('as',dateFormat,sep='.'),
+                      list(as.numeric(time(x)),...))
   xx <- xts(x.mat,
             order.by=order.by,
             frequency=frequency(x),
