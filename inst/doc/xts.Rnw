@@ -1,0 +1,113 @@
+%\VignetteIndexEntry{xts: Extensible Time Series}
+\documentclass{article}
+\usepackage{hyperref}
+\hypersetup{colorlinks,%
+            citecolor=black,%
+            linkcolor=blue,%
+            urlcolor=blue,%
+            }
+
+\title{\bf xts: Extensible Time Series }
+\author{Jeffrey A. Ryan and Joshua M. Ulrich\\
+       jeff.a.ryan@gmail.com josh.m.ulrich@gmail.com}
+\date{January 26, 2008}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+{\sf R} offers the time series analyst a variety of mechanisms
+to both store and manage time-indexed data.  Native classes suitable
+for time series data include data frames, matricies, vectors, and
+ts objects. Over time, additional classes have been introduced to
+handle the shortcomings of the native {\sf R} functions within specific
+domains.  These include {\sf irts} from the tseries package\cite{tseries},
+{\sf timeSeries} from the {\sf Rmetrics} bundle\cite{rmetrics}, and
+{\sf its}~\cite{its} and {\sf zoo}~\cite{zoo} from 
+respective packages. Each of these contributed classes provide solutions
+to many of the issues
+related to working with time series in R, though often in incompatible ways. 
+
+\vspace{3mm}
+\noindent
+At present, one of the most used formats to manage time-series data is
+the {\sf zoo} class. {\sf zoo} 
+
+\section{The technical side of {\sf xts}}
+
+\section{Using {\sf xts}}
+This should contain subsections on:
+1. creating xts objects with xts and as.xts
+2. an explanation of reclass - why and how to use as an end-user
+   including limitations
+
+\subsection{Creating data objects: {\sf xts} and {\sf as.xts}}
+<<a>>=
+
+@
+
+\noindent
+
+\subsection{{\sf xts} methods}
+
+\subsection{Restoring the original class - {\sf reclass}}
+
+\section{Developing with xts}
+
+\vspace{3mm}
+\noindent
+
+\vspace{3mm}
+\noindent
+
+<<b>>=
+
+@
+
+\vspace{2mm}
+\noindent
+
+\section{Extending xts for your own purposes}
+
+\subsection{{\sf xtsAttributes}}
+<<c>>=
+
+@
+
+\vspace{2mm}
+\noindent
+
+\subsection{Subsetting {\sf xts}}
+<<d>>=
+
+@
+
+\section{Conclusion}
+
+\vspace{2mm}
+\noindent
+
+\begin{thebibliography}{99}
+\bibitem{tseries} author:
+\emph{tseries:},
+R package version v, CCYY
+\bibitem{rmetrics} DW:
+\emph{Rmetrics:},
+
+\bibitem{its} :
+\emph{its: Irregular Time Series},
+
+\bibitem{zoo} DW:
+\emph{zoo: Z's Ordered Observations},
+
+\bibitem{R} R Development Core Team:
+\emph{R: A Language and Environment for Statistical Computing},
+R Foundation for Statistical Computing, Vienna, Austria.
+ISBN 3-900051-07-0, URL http://www.R-project.org
+\bibitem{p} Jeffrey A. Ryan:
+\emph{Defaults: Create Global Function Defaults},
+R package version 1.1-0, 2007
+\end{thebibliography}
+\end{document}
