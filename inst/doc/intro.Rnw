@@ -19,29 +19,31 @@
 
 \section{Introduction}
 {\sf R} offers the time series analyst a variety of mechanisms
-to both store and manage time-indexed data.  Native classes suitable
-for time series data include data frames, matricies, vectors, and
-ts objects. Over time, additional classes have been introduced to
+to both store and manage time-indexed data.  Native {\sf R} classes suitable
+for time series data include data.frame, matrix, vector, and
+ts objects. Additional classes have been subsequently introduced to
 handle the shortcomings of the native {\sf R} functions within specific
 domains.  These include {\sf irts} from the tseries package\cite{tseries},
 {\sf timeSeries} from the {\sf Rmetrics} bundle\cite{rmetrics}, and
-{\sf its}~\cite{its} and {\sf zoo}~\cite{zoo} from 
+{\sf its}~\cite{its} and {\sf zoo}~\cite{zoo} from their 
 respective packages. Each of these contributed classes provide solutions
 to many of the issues
-related to working with time series in R, though often in incompatible ways. 
+related to working with time series in R.
 
 \vspace{3mm}
 \noindent
-At present, one of the most used formats to manage time-series data is
-the {\sf zoo} class. {\sf zoo} 
+The purpose of introducing yet another time series class to the R
+community is two-fold. {\sf xts} is designed to offer maximum compatibility
+with current and future time-series classes, as well as provide a rich
+set of time-based functionality to the end user.
 
-\section{The technical side of {\sf xts}}
+\section{The structure of {\sf xts}}
+At the center of every {\sf xts} object is a zoo object.  As such, all
+currently available methods available to zoo object are available to
+objects of class {\sf xts}
 
 \section{Using {\sf xts}}
-This should contain subsections on:
-1. creating xts objects with xts and as.xts
-2. an explanation of reclass - why and how to use as an end-user
-   including limitations
+
 
 \subsection{Creating data objects: {\sf xts} and {\sf as.xts}}
 <<a>>=
