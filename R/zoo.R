@@ -3,10 +3,11 @@
 `re.zoo` <-
 function(x,...) {
   xx <- coredata(x)
-#  rownames(xx) <- attr(x,'zoo.rownames')
-  zoo(xx,
-      order.by=index(x),
-      ...)
+  xx <- zoo(xx,
+        order.by=index(x),
+        ...)
+  attr(xx,'names') <- attr(x,'names') # trying to capture names - jar
+  xx
 }
 
 `as.xts.zoo` <-
@@ -15,7 +16,7 @@ function(x,order.by=index(x),frequency=NULL,...) {
             order.by=order.by,
             frequency=frequency,
             .CLASS='zoo',
-#            zoo.rownames=rownames(x),
+            names=attr(x,'names'), # trying to capture names -jar
             ...)
   xx
 }

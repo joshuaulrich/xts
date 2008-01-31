@@ -73,8 +73,11 @@ function(x, i, j, drop = TRUE, ...)
     if (missing(j)) {
         x <- x[i = i, drop = drop, ...]
         if(!is.null(original.attr)) {
-          for(i in 1:length(original.attr)) {
-            attr(x,names(original.attr)[i]) <- original.attr[[i]]
+          for(ii in 1:length(original.attr)) {
+            if(names(original.attr)[[ii]] == 'names') {
+              # specific issue to 'names' in zoo - must subset to correct size
+              attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
+            } else attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
           }
         }
         class(x) <- original.class
@@ -85,8 +88,11 @@ function(x, i, j, drop = TRUE, ...)
         if (is.null(dim(x))) 
             dim(x) <- c(NROW(x), NCOL(x))
         if(!is.null(original.attr)) {
-          for(i in 1:length(original.attr)) {
-            attr(x,names(original.attr)[i]) <- original.attr[[i]]
+          for(ii in 1:length(original.attr)) {
+            if(names(original.attr)[[ii]] == 'names') {
+              # specific issue to 'names' in zoo - must subset to correct size
+              attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
+            } else attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
           }
         }
         # handle future xts extensions without [. method rewrite
