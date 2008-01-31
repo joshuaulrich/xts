@@ -26,14 +26,14 @@ function(x, i, j, drop = TRUE, ...)
 {
     original.indexclass <- indexClass(x)
     original.class <- class(x)
-    original.cols <- ncol(x)
+    original.cols <- NCOL(x)
     original.names <- colnames(x)
     original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
     if(length(original.attr) < 1) original.attr <- NULL
 
 
     if (missing(i)) 
-        i <- 1:nrow(x)
+        i <- 1:NROW(x)
     if (is.character(i)) {
       # enables subsetting by date style strings
       # must be able to process - and then allow for operations???
