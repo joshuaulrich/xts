@@ -10,7 +10,7 @@ function(x,...) {
 
 `str.xts` <-
 function(object,...) {
-  cat(paste("An",sQuote('xts'),"object containing:\n"))
+  cat(paste("An",sQuote('xts'),"object from",start(object),"to",end(object),"containing:\n"))
   cat(paste("  Data:"))
   str(coredata(object),...)
   cat(paste("  Indexed by: "))
@@ -28,6 +28,7 @@ function(x, i, j, drop = TRUE, ...)
     original.class <- class(x)
     original.cols <- NCOL(x)
     original.names <- colnames(x)
+    #original.rownames <- rownames(x)
     original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
     if(length(original.attr) < 1) original.attr <- NULL
 
@@ -76,8 +77,18 @@ function(x, i, j, drop = TRUE, ...)
           for(ii in 1:length(original.attr)) {
             if(names(original.attr)[[ii]] == 'names') {
               # specific issue to 'names' in zoo - must subset to correct size
-              attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
+#tmp              attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
             } else attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
+
+#           if(names(original.attr)[[ii]] %in%  c('.DIMNAMES','names')) {
+#             # specific issue to 'names' in zoo - must subset to correct size
+#             if(names(original.attr)[[ii]] == 'names')
+#               attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
+#             if(names(original.attr)[[ii]] == '.DIMNAMES') {
+#               rownames(x) <- original.attr[[ii]][[1]][i]
+#               colnames(x) <- original.attr[[ii]][[2]] 
+#             }
+#           } else attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
           }
         }
         class(x) <- original.class
@@ -89,17 +100,30 @@ function(x, i, j, drop = TRUE, ...)
             dim(x) <- c(NROW(x), NCOL(x))
         if(!is.null(original.attr)) {
           for(ii in 1:length(original.attr)) {
-            if(names(original.attr)[[ii]] == 'names') {
-              # specific issue to 'names' in zoo - must subset to correct size
-              attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
-            } else attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
+#           if(names(original.attr)[[ii]] %in%  c('.DIMNAMES','names')) {
+#             # specific issue to 'names' in zoo - must subset to correct size
+#             if(names(original.attr)[[ii]] == 'names')
+#               attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
+#             if(names(original.attr)[[ii]] == '.DIMNAMES') {
+#               rownames(x) <- original.attr[[ii]][[1]][i]
+#               colnames(x) <- original.attr[[ii]][[2]][j] 
+#             }
+#           } else attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
+
+#tmp           if(names(original.attr)[[ii]] == 'names') {
+#tmp             # specific issue to 'names' in zoo - must subset to correct size
+#tmp             attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
+#tmp          } else attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
+
           }
         }
         # handle future xts extensions without [. method rewrite
         class(x) <- original.class
     }
-    if (!is.null(dim(x))) 
+    if (!is.null(dim(x))) {
         colnames(x) <- original.names[j]
+        #rownames(x) <- original.rownames[i]
+    }
     indexClass(x) <- original.indexclass
     x
 }

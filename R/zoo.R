@@ -3,10 +3,19 @@
 `re.zoo` <-
 function(x,...) {
   xx <- coredata(x)
+
   xx <- zoo(xx,
         order.by=index(x),
         ...)
-  attr(xx,'names') <- attr(x,'names') # trying to capture names - jar
+
+  dotNames <- attr(x,'names')
+  if(!is.null(dotNames)) {
+    xx <- structure(xx, .Names=dotNames)
+  }
+# if(is.null(dimnames(x)[2]) | length(dimnames(x)[2])==1) {
+#   dimnames(xx) <- NULL
+#   attr(xx,'names') <- dimnames(x)[1]
+# }
   xx
 }
 
@@ -16,8 +25,14 @@ function(x,order.by=index(x),frequency=NULL,...) {
             order.by=order.by,
             frequency=frequency,
             .CLASS='zoo',
-            names=attr(x,'names'), # trying to capture names -jar
             ...)
+#  attr(xx,'names') <- NULL
+
+# if(is.null(dimnames(x))) {
+#   if(!is.null(attr(x,'names')))  # trying to capture names -jar
+#     dimnames(xx)[1] <- attr(x,'names')
+#     dimnames(xx)[2] <- NULL
+# }
   xx
 }
 

@@ -33,7 +33,7 @@ function(x,order.by=index(x),frequency=NULL,...) {
 `reclass` <-
 function(x) {
   old.class <- CLASS(x)
-  if(!is.null(old.class)) {
+  if(length(old.class) > 0) {
     do.call(paste('re',old.class,sep='.'),list(x))
   } else x
 }
@@ -41,7 +41,11 @@ function(x) {
 `CLASS` <-
 function(x) {
   cl <- attr(x,'.CLASS')
-  return(structure(cl,class='CLASS'))
+
+  if(!is.null(cl))
+    return(structure(cl,class='CLASS'))
+
+  return(NULL)
 }
 
 `print.CLASS` <-

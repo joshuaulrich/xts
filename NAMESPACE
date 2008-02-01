@@ -1,6 +1,9 @@
 # load fortran symbol table
 useDynLib(xts)
 
+# debugging
+#export(re.zoo,as.xts.zoo)
+
 # user visible core xts functions
 export(xts)
 export(as.xts)
