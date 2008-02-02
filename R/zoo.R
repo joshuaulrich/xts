@@ -8,14 +8,11 @@ function(x,...) {
         order.by=index(x),
         ...)
 
-  dotNames <- attr(x,'names')
-  if(!is.null(dotNames)) {
-    xx <- structure(xx, .Names=dotNames)
+  if(length(dimnames(x)[[2]]) < 2) {
+    dimnames(xx) <- NULL
+    dim(xx) <- NULL
+    attr(xx,'names') <- dimnames(x)[[1]]
   }
-# if(is.null(dimnames(x)[2]) | length(dimnames(x)[2])==1) {
-#   dimnames(xx) <- NULL
-#   attr(xx,'names') <- dimnames(x)[1]
-# }
   xx
 }
 
@@ -26,13 +23,13 @@ function(x,order.by=index(x),frequency=NULL,...) {
             frequency=frequency,
             .CLASS='zoo',
             ...)
-#  attr(xx,'names') <- NULL
 
-# if(is.null(dimnames(x))) {
-#   if(!is.null(attr(x,'names')))  # trying to capture names -jar
-#     dimnames(xx)[1] <- attr(x,'names')
-#     dimnames(xx)[2] <- NULL
-# }
+  if(!is.null(attr(x,'names'))) {
+    dim(xx) <- c(NROW(xx),NCOL(xx))
+    dn <- list(attr(x,'names'),colnames(x))
+    dimnames(xx) <- dn
+  }
+
   xx
 }
 

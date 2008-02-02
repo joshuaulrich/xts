@@ -28,7 +28,8 @@ function(x, i, j, drop = TRUE, ...)
     original.class <- class(x)
     original.cols <- NCOL(x)
     original.names <- colnames(x)
-    #original.rownames <- rownames(x)
+    original.CLASS <- CLASS(x)
+
     original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
     if(length(original.attr) < 1) original.attr <- NULL
 
@@ -72,12 +73,23 @@ function(x, i, j, drop = TRUE, ...)
     class(x) <- "zoo"
 
     if (missing(j)) {
-        x <- x[i = i, drop = drop, ...]
+        if(original.cols == 1) {
+          # if data set only has one column:
+          # it is necessary to replace the dimnames removed by [.zoo
+          dn1 <- dimnames(x)[[1]]
+          x <- x[i = i, drop = drop, ...]
+          dim(x) <- c(NROW(x), NCOL(x))
+          dn <- list(dn1[i],colnames(x))
+          dimnames(x) <- dn
+        } else {
+          x <- x[i = i, drop = drop, ...]
+        }
+
         if(!is.null(original.attr)) {
           for(ii in 1:length(original.attr)) {
             if(names(original.attr)[[ii]] == 'names') {
               # specific issue to 'names' in zoo - must subset to correct size
-#tmp              attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
+##              attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
             } else attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
 
 #           if(names(original.attr)[[ii]] %in%  c('.DIMNAMES','names')) {
@@ -95,9 +107,17 @@ function(x, i, j, drop = TRUE, ...)
         if(!is.null(original.cols)) j <- 1:original.cols
     }
     else {
-        x <- x[i = i, j = j, drop = drop, ...]
-        if (is.null(dim(x))) 
-            dim(x) <- c(NROW(x), NCOL(x))
+        if(length(j) == 1) {
+          # subsetting down to 1 cols - '[.zoo' will delete this info
+          dn1 <- dimnames(x)[[1]]
+          x <- x[i = i, j = j, drop = drop, ...]
+          dim(x) <- c(NROW(x), NCOL(x))
+          dn <- list(dn1[i],colnames(x))
+          dimnames(x) <- dn
+        } else {
+          x <- x[i = i, j = j, drop = drop, ...]
+        }
+
         if(!is.null(original.attr)) {
           for(ii in 1:length(original.attr)) {
 #           if(names(original.attr)[[ii]] %in%  c('.DIMNAMES','names')) {
@@ -110,10 +130,10 @@ function(x, i, j, drop = TRUE, ...)
 #             }
 #           } else attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
 
-#tmp           if(names(original.attr)[[ii]] == 'names') {
-#tmp             # specific issue to 'names' in zoo - must subset to correct size
-#tmp             attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
-#tmp          } else attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
+           if(names(original.attr)[[ii]] == 'names') {
+             # specific issue to 'names' in zoo - must subset to correct size
+#             attr(x,names(original.attr)[ii]) <- original.attr[[ii]][i]
+          } else attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
 
           }
         }
@@ -125,6 +145,7 @@ function(x, i, j, drop = TRUE, ...)
         #rownames(x) <- original.rownames[i]
     }
     indexClass(x) <- original.indexclass
+    CLASS(x) <- original.CLASS
     x
 }
 
