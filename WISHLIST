@@ -65,9 +65,6 @@
 
       as.yearmon.xts, as.yearqtr.xts
 
-* per suggestions from Brian Peterson automatically
-  handle mon/qtr as yearmon and yearqtr 
-  
 * look into chron, dates (& yearmon, yearqtr)
   -- this can't be extensible, as we couldn't test for time nature...
   -- but we *should* cover all *known* date handling in R at any given time
