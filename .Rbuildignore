@@ -1,3 +1,4 @@
 inst
 inst/doc
-#tests/doRUnit.R
+inst/doc/intro.Rnw
+tests/doRUnit.R
