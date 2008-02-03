@@ -1,2 +1,3 @@
 inst
 inst/doc
+#tests/doRUnit.R

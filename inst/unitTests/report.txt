@@ -1,0 +1,29 @@
+RUNIT TEST PROTOCOL -- Sat Feb  2 19:07:07 2008 
+*********************************************** 
+Number of test functions: 8 
+Number of errors: 0 
+Number of failures: 0 
+
+ 
+1 Test Suite : 
+xts unit testing - 8 test functions, 0 errors, 0 failures
+
+
+
+Details 
+*************************** 
+Test Suite: xts unit testing 
+Test function regexp: ^test.+ 
+Test file regexp: ^runit.+\.[rR]$ 
+Involved directory: 
+/Users/jryan/Rdir/svntest/rforge/xts/pkg/tests/../inst/unitTests 
+--------------------------- 
+Test file: /Users/jryan/Rdir/svntest/rforge/xts/pkg/tests/../inst/unitTests/runit.zoo.R 
+test.convert_zoo_to_xts: ... OK (0 seconds)
+test.convert_zoo_to_xts_i1: ... OK (0 seconds)
+test.convert_zoo_to_xts_i1j1: ... OK (0 seconds)
+test.convert_zoo_to_xts_j1: ... OK (0 seconds)
+test.zoo_reclass: ... OK (0 seconds)
+test.zoo_reclass_subset_as.xts_j1: ... OK (0 seconds)
+test.zoo_reclass_subset_reclass_j1: ... OK (0 seconds)
+test.zoo_reclass_subset_zoo_j1: ... OK (0 seconds)
