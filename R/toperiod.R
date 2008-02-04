@@ -79,6 +79,15 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
   # allow for nice and user specifiable formatting of dates - per Brian Peterson
   if(!is.null(indexAt)) {
     if(indexAt %in% c('yearmon','yearqtr')) {
+
+      if('timeDate' %in% indexClass(x)) {
+        # timeDate needs to be converted to an object of class POSIXct
+        # to convert to yearmon/yearqtr correctly.  This is only useful
+        # for objects that _can_ have yearmon/yearqtr as an index - 
+        # not for 'ts', 'its' or 'timeSeries' 
+        indexClass(x) <- "Date"
+      }
+
       if(CLASS(x) %in% c('ts','its','timeSeries')) {
         # timeSeries can't handle either of these time-based indexes,
         # so default to startof rather than ugly <NA>

@@ -12,7 +12,7 @@ function(x,value) {
 `indexClass<-.xts` <-
 function(x,value) {
   if(!is.list(value)) value <- as.list(value)
-  if(!value[[1]] %in% c('POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr') )
+  if(!value[[1]] %in% c('POSIXt','POSIXlt','POSIXct','Date','yearmon','yearqtr') )
        stop(paste('illegal',sQuote('indexClass'),'value:',as.character(value[[1]])))
 
   if(value[[1]]=='timeDate') {

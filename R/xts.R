@@ -16,16 +16,23 @@ function(x,order.by=index(x),frequency=NULL,...) {
      & !inherits(order.by,'timeDate')
      & !inherits(order.by,'yearmon') & !inherits(order.by,'yearqtr'))
   {
-    #if(length(order.by)==1) { # a number indicating the column, or column name
-      #order.by <- x[,order.by]
-    #}
-    #order.by <- do.call(paste('as',indexClass,sep='.'),list(order.by,...))
     stop("order.by requires a time-based object of class POSIXct or Date")
   }
-
-  z <- zoo(x=x,order.by=order.by,frequency=frequency)
-#  rownames(z) <- as.character(as.POSIXct(order.by))
-  z <- structure(z,class=c('xts','zoo'),...)
+    orderBy <- class(order.by)
+    if('timeDate' %in% orderBy) {
+      z <- structure(zoo(x=coredata(x),
+                     order.by=as.POSIXct(order.by),
+                     frequency=frequency),
+                     class=c('xts','zoo'),...)
+      indexClass(z) <- 'timeDate'
+    } else {
+      z <- structure(zoo(x=x,
+                     order.by=order.by,
+                     frequency=frequency),
+                     class=c('xts','zoo'),...)
+    }
+#  z <- zoo(x=x, order.by=order.by, frequency=frequency)
+#  z <- structure(z,class=c('xts','zoo'),...)
 
   return(z)
 }

@@ -1,9 +1,0 @@
-RUNIT TEST PROTOCOL -- Sat Feb  2 19:07:07 2008 
-*********************************************** 
-Number of test functions: 8 
-Number of errors: 0 
-Number of failures: 0 
-
- 
-1 Test Suite : 
-xts unit testing - 8 test functions, 0 errors, 0 failures
