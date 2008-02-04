@@ -30,6 +30,10 @@ function(x, i, j, drop = TRUE, ...)
     original.names <- colnames(x)
     original.CLASS <- CLASS(x)
 
+    sys.TZ <- Sys.getenv('TZ') 
+    Sys.setenv(TZ='GMT')
+
+
     original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
     if(length(original.attr) < 1) original.attr <- NULL
 
@@ -117,6 +121,9 @@ function(x, i, j, drop = TRUE, ...)
         colnames(x) <- original.names[j]
 
     indexClass(x) <- original.indexclass
+
+    Sys.setenv(TZ=sys.TZ)
+
     CLASS(x) <- original.CLASS
     x
 }
