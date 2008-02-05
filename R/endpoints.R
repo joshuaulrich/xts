@@ -1,6 +1,12 @@
 `endpoints` <-
 function(x,on='months',k=1) {
-  x <- as.xts(x)
+  if(!is.xts(x)) x <- as.xts(x)
+
+  sys.TZ <- Sys.getenv('TZ')
+  on.exit(Sys.setenv(TZ=sys.TZ))
+  Sys.setenv(TZ='GMT')
+  indexClass(x) <- 'POSIXct'
+
   if(on=='quarters') {
     xi <- (as.POSIXlt(index(x))$mon%/%3) + 1
     c(0,which(diff(xi) != 0),NROW(x))

@@ -11,12 +11,14 @@
 
 `xts` <-
 function(x,order.by=index(x),frequency=NULL,...) {
-  if(!inherits(order.by,'Date') 
-     & !inherits(order.by,'POSIXct')
-     & !inherits(order.by,'timeDate')
-     & !inherits(order.by,'yearmon') & !inherits(order.by,'yearqtr'))
-  {
-    stop("order.by requires a time-based object of class POSIXct or Date")
+  if(!any(sapply(c('Date','POSIXct','dates','timeDate','yearmon','yearqtr'),
+     function(x) inherits(order.by,x)))) {
+#  if(!inherits(order.by,'Date') 
+#     & !inherits(order.by,'POSIXct')
+#     & !inherits(order.by,'dates')
+#     & !inherits(order.by,'yearmon') & !inherits(order.by,'yearqtr'))
+#  {
+    stop("order.by requires an appropriate time-based object")
   }
     orderBy <- class(order.by)
     if('timeDate' %in% orderBy) {

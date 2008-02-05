@@ -483,7 +483,3 @@ Testing as.xts.irts:
 > detach('package:its')
 > detach('package:quadprog')
 > detach('package:tseries')
-> 
-> proc.time()
-   user  system elapsed 
-  2.511   0.219   3.091 

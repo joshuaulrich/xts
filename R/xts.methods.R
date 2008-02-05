@@ -37,16 +37,15 @@ function(x, i, j, drop = TRUE, ...)
     original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
     if(length(original.attr) < 1) original.attr <- NULL
 
+    #POSIXindex <- tindex(x,'POSIXct')  attempt to remove tindex...
+    indexClass(x) <- "POSIXct"
+    POSIXindex <- index(x)
 
     if (missing(i)) 
         i <- 1:NROW(x)
     if (is.character(i)) {
       # enables subsetting by date style strings
       # must be able to process - and then allow for operations???
-
-      #POSIXindex <- tindex(x,'POSIXct')  attempt to remove tindex...
-      indexClass(x) <- "POSIXct"
-      POSIXindex <- index(x)
 
       if(!identical(grep("::",i),integer(0))) {
         # range operator

@@ -88,7 +88,7 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
         indexClass(x) <- "Date"
       }
 
-      if(CLASS(x) %in% c('ts','its','timeSeries')) {
+      if(!is.null(CLASS(x)) && CLASS(x) %in% c('ts','its','timeSeries')) {
         # timeSeries can't handle either of these time-based indexes,
         # so default to startof rather than ugly <NA>
         # ts causes malloc issues when passed a non-numeric index - BAD!
