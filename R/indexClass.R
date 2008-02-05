@@ -1,4 +1,4 @@
-`index<-.xts` <- function(x, value) {
+`time<-.xts` <- `index<-.xts` <- function(x, value) {
   if(length(index(x)) != length(value)) stop('length of index vectors does not match')
 
   if(!class(value)[1] %in% c('dates','chron','POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr') )

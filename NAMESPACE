@@ -46,6 +46,7 @@ S3method(last,zoo)
 # xts methods
 importFrom(zoo,coredata)
 importFrom(zoo,'index<-')
+importFrom(zoo,'time<-')
 S3method(coredata,xts)
 S3method(as.xts,xts)
 S3method('[',xts)
@@ -55,6 +56,7 @@ S3method(print,CLASS)
 S3method('CLASS<-',xts)
 S3method('indexClass<-',xts)
 S3method('index<-',xts)
+S3method('time<-',xts)
 S3method('xtsAttributes<-',xts)
 
 # ts specific methods
