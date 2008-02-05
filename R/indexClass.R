@@ -11,7 +11,7 @@ function(x,value) {
 
 `indexClass<-.xts` <-
 function(x,value) {
-  if(value %in% indexClass(x)[[1]]) return(x)
+  if(value[[1]][1] %in% indexClass(x)[1]) return(x)
 
   original.indexClass <- indexClass(x)
 

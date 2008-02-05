@@ -1,19 +1,21 @@
 **********************************************************************************
 **********************************************************************************
 ** 
-**  WISHLIST: 2008-01-13 for xts
+**  WISHLIST: 2008-02-05 for xts
 **
 **********************************************************************************
 **********************************************************************************
 
 * Write more test cases to better 'test' the functions, specifically tests
   to check on xts class persistence
-
-
-* time<- method for xts - alias for index<-
-
-
-* index<- method to check for time-date requirement
+  Tests to incorporate:
+  
+    for all data classes: 'zoo','ts','timeSeries','its','irts','matrix','data.frame'
+      as.xts
+      reclass
+    
+    indexClass<- for 'Date','timeDate','POSIXct','chron','dates','yearmon','yearqtr'
+    indexClass<- change then  =>  reclass
 
 
 * [.xts<- replacement method
@@ -24,9 +26,6 @@
 
 * aggregate.xts (dispatch to NextMethod or call aggregate.zoo and
   re 'xts' results
-
- 
-* diff.xts method  [not needed: jar]
 
 
 * as.data.frame.xts, as.matrix.xts
