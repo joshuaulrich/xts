@@ -21,7 +21,8 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
     x <- as.xts(x)
     RECLASS <- TRUE
   } else RECLASS <- FALSE
-  
+
+  original.indexClass <- indexClass(x)
   
   if(any(is.na(x))) {
     x <- na.omit(x)  # can't calculate aggregation with NA values  ??? any suggestions
@@ -93,7 +94,12 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
         # so default to startof rather than ugly <NA>
         # ts causes malloc issues when passed a non-numeric index - BAD!
         indexAt <- 'firstof'
-      } else indexClass(tz) <- as.character(indexAt)
+      } else {
+        # convert to yearmon or yearqtr as requested
+        # and set original to current - to prevent reconversion
+        indexClass(tz) <- as.character(indexAt)
+        original.indexClass <- indexClass(tz)  
+      }
     }
     if(indexAt=='startof') {
       index(tz) <- index(x)[startof(x,by=period)]
@@ -126,6 +132,9 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
       }
     }
   }
+
+  # reset indexClass back to the class originally passed in
+  indexClass(tz) <- original.indexClass
 
   if(RECLASS) return(reclass(tz))
   tz
