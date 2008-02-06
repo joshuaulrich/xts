@@ -11,13 +11,8 @@
 
 `xts` <-
 function(x,order.by=index(x),frequency=NULL,...) {
-  if(!any(sapply(c('Date','POSIXct','dates','timeDate','yearmon','yearqtr'),
-     function(x) inherits(order.by,x)))) {
-#  if(!inherits(order.by,'Date') 
-#     & !inherits(order.by,'POSIXct')
-#     & !inherits(order.by,'dates')
-#     & !inherits(order.by,'yearmon') & !inherits(order.by,'yearqtr'))
-#  {
+  if(!any(sapply(c('Date','POSIXct','chron','dates','times','timeDate','yearmon','yearqtr'),
+     function(xx) inherits(order.by,xx)))) {
     stop("order.by requires an appropriate time-based object")
   }
     orderBy <- class(order.by)
@@ -35,6 +30,7 @@ function(x,order.by=index(x),frequency=NULL,...) {
     }
 #  z <- zoo(x=x, order.by=order.by, frequency=frequency)
 #  z <- structure(z,class=c('xts','zoo'),...)
+  attr(z,'.ROWNAMES') <- dimnames(z)[[1]]
 
   return(z)
 }

@@ -5,12 +5,13 @@ function(x,...) {
   #if(periodicity(x)$units == 'days' & !inherits(indexClass(x),"Date"))
   #  indexClass(x) <- "Date"
   # major issue with quick reclass.  Basically fails on data < 1970...
-  tsp.attr <- attr(x,'tsp')
-  freq.attr <- attr(x,'frequency')
+  #tsp.attr <- attr(x,'.tsp')
+  #freq.attr <- attr(x,'.frequency')
 
   #xtsAttributes(x) <- NULL
 
-  ts(coredata(x), start=tsp.attr[1],frequency=freq.attr)
+  #ts(coredata(x), start=tsp.attr[1],frequency=freq.attr)
+  zoo:::as.ts.zoo(x)
 }
 
 `as.xts.ts` <-
@@ -61,7 +62,8 @@ function(x,dateFormat,...) {
             order.by=order.by,
             frequency=frequency(x),
             .CLASS='ts',
-            tsp=tsp(x),
+#            .tsp=tsp(x),
+#            .frequency=frequency(x),
             ...)
   xx
 }

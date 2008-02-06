@@ -89,7 +89,7 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
         indexClass(x) <- "Date"
       }
 
-      if(!is.null(CLASS(x)) && CLASS(x) %in% c('ts','its','timeSeries')) {
+      if(RECLASS && !is.null(CLASS(x)) && CLASS(x) %in% c('ts','its','timeSeries')) {
         # timeSeries can't handle either of these time-based indexes,
         # so default to startof rather than ugly <NA>
         # ts causes malloc issues when passed a non-numeric index - BAD!
@@ -229,7 +229,10 @@ function(x) {
   # function to remove HHMMSS portion of time index
   if(!inherits(x,"its")) {
     x <- as.xts(x)
-    indexClass(x) <- "Date"
-    reclass(x)
+    current.indexClass <- indexClass(x)
+    if(current.indexClass[1] == 'POSIXt')
+      indexClass(x) <- "Date"
+      #reclass(x)
+    x
   } else x
 }
