@@ -28,6 +28,7 @@ function(x,order.by=index(x),frequency=NULL,...) {
     dim(xx) <- c(NROW(xx),NCOL(xx))
     dn <- list(attr(x,'names'),colnames(x))
     dimnames(xx) <- dn
+    attr(xx,'.ROWNAMES') <- attr(x,'names')
   }
 
   xx
