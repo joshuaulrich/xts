@@ -30,8 +30,10 @@ function(x,order.by=index(x),frequency=NULL,...) {
     }
 #  z <- zoo(x=x, order.by=order.by, frequency=frequency)
 #  z <- structure(z,class=c('xts','zoo'),...)
-  attr(z,'.ROWNAMES') <- dimnames(z)[[1]]
-
+  if(!is.null(dim(x))) {
+    attr(z,'.ROWNAMES') <- dimnames(z)[[1]]
+    rownames(z) <- as.character(index(z))
+  }
   return(z)
 }
 
@@ -39,6 +41,10 @@ function(x,order.by=index(x),frequency=NULL,...) {
 function(x) {
   old.class <- CLASS(x)
   if(length(old.class) > 0) {
+    if(!is.null(dim(x))) {
+      rownames(x) <- attr(x,'.ROWNAMES')
+    }
+    attr(x,'.ROWNAMES') <- NULL
     do.call(paste('re',old.class,sep='.'),list(x))
   } else x
 }
