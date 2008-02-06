@@ -89,8 +89,17 @@ function(x, i, j, drop = TRUE, ...)
         }
 
         if(!is.null(original.attr)) {
-          for(ii in 1:length(original.attr)) {
-            attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
+          if(original.CLASS[1] == 'ts') {
+            x <- as.zoo(x)
+            .tsp <- seq(original.attr$tsp[1],original.attr$tsp[2],by=original.attr$tsp[3])[i]
+            attr(x,'tsp') <- c(first(.tsp), last(.tsp), original.attr$tsp[3])
+            for(ii in 1:length(original.attr)) {
+              if(names(original.attr)[ii] != 'tsp') attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
+            }
+          } else {
+            for(ii in 1:length(original.attr)) {
+              attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
+            }
           }
         }
         class(x) <- original.class
