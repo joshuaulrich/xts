@@ -42,7 +42,7 @@ function(x) {
   old.class <- CLASS(x)
   if(length(old.class) > 0) {
     if(!is.null(dim(x))) {
-      rownames(x) <- attr(x,'.ROWNAMES')
+      if(!is.null(attr(x,'.ROWNAMES'))) rownames(x) <- attr(x,'.ROWNAMES')[1:NROW(x)]
     }
     attr(x,'.ROWNAMES') <- NULL
     do.call(paste('re',old.class,sep='.'),list(x))

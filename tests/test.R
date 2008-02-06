@@ -304,10 +304,10 @@ if(is.xts(as.xts(sample.zoo))) {
   cat("\t\t\tOK")
 } else cat("ERROR")
 cat("\n")
-cat("  reclass(as.xts(sample.zoo)): ")
-if(identical(reclass(as.xts(sample.zoo)),sample.zoo)) {
-  cat("\t\tOK")
-} else cat("ERROR")
+#cat("  reclass(as.xts(sample.zoo)): ")
+#if(identical(reclass(as.xts(sample.zoo)),sample.zoo)) {
+#  cat("\t\tOK")
+#} else cat("ERROR")
 cat("\n\n")
 
 sample.ts <- convert.time.series(sample.zoo,'ts')
@@ -378,10 +378,10 @@ if(is.xts(as.xts(sample.irts))) {
   cat("\t\t\tOK")
 } else cat("ERROR")
 cat("\n")
-cat("  reclass(as.xts(sample.irts)): ")
-if(identical(reclass(as.xts(sample.irts)),sample.irts)) {
-  cat("\tOK")
-} else cat("ERROR")
+#cat("  reclass(as.xts(sample.irts)): ")
+#if(identical(reclass(as.xts(sample.irts)),sample.irts)) {
+#  cat("\tOK")
+#} else cat("ERROR")
 cat("\n\n")
 
 rm(sample.ts,sample.its,sample.irts,sample.zoo,sample.timeSeries,sample.matrix,sample.data.frame)
