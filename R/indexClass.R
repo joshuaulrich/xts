@@ -8,8 +8,14 @@
   return(x)
 }
 
+`convertIndex` <-
+function(x,value) {
+  indexClass(x) <- value
+  x
+}
+
 `indexClass` <-
-function(x,...) {
+function(x) {
   if(!is.xts(x)) x <- as.xts(x)
   class(index(x))
 }

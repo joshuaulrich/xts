@@ -6,6 +6,15 @@
 **********************************************************************************
 **********************************************************************************
 
+* An xtsAlign method to align series by date.
+
+
+* convertIndex function to do indexClass<- inplace
+
+
+* add zooreg as a handled class, possibly mts if necessary
+
+
 * Write more test cases to better 'test' the functions, specifically tests
   to check on xts class persistence
   Tests to incorporate:
@@ -17,6 +26,8 @@
     indexClass<- for 'Date','timeDate','POSIXct','chron','dates','yearmon','yearqtr'
     indexClass<- change then  =>  reclass
 
+   *`timeSeries` has internal issues when subsetting.  charvec loses atomic and attributes
+   *`ts` converts to a numeric object if subset by date
 
 * [.xts<- replacement method
 

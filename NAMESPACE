@@ -13,6 +13,7 @@ export(endpoints)
 export(CLASS)
 export('CLASS<-')
 export(indexClass)
+export(convertIndex)
 export('indexClass<-')
 export(to.period,
        to.minutes,
