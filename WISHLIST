@@ -1,7 +1,7 @@
 **********************************************************************************
 **********************************************************************************
 ** 
-**  WISHLIST: 2008-02-05 for xts
+**  WISHLIST: 2008-02-06 for xts
 **
 **********************************************************************************
 **********************************************************************************
@@ -9,7 +9,7 @@
 * An xtsAlign method to align series by date.
 
 
-* convertIndex function to do indexClass<- inplace
+* indexClass and index<- should warn if non-unique index values are applied
 
 
 * add zooreg as a handled class, possibly mts if necessary
