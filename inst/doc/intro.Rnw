@@ -32,9 +32,9 @@ related to working with time series in R.
 
 \vspace{3mm}
 \noindent
-While it seems a bit paradoxical with all the previously mentioned options
-available, what {\sf R} really needed was one more
-time-series class.  Why? Users of R have had many options over the
+While it seems a bit paradoxical with all current options
+available, what {\sf R} really needs is one more
+time-series class.  Why? Users of R have had many choices over the
 years for managing time series data. This variety has meant that
 developers have had to pick and choose the classes they would support,
 or impose the necessary conversions upon the end-user. With the sheer
@@ -46,66 +46,179 @@ individual user, as well as remain compatible with the broadest audience.
 \vspace{3mm}
 \noindent
 What may be sufficient for one use - say a quick correlation matrix, may be
-too limiting when more information needs to be incorporated into a more
-complex calculation.
+too limiting when more information needs to be incorporated 
+in a complex calculation.
 This is especially true for functions that rely on time-based indicies to
-be manipulated or checked.  The previous solution has involved a series of
-{\sf as} calls, to coerce objects from one type to another.  While this may
+be manipulated or checked.
+
+\vspace{3mm}
+\noindent
+The previous solution to managing different data needs often
+involved a series of {\sf as} calls,
+to coerce objects from one type to another.  While this may
 be sufficient for many cases, it is less flexible than allowing for the user
 to simply use the object they are accustomed to, or quite possibly require.
-
 Additionally, all current coercion methods fail to maintain the original
 object's data in its entirety.  Converting from a {\sf timeSeries} class to
-{\sf zoo} would cause attributes such as FinCenter and timezone to be lost. Converting
-the object back to a {\sf timeSeries} would then add new values to that where different
-than the original.
+{\sf zoo} would cause attributes such as FinCenter and timezone to be lost.
+Converting the object back to a {\sf timeSeries} would then add new
+values to that where different than the original.
 For many calculations that do not modify the data, this is most likely
-an acceptable side effect.  For functions that convert data - such as {\sf xts}'s
-{\sf to.period} it limits the value of the function, as the returned object is missing
+an acceptable side effect.  For functions that convert data -
+such as {\sf xts}'s {\sf to.period} it limits the value of the function,
+as the returned object is missing
 much of what may have been a factor in the original class consideration.
 
 \vspace{3mm}
 \noindent
-One of the most important additions the new {\sf xts} class makes to the R user's
+One of the most important additions the new {\sf xts} class makes
+to the R user's
 workflow is possibly not using {\sf xts} at all, at least not explicitly.
-By converting data to {\sf xts} inside a function, the author
-is guaranteed to have to only manage a single class of objects. It becomes unecessary to
-write specific methods to handle different incoming data  While many functions do have
+By converting data to {\sf xts} inside a function, the function developer
+is guaranteed to have to only manage a single class of objects. 
+It becomes unecessary to write specific methods to handle different data.
+While many functions do have
 methods to accomodate different classes, most do not. Before {\sf xts}, the
-{\sf chartSeries} function in the {\sf quantmod} package was only able to handle zoo
-objects well.  Work had been done to allow for timeSeries object to be used as well, but
-many issues were still being worked out.  With {\sf xts} now used internally, it is
-possible to use \emph{any} of R's time-series classes.  Both saving development time,
-as well as reducing the learning/using curve for the end user.  The function now
-simply handles whatever time-series object it receives exactly as the user expects - without
-complaint.
+{\sf chartSeries} function in the {\sf quantmod} package
+was only able to handle zoo objects well.
+Work had been done to allow for timeSeries object to be used as well, but
+many issues were still being worked out.
+With {\sf xts} now used internally, it is
+possible to use \emph{any} of R's time-series classes.
+Simultaneously saving development time and
+reducing the learning/using curve for the end user.  The function now
+simply handles whatever time-series object it receives
+exactly as the user expects - without complaint.
+More details, as well as examples of incorporating {\sf xts} into
+functions will be covered later in this document.
 
 \vspace{3mm}
 \noindent
-While it may seem that {\sf xts} is primarily a tool to help make existing R code
-more user friendly, the opportunity to add exciting (to software people) new functionality
-could not be passed up.  To this end, {\sf xts} offers the user the ability to add
-custom attributes to any object - during its construction or at any time thereafter.  Additionally
-by requiring the index attribute be derived from one of R's existing time-based classes, it can
-make assumptions for subsetting by time/date that allow for truly unique data manipulation.
+While it may seem that {\sf xts} is primarily a tool
+to help make existing R code
+more user friendly, the opportunity to add exciting
+(to software people) new functionality
+could not be passed up.  To this end, {\sf xts} 
+offers the user the ability to add
+custom attributes to any object - during its construction
+or at any time thereafter.  Additionally
+by requiring the index attribute be derived from one of
+R's existing time-based classes, {\sf xts} methods can
+make assumptions while subsetting by time or date that allow for
+truly unique and fast data manipulation.
 
 \vspace{3mm}
 \noindent
-The remainder of this introduction to the new {\sf xts} package will describe the structure
-of {\sf xts} objects - what they are, how to use them, an introduction to developing software
-to utilize {\sf xts}, and extending the object to better match your personal workflow needs.
+The remainder of this introduction will
+examine what exactly an {\sf xts} object consists of,
+basic usage, how developing with {\sf xts} can save
+you time, and finally how to extend the class - informally
+and formally.
 
 \section{The structure of {\sf xts}}
-At the center of every {\sf xts} object is a zoo object.  As such, all
-currently available methods available to zoo object are available to
-objects of class {\sf xts}
+To understand a bit more of \emph{what an xts object can do}, it may
+be beneficial to know \emph{what an xts object is}. This section
+is intended to provide a quick overview of the basics of the
+class, as well as what features make it unique.
+
+\subsection{It's a {\sf zoo} in here}
+At the core of an xts object is a zoo object from the package of
+the same name. Simplified, this class contains an array of values
+comprising your data - often in matrix form, and an index
+attribute to provide information about
+the data's ordering. Most of the details surrounding zoo
+objects apply equally to xts. As it would be redundent to simply retell
+the excellent introductory zoo vingette, the reader is advised to
+read, absorb, and re-read that documentation to best
+understand the power of this class. The authors of the {\sf xts}
+package recognize that
+{\sf zoo}'s strength comes from its
+simplicity of use, as well as its overall flexibility.  What motivated the
+{\sf xts} extension was a desire to have even more flexibility, while 
+imposing reasonable constraints to make this class into a true time-based one.
+
+\subsection{{\sf xts} modifications}
+Objects of class {\sf xts} differ from objects of class 
+{\sf zoo} in four key ways: the use of formal time-based
+classes for indexing, rownames that match the index,
+internal xts properties, and perhaps most unique
+- user added attributes.
+
+\subsubsection{True time-based indexes}
+To allow for functions that make use of {\sf xts} objects
+as a general time series object - it was necessary to
+impose a simple rule on the class.  The index of each
+{\sf xts} object \emph{must} be of a known and supported
+time or date class.  At present this includes any one of
+the following - Date, POSIXct, chron, yearmon, yearqtr, or
+timeDate.  The relative merits of each of are left to
+the judgement of the user, though the first three are expected
+to be sufficient for most applications.
+
+\subsubsection{Rownames that match the index}
+{\sf R} basic data types often include dimnames, which can be
+useful for indexing. This poses a problem when objects that
+rely on index values, and not dimnames, for positioning
+purposes are coerced
+to more elementary classes.  By converting the time
+index into a character string and assigning to
+the rownames of the {\sf xts} object, more information can be
+carried with the data even if converted to a more
+native class such as with {\sf as.matrix}.
+
+\subsubsection{Internal attributes: .CLASS and .ROWNAMES}
+In order for one major feature of the {\sf xts} class
+to be possible - the conversion and re-conversion of classes
+to and from {\sf xts} - certain elements must be preserved within
+a converted object.  These are for internal use, and
+as such require little further explanation.
+
+\subsubsection{xtsAttributes}
+This is what makes the xts class an \emph{extensible}
+time series class. Arbitrary attributes may be assigned
+and removed from the object without causing display or
+other issues.  Additionally this is where \emph{other}
+class specific attributes (e.g. FinCenter from timeSeries)
+are stored during conversion
+to an xts object, so they may be restored with {\sf reclass}.
 
 \section{Using {\sf xts}}
+Just what is required to start using {\sf xts}?  Nothing more
+than a simple conversion of your current time series data, or
+using the {\sf xts} constructor to create a new object.
 
+\subsection{Creating data objects: {\sf as.xts} and {\sf xts}}
+There are two equally valid mechanisms to create an {\sf xts}
+object - coerce a supported time-series class to {\sf xts} with
+a call to {\sf as.xts}, or create a new object from scratch
+with {\sf xts}.
 
-\subsection{Creating data objects: {\sf xts} and {\sf as.xts}}
+\subsubsection{{\sf as.xts}}
+If you already are comfortable using a particular
+time-series class in {\sf R}, you can still access
+the functionality of {\sf xts} by converting your
+current objects.
+
+\vspace{3mm}
+\noindent
+Presently it is possible to convert all the major
+time-series like classes in {\sf R} to {\sf xts}. This list
+includes objects of class:
+matrix, data.frame, ts, zoo, irts, its, and timeSeries.
+The new object will maintain all the necessary information
+needed to {\sf reclass} this object back to its
+original class if that is desired. At present most classes
+after re-conversion will be identical to similar modifications
+on the original object, even
+after sub-setting or other changes while an {\sf xts} object.
+
 <<a>>=
-
+require(xts)
+data(sample.ts)
+class(sample.ts)
+str(sample.ts)
+as.xts(sample.ts)[1:10]
+str(as.xts(sample.ts))
 @
 
 \noindent
@@ -114,11 +227,12 @@ objects of class {\sf xts}
 
 \subsection{Restoring the original class - {\sf reclass}}
 
-\section{Developing with xts}
-
+\section{Developing with {\sf xts}}
+\subsection{One function for all classes}
 \vspace{3mm}
 \noindent
 
+\subsection{Returning the original class}
 \vspace{3mm}
 \noindent
 
@@ -129,7 +243,7 @@ objects of class {\sf xts}
 \vspace{2mm}
 \noindent
 
-\section{Extending xts for your own purposes}
+\section{Customizing and Extending xts}
 
 \subsection{{\sf xtsAttributes}}
 <<c>>=
@@ -139,7 +253,7 @@ objects of class {\sf xts}
 \vspace{2mm}
 \noindent
 
-\subsection{Subsetting {\sf xts}}
+\subsection{Subclassing {\sf xts}}
 <<d>>=
 
 @
