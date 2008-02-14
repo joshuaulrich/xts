@@ -214,11 +214,13 @@ after sub-setting or other changes while an {\sf xts} object.
 
 <<a>>=
 require(xts)
-data(sample.ts)
-class(sample.ts)
-str(sample.ts)
-as.xts(sample.ts)[1:10]
-str(as.xts(sample.ts))
+data(sample_matrix)
+class(sample_matrix)
+str(sample_matrix)
+matrix_xts <- as.xts(sample_matrix,dateFormat='Date')
+str(matrix_xts)
+df_xts <- as.xts(as.data.frame(sample_matrix))
+str(df_xts)
 @
 
 \noindent
