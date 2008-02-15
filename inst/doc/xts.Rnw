@@ -224,6 +224,12 @@ str(df_xts)
 @
 
 \noindent
+A few comments about the above. {\sf as.xts} takes different arguments, depending
+on the original object to be converted from.  Some classes do not contain enough
+information to infer a time-date class. If that is the case, POSIXct is used by
+default. This is the case with both matrix and data.frame object. In the preceding
+examples we first requested that the new date format be of type 'Date'.  The
+second example was left to the default {\sf xts} method.
 
 \subsection{{\sf xts} methods}
 
