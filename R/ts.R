@@ -11,6 +11,11 @@ function(x,...) {
   #xtsAttributes(x) <- NULL
 
   #ts(coredata(x), start=tsp.attr[1],frequency=freq.attr)
+  dim <- attr(x, 'dim')
+  dn <- attr(x,'dimnames')
+  if(dim[2]==1) {
+    attr(x,'dim') <- attr(x, 'dimnames') <- NULL
+  }
   zoo:::as.ts.zoo(x)
 }
 
