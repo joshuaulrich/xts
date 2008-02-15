@@ -43,6 +43,7 @@ S3method(first,default)
 S3method(last,default)
 S3method(first,zoo)
 S3method(last,zoo)
+S3method(print,periodicity)
 
 # xts methods
 importFrom(zoo,coredata)
