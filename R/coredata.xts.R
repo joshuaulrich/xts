@@ -20,7 +20,8 @@ function(x) {
   # get all additional attributes not standard to xts object
   stopifnot(is.xts(x))
   x.attr <- attributes(x)
-  xa <- x.attr[!names(x.attr) %in% c('dim','dimnames','index','class','.CLASS','names')]
+  xa <- x.attr[!names(x.attr) %in% c('dim','dimnames','index','class',
+                                     '.CLASS','names','.ROWNAMES')]
   if(length(xa) == 0) return(NULL)
   xa
 }
@@ -38,7 +39,7 @@ function(x,value) {
     }
   } else
   for(nv in names(value)) {
-    if(!nv %in% c('dim','dimnames','index','class','.CLASS'))
+    if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES'))
       attr(x,nv) <- value[[nv]]
   }
   x
