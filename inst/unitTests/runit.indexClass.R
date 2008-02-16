@@ -3,74 +3,74 @@ data(sample_matrix)
 convert_xts <- as.xts(sample_matrix) # indexClass defaults to POSIXct
 
 # convert from 'POSIXct'
-convert_POSIXct2Date <- function() {
+test.convert_POSIXct2Date <- function() {
   x <- convert_xts
   indexClass(x) <- 'Date'
-  checkTrue(inherits(indexClass(x),'Date'))
+  checkTrue(inherits(index(x),'Date'))
 }
-convert_POSIXct2chron <- function() {
+test.convert_POSIXct2chron <- function() {
   library(chron)
   x <- convert_xts
   indexClass(x) <- 'chron'
-  checkTrue(inherits(indexClass(x),'chron'))
+  checkTrue(inherits(index(x),'dates'))
   detach('package:chron')
 }
-convert_POSIXct2yearmon <- function() {
+test.convert_POSIXct2yearmon <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearmon'
-  checkTrue(inherits(indexClass(x),'yearmon'))
+  checkTrue(inherits(index(x),'yearmon'))
 
 }
-convert_POSIXct2yearqtr <- function() {
+test.convert_POSIXct2yearqtr <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearqtr'
-  checkTrue(inherits(indexClass(x),'yearqtr'))
+  checkTrue(inherits(index(x),'yearqtr'))
 
 }
-convert_POSIXct2timeDate <- function() {
+test.convert_POSIXct2timeDate <- function() {
   library(fSeries)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
-  checkTrue(inherits(indexClass(x),'timeDate'))
+  checkTrue(inherits(index(x),'timeDate'))
 }
-convert_POSIXct2POSIXct <- function() {
+test.convert_POSIXct2POSIXct <- function() {
   x <- convert_xts
   indexClass(x) <- 'POSIXct'
-  checkTrue(inherits(indexClass(x),'POSIXct'))
+  checkTrue(inherits(index(x),'POSIXct'))
 }
 
 # Convert from 'Date'
 indexClass(convert_xts) <- 'Date'
 
-convert_Date2Date <- function() {
+test.convert_Date2Date <- function() {
   x <- convert_xts
   indexClass(x) <- 'Date'
-  checkTrue(inherits(indexClass(x),'Date'))
+  checkTrue(inherits(index(x),'Date'))
 }
-convert_Date2chron <- function() {
+test.convert_Date2chron <- function() {
   library(chron)
   x <- convert_xts
   indexClass(x) <- 'chron'
-  checkTrue(inherits(indexClass(x),'chron'))
+  checkTrue(inherits(index(x),'dates'))
 }
-convert_Date2yearmon <- function() {
+test.convert_Date2yearmon <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearmon'
-  checkTrue(inherits(indexClass(x),'yearmon'))
+  checkTrue(inherits(index(x),'yearmon'))
 }
-convert_Date2yearqtr <- function() {
+test.convert_Date2yearqtr <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearqtr'
-  checkTrue(inherits(indexClass(x),'yearqtr'))
+  checkTrue(inherits(index(x),'yearqtr'))
 }
-convert_Date2timeDate <- function() {
+test.convert_Date2timeDate <- function() {
   library(fSeries)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
-  checkTrue(inherits(indexClass(x),'timeDate'))
+  checkTrue(inherits(index(x),'timeDate'))
 }
-convert_Date2POSIXct <- function() {
+test.convert_Date2POSIXct <- function() {
   x <- convert_xts
   indexClass(x) <- 'POSIXct'
-  checkTrue(inherits(indexClass(x),'POSIXct'))
+  checkTrue(inherits(index(x),'POSIXct'))
 }
