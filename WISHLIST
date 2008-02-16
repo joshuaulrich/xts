@@ -6,9 +6,32 @@
 **********************************************************************************
 **********************************************************************************
 
+
+* plot.xts method - handle x-index values as dates similar to ticks in quantmod
+    follow 'zoo' convention mostly - e.g.
+
+      plot(x, y = NULL, screens, plot.type,
+             panel = lines, xlab = "Index", ylab = NULL, main = NULL,
+             xlim = NULL, ylim = NULL, xy.labels = FALSE, xy.lines = NULL,
+             oma = c(6, 0, 5, 0), mar = c(0, 5.1, 0, 2.1), 
+             col = 1, lty = 1, pch = 1, type = "l", nc, widths = 1, heights = 1, ...)
+
+      ## S3 method for class 'zoo':
+      lines(x, y = NULL, type = "l", ...)
+
+      ## S3 method for class 'zoo':
+      points(x, y = NULL, type = "p", ...)
+  
+  AND allow for full plot/par customization - mostly focus on timeseries data ...
+      
+
 * write as.ts.xts method: handle NAs correctly
 
-* An xtsAlign method to align series by date.
+
+* An xtsAlign method to align series by date. - match monthly data to first/last...
+
+
+* merge.xts
 
 
 * indexClass and index<- should warn if non-unique index values are applied

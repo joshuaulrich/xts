@@ -21,6 +21,22 @@ function(object,...) {
   str(xtsAttributes(object),...)
 }
 
+`na.omit.xts` <- function(object, ...) {
+  xx <- stats:::na.omit.default(object,...)
+  naa <- attr(xx,'na.action')
+  naa.index <- index(object)[naa]
+
+  ROWNAMES <- attr(object,'.ROWNAMES')
+  if(!is.null(ROWNAMES)) {
+    naa.rownames <- ROWNAMES[naa]
+  } else naa.rownames <- NULL
+
+  attr(xx,'na.action') <- structure(naa,
+                                    index=naa.index,
+                                    .ROWNAMES=naa.rownames)
+  return(xx) 
+}
+
 `[.xts` <-
 function(x, i, j, drop = TRUE, ...) 
 {
