@@ -1,10 +1,12 @@
 **********************************************************************************
 **********************************************************************************
 ** 
-**  WISHLIST: 2008-02-06 for xts
+**  WISHLIST: 2008-02-16 for xts
 **
 **********************************************************************************
 **********************************************************************************
+
+* write as.ts.xts method: handle NAs correctly
 
 * An xtsAlign method to align series by date.
 
@@ -28,6 +30,9 @@
 
    *`timeSeries` has internal issues when subsetting.  charvec loses atomic and attributes
    *`ts` converts to a numeric object if subset by date
+
+   [update 2/16/2008: most of the above have been implemented]
+
 
 * [.xts<- replacement method
 
@@ -73,16 +78,21 @@
 
   Additionally indexing to different formats needs to be done:
 
-      as.yearmon.xts, as.yearqtr.xts
+      as.yearmon.xts, as.yearqtr.xts,
+      as.timeDate.xts, as.POSIXct.xts,
+      as.chron.xts, as.dates.xts, as.times.xts,
+      as.Date.xts
 
 * look into chron, dates (& yearmon, yearqtr)
   -- this can't be extensible, as we couldn't test for time nature...
   -- but we *should* cover all *known* date handling in R at any given time
+  [done 2/16/2008 - jar]
 
 * create a matrix of time-series types and attributes for comparison
   documentation
 
 * write an introductory vignette for 'xts', possibly an article for R news
+  [in progress 2/16/2008 - jar]
 
 * web page on R-Forge
 
