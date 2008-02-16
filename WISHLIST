@@ -25,7 +25,10 @@
   AND allow for full plot/par customization - mostly focus on timeseries data ...
       
 
-* write as.ts.xts method: handle NAs correctly
+* write 'as.ts.xts' method: handle NAs correctly
+
+
+* 'Ops.xts' method
 
 
 * An xtsAlign method to align series by date. - match monthly data to first/last...
