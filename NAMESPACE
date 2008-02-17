@@ -39,6 +39,7 @@ export(apply.daily,
        apply.monthly,
        apply.quarterly,
        apply.yearly)
+S3method(plot,xts)
 S3method(first,default)
 S3method(last,default)
 S3method(first,zoo)

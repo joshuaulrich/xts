@@ -23,6 +23,7 @@
       points(x, y = NULL, type = "p", ...)
   
   AND allow for full plot/par customization - mostly focus on timeseries data ...
+  [update 2/16/2008: partially added, still needs work, but working -jar]
       
 
 * write 'as.ts.xts' method: handle NAs correctly
