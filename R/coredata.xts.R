@@ -16,12 +16,27 @@ function(x,...) {
 }
 
 `xtsAttributes` <-
-function(x) {
+function(x, user=NULL) {
   # get all additional attributes not standard to xts object
   stopifnot(is.xts(x))
+  rm.attr <- c('dim','dimnames','index','class','names')
   x.attr <- attributes(x)
-  xa <- x.attr[!names(x.attr) %in% c('dim','dimnames','index','class',
-                                     '.CLASS','names','.ROWNAMES')]
+
+  if(is.null(user)) {
+  # Both xts and user attributes
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES')
+    xa <- x.attr[!names(x.attr) %in% rm.attr]
+  }
+  else
+  if(user) {
+  # Only user attributes
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES',x.attr$.CLASSnames)
+    xa <- x.attr[!names(x.attr) %in% rm.attr]
+  } else {
+  # Only xts attributes
+    xa <- x.attr[names(x.attr) %in% x.attr$.CLASSnames]
+  }
+
   if(length(xa) == 0) return(NULL)
   xa
 }
@@ -39,7 +54,7 @@ function(x,value) {
     }
   } else
   for(nv in names(value)) {
-    if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES'))
+    if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES','.CLASSnames'))
       attr(x,nv) <- value[[nv]]
   }
   x

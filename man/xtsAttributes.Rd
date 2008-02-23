@@ -7,13 +7,15 @@
 Extract and replace non-core \code{xts} attributes.
 }
 \usage{
-xtsAttributes(x)
+xtsAttributes(x, user=NULL)
 
 xtsAttributes(x) <- value
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ an xts object }
+  \item{user}{ logical; should user-defined attributes be returned?
+    The default of \code{NULL} returns all \code{xts} attributes. }
   \item{value}{ a list of new name=value attributes }
 }
 \details{

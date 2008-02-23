@@ -159,3 +159,35 @@ function(x, i, j, drop = TRUE, ...)
     x
 }
 
+`rbind.xts` <-
+function(..., deparse.level=1) {
+
+  args <- list(...)
+
+  # Store original class attributes
+  xts.attr <- sapply(args, xtsAttributes)
+  xts.CLASS <- sapply(args, CLASS)
+  xts.ROWNAMES <- sapply(args, function(x) attr(x, ".ROWNAMES"))
+
+  # Bind objects
+  ret <- zoo:::rbind.zoo( ... )
+  ret <- structure(ret, class=c('xts','zoo') )
+
+  # Re-attach _xts_ attributes
+  CLASS(ret) <- xts.CLASS[[1]]
+  bind.attr <- xts.attr[ !(xts.attr %in% xtsAttributes(ret)) ]
+  ret <- structure(ret, class=c('xts','zoo'), bind=bind.attr)
+  xtsAttributes(ret) <- xts.attr  # attributes must be list of name=value pairs
+
+  return(ret)
+}
+
+`cbind.xts` <-
+function(..., deparse.level=1) {
+}
+
+`c.xts` <-
+function(...) {
+  rbind.xts(...)
+}
+
