@@ -6,6 +6,7 @@
 **********************************************************************************
 **********************************************************************************
 
+* [20080224] dynamically determine .CLASSnames attribute for as.xts methods
 
 * plot.xts method - handle x-index values as dates similar to ticks in quantmod
     follow 'zoo' convention mostly - e.g.

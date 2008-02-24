@@ -41,6 +41,7 @@ function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,...) {
       title=title,
       documentation=documentation,
       .CLASS='timeSeries',
+      .CLASSnames=c('FinCenter','recordIDs','title','documentation'),
       ...)
 }
 

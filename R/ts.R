@@ -84,6 +84,7 @@ function(x,dateFormat,...) {
             order.by=order.by,
             frequency=frequency(x),
             .CLASS='ts',
+            .CLASSnames=c('frequency'),
 #            .tsp=tsp(x),
 #            .frequency=frequency(x),
             ...)
