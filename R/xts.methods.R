@@ -162,28 +162,66 @@ function(x, i, j, drop = TRUE, ...)
 `rbind.xts` <-
 function(..., deparse.level=1) {
 
-  args <- list(...)
+ args <- list(...)
 
-  # Store original class attributes
-  xts.attr <- sapply(args, xtsAttributes)
-  xts.CLASS <- sapply(args, CLASS)
-  xts.ROWNAMES <- sapply(args, function(x) attr(x, ".ROWNAMES"))
+ # Store original class attributes
+ xts.ROWNAMES <- sapply(args, function(x) attr(x, ".ROWNAMES"))
+ xts.CLASS <- sapply(args, CLASS)
+ xts.CLASSattr <- sapply(args, xtsAttributes, user=FALSE)
+ xts.USERattr <- unlist(sapply(args, xtsAttributes, user=TRUE))
 
-  # Bind objects
-  ret <- zoo:::rbind.zoo( ... )
-  ret <- structure(ret, class=c('xts','zoo') )
+ # Bind objects
+ ret <- zoo:::rbind.zoo(...)
+ ret <- structure( ret, class=c('xts','zoo') )
 
-  # Re-attach _xts_ attributes
-  CLASS(ret) <- xts.CLASS[[1]]
-  bind.attr <- xts.attr[ !(xts.attr %in% xtsAttributes(ret)) ]
-  ret <- structure(ret, class=c('xts','zoo'), bind=bind.attr)
-  xtsAttributes(ret) <- xts.attr  # attributes must be list of name=value pairs
+ # Drop CLASS attribute if _not_ the same for all objects
+ xts.CLASS.eq <- sapply(xts.CLASS, function(x) identical(x,xts.CLASS[[1]]))
+ if( all(xts.CLASS.eq) ) {
+   CLASS(ret) <- xts.CLASS[[1]]
+   xts.CLASSattr <- xts.CLASSattr[[1]]
+ } else {
+   CLASS(ret) <- NULL
+   xts.CLASSattr <- NULL
+ }
 
-  return(ret)
+ # Re-attach _xts_ attributes
+ # Need a better way to deal with different xtsAttributes than
+ # simply assigning them to the value of the first object...
+ xtsAttributes(ret) <- c( xts.CLASSattr, xts.USERattr )
+
+ return(ret)
 }
 
 `cbind.xts` <-
 function(..., deparse.level=1) {
+ args <- list(...)
+
+ # Store original class attributes
+ xts.ROWNAMES <- sapply(args, function(x) attr(x, ".ROWNAMES"))
+ xts.CLASS <- sapply(args, CLASS)
+ xts.CLASSattr <- sapply(args, xtsAttributes, user=FALSE)
+ xts.USERattr <- unlist(sapply(args, xtsAttributes, user=TRUE))
+
+ # Bind objects
+ ret <- zoo:::cbind.zoo(...)
+ ret <- structure( ret, class=c('xts','zoo') )
+
+ # Drop CLASS attribute if _not_ the same for all objects
+ xts.CLASS.eq <- sapply(xts.CLASS, function(x) identical(x,xts.CLASS[[1]]))
+ if( all(xts.CLASS.eq) ) {
+   CLASS(ret) <- xts.CLASS[[1]]
+   xts.CLASSattr <- xts.CLASSattr[[1]]
+ } else {
+   CLASS(ret) <- NULL
+   xts.CLASSattr <- NULL
+ }
+
+ # Re-attach _xts_ attributes
+ # Need a better way to deal with different xtsAttributes than
+ # simply assigning them to the value of the first object...
+ xtsAttributes(ret) <- c( xts.CLASSattr, xts.USERattr )
+
+ return(ret)
 }
 
 `c.xts` <-

@@ -63,6 +63,9 @@ S3method('indexClass<-',xts)
 S3method('index<-',xts)
 S3method('time<-',xts)
 S3method('xtsAttributes<-',xts)
+S3method(rbind,xts)
+S3method(cbind,xts)
+S3method(c,xts)
 
 # ts specific methods
 S3method(as.xts,ts)
