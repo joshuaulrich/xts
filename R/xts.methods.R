@@ -105,31 +105,21 @@ function(x, i, j, drop = TRUE, ...)
         }
 
         if(!is.null(original.attr)) {
-#         if(original.CLASS[1] == 'ts') {
-#           x <- as.zoo(x)
-#           .tsp <- seq(original.attr$tsp[1],original.attr$tsp[2],by=original.attr$tsp[3])[i]
-#           attr(x,'tsp') <- c(first(.tsp), last(.tsp), original.attr$tsp[3])
-#           for(ii in 1:length(original.attr)) {
-#             if(names(original.attr)[ii] != 'tsp') attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
-#           }
-#         } else {
             for(ii in 1:length(original.attr)) {
               attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
-#             if(names(original.attr)[ii]=='.tsp') {
-#               # update tsp for `ts` objects
-#               TSP <- original.attr[ii][[1]]
-#               cur.index <- seq(from=TSP[1],to=TSP[2],by=TSP[3])[i]
-#               attr(x,'.tsp') <- c(first(cur.index),last(cur.index),TSP[3])
-#             }
               if(names(original.attr)[ii]=='.ROWNAMES') attr(x,'.ROWNAMES') <- original.attr[[ii]][i]
             }
-#         }
         }
         class(x) <- original.class
         if(!is.null(original.cols)) j <- 1:original.cols
     }
     else {
-        if(length(j) == 1) {
+        j <- sapply(j, function(xx) {
+                         if(is.character(xx)) {
+                           which(xx==colnames(x))
+                         } else xx
+                       })
+        if(length(j) == 1) { # fix loss of column names when using colnames to subset
           # subsetting down to 1 cols - '[.zoo' will delete this info
           dn1 <- dimnames(x)[[1]]
           x <- x[i = i, j = j, drop = drop, ...]
