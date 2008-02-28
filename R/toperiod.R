@@ -59,7 +59,7 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
     # return whichever object was originally passed in
   } else
   if(NCOL(x)==1) {
-    ep <- endpoints(x, period)
+    ep <- endpoints(x, period, k)
     tz <- as.double(as.matrix(x))
     
     # ohlcz is the F77 routine to aggregate single-column data to another periodicity
