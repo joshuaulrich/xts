@@ -35,6 +35,9 @@ function (x, ...)
         if (p.numeric > 59) 
             scale <- "hourly"
     }
+    if (units == "hours") {
+        scale <- "hourly"
+    }
     if (units == "days") {
         scale <- "daily"
         if (p.numeric > 1) 
