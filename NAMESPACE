@@ -39,6 +39,9 @@ export(apply.daily,
        apply.monthly,
        apply.quarterly,
        apply.yearly)
+export(rbind.xts,
+       cbind.xts,
+       c.xts)
 S3method(plot,xts)
 S3method(first,default)
 S3method(last,default)
@@ -96,3 +99,4 @@ S3method(as.xts,irts)
 ## currently unexported functions that _may_ be exported at some point
 
 #export(startof,endof,firstof,lastof)
+
