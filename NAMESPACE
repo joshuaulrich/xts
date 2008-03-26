@@ -31,7 +31,11 @@ export(to.period,
 export(xtsAttributes)
 export('xtsAttributes<-')
 export(periodicity)
-export(period.apply)
+export(period.apply,
+       period.max,
+       period.min,
+       period.sum,
+       period.prod)
 export(first,
        last)
 export(apply.daily,
@@ -39,9 +43,9 @@ export(apply.daily,
        apply.monthly,
        apply.quarterly,
        apply.yearly)
-export(rbind.xts,
-       cbind.xts,
-       c.xts)
+#export(rbind.xts,
+#       cbind.xts,
+#       c.xts)
 S3method(plot,xts)
 S3method(first,default)
 S3method(last,default)

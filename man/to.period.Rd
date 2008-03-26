@@ -112,34 +112,15 @@ object originally, or converting to one in the function call by means
 of \code{as.xts}.
 }
 \examples{
-\dontrun{
-# download daily US/EU exchange rate from
-# the FRED system
-library(quantmod)
-getSymbols("DEXUSEU",src="FRED")
-getSymbols("QQQQ",src="yahoo")
+data(sample_matrix)
 
-# look at the data : )
-DEXUSEU   # univariate time series
-QQQQ      # OHLC already
+samplexts <- as.xts(sample_matrix)
 
-# now it's a yearly OHLC
-dex1 <- to.yearly(DEXUSEU)
+to.monthly(samplexts)
+to.monthly(sample_matrix)
 
-# first monthly, then to yearly
-dex2 <- to.yearly(to.monthly(DEXUSEU))
-
-identical(dex1,dex2) # it's the same!
-
-q1 <- to.yearly(QQQQ)
-q2 <- to.yearly(to.monthly(QQQQ))
-
-# these don't match - sometimes dates
-# are off depending on when cutoffs
-# occur - so BE CAREFUL when converting
-# a converted object!
-identical(q1,q2)    
-}
+str(to.monthly(samplexts))
+str(to.monthly(sample_matrix))
 }
 \author{ Jeffrey A. Ryan }
           

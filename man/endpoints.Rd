@@ -11,7 +11,7 @@ endpoints(x, on="months", k=1)
 \arguments{
   \item{x}{ an xts object }
   \item{on}{ the periods endpoints to find as a character string }
-  \item{k}{ the number of aggregation points??? }
+  \item{k}{ along every k-th element - see notes }
 }
 \details{
 \code{endpoints} returns a numeric vector corresponding to the
@@ -23,11 +23,21 @@ Valid values for the argument \code{on} include: \dQuote{secs} (seconds),
 \dQuote{seconds}, \dQuote{mins} (minutes), \dQuote{minutes},
 \dQuote{hours}, \dQuote{days}, \dQuote{weeks}, \dQuote{months}, \dQuote{quarters},
 and \dQuote{years}.
+
+The \code{k} argument is only valid for values of \code{on}
+equaling \dQuote{minutes} and \dQuote{seconds}. All other values
+will ignore the \code{k} argument.
 }
 \value{
-A numeric vector of endpoints.
+A numeric vector of endpoints beginning with 0
+and ending with the a value equal to the length of
+the x argument.
 }
 \author{ Jeffrey A. Ryan }
 \examples{
+data(sample_matrix)
+
+endpoints(sample_matrix)
+endpoints(sample_matrix, 'weeks')
 }
 \keyword{ utilities }

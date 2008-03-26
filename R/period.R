@@ -1,52 +1,93 @@
 # optimized periodic apply functions
 #
+`timeBased` <-
+function(x) {
+if (!any(sapply(c("Date", "POSIXct", "chron", "dates", "times", 
+        "timeDate", "yearmon", "yearqtr"), function(xx) inherits(x, 
+        xx)))) {
+        FALSE
+    } else TRUE
+}
 
 `period.sum` <-
 function(x,INDEX) {
-  if(NCOL(x) > 1) stop("single col data only")
-  bp <- INDEX
+  if(NCOL(x) > 1) stop("single column data only")
+
+  ep <- INDEX
+  if(ep[1] != 0) ep <- c(0,ep)
+  if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
+
   xx <- as.double(as.matrix(x))
-  q <- .Fortran('psumz',bp=as.integer(bp),lbp=as.integer(length(bp)),
+  q <- .Fortran('psumz',ep=as.integer(ep),lep=as.integer(length(ep)),
                 ia=as.double(xx),lia=as.integer(length(xx)),
-                ret=as.double(rep(0,(length(bp)-1)))
+                ret=as.double(rep(0,(length(ep)-1)))
                 ,PACKAGE='xts')
-  tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[bp[-1]])
+  if(timeBased(index(x))) {
+    tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+  } else {
+    tz <- zoo(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+  }
+  colnames(tz) <- 'period.sum'
   tz
 
 }
 `period.prod` <-
 function(x,INDEX) {
-  if(NCOL(x) > 1) stop("single col data only")
-  bp <- INDEX
+  if(NCOL(x) > 1) stop("single column data only")
+  ep <- INDEX
+  if(ep[1] != 0) ep <- c(0,ep)
+  if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
+
   xx <- as.double(as.matrix(x))
-  q <- .Fortran('pprodz',bp=as.integer(bp),lbp=as.integer(length(bp)),
+  q <- .Fortran('pprodz',ep=as.integer(ep),lep=as.integer(length(ep)),
                 ia=as.double(xx),lia=as.integer(length(xx)),
-                ret=as.double(rep(0,(length(bp)-1)))
+                ret=as.double(rep(0,(length(ep)-1)))
                 ,PACKAGE='xts')
-  tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[bp[-1]])
+  if(timeBased(index(x))) {
+    tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+  } else {
+    tz <- zoo(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+  }
+  colnames(tz) <- 'period.prod'
   tz
 }
 `period.max` <-
 function(x,INDEX) {
-  if(NCOL(x) > 1) stop("single col data only")
-  bp <- INDEX
+  if(NCOL(x) > 1) stop("single column data only")
+  ep <- INDEX
+  if(ep[1] != 0) ep <- c(0,ep)
+  if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
+
   xx <- as.double(as.matrix(x))
-  q <- .Fortran('pmaxz',bp=as.integer(bp),lbp=as.integer(length(bp)),
+  q <- .Fortran('pmaxz',ep=as.integer(ep),lep=as.integer(length(ep)),
                 ia=as.double(xx),lia=as.integer(length(xx)),
-                ret=as.double(rep(0,(length(bp)-1)))
+                ret=as.double(rep(0,(length(ep)-1)))
                 ,PACKAGE='xts')
-  tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[bp[-1]])
+  if(timeBased(index(x))) {
+    tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+  } else {
+    tz <- zoo(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+  }
+  colnames(tz) <- 'period.max'
   tz
 }
 `period.min` <-
 function(x,INDEX) {
-  if(NCOL(x) > 1) stop("single col data only")
-  bp <- INDEX
+  if(NCOL(x) > 1) stop("single column data only")
+  ep <- INDEX
+  if(ep[1] != 0) ep <- c(0,ep)
+  if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
+
   xx <- as.double(as.matrix(x))
-  q <- .Fortran('pminz',bp=as.integer(bp),lbp=as.integer(length(bp)),
+  q <- .Fortran('pminz',ep=as.integer(ep),lep=as.integer(length(ep)),
                 ia=as.double(xx),lia=as.integer(length(xx)),
-                ret=as.double(rep(0,(length(bp)-1)))
+                ret=as.double(rep(0,(length(ep)-1)))
                 ,PACKAGE='xts')
-  tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[bp[-1]])
+  if(timeBased(index(x))) {
+    tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+  } else {
+    tz <- zoo(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+  }
+  colnames(tz) <- 'period.min'
   tz
 }
