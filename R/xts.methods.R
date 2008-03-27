@@ -58,35 +58,41 @@ function(x, i, j, drop = TRUE, ...)
     POSIXindex <- index(x)
 
     if (missing(i)) 
-        i <- 1:NROW(x)
+      i <- 1:NROW(x)
+    if (timeBased(i)) 
+      i <- as.character(as.POSIXct(i)) 
     if (is.character(i)) {
       # enables subsetting by date style strings
       # must be able to process - and then allow for operations???
 
-      if(!identical(grep("::",i),integer(0))) {
-        # range operator
-        dates <- strsplit(i,'::')[[1]]
+      i.tmp <- NULL
+      for(ii in i) {
+        if(!identical(grep("::",ii),integer(0))) {
+          # range operator
+          dates <- strsplit(ii,'::')[[1]]
+          
+          # test for single side range operation
+          first.time <- ifelse(dates[1]=="",
+                               POSIXindex[1],
+                               do.call('firstof',
+                                        as.list(as.numeric(strsplit(dates[1],':|-|/| ')[[1]]))))
+          last.time <- ifelse(length(dates)==1,
+                               POSIXindex[length(POSIXindex)],
+                               do.call('lastof',
+                                        as.list(as.numeric(strsplit(dates[2],':|-|/| ')[[1]]))))
+        } else {
+          # if single date is given - get start and end points if resolution of
+          # series is greater than the time specified
+          dates <- ii
+          first.time <- do.call('firstof',
+                                as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]])))
+          last.time <- do.call('lastof',
+                                as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]])))
+        }      
         
-        # test for single side range operation
-        first.time <- ifelse(dates[1]=="",
-                             POSIXindex[1],
-                             do.call('firstof',
-                                      as.list(as.numeric(strsplit(dates[1],':|-|/| ')[[1]]))))
-        last.time <- ifelse(length(dates)==1,
-                             POSIXindex[length(POSIXindex)],
-                             do.call('lastof',
-                                      as.list(as.numeric(strsplit(dates[2],':|-|/| ')[[1]]))))
-      } else {
-        # if single date is given - get start and end points if resolution of
-        # series is greater than the time specified
-        dates <- i
-        first.time <- do.call('firstof',
-                              as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]])))
-        last.time <- do.call('lastof',
-                              as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]])))
-      }      
-      
-      i <- which(POSIXindex <= last.time & POSIXindex >= first.time)
+        i.tmp <- c(i.tmp,which(POSIXindex <= last.time & POSIXindex >= first.time))
+      }
+      i <- i.tmp
     }
 
     class(x) <- "zoo"
