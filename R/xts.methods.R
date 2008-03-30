@@ -162,31 +162,52 @@ function(..., deparse.level=1) {
 
  # Store original class attributes
  xts.CLASS <- sapply(args, CLASS)
- xts.CLASSattr <- sapply(args, xtsAttributes, user=FALSE)
- xts.USERattr <- unlist(sapply(args, xtsAttributes, user=TRUE))
+ xts.CLASSattr <- lapply(args, xtsAttributes, user=FALSE)
+ xts.USERattr <- lapply(args, xtsAttributes, user=TRUE)
+ has.ROWNAMES <- any( lapply(args, function(x) any(names(attributes(x))=='.ROWNAMES')) )
 
+ # Ensure index attributes match
+ # store as POSIXct, convert to class of first object index
+ iclass <- class( index(args[[1]]) )
+ timeBasedClass <- sapply( iclass, function(x) xts:::timeBased(structure(1,class=x)) )
+ iclass <- iclass[timeBasedClass][1]
+ for(arg in args) {
+   index(arg) <- as.POSIXct(index(arg))
+ }
+ 
  # Bind objects
  ret <- zoo:::rbind.zoo(...)
  ret <- structure( ret, class=c('xts','zoo') )
- #dimnames(ret)[[1]] <- as.character(index(ret))
 
- # Drop CLASS attribute if _not_ the same for all objects
- xts.CLASS.eq <- sapply(xts.CLASS, function(x) identical(x,xts.CLASS[[1]]))
+ # Restore first object index class
+ index(ret) <- do.call( paste('as', iclass, sep='.'), list(index(ret)) )
+
+ # Drop CLASS & USER attributes if they are not the same for all objects
+ all.CLASS <- all( sapply(xts.CLASS, function(x) identical(x,xts.CLASS[[1]])) )
+ all.USER <- all( sapply(xts.USERattr, function(x) identical(x,xts.USERattr[[1]])) )
  
- if( all(xts.CLASS.eq) ) {
+ if( all.CLASS ) {
    # Need a better way to deal with different xtsAttributes than
    # simply assigning them to the value of the first object.
    xts.CLASSattr <- xts.CLASSattr[[1]]
    CLASS(ret) <- xts.CLASS[[1]]
+   attr(ret, '.CLASSnames') <- attr(args[[1]], '.CLASSnames')
 
-   # Even if all args have a .ROWNAMES attribute, they may not be similar
-   # E.g. former data.frame and zoo objects may have .ROWNAMES, but the zoo
-   # .ROWNAMES may not be like the data.frame .ROWNAMES ("1","2","3").
-   # Set .ROWNAMES to index for now.
-   attr(ret, ".ROWNAMES") <- as.character(index(ret))
  } else {
    CLASS(ret) <- NULL
    xts.CLASSattr <- NULL
+ }
+ if( has.ROWNAMES ) {
+ # .ROWNAMES attribute may not be similar, so set .ROWNAMES to index for now,
+ # if it exists in at least one object
+   attr(ret, '.ROWNAMES') <- as.character(index(ret))
+ } else {
+   attr(ret, '.ROWNAMES') <- NULL
+ }
+ if( all.USER ) {
+   xts.USERattr <- xts.USERattr[[1]]
+ } else {
+   xts.USERattr <- NULL
  }
  # Re-attach _xts_ attributes
  xtsAttributes(ret) <- c( xts.CLASSattr, xts.USERattr )
@@ -196,38 +217,50 @@ function(..., deparse.level=1) {
 
 `cbind.xts` <-
 function(..., deparse.level=1) {
+
  args <- list(...)
 
  # Store original class attributes
  xts.CLASS <- sapply(args, CLASS)
- xts.CLASSattr <- sapply(args, xtsAttributes, user=FALSE)
- xts.USERattr <- unlist(sapply(args, xtsAttributes, user=TRUE))
+ xts.CLASSattr <- lapply(args, xtsAttributes, user=FALSE)
+ xts.USERattr <- lapply(args, xtsAttributes, user=TRUE)
+ has.ROWNAMES <- any( lapply(args, function(x) any(names(attributes(x))=='.ROWNAMES')) )
 
  # Bind objects
  ret <- zoo:::cbind.zoo(...)
  ret <- structure( ret, class=c('xts','zoo') )
- #dimnames(ret)[[1]] <- as.character(index(ret))
 
- # Drop CLASS attribute if _not_ the same for all objects
- xts.CLASS.eq <- sapply(xts.CLASS, function(x) identical(x,xts.CLASS[[1]]))
+ # Drop CLASS & USER attributes if they are not the same for all objects
+ all.CLASS <- all( sapply(xts.CLASS, function(x) identical(x,xts.CLASS[[1]])) )
+ all.USER <- all( sapply(xts.USERattr, function(x) identical(x,xts.USERattr[[1]])) )
  
- if( all(xts.CLASS.eq) ) {
+ if( all.CLASS ) {
    # Need a better way to deal with different xtsAttributes than
    # simply assigning them to the value of the first object.
-   CLASS(ret) <- xts.CLASS[[1]]
    xts.CLASSattr <- xts.CLASSattr[[1]]
-   
-   # Even if all args have a .ROWNAMES attribute, they may not be similar
-   # E.g. former data.frame and zoo objects may have .ROWNAMES, but the zoo
-   # .ROWNAMES may not be like the data.frame .ROWNAMES ("1","2","3").
-   # Set .ROWNAMES to index for now.
-   attr(ret, ".ROWNAMES") <- as.character(index(ret))
+   CLASS(ret) <- xts.CLASS[[1]]
+   attr(ret, '.CLASSnames') <- attr(args[[1]], '.CLASSnames')
+
  } else {
    CLASS(ret) <- NULL
    xts.CLASSattr <- NULL
  }
+ if( has.ROWNAMES ) {
+ # .ROWNAMES attribute may not be similar, so set .ROWNAMES to index for now,
+ # if it exists in at least one object.
+   attr(ret, '.ROWNAMES') <- as.character(index(ret))
+ } else {
+   attr(ret, '.ROWNAMES') <- NULL
+ }
+ if( all.USER ) {
+   xts.USERattr <- xts.USERattr[[1]]
+ } else {
+   xts.USERattr <- NULL
+ }
  # Re-attach _xts_ attributes
  xtsAttributes(ret) <- c( xts.CLASSattr, xts.USERattr )
+ # Add rownames
+ rownames(ret) <- as.character(index(ret))
 
  return(ret)
 }
