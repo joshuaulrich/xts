@@ -73,6 +73,7 @@ S3method('xtsAttributes<-',xts)
 S3method(rbind,xts)
 S3method(cbind,xts)
 S3method(c,xts)
+S3method(Ops,xts)
 
 # ts specific methods
 S3method(as.xts,ts)
