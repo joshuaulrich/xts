@@ -15,6 +15,19 @@ function(x,...) {
   return(xx)
 }
 
+`xcoredata.xts` <-
+function(x,...) {
+  x.attr <- attributes(x)
+  original.attr <- x.attr[!names(x.attr) %in%
+                          c('dim','dimnames')]
+  original.attr
+}
+
+`xcoredata` <-
+function(x,...) {
+  UseMethod('xcoredata')
+}
+
 `xtsAttributes` <-
 function(x, user=NULL) {
   # get all additional attributes not standard to xts object

@@ -1,5 +1,6 @@
 \name{as.xts}
 \alias{as.xts}
+\alias{xtsible}
 \alias{reclass}
 \title{ Convert Object To And From Class xts }
 \description{
@@ -9,6 +10,7 @@ losing any attributes of the original format.
 }
 \usage{
 as.xts(x, ...)
+xtsible(x)
 
 reclass(x)
 }
@@ -23,6 +25,10 @@ objects into a uniform format for use within \R.
 It is possible with a call to \code{as.xts} to
 convert objects of class \code{timeSeries}, \code{ts},
 \code{its}, \code{matrix}, \code{data.frame}, and \code{zoo}.
+
+\code{xtsible} safely checks whether an object can be converted to
+an \code{xts} object; returning TRUE on success and FALSE
+otherwise.
 
 The help file \code{as.xts.methods} lists all available
 xts methods and arguments specific to each coercible type.
