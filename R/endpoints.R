@@ -14,9 +14,10 @@ function(x,on='months',k=1) {
     on.opts <- list(secs='%S',seconds='%S',mins='%M',minutes='%M',
                     hours='%H',days='%j',
                     weeks='%W',months='%m',years='%y')
-    if(on %in% c('seconds','minutes')) {
-      c(0,which((diff(as.numeric(format(index(x),"%M"))%/%k + 1) != 0)),NROW(x))
-    } else c(0,which(diff(as.numeric(format(index(x),on.opts[[on]]))) != 0),NROW(x))
+#    if(on %in% c('seconds','minutes')) {
+#      c(0,which((diff(as.numeric(format(index(x),"%M"))%/%k + 1) != 0)),NROW(x))
+#    } else 
+    c(0,which(diff(as.numeric(format(index(x),on.opts[[on]]))%/%k+1) != 0),NROW(x))
   }
 }
 
