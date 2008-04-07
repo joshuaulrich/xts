@@ -5,3 +5,14 @@ function(x)
     FALSE
   } else TRUE
 }
+
+`use.xts` <-
+function(x,warn=TRUE,fail=NULL,...)
+{
+  xx <- try(as.xts,...,silent=warn)
+  if(inherits(xx,'try-error')) {
+    
+  } else {
+
+  }
+}

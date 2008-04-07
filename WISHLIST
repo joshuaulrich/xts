@@ -1,36 +1,26 @@
 **********************************************************************************
 **********************************************************************************
 ** 
-**  WISHLIST: 2008-02-16 for xts
+**  WISHLIST: 2008-04-07 for xts
 **
 **********************************************************************************
 **********************************************************************************
 
 * [20080224] dynamically determine .CLASSnames attribute for as.xts methods
 
-* plot.xts method - handle x-index values as dates similar to ticks in quantmod
-    follow 'zoo' convention mostly - e.g.
-
-      plot(x, y = NULL, screens, plot.type,
-             panel = lines, xlab = "Index", ylab = NULL, main = NULL,
-             xlim = NULL, ylim = NULL, xy.labels = FALSE, xy.lines = NULL,
-             oma = c(6, 0, 5, 0), mar = c(0, 5.1, 0, 2.1), 
-             col = 1, lty = 1, pch = 1, type = "l", nc, widths = 1, heights = 1, ...)
-
-      ## S3 method for class 'zoo':
-      lines(x, y = NULL, type = "l", ...)
-
-      ## S3 method for class 'zoo':
-      points(x, y = NULL, type = "p", ...)
-  
-  AND allow for full plot/par customization - mostly focus on timeseries data ...
-  [update 2/16/2008: partially added, still needs work, but working -jar]
+* 'use.xts' method for use inside functions - possibly with custom warnings, and
+  reduced construction overhead
       
+* 'summary.xts'
+
+* 'adjIndex': adjust time stamps in-place.
+
+* 'xcoredata'
 
 * write 'as.ts.xts' method: handle NAs correctly
 
 
-* 'Ops.xts' method
+* 'Ops.xts' method - done-jar
 
 
 * An xtsAlign method to align series by date. - match monthly data to first/last...
@@ -65,7 +55,7 @@
 * [.xts<- replacement method
 
 
-* cbind/rbind xts methods required to maintain xts object
+* cbind/rbind xts methods required to maintain xts object - 
 
 
 * aggregate.xts (dispatch to NextMethod or call aggregate.zoo and

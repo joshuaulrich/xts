@@ -15,7 +15,7 @@ function(x,...) {
   return(xx)
 }
 
-`xcoredata.xts` <-
+`xcoredata.default` <-
 function(x,...) {
   x.attr <- attributes(x)
   original.attr <- x.attr[!names(x.attr) %in%
@@ -23,9 +23,22 @@ function(x,...) {
   original.attr
 }
 
+
 `xcoredata` <-
 function(x,...) {
   UseMethod('xcoredata')
+}
+
+`xcoredata<-` <- function(x,value) {
+  UseMethod('xcoredata<-')
+}
+
+`xcoredata<-.default` <- function(x,value) {
+  for(att in names(value)) {
+    if(!att %in% c('dim','dimnames'))
+      attr(x,att) <- value[[att]]
+  }
+  x
 }
 
 `xtsAttributes` <-

@@ -9,6 +9,7 @@ export(xts)
 export(as.xts)
 export(is.xts)
 export(xcoredata)
+export('xcoredata<-')
 export(xtsible)
 export(reclass)
 export(endpoints)
@@ -17,6 +18,14 @@ export('CLASS<-')
 export(indexClass)
 export(convertIndex)
 export('indexClass<-')
+export(nseconds,
+       nminutes,
+       nhours,
+       ndays,
+       nweeks,
+       nmonths,
+       nquarters,
+       nyears)
 export(to.period,
        to.minutes,
        to.minutes3,
@@ -63,7 +72,8 @@ importFrom(zoo,'index<-')
 importFrom(zoo,'time<-')
 importFrom(stats,na.omit)
 S3method(coredata,xts)
-S3method(xcoredata,xts)
+S3method(xcoredata,default)
+S3method('xcoredata<-',default)
 S3method(as.xts,xts)
 S3method('[',xts)
 S3method(str,xts)

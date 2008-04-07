@@ -14,9 +14,6 @@ function(x,on='months',k=1) {
     on.opts <- list(secs='%S',seconds='%S',mins='%M',minutes='%M',
                     hours='%H',days='%j',
                     weeks='%W',months='%m',years='%y')
-#    if(on %in% c('seconds','minutes')) {
-#      c(0,which((diff(as.numeric(format(index(x),"%M"))%/%k + 1) != 0)),NROW(x))
-#    } else 
     c(0,which(diff(as.numeric(format(index(x),on.opts[[on]]))%/%k+1) != 0),NROW(x))
   }
 }
@@ -39,12 +36,11 @@ function(year=1970,month=1,day=1,hour=0,min=0,sec=0,tz="") {
 
 `lastof` <-
 function(year=1970,month=12,day=31,hour=23,min=59,sec=59,tz="") {
-  
   mon.lengths <- c(31,28,31,30,31,30,31,31,30,31,30,31)
   if(missing(day)) {
-    if(month==2 & year%%4==0) {
+    if(month %in% 2 && year%%4 %in% 0) {
       # is it a leap year?
-      day <- ifelse(month==2 & year%%400==0,28,29)
+      day <- ifelse(month %in% 2 && year%%400 %in% 0,28,29)
     } else day <- mon.lengths[month]
   }
   ISOdatetime(year,month,day,hour,min,sec,tz)

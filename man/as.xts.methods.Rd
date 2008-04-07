@@ -7,7 +7,6 @@
 \alias{as.xts.ts}
 \alias{as.xts.data.frame}
 \alias{as.xts.matrix}
-\alias{xcoredata}
 \title{ Convert Object To And From Class xts }
 \description{
 Conversion S3 methods to coerce data objects of

@@ -16,7 +16,7 @@ function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
       stop("order.by must be either 'rownames()' or otherwise specified")
     else
       # added '...' args to allow for tz specification
-      order.by <- do.call(paste('as',dateFormat,sep='.'),list(rownames(x),...))
+      order.by <- do.call(paste('as',dateFormat,sep='.'),list(rownames(x)))
   }
   
   xx <- xts(x,
