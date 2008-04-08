@@ -11,16 +11,17 @@ Apply a specified function to each distinct period in a given
 time series object.
 }
 \usage{
-apply.daily(x, FUN)
-apply.weekly(x, FUN)
-apply.monthly(x, FUN)
-apply.quarterly(x, FUN)
-apply.yearly(x, FUN)
+apply.daily(x, FUN, ...)
+apply.weekly(x, FUN, ...)
+apply.monthly(x, FUN, ...)
+apply.quarterly(x, FUN, ...)
+apply.yearly(x, FUN, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{ an object of class zoo }
+  \item{x}{ an time-series object coercible to xts }
   \item{FUN}{ an \R function }
+  \item{\dots}{ additional arguments to FUN }
 }
 \details{
 Simple mechanism to apply a function to non-overlapping
@@ -29,8 +30,8 @@ functions in that this will subset the data based on the specified
 time period (implicit in the call), and return a vector of values
 for each period in the original data.
 
-Essentially a wrapper to the \pkg{quantmod} functions
-\code{breakpoints} and \code{period.apply}, mainly as
+Essentially a wrapper to the \pkg{xts} functions
+\code{endpoints} and \code{period.apply}, mainly as
 a convenience.
 }
 \value{
@@ -41,12 +42,12 @@ to the appropriate periods.
 \seealso{ \code{\link{endpoints}}, \code{\link{period.apply}},
           \code{\link{to.monthly}} }
 \examples{
-zoo.ts <- zoo(rnorm(231),as.Date(13514:13744,origin="1970-01-01"))
+xts.ts <- xts(rnorm(231),as.Date(13514:13744,origin="1970-01-01"))
 
-start(zoo.ts)
-end(zoo.ts)
+start(xts.ts)
+end(xts.ts)
 
-apply.monthly(zoo.ts,sd)
-apply.monthly(zoo.ts,function(x) var(x))
+apply.monthly(xts.ts,sd)
+apply.monthly(xts.ts,function(x) var(x))
 }
 \keyword{ utilities }

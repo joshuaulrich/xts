@@ -7,12 +7,17 @@ function(x)
 }
 
 `use.xts` <-
-function(x,warn=TRUE,fail=NULL,...)
+function(x, ..., error=TRUE)
 {
-  xx <- try(as.xts,...,silent=warn)
+  xx <- try(as.xts(x,...),silent=TRUE)
   if(inherits(xx,'try-error')) {
-    
+    if(is.character(error)) {
+      message(error)
+    } else  
+    if(error) {
+      message(gsub('\n','',xx))
+    } else FALSE
   } else {
-
+    xx
   }
 }

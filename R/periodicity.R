@@ -84,35 +84,35 @@ function (x, INDEX, FUN, ...)
 }
 
 `apply.daily` <-
-function(x,FUN)
+function(x,FUN, ...)
 {
   ep <- endpoints(x,'days')
-  period.apply(x,ep,FUN)
+  period.apply(x,ep,FUN, ...)
 }
 `apply.weekly` <-
-function(x,FUN)
+function(x,FUN, ...)
 {
   ep <- endpoints(x,'weeks')
-  period.apply(x,ep,FUN)
+  period.apply(x,ep,FUN, ...)
 }
 
 `apply.monthly` <-
-function(x,FUN)
+function(x,FUN, ...)
 {
   ep <- endpoints(x,'months')
-  period.apply(x,ep,FUN)
+  period.apply(x,ep,FUN, ...)
 }
 
 `apply.quarterly` <-
-function(x,FUN)
+function(x,FUN, ...)
 {
   ep <- endpoints(x,'quarters')
-  period.apply(x,ep,FUN)
+  period.apply(x,ep,FUN, ...)
 }
 
 `apply.yearly` <-
-function(x,FUN)
+function(x,FUN, ...)
 {
   ep <- endpoints(x,'years')
-  period.apply(x,ep,FUN)
+  period.apply(x,ep,FUN, ...)
 }
