@@ -232,6 +232,23 @@ examples we first requested that the new date format be of type 'Date'.  The
 second example was left to the default {\sf xts} method.
 
 \subsection{{\sf xts} methods}
+There is a full complement of standard methods to make use of the features
+present in {\sf xts} objects. In addition, most methods that can accept
+{\sf zoo} or {\sf matrix} objects will simply work as expected.
+
+The most noticably difference in the behavior of {\sf xts} objects
+will be apparent in the use of the '[' operator. Using
+special notation, one can use date-like strings to extract
+data based on times.  Using increasing levels of time-detail,
+it is possible to subset the object by year, week, days - or even seconds.
+
+The format must be left-specified with respect to the standard ISO 
+time format - {\em CCYY-MM-DD HH:MM:SS}.  This mean that for one 
+to extract a particular month, it is necesssary to fully specify the 
+year as well. To identify a particular hour, say all observations
+in the eighth hour on January 1, 2007, one would likewise need
+to include the full year, month and day - e.g. `2007-01-01 8'. 
+An example or two should provide some further insight.
 
 \subsection{Restoring the original class - {\sf reclass}}
 
