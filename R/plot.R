@@ -5,22 +5,8 @@
   if(is.null(y))
     xycoords <- xy.coords(x)
   time.scale <- periodicity(x)$scale
-#  ticks <- function(ival, major.ticks, gt=2, lt=30) {
-#    tick.opts <- c('years','months','weeks','days',
-#                   'hours','minutes','seconds')
-#    if(major.ticks %in% tick.opts) {
-#      cl <- major.ticks[1]
-#    } else {
-#      is <- sapply(tick.opts,
-#                   function(y) {
-#                     length(endpoints(ival,y,1))-1
-#                   })
-#      cl <- names(is)[which(is > gt & is < lt)][1]
-#    }
-#    ep <- endpoints(ival,cl)
-#    ep 
-#  }
   ep <- axTicksByTime(x,major.ticks)
+  ep <- c(rev(rev(ep)[-1]),rev(ep)[1]-1)
   x.labels <- format(index(x)[ep+1],'%n%b%n%Y')
   if(time.scale== "weekly" | time.scale == "daily") 
       x.labels <- format(index(x)[ep + 1], "%b %d%n%Y")

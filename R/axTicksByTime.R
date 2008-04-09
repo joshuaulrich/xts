@@ -6,7 +6,6 @@ axTicksByTime <- function(ival, ticks.on, k=1, gt = 2, lt = 30) {
     if (ticks.on %in% tick.opts) {
         cl <- ticks.on[1]
         ck <- k
-        ep <- endpoints(ival, cl, ck) 
     }   
     else {
         tick.opts <- paste(rep(tick.opts, c(4, 2, 1, 1, 3, 3,  
@@ -23,8 +22,9 @@ axTicksByTime <- function(ival, ticks.on, k=1, gt = 2, lt = 30) {
         cl <- strsplit(nms, " ")[[1]][1]
         ck <- as.numeric(strsplit(nms, " ")[[1]][2])
     }   
+
     if (is.null(cl)) {
         ep <- NULL
-    }   
+    } else  ep <- endpoints(ival, cl, ck) 
     ep  
 }
