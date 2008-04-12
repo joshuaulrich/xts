@@ -14,6 +14,8 @@
 `to.period` <-
 function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
 {
+  original.class <- class(x) # used for classes derived from 'xts'
+
   if(is.null(name)) name <- deparse(substitute(x))
 
   # test if is class 'xts', if not, convert to 'xts'
@@ -137,6 +139,7 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
   indexClass(tz) <- original.indexClass
 
   if(RECLASS) return(reclass(tz))
+  class(tz) <- original.class # add back original class name if derived from 'xts'
   tz
 
 }

@@ -13,12 +13,15 @@ or by passing 'auto' to the \code{ticks.on} argument,
 to get a best heuristic fit.
 }
 \usage{
-axTicksByTime(ival, ticks.on, k = 1, gt = 2, lt = 30)
+axTicksByTime(ival, ticks.on='auto', k = 1,
+              labels=TRUE, ends=TRUE, gt = 2, lt = 30)
 }
 \arguments{
   \item{ival}{ the object indexed by time }
   \item{ticks.on}{ what to break on }
   \item{k}{ frequency of breaks }
+  \item{labels}{ should a labeled vector be returned }
+  \item{ends}{ should the ends be adjusted }
   \item{gt}{ lower bound on number of breaks }
   \item{lt}{ upper bound on number of breaks }
 }
@@ -29,7 +32,7 @@ uses. In general it is most unlikely that the end user will
 call this function directly.
 }
 \value{
-A vector of index points to break on.
+A vector of index points to break on, possibly with the index names.
 }
 \author{ Jeffrey A. Ryan }
 \seealso{ \code{\link{endpoints}} }
