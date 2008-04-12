@@ -42,6 +42,8 @@ axTicksByTime <- function(x, ticks.on='auto', k=1,
             x.labels <- format(index(x)[ep], "%b %d%n%Y")
         if (time.scale == "minute" | time.scale == "hourly") 
             x.labels <- format(index(x)[ep], "%b %d%n%H:%M")
+        if (time.scale == "seconds")
+            x.labels <- format(index(x)[ep], "%b %d%n%H:%M:%S")
         names(ep) <- x.labels
       } else names(ep) <- as.character(index(x)[ep])
     }
