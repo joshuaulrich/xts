@@ -1,4 +1,8 @@
-axTicksByTime <- function(ival, ticks.on='auto', k=1, labels=TRUE, ends=TRUE, gt = 2, lt = 30) {
+axTicksByTime <- function(x, ticks.on='auto', k=1, 
+                          labels=TRUE, format.labels=TRUE, ends=TRUE,
+                           gt = 2, lt = 30) {
+    # if a vector of times/dates, convert to dummy xts object
+    if(timeBased(x)) x <- xts(rep(1,length(x)),x)
     
     tick.opts <- c("years", "months", "weeks", "days", "hours", 
         "minutes", "seconds")
@@ -14,7 +18,7 @@ axTicksByTime <- function(ival, ticks.on='auto', k=1, labels=TRUE, ends=TRUE, gt
         is <- structure(rep(0,length(tick.opts)),.Names=tick.opts)
         for(i in 1:length(tick.opts)) {
           y <- strsplit(tick.opts[i],' ')[[1]]
-          ep <-endpoints(ival,y[1],as.numeric(y[2]))
+          ep <-endpoints(x,y[1],as.numeric(y[2]))
           is[i] <- length(ep) -1
           if(is[i] > lt) 
             break
@@ -26,11 +30,21 @@ axTicksByTime <- function(ival, ticks.on='auto', k=1, labels=TRUE, ends=TRUE, gt
 
     if (is.null(cl)) {
         ep <- NULL
-    } else  ep <- endpoints(ival, cl, ck) 
+    } else  ep <- endpoints(x, cl, ck) 
     if(ends)
       ep <- ep + c(rep(1,length(ep)-1),0)
-    if(labels) 
-      names(ep) <- as.character(index(ival)[ep])
+    if(labels) {
+      if(format.labels) {
+        # format by level of time detail
+        time.scale <- periodicity(x)$scale
+        x.labels <- format(index(x)[ep], "%n%b%n%Y")
+        if (time.scale == "weekly" | time.scale == "daily") 
+            x.labels <- format(index(x)[ep], "%b %d%n%Y")
+        if (time.scale == "minute" | time.scale == "hourly") 
+            x.labels <- format(index(x)[ep], "%b %d%n%H:%M")
+        names(ep) <- x.labels
+      } else names(ep) <- as.character(index(x)[ep])
+    }
     ep  
 }
 axTicksByTime0 <- function(ival, ticks.on='auto', k=1, labels=TRUE, ends=FALSE, gt = 2, lt = 30) {

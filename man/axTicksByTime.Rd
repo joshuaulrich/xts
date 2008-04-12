@@ -13,14 +13,16 @@ or by passing 'auto' to the \code{ticks.on} argument,
 to get a best heuristic fit.
 }
 \usage{
-axTicksByTime(ival, ticks.on='auto', k = 1,
-              labels=TRUE, ends=TRUE, gt = 2, lt = 30)
+axTicksByTime(x, ticks.on='auto', k = 1,
+              labels=TRUE, format.labels=TRUE, ends=TRUE,
+              gt = 2, lt = 30)
 }
 \arguments{
-  \item{ival}{ the object indexed by time }
+  \item{x}{ the object indexed by time, or a vector of times/dates }
   \item{ticks.on}{ what to break on }
   \item{k}{ frequency of breaks }
   \item{labels}{ should a labeled vector be returned }
+  \item{format.labels}{ should labels be formatted to periodicity }
   \item{ends}{ should the ends be adjusted }
   \item{gt}{ lower bound on number of breaks }
   \item{lt}{ upper bound on number of breaks }
