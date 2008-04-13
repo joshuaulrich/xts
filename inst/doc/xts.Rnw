@@ -408,7 +408,7 @@ endpoints(matrix_xts,on='months')
 endpoints(matrix_xts,on='weeks')
 @
 \subsubsection*{Change periodicity}
-The most ubiquitous type of data
+One of the most ubiquitous type of data
 in finance is OHLC data (Open-High-Low-Close). Often is is necessary
 to change the periodicity of this data to something
 coarser - e.g. take daily data and aggregate to weekly
@@ -431,8 +431,21 @@ even something like {\tt yearmon}.  The online
 documentation provides more details as to additional
 arguments.
 
-\subsubsection*{Periodic Apply}
+\subsubsection*{Periodically apply a function}
+Often it is desirable to be able to calculate a
+particular statistic, or evaluate a function, over
+a set of non-overlapping time periods. With the
+{\tt period.apply} family of functions
+it is quite simple:
 
+<<periodapply>>=
+period.apply(matrix_xts[,4],endpoints(matrix_xts),mean)
+
+period.sum(matrix_xts[,4], endpoints(matrix_xts))
+
+apply.monthly(matrix_xts[,4],mean)
+@
+ 
 \section{Developing with {\tt xts}}
 
 \subsection{One function for all classes}

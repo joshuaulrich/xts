@@ -16,7 +16,7 @@ function(x, ..., error=TRUE)
     } else  
     if(error) {
       message(gsub('\n','',xx))
-    } else FALSE
+    } else x
   } else {
     xx
   }

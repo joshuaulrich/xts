@@ -77,10 +77,24 @@ function (x, ...)
 `period.apply` <-
 function (x, INDEX, FUN, ...) 
 {
+  if(!is.xts(x)) {
+    xx <- use.xts(x,error=FALSE)
+  } else xx <- x
+
+  if(!is.xts(xx)) {
     FUN <- match.fun(FUN)
-    sapply(1:(length(INDEX) - 1), function(y) {
-        FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
+    xx <- sapply(1:(length(INDEX) - 1), function(y) {
+          FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
     })
+  } else {
+    FUN <- match.fun(FUN)
+    new.index <- index(xx)[INDEX]
+    xx <- sapply(1:(length(INDEX) - 1), function(y) {
+          FUN(xx[(INDEX[y] + 1):INDEX[y + 1]], ...)
+    })
+    xx <- xts(xx,new.index)
+  }
+  xx
 }
 
 `apply.daily` <-

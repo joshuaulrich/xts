@@ -23,13 +23,11 @@ function(x,INDEX) {
                 ret=as.double(rep(0,(length(ep)-1)))
                 ,PACKAGE='xts')
   if(timeBased(index(x))) {
-    tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+    tz <- xts(q$ret,index(x)[ep[-1]])
   } else {
-    tz <- zoo(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+    tz <- zoo(q$ret,index(x)[ep[-1]])
   }
-  colnames(tz) <- 'period.sum'
   tz
-
 }
 `period.prod` <-
 function(x,INDEX) {
@@ -44,11 +42,10 @@ function(x,INDEX) {
                 ret=as.double(rep(0,(length(ep)-1)))
                 ,PACKAGE='xts')
   if(timeBased(index(x))) {
-    tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+    tz <- xts(q$ret,index(x)[ep[-1]])
   } else {
-    tz <- zoo(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+    tz <- zoo(q$ret,index(x)[ep[-1]])
   }
-  colnames(tz) <- 'period.prod'
   tz
 }
 `period.max` <-
@@ -64,11 +61,10 @@ function(x,INDEX) {
                 ret=as.double(rep(0,(length(ep)-1)))
                 ,PACKAGE='xts')
   if(timeBased(index(x))) {
-    tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+    tz <- xts(q$ret,index(x)[ep[-1]])
   } else {
-    tz <- zoo(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+    tz <- zoo(q$ret,index(x)[ep[-1]])
   }
-  colnames(tz) <- 'period.max'
   tz
 }
 `period.min` <-
@@ -84,10 +80,9 @@ function(x,INDEX) {
                 ret=as.double(rep(0,(length(ep)-1)))
                 ,PACKAGE='xts')
   if(timeBased(index(x))) {
-    tz <- xts(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+    tz <- xts(q$ret,index(x)[ep[-1]])
   } else {
-    tz <- zoo(matrix(q$ret,nc=1,byrow=TRUE),index(x)[ep[-1]])
+    tz <- zoo(q$ret,index(x)[ep[-1]])
   }
-  colnames(tz) <- 'period.min'
   tz
 }

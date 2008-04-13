@@ -9,18 +9,20 @@
 * [20080224] dynamically determine .CLASSnames attribute for as.xts methods
 
 * 'use.xts' method for use inside functions - possibly with custom warnings, and
-  reduced construction overhead
+  reduced construction overhead [done -jar]
       
 * 'summary.xts'
 
 * 'adjIndex': adjust time stamps in-place.
 
-* 'xcoredata'
+* 'xcoredata' [done -jar]
+
+* add additional Fortran period.mean, period.sd, period.var
 
 * write 'as.ts.xts' method: handle NAs correctly
 
 
-* 'Ops.xts' method - done-jar
+* 'Ops.xts' method - [done -jar]
 
 
 * An xtsAlign method to align series by date. - match monthly data to first/last...
@@ -61,6 +63,9 @@
 * aggregate.xts (dispatch to NextMethod or call aggregate.zoo and
   re 'xts' results
 
+* as.xts.numeric for named numerics if names are coercible to time-based??
+
+* new %::% binary operator to create sequence of timeBased dates - from strings and timeBased
 
 * as.data.frame.xts, as.matrix.xts
   as.zoo.xts, as.its.xts,
