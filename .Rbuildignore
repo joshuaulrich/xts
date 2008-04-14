@@ -1,4 +1,5 @@
 inst
 inst/doc
 inst/doc/intro.Rnw
+tests
 tests/doRUnit.R

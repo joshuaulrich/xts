@@ -12,7 +12,7 @@ like zoo.
 \tabular{ll}{
 Package: \tab xts\cr
 Type: \tab Package\cr
-Version: \tab 0.0-12\cr
+Version: \tab 0.0-13\cr
 Date: \tab 2008-04-13\cr
 License: \tab GPL-3\cr
 }

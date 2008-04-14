@@ -1,7 +1,7 @@
 Package: xts
 Type: Package
 Title: Extensible Time Series
-Version: 0.0-12
+Version: 0.0-13
 Date: 2007-04-13
 Author: Jeffrey A. Ryan, Josh M. Ulrich
 Depends: zoo
