@@ -10,7 +10,7 @@
 #  are also defined below
 
 `xts` <-
-function(x,order.by=index(x),frequency=NULL,...) {
+function(x=NULL,order.by=index(x),frequency=NULL,...) {
   if(!any(sapply(c('Date','POSIXct','chron','dates','times','timeDate','yearmon','yearqtr'),
      function(xx) inherits(order.by,xx)))) {
     stop("order.by requires an appropriate time-based object")

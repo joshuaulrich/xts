@@ -3,6 +3,7 @@ useDynLib(xts)
 
 # debugging
 #export(re.zoo,as.xts.zoo)
+export(firstof,lastof,timeBased)
 
 # user visible core xts functions
 export(xts)
@@ -115,6 +116,8 @@ S3method(as.xts,its)
 # irts (package:tseries) specific methods
 S3method(as.xts,irts)
 
+# Date specific methods
+S3method(as.xts,Date)
 
 ## currently unexported functions that _may_ be exported at some point
 

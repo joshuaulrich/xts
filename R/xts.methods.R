@@ -67,9 +67,9 @@ function(x, i, j, drop = TRUE, ...)
 
       i.tmp <- NULL
       for(ii in i) {
-        if(!identical(grep("::",ii),integer(0))) {
+        if(!identical(grep("(::)|/",ii),integer(0))) {
           # range operator
-          dates <- strsplit(ii,'::')[[1]]
+          dates <- strsplit(ii,'(::)|/')[[1]]
           
           # test for single side range operation
           first.time <- ifelse(dates[1]=="",

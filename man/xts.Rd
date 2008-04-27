@@ -8,7 +8,7 @@ Constructor function for creating an extensible time-series object.
 \code{xts} is used to create an \code{xts} object from raw data inputs.
 }
 \usage{
-xts(x, order.by = index(x),frequency = NULL, ...)
+xts(x = NULL, order.by = index(x),frequency = NULL, ...)
 
 is.xts(x)
 }
