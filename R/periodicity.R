@@ -73,26 +73,43 @@ function (x, ...)
     }
 }
 
-
 `period.apply` <-
+function(x, INDEX, FUN, ...)
+{
+    x <- use.xts(x, error = FALSE)
+    FUN <- match.fun(FUN)
+    xx <- sapply(1:(length(INDEX) - 1), function(y) {
+                   FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
+                })  
+    if (is.xts(x)) {
+        xx <- xts(xx, index(x)[INDEX])
+        CLASS(xx) <- CLASS(x)
+        xtsAttributes(xx) <- xtsAttributes(x)
+    }   
+    reclass2(xx)  
+}
+
+
+`period.apply.original` <-
 function (x, INDEX, FUN, ...) 
 {
-  if(!is.xts(x)) {
-    xx <- use.xts(x,error=FALSE)
-  } else xx <- x
+  x <- use.xts(x,error=FALSE)
 
-  if(!is.xts(xx)) {
+  if(!is.xts(x)) {
     FUN <- match.fun(FUN)
     xx <- sapply(1:(length(INDEX) - 1), function(y) {
           FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
     })
   } else {
     FUN <- match.fun(FUN)
-    new.index <- index(xx)[INDEX]
+    new.index <- index(x)[INDEX]
     xx <- sapply(1:(length(INDEX) - 1), function(y) {
-          FUN(xx[(INDEX[y] + 1):INDEX[y + 1]], ...)
+          FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
     })
     xx <- xts(xx,new.index)
+    CLASS(xx) <- CLASS(x)
+    xtsAttributes(xx) <- xtsAttributes(x)
+    xx <- reclass2(xx)
   }
   xx
 }

@@ -9,6 +9,8 @@ function(x)
 `use.xts` <-
 function(x, ..., error=TRUE)
 {
+  if(is.xts(x)) return(x)
+
   xx <- try(as.xts(x,...),silent=TRUE)
   if(inherits(xx,'try-error')) {
     if(is.character(error)) {

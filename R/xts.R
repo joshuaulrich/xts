@@ -72,6 +72,8 @@ function(x, match.to, ...) {
   } else x
 }
 
+`reclass` <- reclass2
+
 `CLASS` <-
 function(x) {
   cl <- attr(x,'.CLASS')
