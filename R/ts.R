@@ -30,7 +30,7 @@ function(x,...) {
   #ts(coredata(x), start=tsp.attr[1],frequency=freq.attr)
   dim <- attr(x, 'dim')
   dn <- attr(x,'dimnames')
-  if(dim[2]==1) {
+  if(is.null(dim) || dim[2]==1) {
     attr(x,'dim') <- attr(x, 'dimnames') <- NULL
   }
   zoo:::as.ts.zoo(x)
@@ -60,10 +60,10 @@ function(x,dateFormat,...) {
         # something finer than year.month is specified - can't reliable convert
         dateFormat <- ifelse(max(time(x)) > 86400,'POSIXct','Date')
         order.by <- do.call(paste('as',dateFormat,sep='.'),
-                            list(as.numeric(time(x)),...))
+                            list(as.numeric(time(x)),origin='1970-01-01',...))
       } else {
         mo <- ifelse(length(mo) < 1, 1,floor(mo * 12)+1)
-        order.by <- seq.Date(as.Date(firstof(yr,mo)),length.out=length(x),by='year')   
+        order.by <- seq.Date(as.Date(firstof(yr,mo),origin='1970-01-01'),length.out=length(x),by='year')   
       }
     } else
       if(frequency(x) == 4) {

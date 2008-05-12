@@ -16,7 +16,11 @@ function(x, ..., error=TRUE)
     } else  
     if(error) {
       message(gsub('\n','',xx))
-    } else x
+    } else {
+      if(!exists(deparse(substitute(x))))
+        stop(paste('object',dQuote(deparse(substitute(x))),"not found"))
+      return(x) 
+    }
   } else {
     xx
   }

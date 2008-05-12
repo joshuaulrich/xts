@@ -51,6 +51,27 @@ function(x) {
   } else x
 }
 
+`reclass2` <-
+function(x, match.to, ...) {
+  if(!missing(match.to) && is.xts(match.to)) {
+    if(NROW(x) != length(index(match.to)))
+      stop('incompatible match.to attibutes')
+    if(!is.xts(x)) x <- xts(x,index(match.to))
+    CLASS(x) <- CLASS(match.to)
+    xtsAttributes(x) <- xtsAttributes(match.to)
+  }
+  oldCLASS <- CLASS(x)
+  if(length(oldCLASS) > 0) {
+    if(!is.null(dim(x))) {
+      if(!is.null(attr(x,'.ROWNAMES'))) {
+        rownames(x) <- attr(x,'.ROWNAMES')[1:NROW(x)]
+      } else rownames(x) <- NULL
+    }
+    attr(x,'.ROWNAMES') <- NULL
+    do.call(paste('re',oldCLASS,sep='.'),list(x))
+  } else x
+}
+
 `CLASS` <-
 function(x) {
   cl <- attr(x,'.CLASS')

@@ -1,6 +1,7 @@
 \name{as.xts}
 \alias{as.xts}
 \alias{xtsible}
+\alias{use.xts}
 \alias{reclass}
 \title{ Convert Object To And From Class xts }
 \description{
@@ -53,7 +54,4 @@ An S3 object of class \code{xts}.
 }
 \author{ Jeffrey A. Ryan }
 \seealso{ \code{\link{xts}},\code{\link{as.xts.methods}} }
-\examples{
-
-}
 \keyword{ utilities }

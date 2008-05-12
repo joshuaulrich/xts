@@ -1,5 +1,5 @@
-inst
+#inst
 inst/doc
 inst/doc/intro.Rnw
-tests
-tests/doRUnit.R
+#tests
+#tests/doRUnit.R

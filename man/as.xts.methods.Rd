@@ -71,7 +71,4 @@ An S3 object of class \code{xts}.
 }
 \author{ Jeffrey A. Ryan }
 \seealso{ \code{\link{xts}} }
-\examples{
-
-}
 \keyword{ utilities }
