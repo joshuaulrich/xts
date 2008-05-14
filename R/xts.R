@@ -53,12 +53,16 @@ function(x) {
 
 `reclass2` <-
 function(x, match.to, ...) {
-  if(!missing(match.to) && is.xts(match.to)) {
-    if(NROW(x) != length(index(match.to)))
-      stop('incompatible match.to attibutes')
-    if(!is.xts(x)) x <- xts(x,index(match.to))
-    CLASS(x) <- CLASS(match.to)
-    xtsAttributes(x) <- xtsAttributes(match.to)
+  if(!missing(match.to)) {
+    if(is.xts(match.to)) {
+      if(NROW(x) != length(index(match.to)))
+        stop('incompatible match.to attibutes')
+      if(!is.xts(x)) x <- xts(x,index(match.to))
+      CLASS(x) <- CLASS(match.to)
+      xtsAttributes(x) <- xtsAttributes(match.to)
+    } else {
+      stop('match.to must be \'xts\'')
+    }
   }
   oldCLASS <- CLASS(x)
   if(length(oldCLASS) > 0) {

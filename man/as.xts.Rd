@@ -13,10 +13,11 @@ losing any attributes of the original format.
 as.xts(x, ...)
 xtsible(x)
 
-reclass(x)
+reclass(x, match.to, ...)
 }
 \arguments{
   \item{x}{ data object to convert. See details for supported types }
+  \item{match.to}{ \code{xts} object whose attributes will be passed to \code{x}}
   \item{\dots}{ additional parameters or attributes }
 }
 \details{
