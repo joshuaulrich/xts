@@ -19,8 +19,8 @@ function(x, ..., error=TRUE)
     if(error) {
       message(gsub('\n','',xx))
     } else {
-      if(!exists(deparse(substitute(x))))
-        stop(paste('object',dQuote(deparse(substitute(x))),"not found"))
+#      if(!exists(deparse(substitute(x))))
+#        stop(paste('object',dQuote(deparse(substitute(x))),"not found"))
       return(x) 
     }
   } else {
