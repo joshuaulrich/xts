@@ -27,3 +27,11 @@ function(x, ..., error=TRUE)
     xx
   }
 }
+
+`using.xts` <- function(x) {
+  xx <- match.call()
+  xxObj <- eval(xx[[-1]][[2]])
+  inObj <- use.xts(xxObj, error=FALSE)
+  xx <- eval(match.call()[[-1]])
+  reclass(xx, inObj)
+}
