@@ -2,6 +2,7 @@
 \alias{as.xts}
 \alias{xtsible}
 \alias{use.xts}
+\alias{using.xts}
 \alias{reclass}
 \title{ Convert Object To And From Class xts }
 \description{
