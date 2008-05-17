@@ -224,7 +224,7 @@ function(..., deparse.level=1) {
  xts.CLASS <- sapply(args, CLASS)
  xts.CLASSattr <- lapply(args, xtsAttributes, user=FALSE)
  xts.USERattr <- lapply(args, xtsAttributes, user=TRUE)
- has.ROWNAMES <- any( lapply(args, function(x) any(names(attributes(x))=='.ROWNAMES')) )
+ has.ROWNAMES <- any( sapply(args, function(x) any(names(attributes(x))=='.ROWNAMES')) )
 
  # Bind objects
  ret <- zoo:::cbind.zoo(...)

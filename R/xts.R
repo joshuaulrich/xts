@@ -61,7 +61,8 @@ function(x, match.to, ...) {
     xtsAttributes(x) <- xtsAttributes(match.to)
   }
   oldCLASS <- CLASS(x)
-  if(length(oldCLASS) > 0) {  # should this be is.null(oldCLASS)?
+  # should this be is.null(oldCLASS)?
+  if(length(oldCLASS) > 0 && is.null(attr(x,'.RECLASS'))) {  
     if(!is.null(dim(x))) {
       if(!is.null(attr(x,'.ROWNAMES'))) {
         rownames(x) <- attr(x,'.ROWNAMES')[1:NROW(x)]
@@ -69,7 +70,9 @@ function(x, match.to, ...) {
     }
     attr(x,'.ROWNAMES') <- NULL
     do.call(paste('re',oldCLASS,sep='.'),list(x))
-  } else x
+  }
+  attr(x,'.RECLASS') <- NULL
+  return(x)
 }
 
 `reclass` <- reclass2

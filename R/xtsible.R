@@ -9,7 +9,10 @@ function(x)
 `use.xts` <-
 function(x, ..., error=TRUE)
 {
-  if(is.xts(x)) return(x)
+  if(is.xts(x)) {
+    xtsAttributes(x) <- list(.RECLASS=FALSE)
+    return(x)
+  }
 
   xx <- try(as.xts(x,...),silent=TRUE)
   if(inherits(xx,'try-error')) {
