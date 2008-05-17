@@ -76,7 +76,7 @@ function (x, ...)
 `period.apply` <-
 function(x, INDEX, FUN, ...)
 {
-    x <- use.xts(x, error = FALSE)
+    x <- try.xts(x, error = FALSE)
     FUN <- match.fun(FUN)
     xx <- sapply(1:(length(INDEX) - 1), function(y) {
                    FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
@@ -86,7 +86,7 @@ function(x, INDEX, FUN, ...)
         CLASS(xx) <- CLASS(x)
         xtsAttributes(xx) <- xtsAttributes(x)
     }   
-    reclass2(xx)  
+    reclass(xx)  
 }
 
 
