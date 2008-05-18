@@ -10,7 +10,6 @@ function(x)
 function(x, ..., error=TRUE)
 {
   if(is.xts(x)) {
-    xtsAttributes(x) <- list(.RECLASS=FALSE)
     return(x)
   }
 
@@ -22,11 +21,12 @@ function(x, ..., error=TRUE)
     if(error) {
       message(gsub('\n','',xx))
     } else {
-#      if(!exists(deparse(substitute(x))))
+     if(!exists(deparse(substitute(x))))
 #        stop(paste('object',dQuote(deparse(substitute(x))),"not found"))
       return(x) 
     }
   } else {
+    # made positive: now test if needs to be reclassed
     xx
   }
 }
@@ -35,7 +35,7 @@ function(x, ..., error=TRUE)
 
 `use.reclass` <- function(x) {
   xx <- match.call()
-  xxObj <- eval(xx[[-1]][[2]])
+  xxObj <- eval.parent(xx[[-1]][[2]],1)
   inObj <- try.xts(xxObj, error=FALSE)
   xx <- eval(match.call()[[-1]])
   reclass(xx, inObj)

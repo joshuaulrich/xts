@@ -37,32 +37,32 @@ function(x=NULL,order.by=index(x),frequency=NULL,...) {
   return(z)
 }
 
+#`reclass` <-
+#function(x) {
+#  old.class <- CLASS(x)
+#  if(length(old.class) > 0) {
+#    if(!is.null(dim(x))) {
+#      if(!is.null(attr(x,'.ROWNAMES'))) {
+#        rownames(x) <- attr(x,'.ROWNAMES')[1:NROW(x)]
+#      } else rownames(x) <- NULL
+#    }
+#    attr(x,'.ROWNAMES') <- NULL
+#    do.call(paste('re',old.class,sep='.'),list(x))
+#  } else x
+#}
+#
 `reclass` <-
-function(x) {
-  old.class <- CLASS(x)
-  if(length(old.class) > 0) {
-    if(!is.null(dim(x))) {
-      if(!is.null(attr(x,'.ROWNAMES'))) {
-        rownames(x) <- attr(x,'.ROWNAMES')[1:NROW(x)]
-      } else rownames(x) <- NULL
-    }
-    attr(x,'.ROWNAMES') <- NULL
-    do.call(paste('re',old.class,sep='.'),list(x))
-  } else x
-}
-
-`reclass2` <-
 function(x, match.to, ...) {
   if(!missing(match.to) && is.xts(match.to)) {
     if(NROW(x) != length(index(match.to)))
       stop('incompatible match.to attibutes')
-    if(!is.xts(x)) x <- xts(x,index(match.to))
+    if(!is.xts(x)) x <- xts(coredata(x),index(match.to))
     CLASS(x) <- CLASS(match.to)
     xtsAttributes(x) <- xtsAttributes(match.to)
   }
   oldCLASS <- CLASS(x)
   # should this be is.null(oldCLASS)?
-  if(length(oldCLASS) > 0 && is.null(attr(x,'.RECLASS'))) {  
+  if(length(oldCLASS) > 0 && !inherits(oldClass,'xts')) {  
     if(!is.null(dim(x))) {
       if(!is.null(attr(x,'.ROWNAMES'))) {
         rownames(x) <- attr(x,'.ROWNAMES')[1:NROW(x)]
@@ -70,12 +70,10 @@ function(x, match.to, ...) {
     }
     attr(x,'.ROWNAMES') <- NULL
     do.call(paste('re',oldCLASS,sep='.'),list(x))
-  }
-  attr(x,'.RECLASS') <- NULL
-  return(x)
+  } else x
 }
 
-`reclass` <- reclass2
+#`reclass` <- reclass2
 
 `CLASS` <-
 function(x) {

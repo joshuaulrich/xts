@@ -9,7 +9,7 @@
 
 \title{\bf xts: Extensible Time Series }
 \author{Jeffrey A. Ryan \and Joshua M. Ulrich}
-\date{April 9, 2008}
+\date{May 18, 2008}
 
 \begin{document}
 
@@ -24,7 +24,7 @@ Native {\tt R} classes potentially suitable
 for time-series data include {\tt data.frame}, {\tt matrix}, {\tt vector}, and
 {\tt ts} objects. Additional time-series tools have been subsequently introduced 
 in contributed packages to
-handle some of the shortcomings of the native {\tt R} classes.
+handle some of the domain-specific shortcomings of the native {\tt R} classes.
 These include {\tt irts} from the {\tt tseries} package\cite{tseries},
 {\tt timeSeries} from the {\tt Rmetrics} bundle\cite{rmetrics}, and
 {\tt its}~\cite{its} and {\tt zoo}~\cite{zoo} from their 
@@ -32,7 +32,7 @@ respective packages. Each of these contributed classes provide unique solutions
 to many of the issues
 related to working with time-series in R.
 
-While it seems a bit paradoxical with all current options
+While it seems a bit paradoxical with all the current options
 available, what {\tt R} really needed was one more
 time-series class.  Why? Users of R have had many choices over the
 years for managing time-series data. This variety has meant that
@@ -74,7 +74,7 @@ is guaranteed to have to only manage a single class of objects.
 It becomes unecessary to write specific methods to handle different data.
 While many functions do have
 methods to accommodate different classes, most do not. Before {\tt xts}, the
-{\tt chartSeries} function in the {\tt quantmod} package
+{\tt chartSeries} function in the {\tt quantmod} package\cite{quantmod}
 was only able to handle zoo objects well.
 Work had been done to allow for timeSeries object to be used as well, but
 many issues were still being worked out.
@@ -150,9 +150,10 @@ to be sufficient for most applications.
 In order for one major feature of the {\tt xts} class
 to be possible - the conversion and re-conversion of classes
 to and from {\tt xts} - certain elements must be preserved within
-a converted object.  These are for internal use, and
+the converted object.  These are for internal use, and
 as such require little further explanation in an introductory
-document.
+document. Interested readers are invited to examine the source as
+well as read the developer documentation.
 
 \subsubsection*{xtsAttributes}
 This is what makes the xts class an \emph{extensible}
@@ -165,8 +166,8 @@ to an xts object, so they may be restored with {\tt reclass}.
 
 \section{Using the {\tt xts} package}
 Just what is required to start using {\tt xts}?  Nothing more
-than a simple conversion of your current time-series data, or
-using the {\tt xts} constructor to create a new object.
+than a simple conversion of your current time-series data with
+{\tt as.xts}, or create a new object with the {\tt xts} constructor.
 
 \subsection{Creating data objects: {\tt as.xts} and {\tt xts}}
 There are two equally valid mechanisms to create an {\tt xts}
@@ -217,6 +218,10 @@ the {\tt  xts} constructor function, in essentially the same way
 a {\tt  zoo} object is created with the exception that at present
 there is no equivelant {\tt zooreg} class.
 
+<<xtsconstructor>>=
+xts(1:10, Sys.Date()+1:10)
+@
+
 \subsection{{\tt xts} methods}
 There is a full complement of standard methods to make use of the features
 present in {\tt xts} objects. The generic methods currently
@@ -233,7 +238,7 @@ and a quick look at plotting {\tt xts} objects with the {\tt plot}
 function.
 
 \subsubsection*{Subsetting}
-The most noticably difference in the behavior of \texttt{xts} objects
+The most noticable difference in the behavior of \texttt{xts} objects
 will be apparent in the use of the ``{\tt [}'' operator. Using
 special notation, one can use date-like strings to extract
 data based on the time-index.  Using increasing levels of time-detail,
@@ -242,17 +247,19 @@ it is possible to subset the object by year, week, days - or even seconds.
 The {\em i} (row)
 argument to the subset operator ``{\tt [}'', in addition to accepting numeric
 values for indexing,
-can also be a character string, or vector of characters,
-left-specified with respect to the standard ISO 
-time format --- {\em ``CCYY-MM-DD HH:MM:SS''}.  This means that for one 
+can also be a character string, a time-based object, or vector of either.
+The format must left-specified with respect to the standard ISO 
+time format --- {\em ``CCYY-MM-DD HH:MM:SS''}~\cite{ISO}.  This means that for one 
 to extract a particular month, it is necesssary to fully specify the 
 year as well. To identify a particular hour, say all observations
 in the eighth hour on January 1, 2007, one would likewise need
 to include the full year, month and day - e.g. ``2007-01-01 08''. 
 
 It is also possible to explicitly request a range of times via
-this index-based subsetting, using a double colon operator: ``::''.
-The basic form is {\em ``from::to''}, where both {\em from} and {\em to}
+this index-based subsetting, using a double colon operator: ``::'',
+or the recommended ISO range seperator ``/''.
+The basic form is {\em ``from::to''} or {\em ``from/to''},
+where both {\em from} and {\em to}
 are optional.  If either side is missing, it is interpretted as
 a request to retrieve data from the beginning, or through the end of the
 data object.
@@ -276,8 +283,8 @@ cat('...\n')
 
 Now extract all the data from the beginning through
 January 7, 2007.
-<<xtsmethods2, eval=FALSE>>=
-matrix_xts['::2007-01-07']
+<<xtsmethods2, keep.source=TRUE, eval=FALSE>>=
+matrix_xts['::2007-01-07'] # or matrix_xts['/2007-01-07']
 @
 <<xtsmethods2-hidden, echo=FALSE>>=
 matrix_xts['::2007-01-07']
@@ -314,7 +321,7 @@ To that end, {\tt xts} provides facilities for indexing
 based on any of the current time-based classes. These
 include {\tt Date}, {\tt POSIXct}, {\tt chron}, {\tt yearmon},
 {\tt yearqtr}, and {\tt timeDate}.  The index itself may
-be accessed via the zoo generics adapted extended to xts --- {\tt index} and
+be accessed via the zoo generics extended to xts --- {\tt index} and
 the replacement function {\tt index<-}.
 
 It is also possible to directly query and set the
@@ -322,6 +329,11 @@ index class of an {\tt xts} object by using the functions
 {\tt indexClass} and its in-place replacement method {\tt indexClass<-}.
 Temporary conversion, resulting in a new object with the requested
 index class, can be accomplished via the {\tt convertIndex} function.
+
+<<indexClass>>=
+indexClass(matrix_xts)
+indexClass(convertIndex(matrix_xts,'POSIXct'))
+@
 
 \subsubsection*{Plotting}
 \SweaveOpts{height=5,width=10}
@@ -340,17 +352,17 @@ One can also specify the specific points to use
 by passing a character string to the argument
 indicating which time period to create tickmarks on.
 <<xtsaxTicksByTime>>=
-axTicksByTime(matrix_xts,'months')
+axTicksByTime(matrix_xts, ticks.on='months')
 @
 A simple example of the plotting functionality
 offered by this labelling can be seen here:
 \begin{center}
 <<xtsplot, fig=TRUE>>=
-plot(matrix_xts,major.ticks='months',minor.ticks=FALSE,main=NULL,col=3)
+plot(matrix_xts[,1],major.ticks='months',minor.ticks=FALSE,main=NULL,col=3)
 @
 \end{center}
 
-\subsection{Restoring the original class - {\tt reclass}}
+\subsection{Restoring the original class - {\tt reclass} \& {\tt use.reclass}}
 By now you may be interested in some of the xts functionality
 presented, and wondering how to incorporate it into
 a current workflow --- but not yet ready to commit
@@ -379,11 +391,27 @@ make hours of development into minutes per function. More
 details on this will be covered later in the developing with
 xts section of this document.
 
+An alternate use of this {\emph reclass} functionality
+is to help preserve an objects attributes after calling
+a function that is not aware of your particular class.
+
+If the function you are using does not make use of
+reclass internally, it may still be possible to let
+xts convert and reconvert your time-based object for you.
+The caveat here is that the object returned must be of the same
+length as the first argument to the function, which
+also must be the argument's position you are looking to
+preserve the class of.  Simply wrapping the function
+tha meets these criteria in {\tt use.reclass} will
+attempt to coerce the returned output of the function
+
 \subsection{Additional time-based tools}
 In addition to the core {\tt xts} tools covered
 above, there are more functions that are included
 in xts to make the process of dealing with
-time-series data easier.
+time-series data easier. Some of these have been
+moved from the package {\tt quantmod} to {\tt xts}
+to make it easier to use them within other applications.
 
 \subsubsection*{Calculate periodicity}
 The {\tt periodicity} function provides
@@ -440,17 +468,21 @@ it is quite simple:
 
 <<periodapply>>=
 period.apply(matrix_xts[,4],endpoints(matrix_xts),mean)
+@
 
+<<periodsum>>=
 period.sum(matrix_xts[,4], endpoints(matrix_xts))
+@
 
+<<applymonthly>>=
 apply.monthly(matrix_xts[,4],mean)
 @
  
 \section{Developing with {\tt xts}}
 
-\subsection{One function for all classes}
+\subsection{One function for all classes: {\tt try.xts}}
 
-\subsection{Returning the original class}
+\subsection{Returning the original class: {\tt reclass}}
 
 <<b>>=
 
@@ -480,24 +512,34 @@ apply.monthly(matrix_xts[,4],mean)
 \noindent
 
 \begin{thebibliography}{99}
-\bibitem{tseries} author:
-\emph{tseries:},
-R package version v, CCYY
-\bibitem{rmetrics} DW:
-\emph{Rmetrics:},
+\bibitem{zoo} Achim Zeileis and Gabor Grothendieck (2005):
+\emph{ zoo: S3 Infrastructure for Regular and Irregular Time Series.}
+Journal of Statistical Software, 14(6), 1-27. URL http://www.jstatsoft.org/v14/i06/
 
-\bibitem{its} :
-\emph{its: Irregular Time Series},
+\bibitem{tseries} Adrian Trapletti and Kurt Hornik (2007):
+\emph{tseries: Time Series Analysis and Computational Finance.} R package version 0.10-11.
 
-\bibitem{zoo} DW:
-\emph{zoo: Z's Ordered Observations},
+\bibitem{rmetrics} Diethelm Wuertz, many others and see the SOURCE file (2007):
+\emph{Rmetrics: Rmetrics - Financial Engineering and Computational Finance.}
+R package version 260.72. http://www.rmetrics.org
+
+\bibitem{its} Portfolio \& Risk Advisory Group and Commerzbank Securities (2006):
+\emph{its: Irregular Time Series.} R package version 1.1.5.
+
+\bibitem{ISO} International Organization for Standardization (2004):
+\emph{ISO 8601: Data elements and interchage formats ---
+      Information interchange --- Representation of dates and time}
+URL http://www.iso.org
 
 \bibitem{R} R Development Core Team:
 \emph{R: A Language and Environment for Statistical Computing},
 R Foundation for Statistical Computing, Vienna, Austria.
 ISBN 3-900051-07-0, URL http://www.R-project.org
-\bibitem{p} Jeffrey A. Ryan:
-\emph{Defaults: Create Global Function Defaults},
-R package version 1.1-0, 2007
+
+\bibitem{quantmod} Jeffrey A. Ryan (2008):
+\emph{quantmod: Quantitative Financial Modelling Framework.}
+R package version 0.3-5. URL http://www.quantmod.com
+URL http://r-forge.r-project.org/projects/quantmod
+
 \end{thebibliography}
 \end{document}

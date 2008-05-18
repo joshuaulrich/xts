@@ -109,7 +109,7 @@ function (x, INDEX, FUN, ...)
     xx <- xts(xx,new.index)
     CLASS(xx) <- CLASS(x)
     xtsAttributes(xx) <- xtsAttributes(x)
-    xx <- reclass2(xx)
+    xx <- reclass(xx)
   }
   xx
 }
