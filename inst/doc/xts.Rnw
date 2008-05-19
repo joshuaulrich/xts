@@ -106,6 +106,7 @@ its basic usage, explain how developing with {\tt xts} can save
 package development time, and finally how to extend the class - informally
 and formally.
 
+\pagebreak
 \section{The structure of {\tt xts}}
 To understand a bit more of \emph{what an xts object can do}, it may
 be beneficial to know \emph{what an xts object is}. This section
@@ -164,6 +165,7 @@ class specific attributes (e.g. FinCenter from timeSeries)
 are stored during conversion
 to an xts object, so they may be restored with {\tt reclass}.
 
+\pagebreak
 \section{Using the {\tt xts} package}
 Just what is required to start using {\tt xts}?  Nothing more
 than a simple conversion of your current time-series data with
@@ -376,34 +378,73 @@ the original class, it is as simple as calling the
 function {\tt reclass} to return the object to its
 original class.
 
-This differs dramatically from the standard {\tt as}
-conversion though. Internally key attributes of your
+\subsubsection*{(Re)converting classes manually: {\tt reclass}}
+<<asxtsreclass, keep.source=TRUE>>=
+# using xts-style subsetting doesn't work on non-xts objects
+sample_matrix['2007-06']
+# convert to xts to use time-based subsetting
+str(as.xts(sample_matrix)['2007-06'])
+
+# reclass to get to original class back
+str(reclass(as.xts(sample_matrix)['2007-06']))
+@
+
+This differs dramatically from the standard {\tt as.*****}
+conversion though. Internally, key attributes of your
 original data object are preserved and adjusted to
 assure that the process introduces no changes other
 than those requested.  Think of it as a smart {\tt as}.
 
-{\tt reclass} is of much greater use behind the scenes
+Behind the scenes, {\tt reclass} has enormous value
 in functions that convert all incoming data to {\tt xts}
 for simplified processing. Often it is necessary to
 return an object back to the user in the class they
-are expecting. It is here where {\tt reclass} can
-make hours of development into minutes per function. More
-details on this will be covered later in the developing with
+are expecting --- the principal of least surprise.
+It is in these circumstances where {\tt reclass} can
+turn hours of tedious development into mere minutes per function. More
+details on the details of using this functionality
+for developers will be covered later in the Developing with
 xts section of this document.
 
-An alternate use of this {\emph reclass} functionality
-is to help preserve an objects attributes after calling
-a function that is not aware of your particular class.
+A user friendly interface of this \emph{reclass} functionality, though
+implicit, is available in the {\tt use.reclass} function.
+It's purpose is to make it easy to preserve an object's attributes after calling
+a function that is not programmed to be aware of your particular class.
 
-If the function you are using does not make use of
-reclass internally, it may still be possible to let
+\subsubsection*{Letting xts handle the details: {\tt use.reclass}}
+
+If the function you require does not make use of
+{\tt reclass} internally, it may still be possible to let
 xts convert and reconvert your time-based object for you.
-The caveat here is that the object returned must be of the same
-length as the first argument to the function, which
-also must be the argument's position you are looking to
-preserve the class of.  Simply wrapping the function
-tha meets these criteria in {\tt use.reclass} will
+The caveat here is that the object returned:
+\begin{quote}
+\begin{itemize}
+\item must be of the same length as the first argument to
+the function.
+\item intended to be coerced back to the class of the first
+argument
+\end{itemize}
+\end{quote}
+Simply wrapping the function
+that meets these criteria in {\tt use.reclass} will
+result in an
 attempt to coerce the returned output of the function
+
+<<usereclass, keep.source=TRUE>>=
+z <- zoo(1:10,Sys.Date()+1:10)
+# filter converts to a ts object - and loses the zoo class
+(zf <- filter(z, 0.2))
+class(zf)
+# using use.reclass, the zoo class is preserved
+(zf <- use.reclass(filter(z, 0.2)))
+class(zf)
+@
+
+The {\tt use.reclass} function is still a bit experimental, and will
+certainly improve in time, but for now provides at least
+an alternative option to maintain your object's class
+and attributes
+when the function you need doesn't.
 
 \subsection{Additional time-based tools}
 In addition to the core {\tt xts} tools covered
@@ -449,7 +490,7 @@ periodicity(to.period(matrix_xts,'months'))
 # changing the index to something more appropriate
 to.monthly(matrix_xts)
 @
-The {\tt to.monthly} wrapper requests that the
+The {\tt to.monthly} wrapper automatically requests that the
 returned object have an index/rownames using
 the {\tt yearmon} class. With the {\tt indexAt}
 argument it is possible to align most series
@@ -466,50 +507,265 @@ a set of non-overlapping time periods. With the
 {\tt period.apply} family of functions
 it is quite simple:
 
-<<periodapply>>=
-period.apply(matrix_xts[,4],endpoints(matrix_xts),mean)
+The following examples illustrate a
+simple application of the max function
+to our example data.
+<<periodapply, keep.source=TRUE>>=
+# the general function, internally calls sapply
+period.apply(matrix_xts[,4],INDEX=endpoints(matrix_xts),FUN=max)
 @
 
-<<periodsum>>=
-period.sum(matrix_xts[,4], endpoints(matrix_xts))
-@
-
-<<applymonthly>>=
-apply.monthly(matrix_xts[,4],mean)
+<<applymonthly, keep.source=TRUE>>=
+# same result as above, just a monthly interface
+apply.monthly(matrix_xts[,4],FUN=max)
 @
  
+<<periodsum, keep.source=TRUE>>=
+# using one of the optimized functions - about 4x faster
+period.max(matrix_xts[,4], endpoints(matrix_xts))
+@
+
+In addition to {\tt apply.monthly}, there are
+wrappers to other common time frames including:
+{\tt apply.daily}, {\tt apply.weekly}, {\tt apply.quarterly},
+and {\tt apply.yearly}.  Current optimized functions
+include {\tt period.max}, {\tt period.min}, {\tt period.sum},
+and {\tt period.prod}.
+
+\pagebreak
 \section{Developing with {\tt xts}}
+While the tools available to the xts \emph{user} are quite
+useful, possibly greater utility comes from using xts
+internally as a \emph{developer}. Bypassing
+traditional S3/S4 method dispatch and
+custom if-else constructs to handle different time-based
+classes, {\tt xts} not only makes it easy to
+handle all supported classes in one consistent manner,
+it also allows the whole process to be invisible
+to the function user.
 
 \subsection{One function for all classes: {\tt try.xts}}
+With the proliferation of data classes in R, it can be
+tedious, if not entirely impractical, to manage interfaces to all
+classes.
+
+Not only does trying to handle every possible class present
+non-trivial design issues, the developer is also forced
+to learn and understand the nuances of up to eight or
+more classes. For each of these classes it is then
+ncessary to write and manage
+corresponding methods for each case.
+
+At best, this reduces the time available
+to devote to core function functionality --- at worst
+is a prime opportunity to introduce errors that
+inevitibly come from the massive increase in code.
+
+The solution to this issue is to use one class
+internally within your package, or more generally your
+entire workflow.  This can
+be accomplished in one of two ways: force your users
+to adopt the convention you do, or allow for
+multiple object classes by relying on internal
+code to convert to one consistent type.
+
+Using the second approach offers the most end-user
+flexibility, as class conversions are no longer
+required simply to make use of package functionality. The
+user's own workflow need not be interrupted with unproductive and
+potentially error-prone conversions and reconversions.
+
+Using the functionality of {\tt try.xts} and {\tt reclass} offered
+by the xts package allows you the developer an opportunity
+to cleanly, and reliably, manage data with the least amount
+of code, and the least number of artificial end-user restrictions.
+
+An example from the xts package illustrates just how simple
+this can be.
+
+<<devtryxts, keep.source=TRUE>>=
+period.apply
+@
+
+Some explanation of the above code is needed. The
+{\tt try.xts} function takes three arguments, the first
+is the object that the developer is trying to
+convert, the second is any additional arguments to
+the {\tt as.xts} constructor that is called internally
+(ignore this for the most part), and the third is
+a what the result of an error should be.
+
+Of the three, {\tt error} is probably the most useful
+from a design standpoint.  Some functions may not
+be able to deal with data that isn't time-based. Simple
+numerical vectors might not contain enough information
+to be of any use. The \emph{error} argument
+lets the developer decide if the function should be
+halted at this point, or continue onward. Accepting
+either a logical value --- the result of which is
+handled by R's standard error mechanism during the try-catch
+block of code internal to {\tt try.xts}. If error is
+a character string, it is returned to the standard output
+as the message.  This allows for diagnostic messages to
+be fine tuned to your particular application.
+
+The result of this call, if successful (or if {\tt error\=FALSE})
+is an object that may be of class {\tt xts}.  If
+your function can handle either numeric data or time-based
+input, you can branch code here for cases you expect.  If your
+code has been written to be more general
+at this point, you can simply continue with your calculations,
+the originally converted object will contain
+the information that will be required to reclass it at the end.
+
+A note of importance here: if you are planning on
+returning an object that is of the original class, it
+is important to not modify the originally coverted object - in this
+case that would be the {\tt x} result of the {\tt try.xts} call.
+You will notice that the function's result is assigned to
+{\tt xx} so as not to impact the original converted function. If
+this is not possible, it is recommended to copy the object first
+to preserve an untouched copy for use in the reclass function.
+
+Which leads to the second part of the process of developing with
+xts.
 
 \subsection{Returning the original class: {\tt reclass}}
+The {\tt reclass} function takes the object you are
+expecting to return to your user (the result of all your
+calculations) and optionally an {\tt xts} object
+that was the result of the original {\tt try.xts} call.
 
-<<b>>=
+It is important to stress that the {\tt match.to} object
+must be an untouched object returned from the
+{\tt try.xts} call.  The only exception here is
+when the resultant data has changed dimension --- as is
+the case in the {\tt period.apply} example. As reclass
+will try and convert the first argument to the orginal
+class of the second (the original class passed to the function),
+it must have the same general row dimension of the original.
 
-@
+A final note on using {\tt reclass}.  If the {\tt match.to} argument
+is left off, the conversion will only be attempted if the object
+is of class {\tt xts} and has a {\tt CLASS} attribute that is
+not {\tt NULL}. Essentially if the object meant to be
+reconverted is already of in the form needed by
+the individual reclass methods, generally nothing
+more needs to be done by the developer.
 
-\vspace{2mm}
-\noindent
+It is also likely that your function does not return
+an obejct that is expected to be used in the same context
+as the original object.  This would be the case for functions
+that summarize an object, or return some additional statistics.
 
+For functions that do not need the reclass functionality,
+a simple use of {\tt try.xts} at the beginning of the function
+is all that is needed to make use of this single-interface
+tool within {\tt xts}.
+
+Further examples can be found in the {\tt xts} functions
+{\tt periodicity} and {\tt endpoints} (no use of reclass), and
+{\tt to.period} (returns an object of the original's class).
+The package {\tt quantmod} also utilizes the {\tt try.xts}
+functionality in its {\tt chartSeries} function --- allowing
+financial charts for all time-based classes.
+
+Forthcoming developer documentation will examine the functions
+highlighted above, as well go into more detail on exceptional
+cases and requirements.
+
+\pagebreak
 \section{Customizing and Extending xts}
+As \emph{extensible} is in the name of
+the package, it is only logical that it can be extended.
+The two obvious mechanisms to make {\tt xts}
+match the individual needs of a diverse user
+base is the introduction of custom
+attributes, and the idea of subclassing the entire
+{\tt xts} class.
 
 \subsection{{\tt xtsAttributes}}
-<<c>>=
+What makes an R attribute an {\tt xtsAttribute}?
+Beyond the sematics, xtsAttributes are designed to
+persist once attached to an object, as well as not get
+in the way of other object functionality.
+All xtsAttributes are indeed R attributes, though 
+the same can not be said of the reverse --- all
+R attributes are \emph{not} xtsAttributes!
 
+Attaching arbitrary attributes to most (all?) classes
+other than {\tt xts} will cause the attribute to be displayed
+during most calls that print the object.  While this isn't
+necessarily devestating, it is often time unsightly, and sometimes
+even confusing to the end user (this may depend on your users).
+
+xts offers the developer and end-user the opportunity to attach attributes
+with a few different mechanisms - and all will be suppressed
+from normal view, unless specifically called upon.
+
+What makes an xtsAttribute special is that it
+is principally a mechanism to store and view meta-data, that is,
+attributes that would be seen with a call to R's
+{\tt attributes}.
+
+<<attributes>>=
+str(attributes(matrix_xts))
+str(xtsAttributes(matrix_xts))
+
+# attach some attributes
+xtsAttributes(matrix_xts) <- list(myattr="my meta comment")
+attr(matrix_xts, 'another.item') <- "one more thing..."
+
+str(attributes(matrix_xts))
+str(xtsAttributes(matrix_xts))
 @
 
-\vspace{2mm}
-\noindent
+In general - the only attributes that should be
+handled directly by the user (without the assistance
+of xts functions) are ones returned by {\tt xtsAttributes}.
+The additional attributes seen in the {\tt attributes}
+example are for internal R and xts use, and if you expect
+unbroken code, should be left alone.
 
 \subsection{Subclassing {\tt xts}}
-<<d>>=
+Subclassing xts is as simple as extending any other
+S3 class in R.  Simply include the full class of
+the xts system in your new class.
 
+<<subclass>>=
+xtssubclass <- structure(matrix_xts, class=c('xts2','xts','zoo'))
+class(xtssubclass)
 @
 
-\section{Conclusion}
+This will allow the user to override methods of xts and zoo,
+while still allowing for backward compatibility with
+all the tools of xts and zoo.
 
-\vspace{2mm}
-\noindent
+\section{Conclusion}
+The {\tt xts} package offers the R developer and user
+an extensive set of time-aware tools for use in
+time-based applications.  By extending the {\tt zoo} class,
+xts leverages an excellent infrastructure tool into
+a true time-based class.  This simple requirement for
+true time-based indexing allows for code to
+make assumptions about the object's purpose, and facilitates
+a great number of useful utilities --- such as time-based
+subsetting.
+
+Additionally, by embedding knowledge of the currently
+used time-based classes available in R, xts can offer
+the developer and end-user a single interface mechanism
+to make internal class decisions user-driven.  This
+affords developers an opprtunity to design applications
+for there intended purposes, while freeing up time
+previously used to manage the data structures.
+
+Future development of xts will focus on integrating
+xts into more external packages, as well as additional useful
+additions to the time-based utilities currently available
+within the package.  An effort to provide external based disk and
+memory based data access will also be examined for potential
+inclusion or extension.
 
 \begin{thebibliography}{99}
 \bibitem{zoo} Achim Zeileis and Gabor Grothendieck (2005):

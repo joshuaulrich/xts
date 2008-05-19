@@ -81,12 +81,7 @@ function(x, INDEX, FUN, ...)
     xx <- sapply(1:(length(INDEX) - 1), function(y) {
                    FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
                 })  
-    if (is.xts(x)) {
-        xx <- xts(xx, index(x)[INDEX])
-        CLASS(xx) <- CLASS(x)
-        xtsAttributes(xx) <- xtsAttributes(x)
-    }   
-    reclass(xx)  
+    reclass(xx, x[INDEX])  
 }
 
 
