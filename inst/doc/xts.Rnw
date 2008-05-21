@@ -568,9 +568,9 @@ The solution to this issue is to use one class
 internally within your package, or more generally your
 entire workflow.  This can
 be accomplished in one of two ways: force your users
-to adopt the convention you do (\textbf{bad}), or allow for
+to adopt the convention you do, or allow for
 multiple object classes by relying on internal
-code to convert to one consistent type (\textbf{good}).
+code to convert to one consistent type.
 
 Using the second approach offers the most end-user
 flexibility, as class conversions are no longer
