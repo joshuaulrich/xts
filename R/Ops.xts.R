@@ -12,12 +12,12 @@ function (e1, e2)
         merge(e1, e2, all = FALSE, retclass = NULL)
         NextMethod(.Generic)
     }
-    #if(is.xts(e2)) XTS <- e2
-    #if(is.xts(e1)) XTS <- e1
+    if(is.zoo(e2)) XTS <- e2
+    if(is.zoo(e1)) XTS <- e1
 
-    #if (is.null(attr(e, "index"))) 
-    #    e <- xts(coredata(e), index(XTS), attr(XTS, "frequency"))
-    #else e <- xts(coredata(e),index(XTS))
+    if (is.null(attr(e, "index"))) 
+        e <- xts(coredata(e), index(XTS), attr(XTS, "frequency"))
+    else e <- xts(coredata(e),index(e))
 
     e
 }
