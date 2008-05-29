@@ -6,6 +6,8 @@ function(x, retclass=NULL, length.out=NULL) {
   x <- unlist(strsplit(x,"/"))
   from <- x[1]
   to   <- x[2]
+  BY   <- x[3]
+
   year  <- as.numeric(substr(from,1,4))
   month <- as.numeric(substr(from,5,6))
   day   <- as.numeric(substr(from,7,8))
@@ -36,11 +38,21 @@ function(x, retclass=NULL, length.out=NULL) {
   max.resolution <- max(length(time.args.from), length(time.args.to))
   resolution <- c('year','month','day','hour','mins','secs')[max.resolution]
 
-  convert.to <- 'Date'
-  if(max.resolution == 2) convert.to <- 'yearmon'
-  if(max.resolution >  3) convert.to <- 'POSIXct'
+  if(!is.na(BY)) resolution <- names(match.arg(BY, list(year  ='Y',
+                                                        month ='m',
+                                                        day   ='d',
+                                                        hour  ='H',
+                                                        mins  ='M',
+                                                        secs  ='S')))
 
-  if(!is.null(retclass)) convert.to <- retclass
+  convert.to <- 'Date'
+  if(max.resolution == 2 || resolution == 'month' ) convert.to <- 'yearmon'
+  if(max.resolution >  3 || resolution %in% c("H","M","S")) convert.to <- 'POSIXct'
+
+  if(!missing(retclass) && is.null(retclass)) {
+    # return the calculated values only
+    return(list(from=from,to=to,by=resolution,length.out=length.out))
+  }
 
   if(is.null(length.out)) {
     SEQ <- seq(from,to,by=resolution)
@@ -48,6 +60,7 @@ function(x, retclass=NULL, length.out=NULL) {
     SEQ <- seq(from, by=resolution, length.out=length.out)
   }
 
+  if(!is.null(retclass)) convert.to <- retclass
   do.call(paste('as',convert.to,sep='.'), list(SEQ))
 
 }

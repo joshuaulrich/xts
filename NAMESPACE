@@ -2,8 +2,11 @@
 useDynLib(xts)
 
 # debugging
-#export(re.zoo,as.xts.zoo)
-export(firstof,lastof,timeBased)
+export(firstof,
+       lastof)
+
+export(timeBased,
+       timeBasedSeq)
 
 # user visible core xts functions
 export(xts)
