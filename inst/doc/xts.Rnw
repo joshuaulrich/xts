@@ -28,7 +28,7 @@ handle some of the domain-specific shortcomings of the native {\tt R} classes.
 These include {\tt irts} from the {\tt tseries} package\cite{tseries},
 {\tt timeSeries} from the {\tt Rmetrics} bundle\cite{rmetrics}, and
 {\tt its}~\cite{its} and {\tt zoo}~\cite{zoo} from their 
-respective packages. Each of these contributed classes provide unique solutions
+respective packages. Each of these contributed classes provides unique solution
 to many of the issues
 related to working with time-series in R.
 
@@ -43,16 +43,16 @@ for users and developers
 to select a time-series class that will manage the needs of the
 individual user, as well as remain compatible with the broadest audience.
 
-What may be sufficient for one use - say a quick correlation matrix, may be
+What may be sufficient for one use --- say a quick correlation matrix may be
 too limiting when more information needs to be incorporated 
 in a complex calculation.
-This is especially true for functions that rely on time-based indicies to
+This is especially true for functions that rely on time-based indexes to
 be manipulated or checked.
 
 The previous solution to managing different data needs often
 involved a series of {\tt as} calls,
 to coerce objects from one type to another.  While this may
-be sufficient for many cases, it is less flexible than allowing for the user
+be sufficient for many cases, it is less flexible than allowing the users
 to simply use the object they are accustomed to, or quite possibly require.
 Additionally, all current coercion methods fail to maintain the original
 object's data in its entirety.  Converting from a {\tt timeSeries} class to
@@ -61,14 +61,14 @@ object's data in its entirety.  Converting from a {\tt timeSeries} class to
 Converting back to a {\tt timeSeries} would then add new
 values different than the original.
 For many calculations that do not modify the data, this is most likely
-an acceptable side effect.  For functions that convert data -
-such as {\tt xts}'s {\tt to.period} it limits the value of the function,
+an acceptable side effect.  For functions that convert data ---
+such as {\tt xts}'s {\tt to.period} --- it limits the value of the function,
 as the returned object is missing
 much of what may have been a factor in the original class consideration.
 
 One of the most important additions the new {\tt xts} class makes
 to the R user's
-workflow is possibly not using {\tt xts} at all, at least not explicitly.
+workflow doesn't use {\tt xts} at all, at least not explicitly.
 By converting data to {\tt xts} inside a function, the function developer
 is guaranteed to have to only manage a single class of objects. 
 It becomes unecessary to write specific methods to handle different data.
@@ -83,27 +83,28 @@ possible to use \emph{any} of R's time-series classes.
 Simultaneously saving development time and
 reducing the learning/using curve for the end user.  The function now
 simply handles whatever time-series object it receives
-exactly as the user expects - without complaint.
+exactly as the user expects --- without complaint.
 More details, as well as examples of incorporating {\tt xts} into
 functions will be covered later in this document.
 
 While it may seem that {\tt xts} is primarily a tool
 to help make existing R code
-more user friendly, the opportunity to add exciting
+more user-friendly, the opportunity to add exciting
 (to software people) new functionality
 could not be passed up.  To this end, {\tt xts} 
 offers the user the ability to add
-custom attributes to any object - during its construction
+custom attributes to any object --- during its construction
 or at any time thereafter.  Additionally,
-by requiring the index attribute be derived from one of
+by requiring that the index attribute be derived from one of
 R's existing time-based classes, {\tt xts} methods can
-make assumptions while subsetting by time or date that allow for
+make assumptions, while subsetting by time or date, that allow for
 much cleaner and accurate data manipulation.
 
 The remainder of this introduction will
-examine what exactly an {\tt xts} object consists of,
+examine what an {\tt xts} object consists of and
 its basic usage, explain how developing with {\tt xts} can save
-package development time, and finally how to extend the class - informally
+package development time, and finally will demonstrate
+how to extend the class - informally
 and formally.
 
 \pagebreak
@@ -116,11 +117,11 @@ class, as well as what features make it unique.
 \subsection{It's a {\tt zoo} in here}
 At the core of an {\tt xts} object is a {\tt zoo} object from the package of
 the same name. Simplified, this class contains an array of values
-comprising your data --- often in matrix form --- and an index
+comprising your data (often in matrix form) and an index
 attribute to provide information about
 the data's ordering. Most of the details surrounding zoo
 objects apply equally to xts. As it would be redundent to simply retell
-the excellent introductory zoo vingette, the reader is advised to
+the excellent introductory zoo vignette, the reader is advised to
 read, absorb, and re-read that documentation to best
 understand the power of this class. The authors of the {\tt xts}
 package recognize that
@@ -134,7 +135,7 @@ Objects of class {\tt xts} differ from objects of class
 {\tt zoo} in three key ways: the use of formal time-based
 classes for indexing,
 internal xts properties, and perhaps most uniquely
-- user added attributes.
+--- user-added attributes.
 
 \subsubsection*{True time-based indexes}
 To allow for functions that make use of {\tt xts} objects
@@ -143,7 +144,7 @@ impose a simple rule on the class.  The index of each
 {\tt xts} object \emph{must} be of a known and supported
 time or date class.  At present this includes any one of
 the following - Date, POSIXct, chron, yearmon, yearqtr, or
-timeDate.  The relative merits of each of are left to
+timeDate.  The relative merits of each are left to
 the judgement of the user, though the first three are expected
 to be sufficient for most applications.
 
@@ -159,26 +160,26 @@ well as read the developer documentation.
 \subsubsection*{xtsAttributes}
 This is what makes the xts class an \emph{extensible}
 time-series class. Arbitrary attributes may be assigned
-and removed from the object without causing issues, display or
+and removed from the object without causing issues with the data's display or
 otherwise.  Additionally this is where \emph{other}
 class specific attributes (e.g. \emph{FinCenter} from {\tt timeSeries})
 are stored during conversion
-to an xts object, so they may be restored with {\tt reclass}.
+to an xts object so they may be restored with {\tt reclass}.
 
 \pagebreak
 \section{Using the {\tt xts} package}
 Just what is required to start using {\tt xts}?  Nothing more
 than a simple conversion of your current time-series data with
-{\tt as.xts}, or to create a new object with the {\tt xts} constructor.
+{\tt as.xts}, or the creation of a new object with the {\tt xts} constructor.
 
 \subsection{Creating data objects: {\tt as.xts} and {\tt xts}}
 There are two equally valid mechanisms to create an {\tt xts}
 object - coerce a supported time-series class to {\tt xts} with
-a call to {\tt as.xts}, or create a new object from scratch
+a call to {\tt as.xts} or create a new object from scratch
 with {\tt xts}.
 
 \subsubsection*{Converting your \emph{existing} time-series data: {\tt as.xts}}
-If you already are comfortable using a particular
+If you are already comfortable using a particular
 time-series class in {\tt R}, you can still access
 the functionality of {\tt xts} by converting your
 current objects.
@@ -189,7 +190,7 @@ includes objects of class:
 matrix, data.frame, ts, zoo, irts, its, and timeSeries.
 The new object will maintain all the necessary information
 needed to {\tt reclass} this object back to its
-original class if that is desired. At present most classes
+original class if that is desired. Most classes
 after re-conversion will be identical to similar modifications
 on the original object, even
 after sub-setting or other changes while an {\tt xts} object.
@@ -207,17 +208,17 @@ str(df_xts)
 @
 
 A few comments about the above. {\tt as.xts} takes different arguments, depending
-on the original object to be converted from.  Some classes do not contain enough
+on the original object to be converted.  Some classes do not contain enough
 information to infer a time-date class. If that is the case, POSIXct is used by
-default. This is the case with both matrix and data.frame object. In the preceding
+default. This is the case with both matrix and data.frame objects. In the preceding
 examples we first requested that the new date format be of type 'Date'.  The
-second example was left to the default {\tt xts} method, this
-time with a custom attribute added.
+second example was left to the default {\tt xts} method
+with a custom attribute added.
 
 \subsubsection*{Creating new data: the {\tt xts} constructor}
 Data objects can also be constructed directly from raw data with
 the {\tt  xts} constructor function, in essentially the same way
-a {\tt  zoo} object is created, with the exception that at present
+a {\tt  zoo} object is created with the exception that at present
 there is no equivelant {\tt zooreg} class.
 
 <<xtsconstructor>>=
@@ -230,10 +231,10 @@ present in {\tt xts} objects. The generic methods currently
 extended to {\tt xts} include ``{\tt [}'',
 {\tt cbind}, {\tt rbind}, {\tt c}, {\tt str}, {\tt Ops},
 {\tt print}, {\tt na.omit}, {\tt time}, {\tt index},
-{\tt plot}, and {\tt coredata}. In addition, most methods that can accept
+{\tt plot} and {\tt coredata}. In addition, most methods that can accept
 zoo or matrix objects will simply work as expected.
 
-A quick tour of some of the methods leveraged to {\tt xts}
+A quick tour of some of the methods leveraged by {\tt xts}
 will be presented here, including subsetting via ``{\tt [}'',
 indexing objects with {\tt indexClass} and {\tt convertIndex},
 and a quick look at plotting {\tt xts} objects with the {\tt plot}
@@ -249,7 +250,7 @@ it is possible to subset the object by year, week, days - or even seconds.
 The {\em i} (row)
 argument to the subset operator ``{\tt [}'', in addition to accepting numeric
 values for indexing,
-can also be a character string, a time-based object, or vector of either.
+can also be a character string, a time-based object, or a vector of either.
 The format must left-specified with respect to the standard ISO:8601 
 time format --- {\em ``CCYY-MM-DD HH:MM:SS''}~\cite{ISO}.  This means that for one 
 to extract a particular month, it is necesssary to fully specify the 
@@ -364,7 +365,7 @@ plot(matrix_xts[,1],major.ticks='months',minor.ticks=FALSE,main=NULL,col=3)
 @
 \end{center}
 
-\subsection{Restoring the original class - {\tt reclass} \& {\tt use.reclass}}
+\subsection{Restoring the original class - {\tt reclass} \& {\tt Reclass}}
 By now you may be interested in some of the xts functionality
 presented, and wondering how to incorporate it into
 a current workflow --- but not yet ready to commit
@@ -407,12 +408,12 @@ for developers will be covered in section \ref{developer},
 \textbf{Developing with xts}.
 
 A user friendly interface of this \emph{reclass} functionality, though
-implicit, is available in the {\tt use.reclass} function.
+implicit, is available in the {\tt Reclass} function.
 It's purpose is to make it easy to preserve an object's attributes after calling
 a function that is not programmed to be aware of your particular class.
 
 \pagebreak
-\subsubsection*{Letting xts handle the details: {\tt use.reclass}}
+\subsubsection*{Letting xts handle the details: {\tt Reclass}}
 
 If the function you require does not make use of
 {\tt reclass} internally, it may still be possible to let
@@ -427,7 +428,7 @@ argument
 \end{itemize}
 \end{quote}
 Simply wrapping the function
-that meets these criteria in {\tt use.reclass} will
+that meets these criteria in {\tt Reclass} will
 result in an
 attempt to coerce the returned output of the function
 
@@ -436,16 +437,15 @@ z <- zoo(1:10,Sys.Date()+1:10)
 # filter converts to a ts object - and loses the zoo class
 (zf <- filter(z, 0.2))
 class(zf)
-# using use.reclass, the zoo class is preserved
-(zf <- use.reclass(filter(z, 0.2)))
+# using Reclass, the zoo class is preserved
+(zf <- Reclass(filter(z, 0.2)))
 class(zf)
 @
 
-The {\tt use.reclass} function is still a bit experimental, and will
+The {\tt Reclass} function is still a bit experimental, and will
 certainly improve in time, but for now provides at least
 an alternative option to maintain your object's class
-and attributes when the function you need doesn't seem
-to care.
+and attributes when the function you require can't on its own.
 
 \subsection{Additional time-based tools}
 In addition to the core {\tt xts} tools covered
@@ -593,7 +593,7 @@ period.apply
 Some explanation of the above code is needed. The
 {\tt try.xts} function takes three arguments, the first
 is the object that the developer is trying to
-convert, the second is any additional arguments to
+convert, the second \ldots is any additional arguments to
 the {\tt as.xts} constructor that is called internally
 (ignore this for the most part --- though it should
 be noted that this is an R dots argument \ldots), and the third is
@@ -605,8 +605,8 @@ be able to deal with data that isn't time-based. Simple
 numerical vectors might not contain enough information
 to be of any use. The \emph{error} argument
 lets the developer decide if the function should be
-halted at this point, or continue onward. Accepting
-either a logical value --- the result of which is
+halted at this point, or continue onward.
+If a logical value, the result is
 handled by R's standard error mechanism during the try-catch
 block of code internal to {\tt try.xts}. If error is
 a character string, it is returned to the standard output
@@ -629,7 +629,7 @@ case that would be the {\tt x} result of the {\tt try.xts} call.
 You will notice that the function's result is assigned to
 {\tt xx} so as not to impact the original converted function. If
 this is not possible, it is recommended to copy the object first
-to preserve an untouched copy for use in the reclass function.
+to preserve an untouched copy for use in the {\tt reclass} function.
 
 Which leads to the second part of the process of developing with
 xts.
@@ -660,7 +660,7 @@ more needs to be done by the developer.
 
 In many cases your function does not need to return
 an object that is expected to be used in the same context
-as the original object.  This would be the case for functions
+as the original. This would be the case for functions
 that summarize an object, or perform some statistical analysis.
 
 For functions that do not need the {\tt reclass} functionality,
@@ -748,7 +748,7 @@ all the tools of xts and zoo, much the way {\tt xts} benefits from
 extending {\tt zoo}.
 
 \section{Conclusion}
-The {\tt xts} package offers both R developers and users
+The {\tt xts} package offers both R developers and R users
 an extensive set of time-aware tools for use in
 time-based applications.  By extending the {\tt zoo} class,
 xts leverages an excellent infrastructure tool into

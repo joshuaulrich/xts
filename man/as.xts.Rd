@@ -4,6 +4,7 @@
 \alias{use.xts}
 \alias{try.xts}
 \alias{use.reclass}
+\alias{Reclass}
 \alias{reclass}
 \title{ Convert Object To And From Class xts }
 \description{
@@ -15,11 +16,15 @@ losing any attributes of the original format.
 as.xts(x, ...)
 xtsible(x)
 
+Reclass(x)
+
+try.xts(x, ..., error = TRUE)
 reclass(x, match.to, ...)
 }
 \arguments{
   \item{x}{ data object to convert. See details for supported types }
   \item{match.to}{ \code{xts} object whose attributes will be passed to \code{x}}
+  \item{error}{ error handling option. See Details. }
   \item{\dots}{ additional parameters or attributes }
 }
 \details{
@@ -51,9 +56,33 @@ attributes intact - unless otherwise changed.
 It should be obvious, but any attributes added via the \dots
 argument will not be carried back to the original data object,
 as there would be no available storage slot/attribute.
+
+\code{Reclass} is designed for top-level use, where it is
+desirable to have the object returned from an arbitrary
+function in the same class as the object passed in.  Most
+functions within \R are unable to return objects
+matching the original object's class.  While this tool is
+highly experimental at present, it attempts to handle
+conversion and reconversion transparently.  The caveats are
+that the original object must be coercible to \code{xts},
+the returned object must be of the same row length as the
+original object, and that the object to reconvert to is
+the first argument to the function being wrapped.
+
+\code{try.xts} and \code{reclass} are functions that enable
+external developers access to the reclassing tools within
+\pkg{xts} to help speed development of time-aware functions,
+as well as provide a more robust and seemless end-user experience,
+regardless of the end-user's choice of data-classes.
+
+See the accompanying vignette for more details on the above usage
+and the package in general.
 }
 \value{
 An S3 object of class \code{xts}.
+
+In the case of \code{Reclass} and \code{reclass}, the object
+returned will be of the original class as identified by \code{CLASS}.
 }
 \author{ Jeffrey A. Ryan }
 \seealso{ \code{\link{xts}},\code{\link{as.xts.methods}} }

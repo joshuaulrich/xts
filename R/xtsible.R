@@ -40,3 +40,5 @@ function(x, ..., error=TRUE)
   xx <- eval(match.call()[[-1]])
   reclass(xx, inObj)
 }
+
+`Reclass` <- use.reclass
