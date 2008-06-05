@@ -6,6 +6,14 @@
 **********************************************************************************
 **********************************************************************************
 
+* diff.xts and lag.xts implemented. Rework diff.xts remove reliance on diff.zoo
+
+* index<- and time<- replacement methods
+
+* new unit tests to ensure classes extending xts maintain class, works in [.xts
+
+* Reclass improvements to handle failure gracefully
+
 * [20080224] dynamically determine .CLASSnames attribute for as.xts methods
 
 * 'use.xts' method for use inside functions - possibly with custom warnings, and
@@ -17,7 +25,8 @@
 
 * 'xcoredata' [done -jar]
 
-* add additional Fortran period.mean, period.sd, period.var
+* add additional Fortran period.mean, period.sd, period.var, period.cor
+  period.median, period.mode, like runFun in TTR
 
 * write 'as.ts.xts' method: handle NAs correctly
 
@@ -61,11 +70,12 @@
 
 
 * aggregate.xts (dispatch to NextMethod or call aggregate.zoo and
-  re 'xts' results
+  re 'xts' results???
 
 * as.xts.numeric for named numerics if names are coercible to time-based??
 
 * new %::% binary operator to create sequence of timeBased dates - from strings and timeBased
+  implemented via timeBasedSeq()
 
 * as.data.frame.xts, as.matrix.xts
   as.zoo.xts, as.its.xts,
