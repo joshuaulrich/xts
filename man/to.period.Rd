@@ -93,6 +93,14 @@ require magic.
 An object of the original type, with new periodicity.
 }
 \note{
+In order for this function to  work properly on OHLC data, it is necessary
+that the Open, High, Low and Close columns be names as such; including
+the first letter capitalized and the full spelling found.  Internally
+a call is made to reorder the data into the correct column order,
+and then a verification step to make sure that this ordering and naming
+has succeeded. All other data formats must be aggregated with functions
+such as \code{aggregate} and \code{period.apply}.
+
 This method should work on almost all time-series-like
 objects. Including \sQuote{timeSeries}, \sQuote{zoo},
 \sQuote{ts}, \sQuote{its}, and \sQuote{irts}. It is even likely

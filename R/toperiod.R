@@ -31,9 +31,9 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
     warning("missing values removed from data")
   }
 
-  # is this an OHLC object already?
+  # is this an OHLC object already? Force correct ordering first
   # if so, treat differently then single column object
-  if(is.OHLC(x)) {
+  if(is.OHLC(OHLC(x))) {
     ep <- endpoints(x,period,k)
   
     tz <- as.double(as.matrix(x))

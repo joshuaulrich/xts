@@ -1,6 +1,9 @@
 # load fortran symbol table
 useDynLib(xts)
 
+# imports
+importFrom(stats, lag)
+
 # debugging
 export(firstof,
        lastof)
@@ -66,6 +69,8 @@ export(apply.daily,
 export(axTicksByTime)
 
 S3method(plot,xts)
+S3method(lag,xts)
+S3method(diff,xts)
 S3method(first,default)
 S3method(last,default)
 S3method(first,zoo)

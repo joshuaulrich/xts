@@ -10,6 +10,7 @@ function(x)
 function(x, ..., error=TRUE)
 {
   if(is.xts(x)) {
+    attr(x,'.RECLASS') <- FALSE
     return(x)
   }
 
