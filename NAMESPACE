@@ -2,7 +2,7 @@
 useDynLib(xts)
 
 # imports
-importFrom(stats, lag)
+#importFrom(stats, lag)
 
 # debugging
 export(firstof,
@@ -67,10 +67,12 @@ export(apply.daily,
 #       cbind.xts,
 #       c.xts)
 export(axTicksByTime)
-
 S3method(plot,xts)
-S3method(lag,xts)
-S3method(diff,xts)
+
+export(.lag.xts, .diff.xts)
+
+#S3method(lag,xts)
+#S3method(diff,xts)
 S3method(first,default)
 S3method(last,default)
 S3method(first,zoo)

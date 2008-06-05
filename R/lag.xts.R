@@ -1,4 +1,6 @@
-`lag.xts` <- `Lag` <- function(x, k=1, ...) {
+`.lag.xts` <- function(x, k=1, na.pad=FALSE, ...) {
+  if(!na.pad) return(zoo:::lag.zoo(x, k, na.pad, ...))
+
   x <- try.xts(x, error=FALSE)
   
   if(!is.xts(x)) x <- as.matrix(x)
@@ -20,7 +22,7 @@
   reclass(xx,x)
 }
 
-`diff.xts` <- function(x, lag=1, differences=1, arithmetic=TRUE,na.pad=TRUE,...) {
+`.diff.xts` <- function(x, lag=1, differences=1, arithmetic=TRUE,na.pad=TRUE,...) {
   ### TEMPORARY FIX UNTIL NEW xts METHOD IS WRITTEN
   x <- try.xts(x)
   xx <- diff(as.zoo(x),lag=lag,differences=differences, arithmetic=arithmetic,na.pad=na.pad,...)
