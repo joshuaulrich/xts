@@ -44,7 +44,7 @@ function(x,...) {
 `xtsAttributes` <-
 function(x, user=NULL) {
   # get all additional attributes not standard to xts object
-  stopifnot(is.xts(x))
+  #stopifnot(is.xts(x))
   rm.attr <- c('dim','dimnames','index','class','names')
   x.attr <- attributes(x)
 

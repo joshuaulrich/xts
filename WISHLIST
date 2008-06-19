@@ -6,7 +6,12 @@
 **********************************************************************************
 **********************************************************************************
 
+* add lines.xts method, to add shading and events with markup -- much like
+  Peter Carl's code for PA
+
 * diff.xts and lag.xts implemented. Rework diff.xts remove reliance on diff.zoo
+  NOTE: currently moved to .diff.xts and .lag.xts due to some internal zoo-compat
+  issues/
 
 * index<- and time<- replacement methods
 
