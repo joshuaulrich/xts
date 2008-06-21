@@ -69,7 +69,7 @@ export(apply.daily,
 export(axTicksByTime)
 S3method(plot,xts)
 
-export(.lag.xts, .diff.xts)
+export(Lag.xts, Next.xts) #, Diff.xts)
 
 #S3method(lag,xts)
 #S3method(diff,xts)

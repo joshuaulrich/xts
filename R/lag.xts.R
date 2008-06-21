@@ -1,6 +1,4 @@
-`.lag.xts` <- function(x, k=1, na.pad=FALSE, ...) {
-  if(!na.pad) return(zoo:::lag.zoo(x, k, na.pad, ...))
-
+`Lag.xts` <- function(x, k=1, na.action=na.pass, ...) {
   x <- try.xts(x, error=FALSE)
   
   if(!is.xts(x)) x <- as.matrix(x)
@@ -19,11 +17,11 @@
                           'lag',
                           rep(k, each=NCOL(x)),
                           sep = "."))
-  reclass(xx,x)
+  as.function(na.action)(reclass(xx,x))
 }
 
 
-`.next.xts` <- function(x, k=1, na.pad=FALSE, ...) {
+`Next.xts` <- function(x, k=1, na.action=na.pass, ...) {
   x <- try.xts(x, error=FALSE)
   
   if(!is.xts(x)) x <- as.matrix(x)
@@ -42,7 +40,7 @@
                           'next',
                           rep(k, each=NCOL(x)),
                           sep = "."))
-  reclass(xx,x)
+  as.function(na.action)(reclass(xx,x))
 
 }
 
