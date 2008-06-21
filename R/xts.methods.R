@@ -215,10 +215,11 @@ function(..., deparse.level=1) {
  return(ret)
 }
 
-`cbind.xts` <-
-function(..., deparse.level=1) {
+`merge.xts` <-
+function(..., all=TRUE, fill=NA, suffixes=NULL, retclass='xts') {
 
  args <- list(...)
+ #retclass <- match.arg(retclass, retclass)
 
  # Store original class attributes
  xts.CLASS <- sapply(args, CLASS)
@@ -226,8 +227,8 @@ function(..., deparse.level=1) {
  xts.USERattr <- lapply(args, xtsAttributes, user=TRUE)
  has.ROWNAMES <- any( as.logical(sapply(args, function(x) any(names(attributes(x))=='.ROWNAMES'))) )
 
- # Bind objects
- ret <- zoo:::cbind.zoo(...)
+ # Merge objects
+ ret <- zoo:::merge.zoo(..., all=all, fill=fill, suffixes=suffixes, retclass='zoo')
  ret <- structure( ret, class=c('xts','zoo') )
 
  # Drop CLASS & USER attributes if they are not the same for all objects
@@ -263,6 +264,11 @@ function(..., deparse.level=1) {
  rownames(ret) <- as.character(index(ret))
 
  return(ret)
+}
+
+`cbind.xts` <-
+function(..., all=TRUE, fill=NA, suffixes=NULL) {
+    xts:::merge.xts(..., all=all, fill=fill, suffixes=suffixes, retclass="xts")
 }
 
 `c.xts` <-
