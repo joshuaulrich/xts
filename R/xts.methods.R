@@ -37,6 +37,15 @@ function(object,...) {
   return(xx) 
 }
 
+`na.replace` <- function(x) {
+  if(is.null(xtsAttributes(x)$na.action))
+    return(x)
+  tmp <- xts(matrix(rep(NA,NCOL(x)*NROW(x)), nc=NCOL(x)),
+             attr(xtsAttributes(x)$na.action, 'index'))
+  colnames(tmp) <- colnames(x)
+  rbind(x,tmp)
+}
+
 `[.xts` <-
 function(x, i, j, drop = TRUE, ...) 
 {
