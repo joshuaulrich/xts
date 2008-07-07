@@ -22,7 +22,7 @@ axTicksByTime(x, ticks.on='auto', k = 1,
   \item{ticks.on}{ what to break on }
   \item{k}{ frequency of breaks }
   \item{labels}{ should a labeled vector be returned }
-  \item{format.labels}{ should labels be formatted to periodicity }
+  \item{format.labels}{ format labels - may be format to use }
   \item{ends}{ should the ends be adjusted }
   \item{gt}{ lower bound on number of breaks }
   \item{lt}{ upper bound on number of breaks }
@@ -32,6 +32,9 @@ This function is written for internal use, and documented
 for those wishing to use outside of the internal function
 uses. In general it is most unlikely that the end user will
 call this function directly.
+
+The format.labels allows for standard formatting like
+that used in \code{format}, \code{strptime}, and \code{strftime}.
 }
 \value{
 A vector of index points to break on, possibly with the index names.

@@ -1,5 +1,9 @@
 `timeBasedSeq` <- 
 function(x, retclass=NULL, length.out=NULL) {
+  if(!is.character(x))
+    # allows for unquoted numerical expressions to work
+    x <- deparse(match.call()$x)
+
   x <- gsub('::','/',x, perl=TRUE)  # replace all '::' range ops with '/'
   x <- gsub('[-:]','',x, perl=TRUE) # strip all remaining '-' and ':' seps
   x <- gsub('[ ]','',x, perl=TRUE) # strip all remaining white space
@@ -7,6 +11,8 @@ function(x, retclass=NULL, length.out=NULL) {
   from <- x[1]
   to   <- x[2]
   BY   <- x[3]
+
+  if(is.na(to)) length.out <- 1L
 
   year  <- as.numeric(substr(from,1,4))
   month <- as.numeric(substr(from,5,6))

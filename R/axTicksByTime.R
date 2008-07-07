@@ -34,17 +34,23 @@ axTicksByTime <- function(x, ticks.on='auto', k=1,
     if(ends)
       ep <- ep + c(rep(1,length(ep)-1),0)
     if(labels) {
-      if(format.labels) {
+      if(is.logical(format.labels) || is.character(format.labels)) {
         # format by level of time detail
         time.scale <- periodicity(x)$scale
-        x.labels <- format(index(x)[ep], "%n%b%n%Y")
+        fmt <- '%n%b%n%Y'
+        #x.labels <- format(index(x)[ep], "%n%b%n%Y")
         if (time.scale == "weekly" | time.scale == "daily") 
-            x.labels <- format(index(x)[ep], "%b %d%n%Y")
+          fmt <- '%b %d%n%Y'
+        #    x.labels <- format(index(x)[ep], "%b %d%n%Y")
         if (time.scale == "minute" | time.scale == "hourly") 
-            x.labels <- format(index(x)[ep], "%b %d%n%H:%M")
+          fmt <- '%b %d%n%H:%M'
+        #    x.labels <- format(index(x)[ep], "%b %d%n%H:%M")
         if (time.scale == "seconds")
-            x.labels <- format(index(x)[ep], "%b %d%n%H:%M:%S")
-        names(ep) <- x.labels
+          fmt <- '%b %d%n%H:%M:%S'
+        #    x.labels <- format(index(x)[ep], "%b %d%n%H:%M:%S")
+        if(is.character(format.labels)) fmt <- format.labels
+        names(ep) <- format(index(x)[ep],fmt)
+        #names(ep) <- x.labels
       } else names(ep) <- as.character(index(x)[ep])
     }
     ep  

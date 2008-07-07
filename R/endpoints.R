@@ -1,6 +1,7 @@
 `endpoints` <-
 function(x,on='months',k=1) {
-  if(!is.xts(x)) x <- as.xts(x)
+  if(timeBased(x)) x <- xts(, order.by=x)
+  if(!is.xts(x)) x <- try.xts(x, error='must be either xts-coercible or timeBased')
 
   sys.TZ <- Sys.getenv('TZ')
   on.exit(Sys.setenv(TZ=sys.TZ))
