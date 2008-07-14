@@ -40,9 +40,19 @@ function(object,...) {
 `na.replace` <- function(x) {
   if(is.null(xtsAttributes(x)$na.action))
     return(x)
+
+  # Create 'NA' xts object
   tmp <- xts(matrix(rep(NA,NCOL(x)*NROW(x)), nc=NCOL(x)),
              attr(xtsAttributes(x)$na.action, 'index'))
+
+  # Ensure xts 'NA' object has *all* the same attributes
+  # as the object 'x'; this is necessary for rbind to
+  # work correctly
+  CLASS(tmp) <- CLASS(x)
+  xtsAttributes(tmp) <- xtsAttributes(x)
+  attr(x,'na.action') <- attr(tmp,'na.action') <- NULL
   colnames(tmp) <- colnames(x)
+
   rbind(x,tmp)
 }
 
@@ -168,6 +178,10 @@ function(x, i, j, drop = TRUE, ...)
 function(..., deparse.level=1) {
 
  args <- list(...)
+ # Allow, but remove, NULL objects
+ args <- args[!sapply(args,is.null)]
+ if(length(args)==1)
+   return(args[[1]])
 
  # Store original class attributes
  xts.CLASS <- sapply(args, CLASS)
@@ -228,6 +242,10 @@ function(..., deparse.level=1) {
 function(..., all=TRUE, fill=NA, suffixes=NULL, retclass='xts') {
 
  args <- list(...)
+ # Allow, but remove, NULL objects
+ args <- args[!sapply(args,is.null)]
+ if(length(args)==1)
+   return(args[[1]])
  #retclass <- match.arg(retclass, retclass)
 
  # Store original class attributes
