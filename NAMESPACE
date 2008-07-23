@@ -9,6 +9,7 @@ export(firstof,
        lastof)
 
 export(timeBased,
+       timeBasedRange,
        timeBasedSeq)
 
 # user visible core xts functions

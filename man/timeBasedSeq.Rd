@@ -1,6 +1,7 @@
 \name{timeBasedSeq}
 \alias{timeBasedSeq}
-\title{ Create a Sequence of Times }
+\alias{timeBasedRange}
+\title{ Create a Sequence or Range of Times }
 \description{
 A function to create a vector of time-based objects
 suitable for indexing an \emph{xts} object,
@@ -9,14 +10,21 @@ and date standard for range-based specification. The
 resultant series can be of any class supported by
 \emph{xts}, including POSIXct, Date, chron, timeDate,
 yearmon, and yearqtr.
+
+\code{timeBasedRange} creates a vector of length 1 or 2
+as seconds since the epoch (1970-01-01) for use
+internally.
 }
 \usage{
 timeBasedSeq(x, retclass = NULL, length.out = NULL)
+
+timeBasedRange(x, ...)
 }
 \arguments{
   \item{x}{ a string representing the time-date range desired }
   \item{retclass}{ the return class desired }
   \item{length.out}{ passed to \code{seq} internally }
+  \item{\ldots}{ unused }
 }
 \details{
 Designed to provide uniform creation of valid
@@ -28,6 +36,9 @@ In general, the format is a string specifying
 a time and/or date \emph{from}, \emph{to}, and
 optionally \emph{by} delineated by
 either \sQuote{"/"} or \sQuote{"::"}.
+
+The first argument need not be quoted, as it is
+converted internally if need be.
 
 The general form is \emph{from/to/by} or
 \emph{from::to::by}, where \emph{to} and \emph{by}
@@ -65,7 +76,7 @@ days, \code{H} for hours, \code{M} for minutes and \code{S} for
 seconds.
 }
 \value{
-A sequence of time-based objects.
+A sequence or range of time-based objects.
 
 If \code{retclass} is \code{NULL}, the result is a named
 list of from, to, by and length.out.
