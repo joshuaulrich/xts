@@ -11,10 +11,11 @@
 
 `xts` <-
 function(x=NULL,order.by=index(x),frequency=NULL,...) {
-  if(!any(sapply(c('Date','POSIXct','chron','dates','times','timeDate','yearmon','yearqtr'),
-     function(xx) inherits(order.by,xx)))) {
+#  if(!any(sapply(c('Date','POSIXct','chron','dates','times','timeDate','yearmon','yearqtr'),
+#     function(xx) inherits(order.by,xx)))) {
+  if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
-  }
+#  }
     orderBy <- class(order.by)
     if('timeDate' %in% orderBy) {
       z <- structure(zoo(x=coredata(x),
@@ -36,10 +37,13 @@ function(x=NULL,order.by=index(x),frequency=NULL,...) {
 }
 
 `reclass` <-
-function(x, match.to, ...) {
+function(x, match.to, error=FALSE, ...) {
   if(!missing(match.to) && is.xts(match.to)) {
     if(NROW(x) != length(index(match.to)))
-      stop('incompatible match.to attibutes')
+      if(error) {
+        stop('incompatible match.to attibutes')
+      } else return(x)
+
     if(!is.xts(x)) x <- xts(coredata(x),index(match.to))
     CLASS(x) <- CLASS(match.to)
     xtsAttributes(x) <- xtsAttributes(match.to)

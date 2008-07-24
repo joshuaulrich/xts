@@ -64,7 +64,7 @@ package, respectively.
 Valid period character strings include: \code{"seconds"}, 
 \code{"minutes"}, \code{"hours"}, \code{"days"}, \code{"weeks"},
 \code{"months"}, \code{"quarters"}, and \code{"years"}. These are
-calclated internally via \code{endpoints}. See that function's help
+calculated internally via \code{endpoints}. See that function's help
 page for further details.
 
 To adjust the final indexing style, it is possible to set

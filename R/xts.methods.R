@@ -72,14 +72,19 @@ function(x, i, j, drop = TRUE, ...)
     original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
     if(length(original.attr) < 1) original.attr <- NULL
 
-    #POSIXindex <- tindex(x,'POSIXct')  attempt to remove tindex...
-    indexClass(x) <- "POSIXct"
+    # convert index if not POSIXct or Date already
+    if(!inherits(indexClass(x), 'POSIXct') || !inherits(indexClass(x), "Date"))
+      indexClass(x) <- "POSIXct"
     POSIXindex <- index(x)
 
     if (missing(i)) 
+      # this is horribly wasteful  FIXME
       i <- 1:NROW(x)
+
     if (timeBased(i)) 
+      # this shouldn't happen either, though less important I suspect  FIXME
       i <- as.character(as.POSIXct(i)) 
+
     if (is.character(i)) {
       # enables subsetting by date style strings
       # must be able to process - and then allow for operations???

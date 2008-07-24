@@ -1,4 +1,4 @@
-`createIndexRange` <-
+`timeBasedRange` <-
 function(x, ...) {
   # convert unquoted time range to
   if (!is.character(x)) 
