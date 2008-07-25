@@ -104,10 +104,10 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
       }
     }
     if(indexAt=='startof') {
-      index(tz) <- index(x)[startof(x,by=period)]
+      index(tz) <- index(x)[startof(x,by=period, k=k)]
     }
     if(indexAt=='endof') {
-      index(tz) <- index(x)[endof(x,by=period)]
+      index(tz) <- index(x)[endof(x,by=period, k=k)]
     }
     if(indexAt=='firstof') {
       if(period %in% c('months','quarters')) {
