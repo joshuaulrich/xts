@@ -1,6 +1,7 @@
 `plot.xts` <- function(x, y=NULL,
                        type='l', auto.grid=TRUE,
                        major.ticks='auto', minor.ticks=TRUE, 
+                       major.format=TRUE,
                        bar.col='grey', candle.col='white',
                        ann=TRUE, axes=TRUE, 
                        ...) {
@@ -9,7 +10,7 @@
   if(is.null(y))
     xycoords <- xy.coords(x)
   time.scale <- periodicity(x)$scale
-  ep <- axTicksByTime(x,major.ticks)
+  ep <- axTicksByTime(x,major.ticks, format=major.format)
 
   otype <- type
 
