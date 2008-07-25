@@ -1,0 +1,27 @@
+Development Version Notes and CHANGELOG
+
+Purpose:
+To provide a faster implementation of time-based subsetting, as
+well as a more memory efficient implementation.
+
+How: 
+Since the xts object is ordered by design, we are implementing
+a simple binary search to provide near instant access to range
+based time-queries.  This is designed to be similar in at least one
+dimension (time subsetting) to Matt Doyle's impressive data.table
+functionality.
+
+Additionally it is a test of converting the now flexible user-specified
+indexing class into an internal integer/double representation.  This will
+allow for minimal additional conversions to a universal POSIXct style index
+which once again will translate into lookups that are nearly instantaneous.
+
+An additional benefit of even our initial implementation will be
+the drastic minimization of internal copying that needs to take place.
+This means that larger data can be handled in-memory.
+
+We will also be adding more facilities for high frequency data
+management. As well as using large data to benchmark and improve
+the base xts functionality.
+
+Estimated time-table for release is???
