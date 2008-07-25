@@ -72,7 +72,7 @@ function(x, i, j, drop = TRUE, ...)
     original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
     if(length(original.attr) < 1) original.attr <- NULL
 
-    # convert index if not POSIXct or Date already
+    # convert index to POSIXct if not POSIXct or Date already
     if(!inherits(indexClass(x), 'POSIXct') || !inherits(indexClass(x), "Date"))
       indexClass(x) <- "POSIXct"
     POSIXindex <- index(x)
@@ -92,18 +92,21 @@ function(x, i, j, drop = TRUE, ...)
       i.tmp <- NULL
       for(ii in i) {
         if(!identical(grep("(::)|/",ii),integer(0))) {
+          tBR <- as.POSIXct(timeBasedRange(ii), origin="1970-01-01") # this will be left to numeric soon
+          first.time <- tBR[1]
+          last.time  <- tBR[2]
           # range operator
-          dates <- strsplit(ii,'(::)|/')[[1]]
-          
-          # test for single side range operation
-          first.time <- ifelse(dates[1]=="",
-                               POSIXindex[1],
-                               do.call('firstof',
-                                        as.list(as.numeric(strsplit(dates[1],':|-|/| ')[[1]]))))
-          last.time <- ifelse(length(dates)==1,
-                               POSIXindex[length(POSIXindex)],
-                               do.call('lastof',
-                                        as.list(as.numeric(strsplit(dates[2],':|-|/| ')[[1]]))))
+#          dates <- strsplit(ii,'(::)|/')[[1]]
+#          
+#          # test for single side range operation
+#          first.time <- ifelse(dates[1]=="",
+#                               POSIXindex[1],
+#                               do.call('firstof',
+#                                        as.list(as.numeric(strsplit(dates[1],':|-|/| ')[[1]]))))
+#          last.time <- ifelse(length(dates)==1,
+#                               POSIXindex[length(POSIXindex)],
+#                               do.call('lastof',
+#                                        as.list(as.numeric(strsplit(dates[2],':|-|/| ')[[1]]))))
         } else {
           # if single date is given - get start and end points if resolution of
           # series is greater than the time specified
@@ -114,6 +117,7 @@ function(x, i, j, drop = TRUE, ...)
                                 as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]])))
         }      
         
+        # this is probably the cleanest place to add binarySearch, as the full rowsearch is BAD!
         i.tmp <- c(i.tmp,which(POSIXindex <= last.time & POSIXindex >= first.time))
       }
       i <- i.tmp
