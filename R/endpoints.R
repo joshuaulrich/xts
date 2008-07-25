@@ -20,14 +20,14 @@ function(x,on='months',k=1) {
 }
 
 `startof` <-
-function(x,by='months') {
-  ep <- endpoints(x,on=by)
+function(x,by='months', k=1) {
+  ep <- endpoints(x,on=by, k=k)
   (ep+1)[-length(ep)]
 }
 
 `endof` <-
-function(x,by='months') {
-  endpoints(x,on=by)[-1]
+function(x,by='months', k=1) {
+  endpoints(x,on=by, k=k)[-1]
 }
 
 `firstof` <-
