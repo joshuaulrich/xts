@@ -1,5 +1,5 @@
-#inst
-#inst/doc
-#inst/doc/intro.Rnw
-#tests
-#tests/doRUnit.R
+inst
+inst/doc
+inst/doc/xts.Rnw
+tests
+tests/doRUnit.R

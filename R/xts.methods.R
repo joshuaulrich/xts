@@ -1,11 +1,12 @@
 `print.xts` <-
 function(x,...) {
-  x.tmp <- x
-  attributes(x.tmp) <- NULL
-  zoo:::print.zoo(structure(x.tmp,
-                            class='zoo',
-                            index=index(x),
-                            dim=dim(x),dimnames=dimnames(x)),...)
+#  x.tmp <- x
+#  attributes(x.tmp) <- NULL
+#  zoo:::print.zoo(structure(x.tmp,
+#                            class='zoo',
+#                            index=index(x),
+#                            dim=dim(x),dimnames=dimnames(x)),...)
+  print(as.zoo(x))
 }
 
 `str.xts` <-
@@ -72,10 +73,8 @@ function(x, i, j, drop = TRUE, ...)
     original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
     if(length(original.attr) < 1) original.attr <- NULL
 
-    # convert index to POSIXct if not POSIXct or Date already
-    if(!inherits(indexClass(x), 'POSIXct') || !inherits(indexClass(x), "Date"))
-      indexClass(x) <- "POSIXct"
-    POSIXindex <- index(x)
+    # temporarily convert back to POSIXct.  This is what I am eliminating
+    POSIXindex <- as.POSIXct(attr(x, 'index'))
 
     if (missing(i)) 
       # this is horribly wasteful  FIXME

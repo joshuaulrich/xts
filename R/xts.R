@@ -19,15 +19,15 @@ function(x=NULL,order.by=index(x),frequency=NULL,...) {
     orderBy <- class(order.by)
     if('timeDate' %in% orderBy) {
       z <- structure(zoo(x=coredata(x),
-                     order.by=as.POSIXct(order.by),
+                     order.by=as.numeric(as.POSIXct(order.by)),
                      frequency=frequency),
-                     class=c('xts','zoo'),...)
+                     class=c('xts','zoo'), .indexCLASS=orderBy, ...)
       indexClass(z) <- 'timeDate'
     } else {
       z <- structure(zoo(x=x,
-                     order.by=order.by,
+                     order.by=as.numeric(as.POSIXct(order.by)),
                      frequency=frequency),
-                     class=c('xts','zoo'),...)
+                     class=c('xts','zoo'), .indexCLASS=orderBy, ...)
     }
   if(!is.null(dim(x))) {
     attr(z,'.ROWNAMES') <- dimnames(z)[[1]]
