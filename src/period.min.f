@@ -1,15 +1,4 @@
-c
-c     to.period imlpementation to speed up data
-c     aggregation in OHLC format
-c
-c     currently translates to 100X speed improvement
-c     
-c     Copyright Jeffrey A. Ryan 2007
-c     jeff _dot_ ryan _at_ quantmod _dot_ com
-c
-c     Distributed under GPL-3
-c
-      subroutine pmaxz(bp,lbp,ia,lia,ret)
+      subroutine pminz(bp,lbp,ia,lia,ret)
 c     Usage:
 c      
 c     bp   index of breakpoints
@@ -30,6 +19,9 @@ c
 c     pos keeps track of location in col-major array
 c
       pos = 1
+c
+c     data must be OHLC or value,volume
+c     offsets if incoming OHLC data
        
       do 10 i=1,(lbp-1)
 c      
@@ -38,8 +30,8 @@ c
         do 20 j=(bp(i)+1),bp(i+1)
           if(j .eq. (bp(i)+1)) ps(i) = ia(j)
 c
-c         step through each obs. and note values
-          ps(i) = max(ps(i),ia(j))
+c       step through each obs. and note values
+          ps(i) = min(ps(i),ia(j))
 
    20   continue
 
