@@ -6,6 +6,7 @@ function(x,...) {
 
   # strip all non-'core' attributes so they're not attached to the Data slot
   x.attr <- attributes(x)
+  x.index <- index(x)
   xx <- structure(x,dimnames=x.attr$dimnames,index=x.attr$index)
   original.attr <- attributes(x)[!names(attributes(x)) %in% 
                                  c("dim","dimnames","index","class")]
@@ -13,7 +14,7 @@ function(x,...) {
     attr(xx,i) <- NULL
   }
 
-  timeSeries(xx,charvec=as.character(index(xx)),format=x.attr$format,
+  timeSeries(xx,charvec=as.character(x.index),format=x.attr$format,
              zone=x.attr$FinCenter,FinCenter=x.attr$FinCenter,
              recordIDs=x.attr$recordIDs,title=x.attr$title,
              documentation=x.attr$documentation,...)

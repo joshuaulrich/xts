@@ -4,7 +4,7 @@
 function(x, ...) {
   stopifnot("package:its" %in% search() || require("its",quietly=TRUE))
   xx <- coredata(x)
-  dates <- attr(x,'index')
+  dates <- index(x)
   its(xx,dates=dates,...)
 }
 

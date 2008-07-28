@@ -19,7 +19,7 @@ xtsible(x)
 Reclass(x)
 
 try.xts(x, ..., error = TRUE)
-reclass(x, match.to, ...)
+reclass(x, match.to, error = FALSE, ...)
 }
 \arguments{
   \item{x}{ data object to convert. See details for supported types }

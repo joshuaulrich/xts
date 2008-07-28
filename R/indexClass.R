@@ -31,6 +31,12 @@ function(x,value) {
 
 `indexClass<-.xts` <-
 function(x, value) {
+  if(!is.character(value) && length(value) != 1)
+    stop('improperly specified value for indexClass')
+
+  if(!value[1] %in% c('dates','chron','POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr') )
+       stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
+
   attr(x, '.indexCLASS') <- value
   x
 }
@@ -66,11 +72,11 @@ function(x, ...) {
     x.index <- do.call(paste('as',value[[1]],sep='.'),list(x.index))
   } else x.index <- do.call("as.Date",list(x.index))
 #
-  if('timeDate' == value) {
+  #if('timeDate' == value[[1]]) {
     # this will fail now... jar
     # remove unnecessary 'control' attribute
-    x <- structure(x,index=structure(index(x),control=NULL))
-  }
+    #x <- structure(x,index=structure(index(x),control=NULL))
+  #}
 
   Sys.setenv(TZ=sys.TZ)
   

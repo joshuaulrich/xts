@@ -34,11 +34,15 @@ function(x,...) {
 }
 
 `xcoredata<-.default` <- function(x,value) {
-  for(att in names(value)) {
-    if(!att %in% c('dim','dimnames'))
-      attr(x,att) <- value[[att]]
+  if(is.null(value)) {
+    return(coredata(x))
+  } else {
+    for(att in names(value)) {
+      if(!att %in% c('dim','dimnames'))
+        attr(x,att) <- value[[att]]
+    }
+  return(x)
   }
-  x
 }
 
 `xtsAttributes` <-

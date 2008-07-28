@@ -199,19 +199,22 @@ function(..., deparse.level=1) {
 
  # Ensure index attributes match
  # store as POSIXct, convert to class of first object index
- iclass <- class( index(args[[1]]) )
+ # iclass <- class( index(args[[1]]) )
+ iclass <- indexClass(args[[1]])  # using xts functions -- jar
  timeBasedClass <- sapply( iclass, function(x) xts:::timeBased(structure(1,class=x)) )
  iclass <- iclass[timeBasedClass][1]
- for(arg in args) {
-   index(arg) <- as.POSIXct(index(arg))
- }
+ #for(arg in args) {
+ #  index(arg) <- as.POSIXct(index(arg))
+ #}
  
  # Bind objects
  ret <- zoo:::rbind.zoo(...)
- ret <- structure( ret, class=c('xts','zoo') )
+ #ret <- structure( ret, class=c('xts','zoo') )
+ ret <- as.xts(ret)
 
  # Restore first object index class
- index(ret) <- do.call( paste('as', iclass, sep='.'), list(index(ret)) )
+ # index(ret) <- do.call( paste('as', iclass, sep='.'), list(index(ret)) ) 
+ indexClass(ret) <- iclass # changed above to utilize internal classing of V2 xts -- jar
 
  # Drop CLASS & USER attributes if they are not the same for all objects
  all.CLASS <- all( sapply(xts.CLASS, function(x) identical(x,xts.CLASS[[1]])) )
@@ -264,7 +267,8 @@ function(..., all=TRUE, fill=NA, suffixes=NULL, retclass='xts') {
 
  # Merge objects
  ret <- zoo:::merge.zoo(..., all=all, fill=fill, suffixes=suffixes, retclass='zoo')
- ret <- structure( ret, class=c('xts','zoo') )
+ ret <- as.xts(ret) # slightly more clean now that more than a name change happens internally
+ #ret <- structure( ret, class=c('xts','zoo') )
 
  # Drop CLASS & USER attributes if they are not the same for all objects
  all.CLASS <- all( sapply(xts.CLASS, function(x) identical(x,xts.CLASS[[1]])) )
