@@ -8,7 +8,7 @@ Constructor function for creating an extensible time-series object.
 \code{xts} is used to create an \code{xts} object from raw data inputs.
 }
 \usage{
-xts(x = NULL, order.by = index(x),frequency = NULL, ...)
+xts(x = NULL, order.by = index(x),frequency = NULL, row.names = TRUE, ...)
 
 is.xts(x)
 }
@@ -18,6 +18,7 @@ is.xts(x)
   \item{order.by}{ a corresponding vector of unique times/dates - must be
 of a known time-based class. See details. }
   \item{frequency}{ numeric indicating frequency of \code{order.by}. See details. }
+  \item{row.names}{ should row.names be stripped to minimize memory requirements }
   \item{\dots}{ additional attributes to be added. See details. }
 }
 \details{

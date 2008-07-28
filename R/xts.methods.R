@@ -1,60 +1,11 @@
 `print.xts` <-
 function(x,...) {
-#  x.tmp <- x
-#  attributes(x.tmp) <- NULL
-#  zoo:::print.zoo(structure(x.tmp,
-#                            class='zoo',
-#                            index=index(x),
-#                            dim=dim(x),dimnames=dimnames(x)),...)
-  print(as.zoo(x))
-}
-
-`str.xts` <-
-function(object,...) {
-  cat(paste("An",sQuote('xts'),"object from",start(object),"to",end(object),"containing:\n"))
-  cat(paste("  Data:"))
-  str(coredata(object),...)
-  cat(paste("  Indexed by: "))
-  str(index(object),...)
-  if(!is.null(CLASS(object)))
-    cat(paste("  Original class: '",CLASS(object),"' ",sep=""),"\n")
-  cat(paste("  xts Attributes: "),"\n")
-  str(xtsAttributes(object),...)
-}
-
-`na.omit.xts` <- function(object, ...) {
-  xx <- stats:::na.omit.default(object,...)
-  naa <- attr(xx,'na.action')
-  naa.index <- index(object)[naa]
-
-  ROWNAMES <- attr(object,'.ROWNAMES')
-  if(!is.null(ROWNAMES)) {
-    naa.rownames <- ROWNAMES[naa]
-  } else naa.rownames <- NULL
-
-  attr(xx,'na.action') <- structure(naa,
-                                    index=naa.index,
-                                    .ROWNAMES=naa.rownames)
-  return(xx) 
-}
-
-`na.replace` <- function(x) {
-  if(is.null(xtsAttributes(x)$na.action))
-    return(x)
-
-  # Create 'NA' xts object
-  tmp <- xts(matrix(rep(NA,NCOL(x)*NROW(x)), nc=NCOL(x)),
-             attr(xtsAttributes(x)$na.action, 'index'))
-
-  # Ensure xts 'NA' object has *all* the same attributes
-  # as the object 'x'; this is necessary for rbind to
-  # work correctly
-  CLASS(tmp) <- CLASS(x)
-  xtsAttributes(tmp) <- xtsAttributes(x)
-  attr(x,'na.action') <- attr(tmp,'na.action') <- NULL
-  colnames(tmp) <- colnames(x)
-
-  rbind(x,tmp)
+  x.tmp <- x
+  attributes(x.tmp) <- NULL
+  zoo:::print.zoo(structure(x.tmp,
+                            class='zoo',
+                            index=index(x),
+                            dim=dim(x),dimnames=dimnames(x)),...)
 }
 
 `[.xts` <-
@@ -182,73 +133,6 @@ function(x, i, j, drop = TRUE, ...)
     x
 }
 
-`rbind.xts` <-
-function(..., deparse.level=1) {
-
- args <- list(...)
- # Allow, but remove, NULL objects
- args <- args[!sapply(args,is.null)]
- if(length(args)==1)
-   return(args[[1]])
-
- # Store original class attributes
- xts.CLASS <- sapply(args, CLASS)
- xts.CLASSattr <- lapply(args, xtsAttributes, user=FALSE)
- xts.USERattr <- lapply(args, xtsAttributes, user=TRUE)
- has.ROWNAMES <- any( as.logical(lapply(args, function(x) any(names(attributes(x))=='.ROWNAMES'))) )
-
- # Ensure index attributes match
- # store as POSIXct, convert to class of first object index
- # iclass <- class( index(args[[1]]) )
- iclass <- indexClass(args[[1]])  # using xts functions -- jar
- #timeBasedClass <- sapply( iclass, function(x) xts:::timeBased(structure(1,class=x)) )
- #iclass <- iclass[timeBasedClass][1]
- #for(arg in args) {
- #  index(arg) <- as.POSIXct(index(arg))
- #}
- 
- # Bind objects
- ret <- zoo:::rbind.zoo(...)
- #ret <- structure( ret, class=c('xts','zoo') )
- ret <- as.xts(ret)
-
- # Restore first object index class
- # index(ret) <- do.call( paste('as', iclass, sep='.'), list(index(ret)) ) 
- indexClass(ret) <- iclass # changed above to utilize internal classing of V2 xts -- jar
-
- # Drop CLASS & USER attributes if they are not the same for all objects
- all.CLASS <- all( sapply(xts.CLASS, function(x) identical(x,xts.CLASS[[1]])) )
- all.USER <- all( sapply(xts.USERattr, function(x) identical(x,xts.USERattr[[1]])) )
- 
- if( all.CLASS ) {
-   # Need a better way to deal with different xtsAttributes than
-   # simply assigning them to the value of the first object.
-   xts.CLASSattr <- xts.CLASSattr[[1]]
-   CLASS(ret) <- xts.CLASS[[1]]
-   attr(ret, '.CLASSnames') <- attr(args[[1]], '.CLASSnames')
-
- } else {
-   CLASS(ret) <- NULL
-   xts.CLASSattr <- NULL
- }
- if( has.ROWNAMES ) {
- # .ROWNAMES attribute may not be similar, so set .ROWNAMES to index for now,
- # if it exists in at least one object
-   attr(ret, '.ROWNAMES') <- as.character(index(ret))
- } else {
-   attr(ret, '.ROWNAMES') <- NULL
- }
- if( all.USER ) {
-   xts.USERattr <- xts.USERattr[[1]]
- } else {
-   xts.USERattr <- NULL
- }
- # Re-attach _xts_ attributes
- xtsAttributes(ret) <- c( xts.CLASSattr, xts.USERattr )
-
- return(ret)
-}
-
 `merge.xts` <-
 function(..., all=TRUE, fill=NA, suffixes=NULL, retclass='xts') {
 
@@ -305,12 +189,3 @@ function(..., all=TRUE, fill=NA, suffixes=NULL, retclass='xts') {
  return(ret)
 }
 
-`cbind.xts` <-
-function(..., all=TRUE, fill=NA, suffixes=NULL) {
-    xts:::merge.xts(..., all=all, fill=fill, suffixes=suffixes, retclass="xts")
-}
-
-`c.xts` <-
-function(...) {
-  rbind.xts(...)
-}
