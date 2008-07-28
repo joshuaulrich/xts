@@ -54,13 +54,14 @@ function(x, user=NULL) {
 
   if(is.null(user)) {
   # Both xts and user attributes
-    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES')
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT')
     xa <- x.attr[!names(x.attr) %in% rm.attr]
   }
   else
   if(user) {
   # Only user attributes
-    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES',x.attr$.CLASSnames)
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT', 
+                 x.attr$.CLASSnames)
     xa <- x.attr[!names(x.attr) %in% rm.attr]
   } else {
   # Only xts attributes
