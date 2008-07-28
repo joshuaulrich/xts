@@ -31,6 +31,22 @@ function(x=NULL,order.by=index(x),frequency=NULL, row.names=TRUE, ...) {
   return(z)
 }
 
+`.xts` <-
+function(x=NULL, rindex, indexCLASS,  row.names=FALSE, check=FALSE, ...) {
+  if(check) {
+    index <- order(rindex)
+    rindex <- rindex[index]
+    x <- x[index, drop=FALSE]
+  }
+  xx <- structure(x=x,
+            index=rindex(rindex),
+            .indexCLASS=indexCLASS,
+            class=c('xts','zoo'))
+  if(row.names) {
+    #???
+  }
+}
+
 `reclass` <-
 function(x, match.to, error=FALSE, ...) {
   if(!missing(match.to) && is.xts(match.to)) {
