@@ -201,8 +201,8 @@ function(..., deparse.level=1) {
  # store as POSIXct, convert to class of first object index
  # iclass <- class( index(args[[1]]) )
  iclass <- indexClass(args[[1]])  # using xts functions -- jar
- timeBasedClass <- sapply( iclass, function(x) xts:::timeBased(structure(1,class=x)) )
- iclass <- iclass[timeBasedClass][1]
+ #timeBasedClass <- sapply( iclass, function(x) xts:::timeBased(structure(1,class=x)) )
+ #iclass <- iclass[timeBasedClass][1]
  #for(arg in args) {
  #  index(arg) <- as.POSIXct(index(arg))
  #}
