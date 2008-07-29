@@ -34,8 +34,17 @@ startTime <- Sys.time()
       for(ii in i) {
         if(!identical(grep("(::)|/",ii),integer(0))) {
           tBR <- timeBasedRange(ii)
-          first.time <- tBR[1]
-          last.time  <- tBR[2]
+          
+          # the first index value to be found
+          if(is.na(tBR[1])) {
+            first.time <- rindex(x)[1]
+          } else first.time <- tBR[1]
+
+          # the last index value ot be found
+          if(is.na(tBR[2])) {
+            last.time  <- rindex(x)[NROW(x)]
+          } else last.time <- tBR[2]
+
         } else {
           # if single date is given - get start and end points if resolution of
           # series is greater than the time specified
@@ -55,10 +64,13 @@ startTime <- Sys.time()
       }
       i <- i.tmp
     }
-cat('calculate i',Sys.time()-startTime,'\n')
+cat('DEBUG: calculate i',Sys.time()-startTime,'\n')
 
     if (missing(j)) {
+cat("DEBUG: missing(j)\n\n")
         if(original.cols == 1) {
+
+cat("DEBUG: original.cols != 1\n\n")
           # if data set only has one column:
           # it is necessary to replace the dimnames removed by [.zoo
           dn1 <- dimnames(x)[[1]]
@@ -66,22 +78,31 @@ cat('calculate i',Sys.time()-startTime,'\n')
           nr <- NROW(x)
           #attributes(x) <- NULL
           #dim(x) <- c(NROW(x), 1)
-cat('get all attributes for later',Sys.time()-startTime,'\n')
+cat('DEBUG: get all attributes for later',Sys.time()-startTime,'\n')
           #x.tmp <- x[i=i, drop=drop, ...]
-          x.tmp <- .subset(x, i=i, drop=drop)
+          x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
           rm(x)
           x <- x.tmp
-cat('perform subset ',Sys.time()-startTime,'\n')
+          rm(x.tmp)
+cat('DEBUG: perform subset ',Sys.time()-startTime,'\n')
           attr(x, 'index') <- x.index
-          dim(x) <- c(NROW(x), NCOL(x))
-          dn <- list(dn1[i],colnames(x))
+          dim(x) <- c(length(i), original.cols)
+          dn <- list(dn1[i],original.names)
           dimnames(x) <- dn
-cat('add dimensions and dimnames ',Sys.time()-startTime,'\n')
+cat('DEBUG: add dimensions and dimnames ',Sys.time()-startTime,'\n')
         } else {
+cat("DEBUG: original.cols != 1\n\n")
           #x <- x[i = i, drop = drop, ...]
+          dn1 <- dimnames(x)[[1]]
           x.index <- attr(x, 'index')[i]
-          x <- coredata(x)[i = i, drop = drop, ...]
+          x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
+          rm(x)
+          x <- x.tmp
+          rm(x.tmp)
           attr(x, 'index') <- x.index
+          dim(x) <- c(length(i), original.cols)
+          dn <- list(dn1[i],original.names)
+          dimnames(x) <- dn
         }
 
         if(!is.null(original.attr)) {
@@ -105,19 +126,25 @@ cat('added back class and cols',Sys.time()-startTime,'\n')
           # subsetting down to 1 cols - '[.zoo' will delete this info
           dn1 <- dimnames(x)[[1]]
           x.index <- attr(x, 'index')[i]
-          nr <- NROW(x)
-          nc <- NCOL(x)
           #x <- x[i = i, j = j, drop = drop, ...]
           x.tmp <- .subset(x, i=i, j=j, drop=drop)
           rm(x)
           x <- x.tmp
           attr(x, 'index') <- x.index
-          dim(x) <- c(NROW(x), NCOL(x))
-          dn <- list(dn1[i],colnames(x))
+          dim(x) <- c(length(i), length(j))
+          dn <- list(dn1[i],original.names[j])
           dimnames(x) <- dn
         } else {
           #x <- x[i = i, j = j, drop = drop, ...]
-          x <- .subset(x, i=i, j=j, drop=drop)
+          dn1 <- dimnames(x)[[1]]
+          x.index <- attr(x, 'index')[i]
+          x.tmp <- .subset(x, i=i, j=j, drop=drop)
+          rm(x)
+          x <- x.tmp
+          attr(x, 'index') <- x.index
+          dim(x) <- c(length(i), length(j))
+          dn <- list(dn1[i],original.names[j])
+          dimnames(x) <- dn
         }
 
         if(!is.null(original.attr)) {

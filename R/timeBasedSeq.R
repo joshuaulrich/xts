@@ -12,36 +12,49 @@ function(x, retclass=NULL, length.out=NULL) {
   to   <- x[2]
   BY   <- x[3]
 
-  if(is.na(to)) length.out <- 1L
+  # need to test for user specified length.out, currently just overriding
+  if(from == "")
+    from <- NA
 
-  year  <- as.numeric(substr(from,1,4))
-  month <- as.numeric(substr(from,5,6))
-  day   <- as.numeric(substr(from,7,8))
-  hour  <- as.numeric(substr(from,9,10))
-  mins  <- as.numeric(substr(from,11,12))
-  secs  <- as.numeric(substr(from,13,14))
-
-  time.args.from <- as.list(unlist(sapply(c(year,month,day,hour,mins,secs),
-                               function(x) if(!is.na(x)) x)
-                        ))
-
-  from <- do.call('firstof',time.args.from) 
-
+  if(!is.na(from)) {
+    year  <- as.numeric(substr(from,1,4))
+    month <- as.numeric(substr(from,5,6))
+    day   <- as.numeric(substr(from,7,8))
+    hour  <- as.numeric(substr(from,9,10))
+    mins  <- as.numeric(substr(from,11,12))
+    secs  <- as.numeric(substr(from,13,14))
   
-  year  <- as.numeric(substr(to,1,4))
-  month <- as.numeric(substr(to,5,6))
-  day   <- as.numeric(substr(to,7,8))
-  hour  <- as.numeric(substr(to,9,10))
-  mins  <- as.numeric(substr(to,11,12))
-  secs  <- as.numeric(substr(to,13,14))
-
-  time.args.to <- as.list(unlist(sapply(c(year,month,day,hour,mins,secs),
-                               function(x) if(!is.na(x)) x)
-                        ))
-
-  to <- do.call('lastof',time.args.to) 
+    time.args.from <- as.list(unlist(sapply(c(year,month,day,hour,mins,secs),
+                                 function(x) if(!is.na(x)) x)
+                          ))
+  
+    from <- do.call('firstof',time.args.from) 
+  } 
+  else time.args.from <- list()
+ 
+  # only calculate if to is specified
+  if(!is.na(to)) { 
+    year  <- as.numeric(substr(to,1,4))
+    month <- as.numeric(substr(to,5,6))
+    day   <- as.numeric(substr(to,7,8))
+    hour  <- as.numeric(substr(to,9,10))
+    mins  <- as.numeric(substr(to,11,12))
+    secs  <- as.numeric(substr(to,13,14))
+  
+    time.args.to <- as.list(unlist(sapply(c(year,month,day,hour,mins,secs),
+                                 function(x) if(!is.na(x)) x)
+                          ))
+  
+    to <- do.call('lastof',time.args.to) 
+  } 
+  else time.args.to <- list()
 
   max.resolution <- max(length(time.args.from), length(time.args.to))
+
+  # if neither is set
+  if(max.resolution == 0) 
+    max.resolution <- 1
+
   resolution <- c('year','month','day','hour','mins','secs')[max.resolution]
 
   if(!is.na(BY)) resolution <- names(match.arg(BY, list(year  ='Y',
@@ -55,7 +68,9 @@ function(x, retclass=NULL, length.out=NULL) {
   if(max.resolution == 2 || resolution == 'month' ) convert.to <- 'yearmon'
   if(max.resolution >  3 || resolution %in% c("H","M","S")) convert.to <- 'POSIXct'
 
-  if(!missing(retclass) && is.null(retclass)) {
+  if(is.na(to)) length.out <- 1L
+
+  if((!missing(retclass) && is.null(retclass)) || any(is.na(to),is.na(from))) {
     # return the calculated values only
     return(list(from=from,to=to,by=resolution,length.out=length.out))
   }

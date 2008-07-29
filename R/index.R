@@ -4,7 +4,7 @@ function(x, ...) {
 
   sys.TZ <- Sys.getenv('TZ')
   Sys.setenv(TZ='GMT')
-  x.index  <- as.POSIXct(attr(x, 'index'))
+  x.index  <- as.POSIXct(rindex(x))
 
   if(!is.list(value)) 
     value <- as.list(value)

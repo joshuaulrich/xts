@@ -19,32 +19,34 @@ function(x=NULL,order.by=index(x),frequency=NULL, row.names=TRUE, ...) {
   z <- structure(zoo(x=x,
                  order.by=as.numeric(as.POSIXct(order.by)),
                  frequency=frequency),
-                 class=c('xts','zoo'), .indexCLASS=orderBy, ...)
+                 class=c('xts','zoo'), .indexCLASS=orderBy, 
+                 dimnames=list(NULL,colnames(x)), ...)
   if(!is.null(dim(x)) && row.names) {
     attr(z,'.ROWNAMES') <- dimnames(z)[[1]]
     rownames(z) <- as.character(index(z))
   }
 
-  if(!row.names)
-    rownames(z) <- NULL  
-
   return(z)
 }
 
 `.xts` <-
-function(x=NULL, rindex, indexCLASS,  row.names=FALSE, check=FALSE, ...) {
+function(x=NULL, index, indexCLASS,  row.names=FALSE, check=FALSE, ...) {
   if(check) {
-    index <- order(rindex)
-    rindex <- rindex[index]
-    x <- x[index, drop=FALSE]
+    ind <- order(index)
+    rindex <- rindex[ind]
+    x <- x[ind, drop=FALSE]
   }
-  xx <- structure(x=x,
-            index=rindex(rindex),
+  if(!is.numeric(index))
+    index <- as.numeric(index)
+
+  xx <- structure(.Data=x,
+            index=index,
             .indexCLASS=indexCLASS,
             class=c('xts','zoo'))
   if(row.names) {
     #???
   }
+  xx
 }
 
 `reclass` <-
