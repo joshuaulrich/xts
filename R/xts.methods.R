@@ -11,6 +11,7 @@ startTime <- Sys.time()
     sys.TZ <- Sys.getenv('TZ') 
     Sys.setenv(TZ='GMT')
 
+    DIM <- dim(x)
 
     original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
     if(length(original.attr) < 1) original.attr <- NULL
@@ -64,6 +65,9 @@ startTime <- Sys.time()
       }
       i <- i.tmp
     }
+   
+    # .subset is picky, 0's in the 'i' position cause failures
+    i <- i[ -binsearch(i,0) ]
 #cat('DEBUG: calculate i',Sys.time()-startTime,'\n')
 
     if (missing(j)) {
@@ -80,7 +84,11 @@ startTime <- Sys.time()
           #dim(x) <- c(NROW(x), 1)
 #cat('DEBUG: get all attributes for later',Sys.time()-startTime,'\n')
           #x.tmp <- x[i=i, drop=drop, ...]
-          x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
+          if(is.null(DIM)) {
+            x.tmp <- .subset(x, i=i, drop=drop)
+          } 
+          else x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
+
           rm(x)
           x <- x.tmp
           rm(x.tmp)
@@ -95,7 +103,11 @@ startTime <- Sys.time()
           #x <- x[i = i, drop = drop, ...]
           dn1 <- dimnames(x)[[1]]
           x.index <- attr(x, 'index')[i]
-          x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
+          if(is.null(DIM)) {
+            x.tmp <- .subset(x, i=i, drop=drop)
+          }
+          else x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
+
           rm(x)
           x <- x.tmp
           rm(x.tmp)

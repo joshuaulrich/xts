@@ -20,10 +20,15 @@ function(x=NULL,order.by=index(x),frequency=NULL, row.names=TRUE, ...) {
                  order.by=as.numeric(as.POSIXct(order.by)),
                  frequency=frequency),
                  class=c('xts','zoo'), .indexCLASS=orderBy, 
-                 dimnames=list(NULL,colnames(x)), ...)
-  if(!is.null(dim(x)) && row.names) {
+                 dimnames=NULL, ...)
+  if(NCOL(z) == 1)
+    dim(z) <- c(NROW(z), 1)
+
+  if(!is.null(dim(x))) {
     attr(z,'.ROWNAMES') <- dimnames(z)[[1]]
-    rownames(z) <- as.character(index(z))
+    colnames(z) <- colnames(x)
+    if(row.names)
+      rownames(z) <- as.character(index(z))
   }
 
   return(z)
