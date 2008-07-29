@@ -24,6 +24,11 @@ function(vec,  key, start=TRUE) {
       break
     }
   }
+
+  # force only exact matches to return a value other than NA
+  if(is.null(start) && is.null(rec))
+    return(NA)
+
   # if not found return the appropriate bound
   if(is.null(rec)) {
     if(start) {

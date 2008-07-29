@@ -67,7 +67,9 @@ startTime <- Sys.time()
     }
    
     # .subset is picky, 0's in the 'i' position cause failures
-    i <- i[ -binsearch(i,0) ]
+    zero.index <- binsearch(i, 0, NULL)
+    if(!is.na(zero.index))
+      i <- i[ -zero.index ]
 #cat('DEBUG: calculate i',Sys.time()-startTime,'\n')
 
     if (missing(j)) {
