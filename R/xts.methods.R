@@ -53,14 +53,8 @@ startTime <- Sys.time()
           tBR <- timeBasedRange(dates)
           first.time <- tBR[1]
           last.time  <- tBR[2]
-#          first.time <- as.numeric(do.call('firstof',
-#                                as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]]))))
-#          last.time <- as.numeric(do.call('lastof',
-#                                as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]]))))
         }      
         
-        # this is probably the cleanest place to add binarySearch, as the full rowsearch is BAD!
-        #i.tmp <- c(i.tmp,which(POSIXindex <= last.time & POSIXindex >= first.time))
         i.tmp <- c(i.tmp,
                    seq.int(binsearch(attr(x, 'index'), first.time, TRUE),
                            binsearch(attr(x, 'index'), last.time, FALSE))
@@ -73,65 +67,35 @@ startTime <- Sys.time()
     zero.index <- binsearch(i, 0, NULL)
     if(!is.na(zero.index))
       i <- i[ -zero.index ]
-#cat('DEBUG: calculate i',Sys.time()-startTime,'\n')
 
     if (missing(j)) {
-#cat("DEBUG: missing(j)\n\n")
-        if(original.cols == 1) {
+      dn1 <- dimnames(x)[[1]]
+      x.index <- attr(x, 'index')[i]
+      if(is.null(DIM)) {
+        x <- .subset(x, i=i, drop=drop)
+      }
+      else x <- .subset(x, i=i, j=1:original.cols, drop=drop)
 
-#cat("DEBUG: original.cols != 1\n\n")
-          # if data set only has one column:
-          # it is necessary to replace the dimnames removed by [.zoo
-          dn1 <- dimnames(x)[[1]]
-          x.index <- attr(x, 'index')[i]
-          nr <- NROW(x)
-          #attributes(x) <- NULL
-          #dim(x) <- c(NROW(x), 1)
-#cat('DEBUG: get all attributes for later',Sys.time()-startTime,'\n')
-          #x.tmp <- x[i=i, drop=drop, ...]
-          if(is.null(DIM)) {
-            x.tmp <- .subset(x, i=i, drop=drop)
-          } 
-          else x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
+#      if(is.null(DIM)) {
+#        x.tmp <- .subset(x, i=i, drop=drop)
+#      }
+#      else x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
+#      rm(x)
+#      x <- x.tmp
+#      rm(x.tmp)
+      attr(x, 'index') <- x.index
+      dim(x) <- c(length(i), original.cols)
+      dn <- list(dn1[i],original.names)
+      dimnames(x) <- dn
 
-          rm(x)
-          x <- x.tmp
-          rm(x.tmp)
-#cat('DEBUG: perform subset ',Sys.time()-startTime,'\n')
-          attr(x, 'index') <- x.index
-          dim(x) <- c(length(i), original.cols)
-          dn <- list(dn1[i],original.names)
-          dimnames(x) <- dn
-#cat('DEBUG: add dimensions and dimnames ',Sys.time()-startTime,'\n')
-        } else {
-#cat("DEBUG: original.cols != 1\n\n")
-          #x <- x[i = i, drop = drop, ...]
-          dn1 <- dimnames(x)[[1]]
-          x.index <- attr(x, 'index')[i]
-          if(is.null(DIM)) {
-            x.tmp <- .subset(x, i=i, drop=drop)
-          }
-          else x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
-
-          rm(x)
-          x <- x.tmp
-          rm(x.tmp)
-          attr(x, 'index') <- x.index
-          dim(x) <- c(length(i), original.cols)
-          dn <- list(dn1[i],original.names)
-          dimnames(x) <- dn
+      if(!is.null(original.attr)) {
+        for(ii in 1:length(original.attr)) {
+          attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
+          if(names(original.attr)[ii]=='.ROWNAMES') attr(x,'.ROWNAMES') <- original.attr[[ii]][i]
         }
-
-        if(!is.null(original.attr)) {
-            for(ii in 1:length(original.attr)) {
-              attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
-              if(names(original.attr)[ii]=='.ROWNAMES') attr(x,'.ROWNAMES') <- original.attr[[ii]][i]
-            }
-        }
-#cat('added back attributes',Sys.time()-startTime,'\n')
-        class(x) <- original.class
-        if(!is.null(original.cols)) j <- 1:original.cols
-#cat('added back class and cols',Sys.time()-startTime,'\n')
+      }
+      class(x) <- original.class
+      if(!is.null(original.cols)) j <- 1:original.cols
     }
     else {
         j <- sapply(j, function(xx) {
@@ -139,30 +103,16 @@ startTime <- Sys.time()
                            which(xx==colnames(x))
                          } else xx
                        })
-        if(length(j) == 1) { # fix loss of column names when using colnames to subset
-          # subsetting down to 1 cols - '[.zoo' will delete this info
-          dn1 <- dimnames(x)[[1]]
-          x.index <- attr(x, 'index')[i]
-          #x <- x[i = i, j = j, drop = drop, ...]
-          x.tmp <- .subset(x, i=i, j=j, drop=drop)
-          rm(x)
-          x <- x.tmp
-          attr(x, 'index') <- x.index
-          dim(x) <- c(length(i), length(j))
-          dn <- list(dn1[i],original.names[j])
-          dimnames(x) <- dn
-        } else {
-          #x <- x[i = i, j = j, drop = drop, ...]
-          dn1 <- dimnames(x)[[1]]
-          x.index <- attr(x, 'index')[i]
-          x.tmp <- .subset(x, i=i, j=j, drop=drop)
-          rm(x)
-          x <- x.tmp
-          attr(x, 'index') <- x.index
-          dim(x) <- c(length(i), length(j))
-          dn <- list(dn1[i],original.names[j])
-          dimnames(x) <- dn
-        }
+        dn1 <- dimnames(x)[[1]]
+        x.index <- attr(x, 'index')[i]
+#        x.tmp <- .subset(x, i=i, j=j, drop=drop)
+#        rm(x)
+#        x <- x.tmp
+        x <- .subset(x, i=i, j=j, drop=drop)
+        attr(x, 'index') <- x.index
+        dim(x) <- c(length(i), length(j))
+        dn <- list(dn1[i],original.names[j])
+        dimnames(x) <- dn
 
         if(!is.null(original.attr)) {
           for(ii in 1:length(original.attr)) {
