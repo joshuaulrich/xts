@@ -64,13 +64,13 @@ startTime <- Sys.time()
       }
       i <- i.tmp
     }
-cat('DEBUG: calculate i',Sys.time()-startTime,'\n')
+#cat('DEBUG: calculate i',Sys.time()-startTime,'\n')
 
     if (missing(j)) {
-cat("DEBUG: missing(j)\n\n")
+#cat("DEBUG: missing(j)\n\n")
         if(original.cols == 1) {
 
-cat("DEBUG: original.cols != 1\n\n")
+#cat("DEBUG: original.cols != 1\n\n")
           # if data set only has one column:
           # it is necessary to replace the dimnames removed by [.zoo
           dn1 <- dimnames(x)[[1]]
@@ -78,20 +78,20 @@ cat("DEBUG: original.cols != 1\n\n")
           nr <- NROW(x)
           #attributes(x) <- NULL
           #dim(x) <- c(NROW(x), 1)
-cat('DEBUG: get all attributes for later',Sys.time()-startTime,'\n')
+#cat('DEBUG: get all attributes for later',Sys.time()-startTime,'\n')
           #x.tmp <- x[i=i, drop=drop, ...]
           x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
           rm(x)
           x <- x.tmp
           rm(x.tmp)
-cat('DEBUG: perform subset ',Sys.time()-startTime,'\n')
+#cat('DEBUG: perform subset ',Sys.time()-startTime,'\n')
           attr(x, 'index') <- x.index
           dim(x) <- c(length(i), original.cols)
           dn <- list(dn1[i],original.names)
           dimnames(x) <- dn
-cat('DEBUG: add dimensions and dimnames ',Sys.time()-startTime,'\n')
+#cat('DEBUG: add dimensions and dimnames ',Sys.time()-startTime,'\n')
         } else {
-cat("DEBUG: original.cols != 1\n\n")
+#cat("DEBUG: original.cols != 1\n\n")
           #x <- x[i = i, drop = drop, ...]
           dn1 <- dimnames(x)[[1]]
           x.index <- attr(x, 'index')[i]
@@ -111,10 +111,10 @@ cat("DEBUG: original.cols != 1\n\n")
               if(names(original.attr)[ii]=='.ROWNAMES') attr(x,'.ROWNAMES') <- original.attr[[ii]][i]
             }
         }
-cat('added back attributes',Sys.time()-startTime,'\n')
+#cat('added back attributes',Sys.time()-startTime,'\n')
         class(x) <- original.class
         if(!is.null(original.cols)) j <- 1:original.cols
-cat('added back class and cols',Sys.time()-startTime,'\n')
+#cat('added back class and cols',Sys.time()-startTime,'\n')
     }
     else {
         j <- sapply(j, function(xx) {
