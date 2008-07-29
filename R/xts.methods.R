@@ -49,11 +49,14 @@ startTime <- Sys.time()
         } else {
           # if single date is given - get start and end points if resolution of
           # series is greater than the time specified
-          dates <- ii
-          first.time <- as.numeric(do.call('firstof',
-                                as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]]))))
-          last.time <- as.numeric(do.call('lastof',
-                                as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]]))))
+          dates <- paste(ii,ii,sep='/')
+          tBR <- timeBasedRange(dates)
+          first.time <- tBR[1]
+          last.time  <- tBR[2]
+#          first.time <- as.numeric(do.call('firstof',
+#                                as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]]))))
+#          last.time <- as.numeric(do.call('lastof',
+#                                as.list(as.numeric(strsplit(dates,':|-|/| ')[[1]]))))
         }      
         
         # this is probably the cleanest place to add binarySearch, as the full rowsearch is BAD!
