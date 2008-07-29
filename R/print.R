@@ -1,10 +1,12 @@
 `print.xts` <-
-function(x,...) {
-  x.tmp <- x
-  attributes(x.tmp) <- NULL
-  zoo:::print.zoo(structure(x.tmp,
-                            class='zoo',
-                            index=index(x),
-                            dim=dim(x),dimnames=dimnames(x)),...)
+function(x,fmt,...) {
+  if(missing(fmt)) 
+    fmt <- indexFormat(x)
+  
+  xx <- as.matrix(x)
+  if(!is.null(fmt)) {
+    rownames(xx) <- format(index(x), fmt)
+  }
+  print(xx)
 }
 

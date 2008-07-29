@@ -1,7 +1,18 @@
 `coredata.xts` <-
-function(x,...) {
+function(x, fmt=FALSE, ...) {
   x.attr <- attributes(x)
 
+  if(is.character(fmt)) {
+    indexFormat(x) <- fmt
+    fmt <- TRUE
+  }
+  
+  if(fmt) {
+    if(!is.null(indexFormat(x))) {
+      x.attr$dimnames[[1]] <- format(index(x), format=indexFormat(x))
+      indexFormat(x) <- NULL  # remove before printing
+    }  
+  }
   xx <- structure(x,dimnames=x.attr$dimnames) #,index=x.attr$index)
 
   # attributes not to be kept
@@ -85,7 +96,8 @@ function(x,value) {
     }
   } else
   for(nv in names(value)) {
-    if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES','.CLASSnames'))
+    if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES','.CLASSnames',
+                  '.indexCLASS','.indexFORMAT'))
       attr(x,nv) <- value[[nv]]
   }
   x
