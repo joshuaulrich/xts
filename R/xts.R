@@ -72,7 +72,7 @@ function(x, match.to, error=FALSE, ...) {
     if(!is.null(dim(x))) {
       if(!is.null(attr(x,'.ROWNAMES'))) {
         rownames(x) <- attr(x,'.ROWNAMES')[1:NROW(x)]
-      } else rownames(x) <- NULL
+      } #else rownames(x) <- NULL
     }
     attr(x,'.ROWNAMES') <- NULL
     if(is.null(attr(x,'.RECLASS')) || attr(x,'.RECLASS')) {#should it be reclassed?
