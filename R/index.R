@@ -43,8 +43,14 @@ function(x, ...) {
     stop(paste('unsupported',sQuote('index'),
                'index type of class',sQuote(class(value))))
 
+#  tB <- as.POSIXct(value)
+#  attributes(x) <- list(attributes(x), index=as.numeric(tB),
+#                        dimnames=list(as.character(tB), colnames(x)),
+#                        .indexCLASS=class(value))
+#  return(x)
   # set index to the numeric value of the desired index class
   attr(x, 'index') <- as.numeric(as.POSIXct(value))
+  rownames(x) <- as.character(as.POSIXct(value))
   
   # set the .indexCLASS attribute to the end-user specified class
   attr(x, '.indexCLASS') <- class(value)
