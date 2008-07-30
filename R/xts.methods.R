@@ -2,7 +2,7 @@
 function(x, i, j, drop = TRUE, ...) 
 {
 
-DEBUG <- TRUE
+DEBUG <- FALSE
 AT <- FALSE # This is for internal testing at present will remove soon
 
     original.indexclass <- indexClass(x)
@@ -75,12 +75,12 @@ START <- Sys.time()
     if (missing(j)) {
         dn1 <- dimnames(x)[[1]]
         x.index <- attr(x, 'index')[i]
-        cat("SUBSET index: ", Sys.time() - START,"\n")
+        if(DEBUG) cat("SUBSET index: ", Sys.time() - START,"\n")
         if(is.null(DIM)) {
           x.tmp <- .subset(x, i=i, drop=drop)
         }
         else x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
-        cat("SUBSET data: ", Sys.time() - START,"\n")
+        if(DEBUG) cat("SUBSET data: ", Sys.time() - START,"\n")
         rm(x)
         x <- x.tmp
         rm(x.tmp)
@@ -90,7 +90,7 @@ START <- Sys.time()
           dn <- list(dn1[i],original.names)
           dimnames(x) <- dn
         } 
-        cat("GLUE dimnames: ", Sys.time() - START,"\n")
+        if(DEBUG) cat("GLUE dimnames: ", Sys.time() - START,"\n")
         dim2 <- original.cols
 
       if(!is.null(original.attr)) {
