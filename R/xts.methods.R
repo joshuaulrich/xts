@@ -154,7 +154,7 @@ if(DEBUG) cat("Set Sys.setenv: ", Sys.time() - START,"\n")
     CLASS(x) <- original.CLASS
 if(DEBUG) cat("Set CLASS: ", Sys.time() - START,"\n")
 } else {
-    attributes(x) <- c(attributes(x),list(index=x.index, dim=c(length(i), dim2),
+    attributes(x) <- c(attributes(x),list(index=x.index, dim=c(length(i), dim2), names=NULL,
                        dimnames=list(dn1[i],original.names[j]),class=original.class,
                        .indexCLASS=original.indexclass, .CLASS=original.CLASS))
 if(DEBUG) cat("Set colnames, indexClass and CLASS all at once: ", Sys.time()-START,"\n")

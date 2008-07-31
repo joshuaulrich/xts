@@ -13,7 +13,7 @@ export(timeBased,
        timeBasedSeq)
 
 # user visible core xts functions
-export(xts)
+export(xts, .xts)
 export(as.xts)
 export(is.xts)
 export(xcoredata)

@@ -35,7 +35,7 @@ function(x=NULL,order.by=index(x),frequency=NULL, row.names=TRUE, ...) {
 }
 
 `.xts` <-
-function(x=NULL, index, indexCLASS,  row.names=FALSE, check=FALSE, unique=FALSE, ...) {
+function(x=NULL, index, .indexCLASS,  row.names=FALSE, check=FALSE, unique=FALSE, ...) {
   if(check) {
     if(any(diff(index) < unique))
       stop('index is not in',ifelse(unique, 'strictly', ''),'ascending order')
@@ -44,9 +44,10 @@ function(x=NULL, index, indexCLASS,  row.names=FALSE, check=FALSE, unique=FALSE,
     index <- as.numeric(index)
 
   xx <- structure(.Data=x,
+            dim=c(NROW(x),NCOL(x)),
             index=index,
-            .indexCLASS=indexCLASS,
-            class=c('xts','zoo'))
+            .indexCLASS=.indexCLASS,
+            class=c('xts','zoo'), ...)
   if(row.names) {
     #???
   }

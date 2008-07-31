@@ -8,7 +8,7 @@ Mechanism to extract and replace the core data of an
 \code{xts} object.
 }
 \usage{
-\method{coredata}{xts}(x, fmt=TRUE, ...)
+\method{coredata}{xts}(x, fmt=FALSE, ...)
 
 xcoredata(x,...)
 xcoredata(x) <- value
