@@ -4,12 +4,22 @@
 \alias{convertIndex}
 \alias{indexClass<-}
 \alias{indexFormat<-}
+\alias{index.xts}
+\alias{index.xts<-}
+\alias{rindex.xts}
+\alias{rindex.xts<-}
 \title{ Extracting/Replacing the Class of an xts Index }
 \description{
 Generic functions to extract, replace, and format the class of the index
 of an xts object.
 }
 \usage{
+\method{index}{xts}(x, ...)
+\method{index<-}{xts}(x, value)
+
+rindex(x, ...)
+rindex(x) <- value
+
 indexClass(x)
 indexClass(x) <- value
 
@@ -21,8 +31,19 @@ convertIndex(x,value)
 \arguments{
   \item{x}{ xts object }
   \item{value}{ desired new class or format. See details }
+  \item{\dots}{ additional arguments (unused) }
 }
 \details{
+The main accessor methods to an \code{xts} object's index
+is via the \code{index} and \code{index<-} replacement method.
+The structure of the index internally is now a numeric
+value corresponding to seconds since the epoch (POSIXct converted to numeric).
+A call to \code{index} translates to the desired class on-the-fly.
+
+To retrieve the raw numeric data a new accessor function (and replacement) has been
+added \code{rindex}. This is primarily for internal use, but may be used
+by end-users.
+
 It is possible to view and set the class of the time-index
 of a given \code{xts} object via the \code{indexClass} function.
 
