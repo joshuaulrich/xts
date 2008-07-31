@@ -2,11 +2,10 @@
 function(x,fmt,...) {
   if(missing(fmt)) 
     fmt <- indexFormat(x)
+  if(is.null(fmt))
+    fmt <- TRUE
   
-  xx <- as.matrix(x)
-  if(!is.null(fmt)) {
-    rownames(xx) <- format(index(x), fmt)
-  }
+  xx <- coredata(x, fmt)
   print(xx)
 }
 

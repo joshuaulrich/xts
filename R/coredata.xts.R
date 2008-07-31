@@ -11,9 +11,11 @@ function(x, fmt=FALSE, ...) {
     if(!is.null(indexFormat(x))) {
       x.attr$dimnames[[1]] <- format(index(x), format=indexFormat(x))
       indexFormat(x) <- NULL  # remove before printing
-    }  
+    } else {
+      x.attr$dimnames[[1]] <- format(index(x))
+    } 
   }
-  xx <- structure(x,dimnames=x.attr$dimnames) #,index=x.attr$index)
+  xx <- structure(x, dim=x.attr$dim, dimnames=x.attr$dimnames) 
 
   # attributes not to be kept
   original.attr <- x.attr[!names(x.attr) %in%

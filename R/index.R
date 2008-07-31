@@ -50,6 +50,7 @@ function(x, ...) {
 #  return(x)
   # set index to the numeric value of the desired index class
   attr(x, 'index') <- as.numeric(as.POSIXct(value))
+
   rownames(x) <- as.character(as.POSIXct(value))
   
   # set the .indexCLASS attribute to the end-user specified class
