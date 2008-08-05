@@ -4,7 +4,7 @@ function(x, ...) {
 
   sys.TZ <- Sys.getenv('TZ')
   Sys.setenv(TZ='GMT')
-  x.index  <- as.POSIXct(rindex(x))
+  x.index  <- as.POSIXct(.index(x))
 
   if(!is.list(value)) 
     value <- as.list(value)
@@ -58,11 +58,11 @@ function(x, ...) {
   return(x)
 }
 
-`rindex` <- function(x, ...) {
+`.index` <- function(x, ...) {
   attr(x, 'index')
 }
 
-`rindex<-` <- function(x, value) {
+`.index<-` <- function(x, value) {
   if(timeBased(value)) {
     if(inherits(value, 'Date')) {
       attr(x, 'index') <- as.numeric(value)
@@ -72,6 +72,6 @@ function(x, ...) {
   } else 
   if(is.numeric(value)) {
     attr(x, 'index') <- value
-  } else stop("rindex is used for low level operations - data must be numeric or timeBased")
+  } else stop(".index is used for low level operations - data must be numeric or timeBased")
   return(x)
 }

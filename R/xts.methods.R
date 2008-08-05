@@ -41,12 +41,12 @@ AT <- FALSE # This is for internal testing at present will remove soon
           
           # the first index value to be found
           if(is.na(tBR[1])) {
-            first.time <- rindex(x)[1]
+            first.time <- .index(x)[1]
           } else first.time <- tBR[1]
 
           # the last index value ot be found
           if(is.na(tBR[2])) {
-            last.time  <- rindex(x)[NROW(x)]
+            last.time  <- .index(x)[NROW(x)]
           } else last.time <- tBR[2]
 
         } else {

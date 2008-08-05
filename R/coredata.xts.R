@@ -9,10 +9,11 @@ function(x, fmt=FALSE, ...) {
   
   if(fmt) {
     if(!is.null(indexFormat(x))) {
-      x.attr$dimnames[[1]] <- format(index(x), format=indexFormat(x))
+      x.attr$dimnames <- list(format(index(x), format=indexFormat(x)),
+                              dimnames(x)[[2]])
       indexFormat(x) <- NULL  # remove before printing
     } else {
-      x.attr$dimnames[[1]] <- format(index(x))
+      x.attr$dimnames <- list(format(index(x)),dimnames(x)[[2]])
     } 
   }
   xx <- structure(x, dim=x.attr$dim, dimnames=x.attr$dimnames) 
