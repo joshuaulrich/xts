@@ -1,5 +1,5 @@
 `binsearch` <-
-function(vec,  key, start=TRUE) {
+function(key,  vec, start=TRUE) {
   # vec is a numeric vector to search
   # key is the numeric key we are looking for
   # start is a logical indicating

@@ -137,13 +137,6 @@ SEXP xtsSubset(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
       setAttrib(result, install("index"), newindex);
       UNPROTECT(1);
     }
-/*
-    if(TYPEOF(index) == REALSXP) {
-      newindex = allocVector(REALSXP, LENGTH(sr));
-      PROTECT(newindex);
-    }
-*/
-
     // Begin row loop, as .Call proceeds in row-major order?
     for (i = 0; i < nrs; i++) {
       ii = INTEGER(sr)[i];
@@ -152,9 +145,17 @@ SEXP xtsSubset(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
           error("i is out of range\n");
         ii--;
       }
-      //if(!isNull(index)) {
-      //  REAL(newindex)[i] = REAL(index)[INTEGER(sr)[i]-1];
-      //}
+//      switch(TYPEOF(index)) {
+//        case INTSXP:
+//          INTEGER(newindex)[i] = INTEGER(index)[INTEGER(sr)[i]-1];
+//          break;
+//        case REALSXP:
+//          REAL(newindex)[i] = REAL(index)[INTEGER(sr)[i]-1];
+//          break;
+//        default:
+//          error("index must be either REAL or INTEGER\n");
+//          break;
+//      }
       // Begin column loop
       for (j = 0; j < ncs; j++) {
         jj = INTEGER(sc)[j];
@@ -265,7 +266,12 @@ SEXP xtsSubset(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
     setAttrib(result, install(".indexCLASS"), getAttrib(x, install(".indexCLASS")));
     setAttrib(result, install(".indexFORMAT"), getAttrib(x, install(".indexFORMAT")));
 
-
+//    if(TYPEOF(index) == INTSXP || TYPEOF(index) == REALSXP) {
+//      setAttrib(result, install("index"), newindex);
+//      UNPROTECT(3);
+//    }
+//    else {
     UNPROTECT(2);
+//    }
     return result;
 }

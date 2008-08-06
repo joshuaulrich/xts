@@ -44,15 +44,15 @@ function(x, i, j, drop = TRUE, ...)
         }      
         
         i.tmp <- c(i.tmp,
-                   seq.int(binsearch(attr(x, 'index'), first.time, TRUE),
-                           binsearch(attr(x, 'index'), last.time, FALSE))
+                   seq.int(binsearch(first.time, attr(x, 'index'), TRUE),
+                           binsearch(last.time, attr(x, 'index'), FALSE))
                   )
       }
       i <- i.tmp
     }
   
     # .subset is picky, 0's in the 'i' position cause failures
-    zero.index <- binsearch(i, 0, NULL)
+    zero.index <- binsearch(0, i, NULL)
     if(!is.na(zero.index))
       i <- i[ -zero.index ]
 
