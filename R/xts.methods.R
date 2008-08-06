@@ -16,8 +16,9 @@ AT <- FALSE # This is for internal testing at present will remove soon
 
     DIM <- dim(x)
 
-    original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
-    if(length(original.attr) < 1) original.attr <- NULL
+    #original.attr <- attributes(x)[!names(attributes(x)) %in% c('dim','dimnames','index','class')]
+    original.attr <- xtsAttributes(x)
+    #if(length(original.attr) < 1) original.attr <- NULL
 
     # temporarily convert back to POSIXct.  This is what I am eliminating
     #POSIXindex <- as.POSIXct(attr(x, 'index'))
@@ -73,17 +74,20 @@ START <- Sys.time()
       i <- i[ -zero.index ]
 
     if (missing(j)) {
-        dn1 <- dimnames(x)[[1]]
-        x.index <- attr(x, 'index')[i]
+        ###dn1 <- dimnames(x)[[1]]
+        ###x.index <- attr(x, 'index')[i]
         if(DEBUG) cat("SUBSET index: ", Sys.time() - START,"\n")
-        if(is.null(DIM)) {
-          x.tmp <- .subset(x, i=i, drop=drop)
-        }
-        else x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
+        ###if(is.null(DIM)) {
+        ###  x.tmp <- .subset(x, i=i, drop=drop)
+        ###}
+        ###else x.tmp <- .subset(x, i=i, j=1:original.cols, drop=drop)
+
+        x <- .Call('xtsSubset', x, as.integer(i), as.integer(1:original.cols), PACKAGE='xts')
+
         if(DEBUG) cat("SUBSET data: ", Sys.time() - START,"\n")
-        rm(x)
-        x <- x.tmp
-        rm(x.tmp)
+        ###rm(x)
+        ###x <- x.tmp
+        ###rm(x.tmp)
         if(AT) {  
           attr(x, 'index') <- x.index
           dim(x) <- c(length(i), original.cols)
@@ -91,7 +95,7 @@ START <- Sys.time()
           dimnames(x) <- dn
         } 
         if(DEBUG) cat("GLUE dimnames: ", Sys.time() - START,"\n")
-        dim2 <- original.cols
+        ###dim2 <- original.cols
 
       if(!is.null(original.attr)) {
         for(ii in 1:length(original.attr)) {
@@ -114,22 +118,23 @@ START <- Sys.time()
                            which(xx==colnames(x))
                          } else xx
                        })
-        dn1 <- dimnames(x)[[1]]
-        x.index <- attr(x, 'index')[i]
-        if(is.null(DIM)) {
-          x.tmp <- .subset(x, i=i, drop=drop)
-        }
-        else x.tmp <- .subset(x, i=i, j=j, drop=drop)
-        rm(x)
-        x <- x.tmp
-        rm(x.tmp)
+        ###dn1 <- dimnames(x)[[1]]
+        ###x.index <- attr(x, 'index')[i]
+        ###if(is.null(DIM)) {
+        ###  x.tmp <- .subset(x, i=i, drop=drop)
+        ###}
+        ###else x.tmp <- .subset(x, i=i, j=j, drop=drop)
+        x <- .Call('xtsSubset', x, as.integer(i), as.integer(j), PACKAGE='xts')
+        ###rm(x)
+        ###x <- x.tmp
+        ###rm(x.tmp)
         if(AT) {
           attr(x, 'index') <- x.index
           dim(x) <- c(length(i), length(j))
           dn <- list(dn1[i],original.names[j])
           dimnames(x) <- dn
         }
-        dim2 <- length(j)
+        ###dim2 <- length(j)
         if(!is.null(original.attr)) {
           for(ii in 1:length(original.attr)) {
             attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
@@ -154,9 +159,10 @@ if(DEBUG) cat("Set Sys.setenv: ", Sys.time() - START,"\n")
     CLASS(x) <- original.CLASS
 if(DEBUG) cat("Set CLASS: ", Sys.time() - START,"\n")
 } else {
-    attributes(x) <- c(attributes(x),list(index=x.index, dim=c(length(i), dim2), names=NULL,
-                       dimnames=list(dn1[i],original.names[j]),class=original.class,
-                       .indexCLASS=original.indexclass, .CLASS=original.CLASS))
+    #xtsAttributes(x) <- original.attr
+    #attributes(x) <- c(xtsAttributes(x),list(index=x.index, dim=c(length(i), dim2), names=NULL,
+    #                   dimnames=list(dn1[i],original.names[j]),class=original.class,
+    #                   .indexCLASS=original.indexclass, .CLASS=original.CLASS))
 if(DEBUG) cat("Set colnames, indexClass and CLASS all at once: ", Sys.time()-START,"\n")
 }
     x

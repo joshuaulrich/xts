@@ -25,3 +25,9 @@ management. As well as using large data to benchmark and improve
 the base xts functionality.
 
 Estimated time-table for release is???
+
+IMPLEMENTED CHANGES:
+Internal structure now includes a numeric conversion of POSIXct as the index
+with an .indexClass and .indexFormat attribute system to provide seemless
+timeBased-class like behavior, yet with a more efficient and memory-friendly
+construction.

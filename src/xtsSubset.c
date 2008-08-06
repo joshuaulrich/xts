@@ -123,7 +123,7 @@ SEXP xtsSubset(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
       newindex = allocVector(INTSXP, LENGTH(sr));
       PROTECT(newindex);
       for(indx = 0; indx < nrs; indx++) {
-        INTEGER(newindex)[indx] = INTEGER(index)[INTEGER(sr)[indx]];
+        INTEGER(newindex)[indx] = INTEGER(index)[INTEGER(sr)[indx]-1];
       }
       setAttrib(result, install("index"), newindex);
       UNPROTECT(1);
@@ -261,6 +261,9 @@ SEXP xtsSubset(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
         UNPROTECT(1);
     }
     }
+    setAttrib(result, install("class"), getAttrib(x, install("class")));
+    setAttrib(result, install(".indexCLASS"), getAttrib(x, install(".indexCLASS")));
+    setAttrib(result, install(".indexFORMAT"), getAttrib(x, install(".indexFORMAT")));
 
 
     UNPROTECT(2);
