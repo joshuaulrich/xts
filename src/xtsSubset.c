@@ -109,6 +109,8 @@ SEXP xtsSubset(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
 
     nrs = LENGTH(sr);
     ncs = LENGTH(sc);
+
+
     result = allocVector(TYPEOF(x), nrs*ncs);
     PROTECT(result);
 
@@ -265,6 +267,7 @@ SEXP xtsSubset(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
     setAttrib(result, install("class"), getAttrib(x, install("class")));
     setAttrib(result, install(".indexCLASS"), getAttrib(x, install(".indexCLASS")));
     setAttrib(result, install(".indexFORMAT"), getAttrib(x, install(".indexFORMAT")));
+    setAttrib(result, install(".CLASS"), getAttrib(x, install(".CLASS")));
 
 //    if(TYPEOF(index) == INTSXP || TYPEOF(index) == REALSXP) {
 //      setAttrib(result, install("index"), newindex);

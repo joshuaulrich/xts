@@ -6,12 +6,37 @@ function(x,on='months',k=1) {
   sys.TZ <- Sys.getenv('TZ')
   on.exit(Sys.setenv(TZ=sys.TZ))
   Sys.setenv(TZ='GMT')
-  indexClass(x) <- 'POSIXct'
+  #indexClass(x) <- 'POSIXct'
 
-  if(on=='quarters') {
+  if(on == 'years') {
+    c(0, which(diff(as.POSIXlt(index(x))$year %/% k + 1) != 0), NROW(x)) 
+  } else
+
+  if(on == 'quarters') {
     xi <- (as.POSIXlt(index(x))$mon%/%3) + 1
     c(0,which(diff(xi) != 0),NROW(x))
+  } else 
+
+  if(on == 'months') {
+    c(0, which(diff(as.POSIXlt(index(x))$mon %/% k + 1) != 0), NROW(x)) 
+  } else 
+  if(on == 'weeks') {
+    c(0,which(diff(as.numeric(format(index(x),'%W')) %/% k + 1) != 0),NROW(x))
+  } else
+  if(on == 'days') {
+    c(0, which(diff(as.POSIXlt(index(x))$yday %/% k + 1) != 0), NROW(x)) 
+  } else
+  if(on == 'hours') {
+    c(0, which(diff(as.POSIXlt(index(x))$hour %/% k + 1) != 0), NROW(x)) 
+  } else
+  if(on == 'minutes' || on == 'mins') {
+    c(0, which(diff(as.POSIXlt(index(x))$min %/% k + 1) != 0), NROW(x)) 
+  } else
+  if(on == 'seconds' || on == 'secs') {
+    c(0, which(diff(as.POSIXlt(index(x))$sec %/% k + 1) != 0), NROW(x)) 
   } else {
+    stop('unsupported "on" argument')
+
     on.opts <- list(secs='%S',seconds='%S',mins='%M',minutes='%M',
                     hours='%H',days='%j',
                     weeks='%W',months='%m',years='%y')

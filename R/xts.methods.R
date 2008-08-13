@@ -7,10 +7,23 @@ function(x, i, j, drop = TRUE, ...)
     original.cols <- NCOL(x)
     original.attr <- xtsAttributes(x)
 
+    # test for negative subscripting in i
+    if (!missing(i) && is.numeric(i) && any(i < 0)) {
+      if(!all(i < 0))
+        stop('only zeros may be mixed with negative subscripts')
+      i <- (1:NROW(x))[i]
+    }
+    # test for negative subscripting in j
+    if (!missing(j) && is.numeric(j) && any(j < 0)) {
+      if(!all(j < 0))
+        stop('only zeros may be mixed with negative subscripts')
+      j <- (1:NCOL(x))[j]
+    }
+
     if (missing(i)) 
       # this is horribly wasteful  FIXME
       i <- 1:NROW(x)
-
+    
     if (timeBased(i)) 
       # this shouldn't happen either, though less important I suspect  FIXME
       i <- as.character(as.POSIXct(i)) 
