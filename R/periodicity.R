@@ -9,8 +9,60 @@
 # apply.monthly
 # apply.quarterly
 # apply.yearly
+`periodicity` <- function(x, ...) {
+  if( timeBased(x) || !is.xts(x) )
+    x <- try.xts(x, 'periodicity need to be timeBased or xtsible')
 
-`periodicity` <-
+  p <- median(diff( .index(x) ))
+
+  if( is.na(p) ) stop("can not calculate periodicity of 1 observation")
+
+  units <- 'days' # the default if p > hourly
+  scale <- 'years'# the default for p > quarterly
+
+  if( p <= 1 ) {
+    # 86400 / 24 / 60 / 60
+    units <- 'secs'
+    scale <- 'seconds'
+  } else 
+  if( p <= 60 ) {
+    # 86400 / 24 / 60
+    units <- 'mins'
+    scale <- 'minutes'
+  } else
+  if( p <= 3600 ) {
+    # 86400 / 24
+    units <- 'hours'
+    scale <- 'hourly'
+  } else
+  if( p <= 86400 ) {
+    # 86400 * 1
+    scale <- 'daily'
+  } else
+  if( p <= 604800) {
+    # 86400 * 7
+    scale <- 'weekly'
+  } else 
+  if( p <= 2678400 ) {
+    # 86400 * 31
+    scale <- 'monthly'
+  } else
+  if( p <= 7862400 ) {
+    # 86400 * 91
+    scale <- 'quarterly'
+  }
+
+  structure(list( difftime = structure(p,units=units,class='difftime'),
+                 frequency = p,
+                     start = start(x),
+                       end = end(x),
+                     units = units,
+                     scale = scale),
+            class = 'periodicity') 
+  
+}
+
+`periodicity.old` <-
 function (x, ...) 
 {
     if(!is.xts(x)) x <- as.xts(x)
