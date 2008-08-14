@@ -21,7 +21,8 @@ function(x,on='months',k=1) {
     c(0, which(diff(as.POSIXlt(index(x))$mon %/% k + 1) != 0), NROW(x)) 
   } else 
   if(on == 'weeks') {
-    c(0,which(diff(as.numeric(format(index(x),'%W')) %/% k + 1) != 0),NROW(x))
+    c(0, which(diff( (.index(x) + (3 * 86400)) %/% 86400 %/% 7 %/% k + 1) != 0), NROW(x)) 
+    #c(0,which(diff(as.numeric(format(index(x),'%W')) %/% k + 1) != 0),NROW(x))
   } else
   if(on == 'days') {
     c(0, which(diff(as.POSIXlt(index(x))$yday %/% k + 1) != 0), NROW(x)) 
