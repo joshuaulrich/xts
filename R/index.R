@@ -109,3 +109,7 @@ function(x, ...) {
 `.indexweek` <- function(x) {
   (.index(x) + (3 * 86400)) %/% 86400 %/% 7
 }
+`.indexyweek` <- function(x) {
+  ((.index(x) + (3 * 86400)) %/% 86400 %/% 7) -
+    ((startOfYear() * 86400 + (3 * 86400)) %/% 86400 %/% 7)[.indexyear(x) + 1]
+}
