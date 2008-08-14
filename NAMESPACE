@@ -12,6 +12,19 @@ export(timeBased,
        timeBasedRange,
        timeBasedSeq)
 
+export(.indexsec,
+       .indexmin,
+       .indexhour,
+       .indexday,
+       .indexDate,
+       .indexmon,
+       .indexmday,
+       .indexwday,
+       .indexyday,
+       .indexisdst,
+       .indexyear,
+       .indexweek)
+
 # user visible core xts functions
 export(xts, .xts)
 export(as.xts)
