@@ -8,7 +8,8 @@ useDynLib(xts)
 export(firstof,
        lastof)
 
-export(timeBased,
+export(is.timeBased,
+       timeBased,
        timeBasedRange,
        timeBasedSeq)
 
@@ -24,6 +25,8 @@ export(.indexsec,
        .indexisdst,
        .indexyear,
        .indexweek)
+
+export(is.ordered)
 
 # user visible core xts functions
 export(xts, .xts)

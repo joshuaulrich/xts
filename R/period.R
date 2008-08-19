@@ -1,6 +1,6 @@
 # optimized periodic apply functions
 #
-`timeBased` <-
+`is.timeBased` <- `timeBased` <-
 function(x) {
 if (!any(sapply(c("Date", "POSIXct", "chron", "dates", "times", 
         "timeDate", "yearmon", "yearqtr"), function(xx) inherits(x, 
