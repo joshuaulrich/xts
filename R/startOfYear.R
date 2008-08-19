@@ -6,6 +6,6 @@
      from = as.integer(from),
      to   = as.integer(to),
      fromto=as.integer(from:to),
-     origin=as.integer(origin)
+     origin=as.integer(origin), PACKAGE='xts'
     )$fromto
 }
