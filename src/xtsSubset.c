@@ -94,7 +94,7 @@ static SEXP xtsExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
     return result;
 } //}}}
 
-SEXP xtsSubset(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
+SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
 {
     SEXP attr, result, dim;
     int nr, nc, nrs, ncs;

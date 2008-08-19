@@ -70,7 +70,7 @@ function(x, i, j, drop = TRUE, ...)
       i <- i[ -zero.index ]
 
     if (missing(j)) {
-      x <- .Call('xtsSubset', x, as.integer(i), as.integer(1:original.cols), PACKAGE='xts')
+      x <- .Call('do_subset_xts', x, as.integer(i), as.integer(1:original.cols), PACKAGE='xts')
       if(!is.null(original.attr)) {
         for(ii in 1:length(original.attr)) {
           attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
@@ -85,7 +85,7 @@ function(x, i, j, drop = TRUE, ...)
                            which(xx==colnames(x))
                          } else xx
                        })
-        x <- .Call('xtsSubset', x, as.integer(i), as.integer(j), PACKAGE='xts')
+        x <- .Call('do_subset_xts', x, as.integer(i), as.integer(j), PACKAGE='xts')
         if(!is.null(original.attr)) {
           for(ii in 1:length(original.attr)) {
             attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
