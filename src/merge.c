@@ -72,6 +72,11 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
     }
   } 
 
+  if(i == 0) {
+    UNPROTECT(2);
+    return allocVector(TYPEOF(x),0);
+  }
+
   int num_rows = i;
   xp = 1; yp = 1;
 
@@ -96,7 +101,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
         }
       }
       yp++;
-      if(!merge_all) i--;
+      if(!merge_all) i--;  // if all=FALSE, we must decrement i for each non-match
     } else
 
     if( yp > nry ) {
