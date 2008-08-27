@@ -17,8 +17,9 @@
 SEXP do_merge_xts (SEXP x, SEXP y) //, SEXP all, SEXP fill)
 {
   int nrx, ncx, nry, ncy, len;
-  int i, xp = 1, yp = 1; // x and y positions in index
-  SEXP xindex, yindex, index, result, tmp_table;
+  int i, j, xp = 1, yp = 1; // x and y positions in index
+  int ij, ij_original, ij_result;
+  SEXP xindex, yindex, index, result, attr;
 
   nrx = nrows(x);
   ncx = ncols(x);
@@ -34,29 +35,36 @@ SEXP do_merge_xts (SEXP x, SEXP y) //, SEXP all, SEXP fill)
   if( TYPEOF(xindex) != TYPEOF(yindex) )
     error("incompatible index types");
 
+  /* determine num_rows of final merged xts object
+     
+     this seems to only cost 1/1000 of a sec per
+     1e6 observations.  Acceptable 'waste' given
+     that now we can properly allocate space
+     for our results */
+
   while( (xp + yp) <= (len + 1) ) {
     if( xp > nrx ) {
-    //  REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
       yp++;
+      i++;
     } else
     if( yp > nry ) {
-    //  REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
       xp++;
+      i++;
     } else
     if( REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ] ) {
-    //  REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+      // this will be the only result all=FALSE
       yp++;
       xp++;
+      i++;
     } else
     if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
-    //  REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
       xp++;
+      i++;
     } else
     if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
-    //  REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
       yp++;
+      i++;
     }
-    i++;
   } 
 
   int num_rows = i;
@@ -66,49 +74,100 @@ SEXP do_merge_xts (SEXP x, SEXP y) //, SEXP all, SEXP fill)
   PROTECT( result = allocVector(TYPEOF(x), (ncx + ncy) * num_rows) );
 
   for(i = 0; i < num_rows; i++) {
+    /* If we are past the last row in x, assign NA to merged data 
+       and copy the y column values to the second side of result
+    */
     if( xp > nrx ) {
       REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
+      for(j = 0; j < ncx; j++) { // x-values
+        ij_result = i + j * num_rows;
+        REAL(result)[ ij_result ] = NA_REAL;
+      }
+      for(j = 0; j < ncy; j++) { // y-values
+        ij_result = i + (j+ncx) * num_rows;
+        ij_original = (yp-1) + j * num_rows;
+        REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+      }
       yp++;
     } else
+
     if( yp > nry ) {
       REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+      for(j = 0; j < ncx; j++) { // x-values
+        ij_result = i + j * num_rows;
+        ij_original = (xp-1) + j * num_rows;
+        REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+      }
+      for(j = 0; j < ncy; j++) { // y-values
+        ij_result = i + (j+ncx) * num_rows;
+        REAL(result)[ ij_result ] = NA_REAL;
+      }
       xp++;
     } else
+
     if( REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ] ) {
       REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+      for(j = 0; j < ncx; j++) { // x-values
+        //ij = i + j * num_rows;
+        ij_result = i + j * num_rows;
+        ij_original = (xp-1) + j * num_rows;
+        REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+Rprintf("ij_result: %i\n", i);
+Rprintf("ij_original: %i\n", xp-1);
+      }
+      for(j = 0; j < ncy; j++) { // y-values
+        ij_result = i + (j+ncx) * num_rows;
+        ij_original = (yp-1) + j * num_rows;
+        REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+      }
       yp++;
       xp++;
     } else
+
     if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
       REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+      for(j = 0; j < ncx; j++) { // x-values
+        //ij = i + j * num_rows;
+        ij_result = i + j * num_rows;
+        ij_original = (xp-1) + j * num_rows;
+        REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+      }
+      for(j = 0; j < ncy; j++) { // y-values
+        ij_result = i + (j+ncx) * num_rows;
+        REAL(result)[ ij_result ] = NA_REAL;
+      }
       xp++;
     } else
+
     if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
       REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
+      for(j = 0; j < ncx; j++) { // x-values
+        ij_result = i + j * num_rows;
+        REAL(result)[ ij_result ] = NA_REAL;
+      }
+      for(j = 0; j < ncy; j++) { // y-values
+        ij_result = i + (j+ncx) * num_rows;
+        ij_original = (yp-1) + j * num_rows;
+        REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+      }
       yp++;
     }
   }
 
-  /* the above routine minimizes memory allocation, at the
-     small expense of an additional loop, which also
-     will  make implementation more clean and obvious 
-
-  int total_rows = i;
-  PROTECT( result = allocVector(TYPEOF(x), (ncx + ncy) * total_rows) );
-
-  for(i = 0; i < total_rows; i++) {
-    // do x-values
-    if( REAL(index)[ i ] == REAL(xindex)[ i ] ) {
-
-    } else {
-
-    }
-
-    // do y-values 
-  }
-  */
-
   UNPROTECT(4);
+  if(num_rows >= 0 && (ncx + ncy) >= 0) {
+    PROTECT(attr = allocVector(INTSXP, 2));
+    INTEGER(attr)[0] = num_rows;
+    INTEGER(attr)[1] = ncx + ncy;
+    setAttrib(result, R_DimSymbol, attr);
+    UNPROTECT(1);
+  }
 
-  return index;  
+  setAttrib(result, install("index"), index);
+  setAttrib(result, install("class"), getAttrib(x, install("class")));
+  setAttrib(result, install(".indexCLASS"), getAttrib(x, install(".indexCLASS")));
+  setAttrib(result, install(".indexFORMAT"), getAttrib(x, install(".indexFORMAT")));
+  setAttrib(result, install(".CLASS"), getAttrib(x, install(".CLASS")));
+
+  return result;  
 }
