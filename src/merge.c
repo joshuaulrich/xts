@@ -14,9 +14,9 @@
 
 */
 
-SEXP do_merge_xts (SEXP x, SEXP y) //, SEXP all, SEXP fill)
+SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
 {
-  int nrx, ncx, nry, ncy, len;
+  int nrx, ncx, nry, ncy, len, merge_all;
   int i, j, xp = 1, yp = 1; // x and y positions in index
   int ij, ij_original, ij_result;
   SEXP xindex, yindex, index, result, attr;
@@ -35,6 +35,11 @@ SEXP do_merge_xts (SEXP x, SEXP y) //, SEXP all, SEXP fill)
   if( TYPEOF(xindex) != TYPEOF(yindex) )
     error("incompatible index types");
 
+  if( TYPEOF(all) != LGLSXP )
+    error("all must be a logical value of TRUE or FALSE");
+
+  merge_all = INTEGER(all)[0];
+
   /* determine num_rows of final merged xts object
      
      this seems to only cost 1/1000 of a sec per
@@ -45,11 +50,11 @@ SEXP do_merge_xts (SEXP x, SEXP y) //, SEXP all, SEXP fill)
   while( (xp + yp) <= (len + 1) ) {
     if( xp > nrx ) {
       yp++;
-      i++;
+      if(merge_all) i++;
     } else
     if( yp > nry ) {
       xp++;
-      i++;
+      if(merge_all) i++;
     } else
     if( REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ] ) {
       // this will be the only result all=FALSE
@@ -59,11 +64,11 @@ SEXP do_merge_xts (SEXP x, SEXP y) //, SEXP all, SEXP fill)
     } else
     if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
       xp++;
-      i++;
+      if(merge_all) i++;
     } else
     if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
       yp++;
-      i++;
+      if(merge_all) i++;
     }
   } 
 
@@ -78,79 +83,87 @@ SEXP do_merge_xts (SEXP x, SEXP y) //, SEXP all, SEXP fill)
        and copy the y column values to the second side of result
     */
     if( xp > nrx ) {
-      REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
-      for(j = 0; j < ncx; j++) { // x-values
-        ij_result = i + j * num_rows;
-        REAL(result)[ ij_result ] = NA_REAL;
-      }
-      for(j = 0; j < ncy; j++) { // y-values
-        ij_result = i + (j+ncx) * num_rows;
-        ij_original = (yp-1) + j * num_rows;
-        REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+      if(merge_all) {
+        REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
+        for(j = 0; j < ncx; j++) { // x-values
+          ij_result = i + j * num_rows;
+          REAL(result)[ ij_result ] = NA_REAL;
+        }
+        for(j = 0; j < ncy; j++) { // y-values
+          ij_result = i + (j+ncx) * num_rows;
+          ij_original = (yp-1) + j * num_rows;
+          REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+        }
       }
       yp++;
+      if(!merge_all) i--;
     } else
 
     if( yp > nry ) {
-      REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
-      for(j = 0; j < ncx; j++) { // x-values
-        ij_result = i + j * num_rows;
-        ij_original = (xp-1) + j * num_rows;
-        REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
-      }
-      for(j = 0; j < ncy; j++) { // y-values
-        ij_result = i + (j+ncx) * num_rows;
-        REAL(result)[ ij_result ] = NA_REAL;
+      if(merge_all) {
+        REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+        for(j = 0; j < ncx; j++) { // x-values
+          ij_result = i + j * num_rows;
+          ij_original = (xp-1) + j * num_rows;
+          REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+        }
+        for(j = 0; j < ncy; j++) { // y-values
+          ij_result = i + (j+ncx) * num_rows;
+          REAL(result)[ ij_result ] = NA_REAL;
+        }
       }
       xp++;
+      if(!merge_all) i--;
     } else
 
     if( REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ] ) {
       REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
       for(j = 0; j < ncx; j++) { // x-values
-        //ij = i + j * num_rows;
         ij_result = i + j * num_rows;
         ij_original = (xp-1) + j * num_rows;
         REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
-Rprintf("ij_result: %i\n", i);
-Rprintf("ij_original: %i\n", xp-1);
       }
       for(j = 0; j < ncy; j++) { // y-values
         ij_result = i + (j+ncx) * num_rows;
         ij_original = (yp-1) + j * num_rows;
         REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
       }
-      yp++;
       xp++;
+      yp++;
     } else
 
     if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
-      REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
-      for(j = 0; j < ncx; j++) { // x-values
-        //ij = i + j * num_rows;
-        ij_result = i + j * num_rows;
-        ij_original = (xp-1) + j * num_rows;
-        REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
-      }
-      for(j = 0; j < ncy; j++) { // y-values
-        ij_result = i + (j+ncx) * num_rows;
-        REAL(result)[ ij_result ] = NA_REAL;
+      if(merge_all) {
+        REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+        for(j = 0; j < ncx; j++) { // x-values
+          ij_result = i + j * num_rows;
+          ij_original = (xp-1) + j * num_rows;
+          REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+        }
+        for(j = 0; j < ncy; j++) { // y-values
+          ij_result = i + (j+ncx) * num_rows;
+          REAL(result)[ ij_result ] = NA_REAL;
+        }
       }
       xp++;
+      if(!merge_all) i--;
     } else
 
     if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
-      REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
-      for(j = 0; j < ncx; j++) { // x-values
-        ij_result = i + j * num_rows;
-        REAL(result)[ ij_result ] = NA_REAL;
-      }
-      for(j = 0; j < ncy; j++) { // y-values
-        ij_result = i + (j+ncx) * num_rows;
-        ij_original = (yp-1) + j * num_rows;
-        REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+      if(merge_all) {
+        REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
+        for(j = 0; j < ncx; j++) { // x-values
+          ij_result = i + j * num_rows;
+          REAL(result)[ ij_result ] = NA_REAL;
+        }
+        for(j = 0; j < ncy; j++) { // y-values
+          ij_result = i + (j+ncx) * num_rows;
+          ij_original = (yp-1) + j * num_rows;
+          REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+        }
       }
       yp++;
+      if(!merge_all) i--;
     }
   }
 
