@@ -13,8 +13,23 @@
   Copyright Jeffrey A. Ryan 2008
 
 */
+void copyIndex(SEXP index, SEXP index_original, int i, int i_original)
+{
+  switch(TYPEOF(index_original)) {
+    case REALSXP:
+      REAL(index)[ i ] = REAL(index_original)[ i_original ];
+      break;
+    case LGLSXP:
+    case INTSXP:
+      INTEGER(index)[ i ] = INTEGER(index_original)[ i_original ];
+      break;
+    default:
+      error("incompatible index type");
+  }
+}
 
-SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
+
+SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
 {
   int nrx, ncx, nry, ncy, len, merge_all;
   int i, j, xp = 1, yp = 1; // x and y positions in index
@@ -74,7 +89,14 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
 
   if(i == 0) {
     UNPROTECT(2);
-    return allocVector(TYPEOF(x),0);
+    PROTECT(result=allocVector(TYPEOF(x),0));
+    setAttrib(result, install("index"), index);
+    setAttrib(result, install("class"), getAttrib(x, install("class")));
+    setAttrib(result, install(".indexCLASS"), getAttrib(x, install(".indexCLASS")));
+    setAttrib(result, install(".indexFORMAT"), getAttrib(x, install(".indexFORMAT")));
+    setAttrib(result, install(".CLASS"), getAttrib(x, install(".CLASS")));
+    UNPROTECT(1);
+    return result;
   }
 
   int num_rows = i;
@@ -89,6 +111,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
     */
     if( xp > nrx ) {
       if(merge_all) {
+        //copyIndex(index, yindex, i, yp-1);
         REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
@@ -106,6 +129,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
 
     if( yp > nry ) {
       if(merge_all) {
+        //copyIndex(index, xindex, i, xp-1);
         REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
@@ -122,6 +146,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
     } else
 
     if( REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ] ) {
+      //copyIndex(index, xindex, i, xp-1);
       REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
       for(j = 0; j < ncx; j++) { // x-values
         ij_result = i + j * num_rows;
@@ -139,6 +164,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
 
     if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
       if(merge_all) {
+        //copyIndex(index, xindex, i, xp-1);
         REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
@@ -156,6 +182,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
 
     if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
       if(merge_all) {
+        //copyIndex(index, yindex, i, yp-1);
         REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
