@@ -96,7 +96,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
         }
         for(j = 0; j < ncy; j++) { // y-values
           ij_result = i + (j+ncx) * num_rows;
-          ij_original = (yp-1) + j * num_rows;
+          ij_original = (yp-1) + j * nry; //num_rows;
           REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
         }
       }
@@ -109,7 +109,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
         REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
-          ij_original = (xp-1) + j * num_rows;
+          ij_original = (xp-1) + j * nrx; //num_rows;
           REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
         }
         for(j = 0; j < ncy; j++) { // y-values
@@ -125,12 +125,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
       REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
       for(j = 0; j < ncx; j++) { // x-values
         ij_result = i + j * num_rows;
-        ij_original = (xp-1) + j * num_rows;
+        ij_original = (xp-1) + j * nrx; //num_rows;
         REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
       }
       for(j = 0; j < ncy; j++) { // y-values
         ij_result = i + (j+ncx) * num_rows;
-        ij_original = (yp-1) + j * num_rows;
+        ij_original = (yp-1) + j * nry; //num_rows;
         REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
       }
       xp++;
@@ -142,7 +142,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
         REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
-          ij_original = (xp-1) + j * num_rows;
+          ij_original = (xp-1) + j * nrx; //num_rows;
           REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
         }
         for(j = 0; j < ncy; j++) { // y-values
@@ -163,7 +163,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all) //, SEXP fill)
         }
         for(j = 0; j < ncy; j++) { // y-values
           ij_result = i + (j+ncx) * num_rows;
-          ij_original = (yp-1) + j * num_rows;
+          ij_original = (yp-1) + j * nry; //num_rows;
           REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
         }
       }
