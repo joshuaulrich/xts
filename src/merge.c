@@ -80,16 +80,19 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
       if(merge_all) i++;
     } else
     if(REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ]) {
+      // INNER JOIN
       // this will be the only result all=FALSE
       yp++;
       xp++;
       i++;
     } else
     if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
+      // LEFT JOIN
       xp++;
       if(merge_all) i++;
     } else
     if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
+      // RIGHT JOIN
       yp++;
       if(merge_all) i++;
     }
@@ -206,6 +209,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
         }
       }
       yp++;
+      // if attempting LJOIN or RJOIN, possibly use this to affect output
       if(!merge_all) i--;  // if all=FALSE, we must decrement i for each non-match
     } else
 
