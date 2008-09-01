@@ -1,3 +1,34 @@
+`merge.xts0` <- function(x,y,...,all=TRUE, fill=NA, suffixes=NULL) {
+  # merge is currently optimized for the 2 case
+  # scenario, but will handle k-merges via the overflow
+  # ... arg.
+  
+  # still need an implementation with do_merge_xts
+  # that can handle:
+  #  suffixes=
+  #
+
+  dots <- list(...)
+  if(length(all) != length(dots)+1)
+    all <- rep(all,length.out=length(dots)+1)
+
+  if(length(dots) > 0) {
+    x <- .Call('do_merge_xts', x, y, all[1], fill[1])
+#    cnames <- c( paste(suffixes[1],colnames(x),sep="."), paste(suffixes[2],colnames(y),sep=".") )
+    for(i in 1:length(dots)) {
+      x <- .Call('do_merge_xts', x, dots[[i]], all[i+1], fill[1])
+#      cnames <- c( cnames, paste(suffixes[i],colnames(dots[[i]]),sep=".") )
+    }
+#    colnames(x) <- cnames
+    return(x)
+  } else {
+#    cnames <- c( paste(suffixes[1],colnames(x),sep="."), paste(suffixes[2],colnames(y),sep=".") )
+    x <- .Call('do_merge_xts', x, y, all[[1]], fill[1])
+#    colnames(x) <- cnames
+    return(x)
+  }
+}
+
 `merge.xts` <-
 function(..., all=TRUE, fill=NA, suffixes=NULL, retclass='xts') {
 
