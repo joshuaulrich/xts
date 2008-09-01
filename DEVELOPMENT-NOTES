@@ -8,7 +8,7 @@ How:
 Since the xts object is ordered by design, we are implementing
 a simple binary search to provide near instant access to range
 based time-queries.  This is designed to be similar in at least one
-dimension (time subsetting) to Matt Doyle's impressive data.table
+dimension (time subsetting) to Matt Dowle's impressive data.table
 functionality.
 
 Additionally it is a test of converting the now flexible user-specified
