@@ -22,9 +22,10 @@
 SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
 {
   int nrx, ncx, nry, ncy, len, merge_all, original_index_type;
+  int left_join, right_join;
   int i = 0, j = 0, xp = 1, yp = 1; // x and y positions in index
   int ij, ij_original, ij_result;
-  int p;
+  int p = 0;
   SEXP xindex, yindex, index, result, attr;
 
   nrx = nrows(x);
@@ -46,18 +47,24 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
      to REAL so as not to lose any information (at the expense
      of conversion cost and memory), and issue a warning. */
   if( TYPEOF(xindex) != TYPEOF(yindex) ) 
-    error ("indexes of each object must be the same type"); //FIXME coerceVector???
+  {
+    PROTECT(xindex = coerceVector(xindex, REALSXP)); p++;
+    PROTECT(yindex = coerceVector(yindex, REALSXP)); p++;
+    warning ("indexes of each object must be the same type"); //FIXME coerceVector???
+  }
 
 
   if( TYPEOF(all) != LGLSXP )
     error("all must be a logical value of TRUE or FALSE");
 
   if( TYPEOF(fill) != TYPEOF(x) ) {
-    PROTECT( fill = coerceVector(fill, TYPEOF(x)) );
-    p = 1; // p is used to make sure our UNPROTECT is correct
-   } else p = 0;
+    PROTECT( fill = coerceVector(fill, TYPEOF(x)) ); p++; // p is used to make sure our UNPROTECT is correct
+   } 
 
-  merge_all = INTEGER(all)[0];
+  merge_all = INTEGER(all)[ 0 ];
+
+  left_join = INTEGER(all)[ 0 ];
+  right_join = INTEGER(all)[ 1 ];
 
   /* determine num_rows of final merged xts object
      
@@ -73,11 +80,13 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
   while( (xp + yp) <= (len + 1) ) {
     if( xp > nrx ) {
       yp++;
-      if(merge_all) i++;
+      //if(merge_all) i++;
+      if(right_join) i++;
     } else
     if( yp > nry ) {
       xp++;
-      if(merge_all) i++;
+      //if(merge_all) i++;
+      if(left_join) i++;
     } else
     if(REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ]) {
       // INNER JOIN
@@ -89,12 +98,14 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
     if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
       // LEFT JOIN
       xp++;
-      if(merge_all) i++;
+      //if(merge_all) i++;
+      if(left_join) i++;
     } else
     if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
       // RIGHT JOIN
       yp++;
-      if(merge_all) i++;
+      //if(merge_all) i++;
+      if(right_join) i++;
     }
   } 
   } else
@@ -102,11 +113,13 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
   while( (xp + yp) <= (len + 1) ) {
     if( xp > nrx ) {
       yp++;
-      if(merge_all) i++;
+      //if(merge_all) i++;
+      if(right_join) i++;
     } else
     if( yp > nry ) {
       xp++;
-      if(merge_all) i++;
+      //if(merge_all) i++;
+      if(left_join) i++;
     } else
     if(INTEGER(xindex)[ xp-1 ] == INTEGER(yindex)[ yp-1 ]) {
       // this will be the only result all=FALSE
@@ -116,11 +129,13 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
     } else
     if( INTEGER(xindex)[ xp-1 ]  < INTEGER(yindex)[ yp-1 ] ) {
       xp++;
-      if(merge_all) i++;
+      //if(merge_all) i++;
+      if(left_join) i++;
     } else
     if( INTEGER(xindex)[ xp-1 ]  > INTEGER(yindex)[ yp-1 ] ) {
       yp++;
-      if(merge_all) i++;
+      //if(merge_all) i++;
+      if(right_join) i++;
     }
   } 
   }
@@ -156,7 +171,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
        and copy the y column values to the second side of result
     */
     if( xp > nrx ) {
-      if(merge_all) {
+      //if(merge_all) {
+      if(right_join) {
         //copyIndex(index, yindex, i, yp-1);
         REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
@@ -210,12 +226,14 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
       }
       yp++;
       // if attempting LJOIN or RJOIN, possibly use this to affect output
-      if(!merge_all) i--;  // if all=FALSE, we must decrement i for each non-match
+      //if(!merge_all) i--;  // if all=FALSE, we must decrement i for each non-match
+      if(!right_join) i--;  // if all=FALSE, we must decrement i for each non-match
     } else
 
     /* past the last row of y */
     if( yp > nry ) {
-      if(merge_all) {
+      //if(merge_all) {
+      if(left_join) {
 
         /* record new index value */
         REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
@@ -272,7 +290,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
         }
       }
       xp++;
-      if(!merge_all) i--;
+      //if(!merge_all) i--;
+      if(!left_join) i--;
     } else
 
     /* matching index values copy all column values from x and y to results */
@@ -339,7 +358,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
     } else
 
     if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
-      if(merge_all) {
+      //if(merge_all) {
+      if(left_join) {
         //copyIndex(index, xindex, i, xp-1);
         REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
@@ -392,11 +412,13 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
         }
       }
       xp++;
-      if(!merge_all) i--;
+      //if(!merge_all) i--;
+      if(!left_join) i--;
     } else
 
     if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
-      if(merge_all) {
+      //if(merge_all) {
+      if(right_join) {
         //copyIndex(index, yindex, i, yp-1);
         REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
@@ -449,7 +471,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
         }
       }
       yp++;
-      if(!merge_all) i--;
+      //if(!merge_all) i--;
+      if(!right_join) i--;
     }
   }
 
@@ -460,7 +483,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
        and copy the y column values to the second side of result
     */
     if( xp > nrx ) {
-      if(merge_all) {
+      //if(merge_all) {
+      if(right_join) {
         //copyIndex(index, yindex, i, yp-1);
         INTEGER(index)[ i ] = INTEGER(yindex)[ yp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
@@ -513,12 +537,13 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
         }
       }
       yp++;
-      if(!merge_all) i--;  // if all=FALSE, we must decrement i for each non-match
+      //if(!merge_all) i--;  // if all=FALSE, we must decrement i for each non-match
+      if(!right_join) i--;  // if all=FALSE, we must decrement i for each non-match
     } else
 
     /* past the last row of y */
     if( yp > nry ) {
-      if(merge_all) {
+      if(left_join) {
 
         /* record new index value */
         INTEGER(index)[ i ] = INTEGER(xindex)[ xp-1 ]; 
@@ -575,7 +600,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
         }
       }
       xp++;
-      if(!merge_all) i--;
+      if(!left_join) i--;
     } else
 
     /* matching index values copy all column values from x and y to results */
@@ -642,7 +667,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
     } else
 
     if( INTEGER(xindex)[ xp-1 ]  < INTEGER(yindex)[ yp-1 ] ) {
-      if(merge_all) {
+      if(left_join) {
         //copyIndex(index, xindex, i, xp-1);
         INTEGER(index)[ i ] = INTEGER(xindex)[ xp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
@@ -695,11 +720,11 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
         }
       }
       xp++;
-      if(!merge_all) i--;
+      if(!left_join) i--;
     } else
 
     if( INTEGER(xindex)[ xp-1 ]  > INTEGER(yindex)[ yp-1 ] ) {
-      if(merge_all) {
+      if(right_join) {
         //copyIndex(index, yindex, i, yp-1);
         INTEGER(index)[ i ] = INTEGER(yindex)[ yp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
@@ -752,7 +777,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
         }
       }
       yp++;
-      if(!merge_all) i--;
+      if(!right_join) i--;
     }
   }
 
