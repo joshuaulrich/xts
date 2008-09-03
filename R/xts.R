@@ -10,17 +10,33 @@
 #  are also defined below
 
 `xts` <-
-function(x=NULL,order.by=index(x),frequency=NULL, row.names=TRUE, ...) {
+function(x=NULL,order.by=index(x),frequency=NULL, row.names=FALSE, ...) {
   if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
 
   orderBy <- class(order.by)
 
-  z <- structure(zoo(x=x,
-                 order.by=as.numeric(as.POSIXct(order.by)),
-                 frequency=frequency),
-                 class=c('xts','zoo'), .indexCLASS=orderBy, 
+  if( !isOrdered(order.by) ) {
+    indx <- order(order.by)
+    x <- x[indx,]
+    order.by <- order.by[indx]
+  }
+
+  tz <- Sys.getenv('TZ')
+  on.exit( Sys.setenv(TZ=tz) )
+  Sys.setenv(TZ='GMT')
+
+  z <- structure(.Data=x,
+                 index=as.numeric(as.POSIXct(order.by)),
+                 class=c('xts','zoo'),
+                 .indexCLASS=orderBy,
                  dimnames=NULL, ...)
+    
+#  z <- structure(zoo(x=x,
+#                 order.by=as.numeric(as.POSIXct(order.by)),
+#                 frequency=frequency),
+#                 class=c('xts','zoo'), .indexCLASS=orderBy, 
+#                 dimnames=NULL, ...)
   if(NCOL(z) == 1)
     dim(z) <- c(NROW(z), 1)
 

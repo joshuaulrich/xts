@@ -1,4 +1,4 @@
-`merge.xts0` <- function(x,y,...,all=TRUE, fill=NA, suffixes=NULL) {
+`merge.xts0` <- function(x,y,...,all=TRUE, fill=NA, suffixes=NULL, join='outer') {
   # merge is currently optimized for the 2 case
   # scenario, but will handle k-merges via the overflow
   # ... arg.
@@ -7,10 +7,16 @@
   # that can handle:
   #  suffixes=
   #
+  if(!missing(join)) {
+    all <- switch(pmatch(join,c("outer","left","right","inner")),
+      c(TRUE,TRUE),c(TRUE,FALSE),c(FALSE,TRUE),c(FALSE,FALSE))
+  }
 
-  dots <- list(...)
+
   if(length(all) != length(dots)+1)
     all <- rep(all,length.out=length(dots)+1)
+
+  dots <- list(...)
 
   if(length(dots) > 0) {
     x <- .Call('do_merge_xts', x, y, all[1], fill[1])
