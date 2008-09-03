@@ -31,3 +31,9 @@ Internal structure now includes a numeric conversion of POSIXct as the index
 with an .indexClass and .indexFormat attribute system to provide seemless
 timeBased-class like behavior, yet with a more efficient and memory-friendly
 construction.
+
+New subset.c and merge.c code to handle [.xts and merge.xts operations.
+These are much more memory efficient and incredibly fast.
+
+Most (almost all) of internal reliance on zoo has been removed.  The goal is to
+have 'xts' merely suggest 'zoo'.
