@@ -12,9 +12,8 @@
       c(TRUE,TRUE),c(TRUE,FALSE),c(FALSE,TRUE),c(FALSE,FALSE))
   }
 
-
-  if(length(all) != length(dots)+1)
-    all <- rep(all,length.out=length(dots)+1)
+  if( length(all) == 1 )
+    all <- rep(all, length.out=2)
 
   dots <- list(...)
 
