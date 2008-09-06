@@ -1,5 +1,9 @@
 `coredata.xts` <-
 function(x, fmt=FALSE, ...) {
+##  DIM <- dim(x)
+##  attributes(x) <- NULL
+##  return(structure(x, dim=DIM))
+
   x.attr <- attributes(x)
 
   if(is.character(fmt)) {
