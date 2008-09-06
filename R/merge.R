@@ -1,4 +1,4 @@
-`merge.xts0` <- function(x,y,...,all=TRUE, fill=NA, suffixes=NULL, join='outer') {
+`merge.xts0` <- function(x,y,...,all=TRUE, fill=NA, suffixes=NULL, join="outer") {
   # merge is currently optimized for the 2 case
   # scenario, but will handle k-merges via the overflow
   # ... arg.
@@ -7,28 +7,56 @@
   # that can handle:
   #  suffixes=
   #
-  if(!missing(join)) {
+  # to match the behavior of zoo
+  if( missing(y) ) 
+    return(x)
+
+  if( !is.xts(y) ) {
+    y <- try.xts(y, error=FALSE)
+    if( !is.xts(y) && NROW(y) != NROW(x) ) {
+      y <- structure(rep(y, length.out=NROW(x)), index=.index(x))
+    } else stop("can not convert 'y' to suitable class for merge")
+  }
+
+  if( !missing(join) ) {
+    # join logic applied to index:
+    # inspired by: http://blogs.msdn.com/craigfr/archive/2006/08/03/687584.aspx
+    #
+    #  (full) outer - all cases, equivelant to all=c(TRUE,TRUE)
+    #         left  - all x,    &&  y's that match x
+    #         right - all  ,y   &&  x's that match x
+    #         inner - only x and y where index(x)==index(y)
     all <- switch(pmatch(join,c("outer","left","right","inner")),
-      c(TRUE,TRUE),c(TRUE,FALSE),c(FALSE,TRUE),c(FALSE,FALSE))
+                    c(TRUE,  TRUE ), #  outer
+                    c(TRUE,  FALSE), #  left
+                    c(FALSE, TRUE ), #  right
+                    c(FALSE, FALSE)  #  inner
+                 )
   }
 
   if( length(all) == 1 )
     all <- rep(all, length.out=2)
 
   dots <- list(...)
-
   if(length(dots) > 0) {
-    x <- .Call('do_merge_xts', x, y, all[1], fill[1])
+
+    x <- .Call('do_merge_xts', x, y, all, fill[1])
 #    cnames <- c( paste(suffixes[1],colnames(x),sep="."), paste(suffixes[2],colnames(y),sep=".") )
     for(i in 1:length(dots)) {
-      x <- .Call('do_merge_xts', x, dots[[i]], all[i+1], fill[1])
+      if( !is.xts(dots[[i]]) ) {
+        dots[[i]] <- try.xts(dots[[i]], error=FALSE)
+        if( !is.xts(dots[[i]]) && NROW(dots[[i]]) != NROW(x) ) {
+          dots[[i]] <- structure(rep(dots[[i]], length.out=NROW(x)), index=.index(x))
+        } else stop("can not convert 'y' to suitable class for merge")
+      }
+      x <- .Call('do_merge_xts', x, dots[[i]], all, fill[1])
 #      cnames <- c( cnames, paste(suffixes[i],colnames(dots[[i]]),sep=".") )
     }
 #    colnames(x) <- cnames
     return(x)
   } else {
 #    cnames <- c( paste(suffixes[1],colnames(x),sep="."), paste(suffixes[2],colnames(y),sep=".") )
-    x <- .Call('do_merge_xts', x, y, all[[1]], fill[1])
+    x <- .Call('do_merge_xts', x, y, all, fill[1])
 #    colnames(x) <- cnames
     return(x)
   }

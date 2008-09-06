@@ -12,7 +12,7 @@
 # endpoints needs to be able to handle 'k' arguments to minutes...
 
 `to.period` <-
-function(x,period='months',k=1,indexAt=NULL,name=NULL,...)
+function(x,period='months',k=1,indexAt=NULL,name=NULL,OHLC=TRUE,...)
 {
   original.class <- class(x) # used for classes derived from 'xts'
 

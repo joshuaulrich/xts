@@ -36,7 +36,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
 
   len = nrx + nry;
   
-  original_index_type = TYPEOF(xindex);
+  //original_index_type = TYPEOF(xindex);
 
 
   PROTECT( xindex = getAttrib(x, install("index")) );
@@ -50,7 +50,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
   {
     PROTECT(xindex = coerceVector(xindex, REALSXP)); p++;
     PROTECT(yindex = coerceVector(yindex, REALSXP)); p++;
-    warning ("indexes of each object must be the same type"); //FIXME coerceVector???
+    warning ("incompatible index type, coerced to type double"); //FIXME coerceVector???
   }
 
 
@@ -59,9 +59,9 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
 
   if( TYPEOF(fill) != TYPEOF(x) ) {
     PROTECT( fill = coerceVector(fill, TYPEOF(x)) ); p++; // p is used to make sure our UNPROTECT is correct
-   } 
+  } 
 
-  merge_all = INTEGER(all)[ 0 ];
+  //merge_all = INTEGER(all)[ 0 ];
 
   left_join = INTEGER(all)[ 0 ];
   right_join = INTEGER(all)[ 1 ];
@@ -161,6 +161,11 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
      either here or in the calling R code.  I suspect here is
      more useful if other function can call the C code as well. */
   PROTECT( result = allocVector(TYPEOF(x), (ncx + ncy) * num_rows) );
+
+  /* need to coerce y to typeof x */
+  if( TYPEOF(x) != TYPEOF(y) ) {
+    PROTECT( y = coerceVector(y, TYPEOF(x)) ); p++;
+  }
 
   /* There are two type of supported index types, each branched from here */
   if( TYPEOF(xindex) == REALSXP ) {
