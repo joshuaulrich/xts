@@ -14,6 +14,9 @@ function(x=NULL,order.by=index(x),frequency=NULL, row.names=FALSE, ...) {
   if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
 
+  if(NROW(x) != length(order.by))
+    stop("data and index have different lengths")
+
   orderBy <- class(order.by)
 
   if( !isOrdered(order.by) ) {
@@ -51,13 +54,15 @@ function(x=NULL,order.by=index(x),frequency=NULL, row.names=FALSE, ...) {
 }
 
 `.xts` <-
-function(x=NULL, index, .indexCLASS,  row.names=FALSE, check=FALSE, unique=FALSE, ...) {
+function(x=NULL, index, .indexCLASS,  row.names=FALSE, check=TRUE, unique=FALSE, ...) {
   if(check) {
     if( isOrdered(x, increasing=TRUE, strictly=unique) )
       stop('index is not in',ifelse(unique, 'strictly', ''),'increasing order')
   }
   if(!is.numeric(index))
     index <- as.numeric(index)
+  if(NROW(x) != length(index))
+    stop("data and index must have same length")
 
   xx <- structure(.Data=x,
             dim=c(NROW(x),NCOL(x)),
