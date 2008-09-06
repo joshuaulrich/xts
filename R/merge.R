@@ -1,4 +1,4 @@
-`merge.xts0` <- function(x,y,...,all=TRUE, fill=NA, suffixes=NULL, join="outer") {
+`merge.xts0` <- function(x,y,...,all=TRUE, fill=NA, suffixes=NULL, join="outer", retclass='xts') {
   # merge is currently optimized for the 2 case
   # scenario, but will handle k-merges via the overflow
   # ... arg.
@@ -8,6 +8,7 @@
   #  suffixes=
   #
   # to match the behavior of zoo
+  xyNames <- list(x=deparse(substitute(x)),y=deparse(substitute(y)))
   if( missing(y) ) 
     return(x)
 
@@ -41,7 +42,6 @@
   if(length(dots) > 0) {
 
     x <- .Call('do_merge_xts', x, y, all, fill[1])
-#    cnames <- c( paste(suffixes[1],colnames(x),sep="."), paste(suffixes[2],colnames(y),sep=".") )
     for(i in 1:length(dots)) {
       if( !is.xts(dots[[i]]) ) {
         dots[[i]] <- try.xts(dots[[i]], error=FALSE)
@@ -50,14 +50,17 @@
         } else stop("can not convert 'y' to suitable class for merge")
       }
       x <- .Call('do_merge_xts', x, dots[[i]], all, fill[1])
-#      cnames <- c( cnames, paste(suffixes[i],colnames(dots[[i]]),sep=".") )
     }
-#    colnames(x) <- cnames
     return(x)
   } else {
-#    cnames <- c( paste(suffixes[1],colnames(x),sep="."), paste(suffixes[2],colnames(y),sep=".") )
+    ncx <- 1:NCOL(x)
     x <- .Call('do_merge_xts', x, y, all, fill[1])
-#    colnames(x) <- cnames
+    if(is.null(retclass)) {
+      # needed for Ops.xts(e1,e2)
+      assign(xyNames$x, x[,ncx], parent.frame())
+      assign(xyNames$y, x[,-ncx],parent.frame())
+      invisible(return(NULL))
+    } else
     return(x)
   }
 }
