@@ -1,4 +1,4 @@
-`Ops.xts` <-
+`Ops.xts.o` <-
 function (e1, e2) 
 {
     # code borrowed heavily from Ops.zoo
@@ -34,3 +34,29 @@ function (e1, e2)
     e
 }
 
+`Ops.xts` <-
+function(e1, e2)
+{
+  e <- if (missing(e2)) {
+    NextMethod(.Generic)
+  }
+  else if (any(nchar(.Method) == 0)) {
+    NextMethod(.Generic)
+  }
+  else {
+    merge.xts0(e1,e2,all=FALSE, retclass=NULL)
+    # this assigns the merged values back to e1 and e2 - in this environment
+    e1 <- unclass(e1)
+    e2 <- unclass(e2)
+    switch(.Generic,
+      "+" = e1 + e2,
+      "-" = e1 - e2,
+      "*" = e1 * e2,
+      "/" = e1 / e2,
+      "^" = e1 ^ e2,
+      "%%" = e1 %% e2,
+      "%/%" = e1 %/% e2)
+  }
+
+  .Call('add_class', e)
+}

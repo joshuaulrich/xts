@@ -29,7 +29,7 @@ function(x=NULL,order.by=index(x),frequency=NULL, row.names=FALSE, ...) {
   on.exit( Sys.setenv(TZ=tz) )
   Sys.setenv(TZ='GMT')
 
-  z <- structure(.Data=x,
+  z <- structure(.Data=as.matrix(x),
                  index=as.numeric(as.POSIXct(order.by)),
                  class=c('xts','zoo'),
                  .indexCLASS=orderBy,
