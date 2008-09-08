@@ -58,5 +58,5 @@ function(e1, e2)
       "%/%" = e1 %/% e2)
   }
 
-  .Call('add_class', e)
+  .Call('add_xts_class', e)
 }

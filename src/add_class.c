@@ -2,7 +2,7 @@
 #include <Rinternals.h>
 #include <Rdefines.h>
 
-SEXP add_class (SEXP x) //, SEXP class)
+SEXP add_xts_class (SEXP x) //, SEXP class)
 {
   SEXP class;
   PROTECT(class = allocVector(STRSXP, 2));
