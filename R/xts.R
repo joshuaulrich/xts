@@ -139,7 +139,9 @@ function(x,value) {
 
 `is.xts` <-
 function(x) {
-  inherits(x,'xts')
+  inherits(x,'xts') &&
+  is.numeric(.index(x)) &&
+  !is.null(indexClass(x))
 }
 
 `as.xts` <-

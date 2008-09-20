@@ -28,7 +28,7 @@
   if( p <= 60 ) {
     # 86400 / 24 / 60
     units <- 'mins'
-    scale <- 'minutes'
+    scale <- 'minute'
   } else
   if( p <= 3600 ) {
     # 86400 / 24
