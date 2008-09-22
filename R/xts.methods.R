@@ -6,12 +6,17 @@ function(x, i, j, drop = TRUE, ...)
 
     original.cols <- NCOL(x)
     original.attr <- xtsAttributes(x)
-
+    
     # test for negative subscripting in i
-    if (!missing(i) && is.numeric(i) && any(i < 0)) {
-      if(!all(i < 0))
-        stop('only zeros may be mixed with negative subscripts')
-      i <- (1:NROW(x))[i]
+    if (!missing(i) && is.numeric(i) ) {
+      if(!isOrdered(i, strictly=FALSE))
+        return(x)
+
+      if(any(i < 0)) {
+        if(!all(i < 0))
+          stop('only zeros may be mixed with negative subscripts')
+        i <- (1:NROW(x))[i]
+      }
     }
     # test for negative subscripting in j
     if (!missing(j) && is.numeric(j) && any(j < 0)) {
