@@ -26,3 +26,7 @@ DATA TOOLS
 */
 #define  xts_ATTRIB(x)          coerceVector(do_xtsAttributes(x),LISTSXP)
 
+/*
+FUNCTIONS
+*/
+void copy_xtsAttributes(SEXP x, SEXP y);

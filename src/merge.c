@@ -1,6 +1,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <Rdefines.h>
+#include "xts.h"
 
 
 #define OFFSET(r,c,rows) ((r-1) + (c-1) * rows)
@@ -140,8 +141,10 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass)
   if(i == 0) {
     /* if no rows match, return an empty xts object, similar in style to zoo */
     UNPROTECT(2 + p);
+    return R_NilValue;
+    /*
     PROTECT(result=allocVector(TYPEOF(x),0));
-    setAttrib(result, install("index"), index);
+    setAttrib(result, install("index"), allocVector(TYPEOF(xindex), 0));
     if(LOGICAL(retclass)[0]) 
       setAttrib(result, install("class"), getAttrib(x, install("class")));
     setAttrib(result, install(".indexCLASS"), getAttrib(x, install(".indexCLASS")));
@@ -149,6 +152,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass)
     setAttrib(result, install(".CLASS"), getAttrib(x, install(".CLASS")));
     UNPROTECT(1);
     return result;
+    */
   }
 
   int num_rows = i;
