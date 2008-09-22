@@ -3,8 +3,6 @@
 #include <Rdefines.h>
 #include "xts.h"
 
-
-#define OFFSET(r,c,rows) ((r-1) + (c-1) * rows)
 /* 
 
   This is a merge_join algorithm used to

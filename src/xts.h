@@ -12,6 +12,10 @@ This source is distributed with the same license
 as the full xts software, GPL3.
 */
 
+#ifndef _XTS
+#define _XTS
+
+
 /*
 INTERNAL SYMBOLS
 */
@@ -29,4 +33,7 @@ DATA TOOLS
 /*
 FUNCTIONS
 */
-void copy_xtsAttributes(SEXP x, SEXP y);
+SEXP do_xtsAttributes(SEXP x);              // xtsAttributes
+void copy_xtsAttributes(SEXP x, SEXP y);    
+
+#endif /* _XTS */

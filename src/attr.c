@@ -43,6 +43,11 @@ SEXP do_xtsAttributes(SEXP x)
       i++;
     }
   }
+  if(i == 0) {
+    UNPROTECT(P);
+    return R_NilValue;
+  }
+
   SET_LENGTH(values, i); // truncate list back to i-size
   SET_LENGTH(names,  i);
   setAttrib(values, R_NamesSymbol, names);
