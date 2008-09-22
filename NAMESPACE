@@ -28,6 +28,8 @@ export(.indexsec,
 
 export(isOrdered)
 
+export(.subset.xts)
+
 # user visible core xts functions
 export(xts, .xts)
 export(as.xts)
@@ -128,6 +130,7 @@ S3method('index',xts)
 S3method('index<-',xts)
 S3method('time<-',xts)
 S3method('xtsAttributes<-',xts)
+S3method(merge,xts)
 S3method(rbind,xts)
 S3method(cbind,xts)
 S3method(c,xts)

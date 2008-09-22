@@ -1,11 +1,11 @@
 `cbind.xts` <-
-function(..., all=TRUE, fill=NA, suffixes=NULL) {
-    xts:::merge.xts(..., all=all, fill=fill, suffixes=suffixes, retclass="xts")
+function(x, y, ..., all=TRUE, fill=NA, suffixes=NULL, join="outer") {
+    xts:::merge.xts0(x, y, ..., all=all, fill=fill, suffixes=suffixes, retclass="xts")
 }
 
 `c.xts` <-
-function(...) {
-  rbind.xts(...)
+function(x, y, ...) {
+  cbind.xts(x, y, ...)
 }
 
 

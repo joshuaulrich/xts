@@ -8,7 +8,12 @@ Constructor function for creating an extensible time-series object.
 \code{xts} is used to create an \code{xts} object from raw data inputs.
 }
 \usage{
-xts(x = NULL, order.by = index(x),frequency = NULL, row.names = TRUE, ...)
+xts(x = NULL,
+    order.by = index(x),
+    frequency = NULL,
+    row.names = TRUE, 
+    unique = TRUE,
+    ...)
 
 is.xts(x)
 }
@@ -19,6 +24,7 @@ is.xts(x)
 of a known time-based class. See details. }
   \item{frequency}{ numeric indicating frequency of \code{order.by}. See details. }
   \item{row.names}{ should row.names be stripped to minimize memory requirements }
+  \item{unique}{ should index be checked for unique time-stamps? }
   \item{\dots}{ additional attributes to be added. See details. }
 }
 \details{
@@ -30,6 +36,10 @@ that the index values not only be unique and ordered, but also must be of
 a time-based class. Currently acceptable classes include: \sQuote{Date},
 \sQuote{POSIXct}, \sQuote{timeDate}, as well as \sQuote{yearmon} and
 \sQuote{yearqtr} where the index values remain unique.
+
+This last uniqueness requirement has been relaxed as of version 0.5-0.
+By setting unique=FALSE, only a check that the index is
+not decreasing is carried out via the \code{isOrdered} function.
 
 The second difference is that the object may now carry additional
 attributes that may be desired in individual time-series handling.

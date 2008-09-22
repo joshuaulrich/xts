@@ -1,4 +1,4 @@
-`[.xts` <-
+`.subset.xts` <- `[.xts` <-
 function(x, i, j, drop = TRUE, ...) 
 {
     sys.TZ <- Sys.getenv('TZ') 

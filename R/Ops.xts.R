@@ -44,17 +44,21 @@ function(e1, e2)
     NextMethod(.Generic)
   }
   else {
-    merge.xts0(e1,e2,all=FALSE, retclass=NULL)
-    # this assigns the merged values back to e1 and e2 - in this environment
-    e1 <- unclass(e1)
-    e2 <- unclass(e2)
+#    merge.xts0(e1,e2,all=FALSE)#, retclass=NULL)
+#    # this assigns the merged values back to e1 and e2 - in this environment
+#    e1 <- unclass(e1)
+#    e2 <- unclass(e2)
+    nc1 <- 1:NCOL(e1)
+    E <- merge.xts0(e1, e2, all=FALSE, retclass=FALSE)
+    e1 <- .subset.xts(E, j= nc1) #[,  nc1] 
+    e2 <- .subset.xts(E, j=-nc1) #E[, -nc1] 
     switch(.Generic,
-      "+" = e1 + e2,
-      "-" = e1 - e2,
-      "*" = e1 * e2,
-      "/" = e1 / e2,
-      "^" = e1 ^ e2,
-      "%%" = e1 %% e2,
+      "+"   = e1 + e2,
+      "-"   = e1 - e2,
+      "*"   = e1 * e2,
+      "/"   = e1 / e2,
+      "^"   = e1 ^ e2,
+      "%%"  = e1 %% e2,
       "%/%" = e1 %/% e2)
   }
 

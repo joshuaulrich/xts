@@ -19,7 +19,7 @@
 
 */
 // do_merge_xts {{{
-SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
+SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass)
 {
   int nrx, ncx, nry, ncy, len, merge_all, original_index_type;
   int left_join, right_join;
@@ -35,9 +35,6 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
   ncy = ncols(y);
 
   len = nrx + nry;
-  
-  //original_index_type = TYPEOF(xindex);
-
 
   PROTECT( xindex = getAttrib(x, install("index")) );
   PROTECT( yindex = getAttrib(y, install("index")) );
@@ -50,7 +47,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
   {
     PROTECT(xindex = coerceVector(xindex, REALSXP)); p++;
     PROTECT(yindex = coerceVector(yindex, REALSXP)); p++;
-    warning ("incompatible index type, coerced to type double"); //FIXME coerceVector???
+    //warning ("incompatible index type, coerced to type double"); //FIXME coerceVector???
   }
 
 
@@ -145,7 +142,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
     UNPROTECT(2 + p);
     PROTECT(result=allocVector(TYPEOF(x),0));
     setAttrib(result, install("index"), index);
-    setAttrib(result, install("class"), getAttrib(x, install("class")));
+    if(LOGICAL(retclass)[0]) 
+      setAttrib(result, install("class"), getAttrib(x, install("class")));
     setAttrib(result, install(".indexCLASS"), getAttrib(x, install(".indexCLASS")));
     setAttrib(result, install(".indexFORMAT"), getAttrib(x, install(".indexFORMAT")));
     setAttrib(result, install(".CLASS"), getAttrib(x, install(".CLASS")));
@@ -804,10 +802,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill)
 */
 
   setAttrib(result, install("index"), index);
-  setAttrib(result, install("class"), getAttrib(x, install("class")));
+  if(LOGICAL(retclass)[0])
+    setAttrib(result, install("class"), getAttrib(x, install("class")));
   setAttrib(result, install(".indexCLASS"), getAttrib(x, install(".indexCLASS")));
   setAttrib(result, install(".indexFORMAT"), getAttrib(x, install(".indexFORMAT")));
   setAttrib(result, install(".CLASS"), getAttrib(x, install(".CLASS")));
+  copy_xtsAttributes(x, result);
 
   return result;  
 } //}}}

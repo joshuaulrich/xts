@@ -12,6 +12,10 @@
   if( missing(y) ) 
     return(x)
 
+  if(is.logical(retclass) && !retclass) {
+    setclass <- FALSE
+  } else setclass <- TRUE
+
   if( !is.xts(y) ) {
     y <- try.xts(y, error=FALSE)
     if( !is.xts(y) && NROW(y) != NROW(x) ) {
@@ -39,9 +43,10 @@
     all <- rep(all, length.out=2)
 
   dots <- list(...)
+
   if(length(dots) > 0) {
 
-    x <- .Call('do_merge_xts', x, y, all, fill[1])
+    x <- .Call('do_merge_xts', x, y, all, fill[1], setclass, PACKAGE="xts")
     for(i in 1:length(dots)) {
       if( !is.xts(dots[[i]]) ) {
         dots[[i]] <- try.xts(dots[[i]], error=FALSE)
@@ -49,14 +54,14 @@
           dots[[i]] <- structure(rep(dots[[i]], length.out=NROW(x)), index=.index(x))
         } else stop("can not convert 'y' to suitable class for merge")
       }
-      x <- .Call('do_merge_xts', x, dots[[i]], all, fill[1])
+      x <- .Call('do_merge_xts', x, dots[[i]], all, fill[1], setclass, PACKAGE="xts")
     }
     return(x)
   } else {
     ncx <- 1:NCOL(x)
-    x <- .Call('do_merge_xts', x, y, all, fill[1])
+    x <- .Call('do_merge_xts', x, y, all, fill[1], setclass, PACKAGE="xts")
     if(is.null(retclass)) {
-      # needed for Ops.xts(e1,e2)
+      # needed for original Ops.xts(e1,e2), now for zoo compat
       assign(xyNames$x, x[,ncx], parent.frame())
       assign(xyNames$y, x[,-ncx],parent.frame())
       invisible(return(NULL))
@@ -65,7 +70,9 @@
   }
 }
 
-`merge.xts` <-
+`merge.xts` <- merge.xts0
+
+`.merge.xts` <-
 function(..., all=TRUE, fill=NA, suffixes=NULL, retclass='xts') {
 
  args <- list(...)

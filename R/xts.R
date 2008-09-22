@@ -2,6 +2,7 @@
 #   additional methods are in correspondingly named .R files
 #   current conversions include:
 #     timeSeries, its, irts, ts, matrix, data.frame, and zoo
+#     MISSING: fts, tis, fame
 #
 #  this file includes the main xts constructor as well as the reclass
 #  function.
@@ -10,7 +11,13 @@
 #  are also defined below
 
 `xts` <-
-function(x=NULL,order.by=index(x),frequency=NULL, row.names=FALSE, ...) {
+function(x=NULL,
+         order.by=index(x),
+         frequency=NULL,
+         row.names=FALSE,
+         unique=TRUE,
+         ...)
+{
   if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
 
@@ -19,7 +26,7 @@ function(x=NULL,order.by=index(x),frequency=NULL, row.names=FALSE, ...) {
 
   orderBy <- class(order.by)
 
-  if( !isOrdered(order.by) ) {
+  if( !isOrdered(order.by, strictly=!unique) ) {
     indx <- order(order.by)
     x <- x[indx,]
     order.by <- order.by[indx]
