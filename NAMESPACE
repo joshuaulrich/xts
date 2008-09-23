@@ -2,7 +2,7 @@
 useDynLib(xts)
 
 # imports
-#importFrom(stats, lag)
+importFrom(stats, lag)
 
 # debugging
 export(firstof,
@@ -96,7 +96,9 @@ S3method(plot,xts)
 
 #export(Lag.xts, Next.xts) #, Diff.xts)
 
-#S3method(lag,xts)
+export(lag.xts)
+export(merge.xts)
+S3method(lag,xts)
 #S3method(diff,xts)
 S3method(first,default)
 S3method(last,default)

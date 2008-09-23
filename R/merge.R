@@ -19,6 +19,9 @@
   if( !is.xts(y) ) {
     y <- try.xts(y, error=FALSE)
     if( !is.xts(y) && NROW(y) == NROW(x) ) {
+      y <- structure(y, index=.index(x))
+    } else
+    if( !is.xts(y) && NROW(y)==1 && NCOL(y)==1) {
       y <- structure(rep(y, length.out=NROW(x)), index=.index(x))
     } else stop("can not convert 'y' to suitable class for merge")
   }
@@ -51,7 +54,10 @@
       if( !is.xts(dots[[i]]) ) {
         dots[[i]] <- try.xts(dots[[i]], error=FALSE)
         if( !is.xts(dots[[i]]) && NROW(dots[[i]]) == NROW(x) ) {
-          dots[[i]] <- structure(rep(dots[[i]], length.out=NROW(x)), index=.index(x))
+          dots[[i]] <- structure(dots[[i]], index=.index(x))
+        } else
+        if( !is.xts(dots[[i]]) && NROW(dots[[i]])==1 && NCOL(dots[[i]])==1) {
+          dots[[i]] <- structure(rep(dots[[i]], length.out=NROW(x)), index=.index(x)) 
         } else stop("can not convert 'y' to suitable class for merge")
       }
       x <- .Call('do_merge_xts', x, dots[[i]], all, fill[1], setclass, PACKAGE="xts")

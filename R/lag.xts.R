@@ -54,6 +54,9 @@
   reclass(xx, x[narm])
 }
 
+`lag.xts` <- function(x, k=1, na.pad=TRUE, ...) {
+  .Call('lagXts', x, as.integer(k), as.logical(na.pad))
+}
 
 #`lag.xts` <- `Lag` <- function(x, k=1) {
 #

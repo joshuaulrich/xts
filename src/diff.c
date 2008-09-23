@@ -27,13 +27,19 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
   if(NApad) {
     PROTECT(result = allocVector(TYPEOF(x), nrs*ncs)); P++;
   } else {
-    PROTECT(result = allocVector(TYPEOF(x), (nrs-K)*ncs)); P++;
+    if(K > 0) {
+      PROTECT(result = allocVector(TYPEOF(x), (nrs-K)*ncs)); P++;
+    } else {
+      PROTECT(result = allocVector(TYPEOF(x), (nrs+K)*ncs)); P++;
+    }
   }
 
   for(i = 0; i < nrs; i++) {
   for(j = 0; j < ncs; j++) {
     ij = i + j * nrs;
-    if(i < INTEGER(k)[0]) {
+//Rprintf("i=%i\tK=%i\t(nrs+K)=%i\n",i,K,(nrs+K));
+    if(i < K ||
+       K < 0 && i > (nrs+K-1)) {
     /* Pad NA values at beginning */
       if(NApad) {
       switch (TYPEOF(x)) {
@@ -64,8 +70,9 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
       } // NApad
     } else {
       iijj = i - K + j * nrs; // move back K positions to get data
-      if(!NApad) ij = iijj;   // if not padding, start at the correct spot
-Rprintf("i=%i;\tj=%i;\tij=%i;\tiijj=%i\n", i, j, ij, iijj);
+      if(!NApad && K > 0) ij = i - K + j * (nrs - K);   // if not padding, start at the correct spot
+      if(!NApad && K < 0) ij = i + j * (nrs + K);   // if not padding, start at the correct spot
+//Rprintf("i=%i;\tj=%i;\tij=%i;\tiijj=%i\n", i, j, ij, iijj);
       switch (TYPEOF(x)) {
         case LGLSXP:
              LOGICAL(result)[ij] = LOGICAL(x)[iijj];
@@ -99,8 +106,10 @@ Rprintf("i=%i;\tj=%i;\tij=%i;\tiijj=%i\n", i, j, ij, iijj);
   setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
   if(!NApad) { // No NA padding
     SEXP oindex, nindex, dims;
+    int nRows = (K > 0) ? nrs-K : nrs+K;
     PROTECT(oindex = getAttrib(x, xts_IndexSymbol));
-    PROTECT(nindex = allocVector(TYPEOF(oindex), nrs-K));
+    PROTECT(nindex = allocVector(TYPEOF(oindex), nRows));
+    if(K > 0) {
     switch(TYPEOF(oindex)) {
       case REALSXP:
         for( i = 0; i < (nrs-K); i++)
@@ -113,9 +122,24 @@ Rprintf("i=%i;\tj=%i;\tij=%i;\tiijj=%i\n", i, j, ij, iijj);
       default:
         break;
     }
+    } else {
+    switch(TYPEOF(oindex)) {
+      case REALSXP:
+        for( i = 0; i < nrs+K; i++)
+          REAL(nindex)[ i ] = REAL(oindex)[ i ];
+        break;
+      case INTSXP:
+        for( i = 0; i < nrs+K; i++)
+          INTEGER(nindex)[ i ] = INTEGER(oindex)[ i ];
+        break;
+      default:
+        break;
+    }
+
+    }
     setAttrib(result, xts_IndexSymbol, nindex);
     PROTECT(dims = allocVector(INTSXP, 2));
-    INTEGER(dims)[0] = nrs-K;
+    INTEGER(dims)[0] = nRows;
     INTEGER(dims)[1] = ncs;
     setAttrib(result, R_DimSymbol, dims);
     setAttrib(result, R_DimNamesSymbol, getAttrib(x, R_DimNamesSymbol));
