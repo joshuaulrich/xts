@@ -107,35 +107,20 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
   if(!NApad) { // No NA padding
     SEXP oindex, nindex, dims;
     int nRows = (K > 0) ? nrs-K : nrs+K;
+    int incr  = (K > 0) ? K : 0;
     PROTECT(oindex = getAttrib(x, xts_IndexSymbol));
     PROTECT(nindex = allocVector(TYPEOF(oindex), nRows));
-    if(K > 0) {
     switch(TYPEOF(oindex)) {
       case REALSXP:
-        for( i = 0; i < (nrs-K); i++)
-          REAL(nindex)[ i ] = REAL(oindex)[ i+K ];
+        for( i = 0; i < nRows; i++)
+          REAL(nindex)[ i ] = REAL(oindex)[ i+incr ];
         break;
       case INTSXP:
-        for( i = 0; i < (nrs-K); i++)
-          INTEGER(nindex)[ i ] = INTEGER(oindex)[ i+K ];
+        for( i = 0; i < nRows; i++)
+          INTEGER(nindex)[ i ] = INTEGER(oindex)[ i+incr ];
         break;
       default:
         break;
-    }
-    } else {
-    switch(TYPEOF(oindex)) {
-      case REALSXP:
-        for( i = 0; i < nrs+K; i++)
-          REAL(nindex)[ i ] = REAL(oindex)[ i ];
-        break;
-      case INTSXP:
-        for( i = 0; i < nrs+K; i++)
-          INTEGER(nindex)[ i ] = INTEGER(oindex)[ i ];
-        break;
-      default:
-        break;
-    }
-
     }
     setAttrib(result, xts_IndexSymbol, nindex);
     PROTECT(dims = allocVector(INTSXP, 2));
