@@ -18,7 +18,7 @@
 
   if( !is.xts(y) ) {
     y <- try.xts(y, error=FALSE)
-    if( !is.xts(y) && NROW(y) != NROW(x) ) {
+    if( !is.xts(y) && NROW(y) == NROW(x) ) {
       y <- structure(rep(y, length.out=NROW(x)), index=.index(x))
     } else stop("can not convert 'y' to suitable class for merge")
   }
@@ -50,7 +50,7 @@
     for(i in 1:length(dots)) {
       if( !is.xts(dots[[i]]) ) {
         dots[[i]] <- try.xts(dots[[i]], error=FALSE)
-        if( !is.xts(dots[[i]]) && NROW(dots[[i]]) != NROW(x) ) {
+        if( !is.xts(dots[[i]]) && NROW(dots[[i]]) == NROW(x) ) {
           dots[[i]] <- structure(rep(dots[[i]], length.out=NROW(x)), index=.index(x))
         } else stop("can not convert 'y' to suitable class for merge")
       }
