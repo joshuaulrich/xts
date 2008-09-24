@@ -37,7 +37,7 @@ and within functions requiring positional matching of data.
 \value{
 An \code{xts} object reflected the desired lag and/or differencing.
 }
-\references{ \url{http://en.wikipedia.org/wiki/Lag }
+\references{ \url{http://en.wikipedia.org/wiki/Lag } }
 \author{ Jeffrey A. Ryan }
 \examples{
 x <- xts(1:10, Sys.Date()+1:10)
