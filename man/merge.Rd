@@ -62,8 +62,8 @@ of two objects speed and memory improvements on the order of
 significant performance loss.
 }
 \examples{
-(x <- xts(1:10, Sys.Date()+1:10))
-(y <- x[1:5])
+(x <- xts(4:10, Sys.Date()+4:10))
+(y <- xts(1:6, Sys.Date()+1:6))
 
 merge(x,y)
 merge(x,y, join='inner')
