@@ -44,44 +44,32 @@
 
 }
 
-`.diff.xts` <- function(x, lag=1, differences=1, arithmetic=TRUE,na.pad=TRUE,...) {
-  ### TEMPORARY FIX UNTIL NEW xts METHOD IS WRITTEN
-  x <- try.xts(x)
-  xx <- diff(as.zoo(x),lag=lag,differences=differences, arithmetic=arithmetic,na.pad=na.pad,...)
-  narm <- if(!na.pad) {
-            seq_len(lag * differences)
-          } else seq_len(NROW(x))
-  reclass(xx, x[narm])
-}
 
 `lag.xts` <- function(x, k=1, na.pad=TRUE, ...) {
   .Call('lagXts', x, as.integer(k), as.logical(na.pad))
 }
 
-#`lag.xts` <- `Lag` <- function(x, k=1) {
-#
-#  x <- try.xts(x, error=FALSE)
-#
-#  if(NCOL(x) > 1) {
-#    xx <- x[,1]
-#  } else xx <- x
-#
-#  for(i in 1:NCOL(x)) {
-#    xx <- cbind.zoo(xx,sapply(k, 
-#                           function(k) {
-#                             if(NCOL(x) > 1) x <- x[,i]
-#                             if(k==0) return(x)
-#                             if(k > NROW(x)) k <- NROW(x)
-#                             c(rep(NA,k), x[-((NROW(x)-k+1):NROW(x))])
-#                           }
-#                         )
-#               )
-#  }
-#  xx <- xx[,-1]
-#  dim(xx) <- c(NROW(xx),NCOL(xx))
-#  colnames(xx) <- c(paste('lag',
-#                        rep(k,NCOL(x)),
-#                        colnames(x)[sort(rep(1:NCOL(x),length(k)))],
-#                        sep='.') )
-#  reclass(coredata(xx),x)
-#}
+`diff.xts` <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad=TRUE, ...)
+{
+  if(lag < 1 || differences < 1)
+    stop("'diff.xts' defined only for positive lag and differences arguments")
+
+  if(differences > 1) {
+    if(arithmetic && !log) { #log is FALSE or missing
+      x <- x - lag.xts(x, k=lag, na.pad=na.pad)
+    } else {
+      if(log) {
+        x <- log(x/lag.xts(x, k=lag, na.pad=na.pad))
+      } else x <- x/lag.xts(x, k=lag, na.pad=na.pad)
+    }
+    diff(x, lag, differences=differences-1, arithmetic=arithmetic, log=log, na.pad=na.pad, ...)
+  } else {
+    if(arithmetic && !log) {
+      x - lag.xts(x, k=lag, na.pad=na.pad)
+    } else {
+      if(log) {
+        log(x/lag.xts(x, k=lag, na.pad=na.pad))
+      } else x/lag.xts(x, k=lag, na.pad=na.pad)
+    }
+  }
+}

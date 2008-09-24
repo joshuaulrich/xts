@@ -50,6 +50,8 @@ function(e1, e2)
 #    e2 <- unclass(e2)
     nc1 <- 1:NCOL(e1)
     E <- merge.xts0(e1, e2, all=FALSE, retclass=FALSE)
+    if(is.null(E)) 
+      return(E)
     e1 <- .subset.xts(E, j= nc1) #[,  nc1] 
     e2 <- .subset.xts(E, j=-nc1) #E[, -nc1] 
     switch(.Generic,
