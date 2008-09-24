@@ -18,7 +18,7 @@
 
 */
 // do_merge_xts {{{
-SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass)
+SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP colnames)
 {
   int nrx, ncx, nry, ncy, len, merge_all, original_index_type;
   int left_join, right_join;
@@ -789,28 +789,39 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass)
 
   }
 
-  UNPROTECT(4 + p);
+  /* set Dim and DimNames */
   if(num_rows >= 0 && (ncx + ncy) >= 0) {
+    /* DIM */
     PROTECT(attr = allocVector(INTSXP, 2));
     INTEGER(attr)[0] = num_rows;
     INTEGER(attr)[1] = ncx + ncy;
     setAttrib(result, R_DimSymbol, attr);
     UNPROTECT(1);
+    /* DIMNAMES */
+    if(!isNull(colnames)) {
+      SEXP dimnames, newcolnames;
+      PROTECT(dimnames = allocVector(VECSXP, 2));
+      PROTECT(newcolnames = allocVector(STRSXP, ncx+ncy));
+      for(i = 0; i < (ncx + ncy); i++) {
+        SET_STRING_ELT(newcolnames, i, STRING_ELT(colnames, i));
+      }
+      SET_VECTOR_ELT(dimnames, 0, R_NilValue);  // ROWNAMES are NULL
+      SET_VECTOR_ELT(dimnames, 1, newcolnames); // COLNAMES are passed in
+      setAttrib(result, R_DimNamesSymbol, dimnames);
+      UNPROTECT(2);
+    }
   }
+  
 
-/*
-  if(original_index_type == INTSXP)
-    index = coerceVector(index,INTSXP);
-*/
-
-  setAttrib(result, install("index"), index);
+  setAttrib(result, xts_IndexSymbol, index);
   if(LOGICAL(retclass)[0])
-    setAttrib(result, install("class"), getAttrib(x, install("class")));
-  setAttrib(result, install(".indexCLASS"), getAttrib(x, install(".indexCLASS")));
-  setAttrib(result, install(".indexFORMAT"), getAttrib(x, install(".indexFORMAT")));
-  setAttrib(result, install(".CLASS"), getAttrib(x, install(".CLASS")));
+    setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
+  setAttrib(result, xts_IndexClassSymbol, getAttrib(x, xts_IndexClassSymbol));
+  setAttrib(result, xts_IndexFormatSymbol, getAttrib(x, xts_IndexFormatSymbol));
+  setAttrib(result, xts_ClassSymbol, getAttrib(x, xts_ClassSymbol));
   copy_xtsAttributes(x, result);
 
+  UNPROTECT(4 + p);
   return result;  
 } //}}}
 
