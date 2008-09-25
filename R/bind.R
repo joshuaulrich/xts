@@ -1,6 +1,6 @@
 `cbind.xts` <-
 function(x, y, ..., all=TRUE, fill=NA, suffixes=NULL, join="outer") {
-    xts:::merge.xts0(x, y, ..., all=all, fill=fill, suffixes=suffixes, retclass="xts")
+    merge.xts(x, y, ..., all=all, fill=fill, suffixes=suffixes, retclass="xts")
 }
 
 `c.xts` <-
