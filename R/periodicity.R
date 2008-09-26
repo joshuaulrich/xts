@@ -11,7 +11,7 @@
 # apply.yearly
 `periodicity` <- function(x, ...) {
   if( timeBased(x) || !is.xts(x) )
-    x <- try.xts(x, 'periodicity need to be timeBased or xtsible')
+    x <- try.xts(x, error='periodicity need to be timeBased or xtsible')
 
   p <- median(diff( .index(x) ))
 
