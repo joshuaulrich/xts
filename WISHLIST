@@ -11,7 +11,7 @@
 
 * diff.xts and lag.xts implemented. Rework diff.xts remove reliance on diff.zoo
   NOTE: currently moved to .diff.xts and .lag.xts due to some internal zoo-compat
-  issues/
+  issues/ [done! -jar]
 
 * index<- and time<- replacement methods
 
@@ -42,7 +42,7 @@
 * An xtsAlign method to align series by date. - match monthly data to first/last...
 
 
-* merge.xts
+* merge.xts, cbind [done!]
 
 
 * indexClass and index<- should warn if non-unique index values are applied
