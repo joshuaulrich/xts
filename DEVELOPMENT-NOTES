@@ -6,8 +6,11 @@ well as a more memory efficient implementation.
 
 How: 
 Since the xts object is ordered by design, we are implementing
-a simple binary search to provide near instant access to range
-based time-queries.  This is designed to be similar in at least one
+a number of standard algorithms to improve both search and
+database style queries.
+
+A simple binary search to provide near instant access to range
+based time-queries has been incorporated.  This is designed to be similar in at least one
 dimension (time subsetting) to Matt Dowle's impressive data.table
 functionality.
 
@@ -32,8 +35,16 @@ with an .indexClass and .indexFormat attribute system to provide seemless
 timeBased-class like behavior, yet with a more efficient and memory-friendly
 construction.
 
-New subset.c and merge.c code to handle [.xts and merge.xts operations.
-These are much more memory efficient and incredibly fast.
+New subset.c, rbind.c, and merge.c code to handle [.xts, c.xts, rbind.xts, cbind.xts
+and merge.xts operations.
 
-Most (almost all) of internal reliance on zoo has been removed.  The goal is to
-have 'xts' merely suggest 'zoo'.
+Speed improvements range from 30-1300x over similar operations when compared
+to other popular R-based time-series tools.
+
+Additional C and R code has been added to speed up diff() and lag() operations,
+as well as provide basic Ops tools that are nearly as fast as native
+data-type operations, while maintaining all the functionality of xts.
+
+All of the internal reliance on zoo has been removed.  The goal is to
+have 'xts' merely suggest 'zoo', though it will always carry the same basic
+matrix+index structure that makes zoo so useful.
