@@ -6,9 +6,9 @@
 #define MAX(a,b) (a > b ? a : b)
 #define MIN(a,b) (a < b ? a : b)
 
-SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted)
+SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP first, SEXP colnames)
 {
-  SEXP result, ohlc, xindex, newindex;
+  SEXP result, ohlc, xindex, newindex, dimnames;
 
   int i, j=0, jstart, ii, nrx, ncx, ncr, n, P=0;
   nrx = nrows(x);
@@ -27,8 +27,7 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted)
   PROTECT(result = allocVector(mode, n * ncr )); P++;
   PROTECT(ohlc = allocVector(mode, 6)); P++;
 
-  int _FIRST = 0;
-  int _LAST  = 1;
+  int _FIRST = (INTEGER(first)[0]);
 
   for(i = 0; i < n; i++) {
     jstart = j = INTEGER(endpoints)[i];
@@ -67,7 +66,7 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted)
     if(INTEGER(hasAdjusted))
       INTEGER(ohlc)[5] = INTEGER(x)[j + 5*nrx];
    
-    if(_LAST)  // if index at last
+    if(!_FIRST)  // if index at last
       INTEGER(newindex)[i] = INTEGER(xindex)[j];
 
     INTEGER(result)[i]     = INTEGER(ohlc)[0];
@@ -86,7 +85,28 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted)
   INTEGER(dim)[0] = n;
   INTEGER(dim)[1] = ncr;
   setAttrib(result, R_DimSymbol, dim);
-  setAttrib(result, R_DimNamesSymbol, getAttrib(x, R_DimNamesSymbol));
+
+  PROTECT(dimnames = allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dimnames, 0, R_NilValue);  // no rownames ever!   
+  if(!isNull(colnames)) {
+    SET_VECTOR_ELT(dimnames, 1, colnames);
+  } else {
+    SEXP newcolnames;
+    PROTECT(newcolnames = allocVector(STRSXP, ncr));
+    SET_STRING_ELT(newcolnames, 0, mkChar("Open"));
+    SET_STRING_ELT(newcolnames, 1, mkChar("High"));
+    SET_STRING_ELT(newcolnames, 2, mkChar("Low"));
+    SET_STRING_ELT(newcolnames, 3, mkChar("Close"));
+    if(INTEGER(hasVolume))
+      SET_STRING_ELT(newcolnames, 4, mkChar("Volume"));
+    if(INTEGER(hasVolume))
+      SET_STRING_ELT(newcolnames, 5, mkChar("Adjusted"));
+    SET_VECTOR_ELT(dimnames, 1, newcolnames);
+    UNPROTECT(1);
+  }
+  setAttrib(result, R_DimNamesSymbol, dimnames);
+  UNPROTECT(1);
+
   setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
 
   setAttrib(result, xts_ClassSymbol, getAttrib(x, xts_ClassSymbol));
