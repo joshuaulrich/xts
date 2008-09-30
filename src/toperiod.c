@@ -22,7 +22,8 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
 
   // handle index values in xts
   PROTECT(xindex = getAttrib(x, xts_IndexSymbol)); P++;
-  PROTECT(newindex = allocVector(TYPEOF(xindex), n)); P++;
+  int index_mode = TYPEOF(xindex);
+  PROTECT(newindex = allocVector(index_mode, n)); P++;
   
   PROTECT(result = allocVector(mode, n * ncr )); P++;
   PROTECT(ohlc = allocVector(mode, 6)); P++;
@@ -32,8 +33,16 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
   for(i = 0; i < n; i++) {
     jstart = j = INTEGER(endpoints)[i];
 
-    if(_FIRST)
-      INTEGER(newindex)[i] = INTEGER(xindex)[j];
+    if(_FIRST) {
+      switch(index_mode) {
+        case INTSXP:
+          INTEGER(newindex)[i] = INTEGER(xindex)[j];
+          break;
+        case REALSXP:
+          REAL(newindex)[i] = REAL(xindex)[j];
+          break;
+      }
+    }
     // set the Open, and initialize High, Low and Volume
     switch(mode) {
       case INTSXP:
@@ -53,31 +62,73 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
     }
 
     // set the High, Low, and Volume
-    for( ; j < INTEGER(endpoints)[i+1]; j++) {
-      INTEGER(ohlc)[1] = MAX(INTEGER(ohlc)[1], INTEGER(x)[j + 1*nrx]);  //HI
-      INTEGER(ohlc)[2] = MIN(INTEGER(ohlc)[2], INTEGER(x)[j + 2*nrx]);  //LO
-      if(INTEGER(hasVolume))
-        INTEGER(ohlc)[4] = INTEGER(ohlc)[4] + INTEGER(x)[j + 4*nrx];    //VO
+    switch(mode) {
+      case INTSXP:
+        for( ; j < INTEGER(endpoints)[i+1]; j++) {
+          INTEGER(ohlc)[1] = MAX(INTEGER(ohlc)[1], INTEGER(x)[j + 1*nrx]);  //HI
+          INTEGER(ohlc)[2] = MIN(INTEGER(ohlc)[2], INTEGER(x)[j + 2*nrx]);  //LO
+          if(INTEGER(hasVolume))
+            INTEGER(ohlc)[4] = INTEGER(ohlc)[4] + INTEGER(x)[j + 4*nrx];    //VO
+        }
+        break;
+      case REALSXP:
+        for( ; j < INTEGER(endpoints)[i+1]; j++) {
+          REAL(ohlc)[1] = MAX(REAL(ohlc)[1], REAL(x)[j + 1*nrx]);  //HI
+          REAL(ohlc)[2] = MIN(REAL(ohlc)[2], REAL(x)[j + 2*nrx]);  //LO
+          if(INTEGER(hasVolume))
+            REAL(ohlc)[4] = REAL(ohlc)[4] + REAL(x)[j + 4*nrx];    //VO
+        }
+        break;
     }
 
     // set the Close and Adjusted columns
     j--;
-    INTEGER(ohlc)[3] = INTEGER(x)[j + 3*nrx];
-    if(INTEGER(hasAdjusted))
-      INTEGER(ohlc)[5] = INTEGER(x)[j + 5*nrx];
+    switch(mode) {
+      case INTSXP:
+        INTEGER(ohlc)[3] = INTEGER(x)[j + 3*nrx];
+        if(INTEGER(hasAdjusted))
+          INTEGER(ohlc)[5] = INTEGER(x)[j + 5*nrx];
+        break;
+      case REALSXP:
+        REAL(ohlc)[3] = REAL(x)[j + 3*nrx];
+        if(INTEGER(hasAdjusted))
+          REAL(ohlc)[5] = REAL(x)[j + 5*nrx];
+        break;
+    }
    
-    if(!_FIRST)  // if index at last
-      INTEGER(newindex)[i] = INTEGER(xindex)[j];
+    if(!_FIRST) {  // index at last position
+      switch(index_mode) {
+        case INTSXP:
+          INTEGER(newindex)[i] = INTEGER(xindex)[j];
+          break;
+        case REALSXP:
+          REAL(newindex)[i] = REAL(xindex)[j];
+          break;
+      }
+    }
 
-    INTEGER(result)[i]     = INTEGER(ohlc)[0];
-    INTEGER(result)[i+1*n] = INTEGER(ohlc)[1];
-    INTEGER(result)[i+2*n] = INTEGER(ohlc)[2];
-    INTEGER(result)[i+3*n] = INTEGER(ohlc)[3];
-    if(INTEGER(hasVolume))
-      INTEGER(result)[i+4*n] = INTEGER(ohlc)[4];
-    if(INTEGER(hasAdjusted))
-      INTEGER(result)[i+5*n] = INTEGER(ohlc)[5];
-
+    switch(mode) {
+      case INTSXP:
+        INTEGER(result)[i]     = INTEGER(ohlc)[0];
+        INTEGER(result)[i+1*n] = INTEGER(ohlc)[1];
+        INTEGER(result)[i+2*n] = INTEGER(ohlc)[2];
+        INTEGER(result)[i+3*n] = INTEGER(ohlc)[3];
+        if(INTEGER(hasVolume))
+          INTEGER(result)[i+4*n] = INTEGER(ohlc)[4];
+        if(INTEGER(hasAdjusted))
+          INTEGER(result)[i+5*n] = INTEGER(ohlc)[5];
+        break;
+      case REALSXP:
+        REAL(result)[i]     = REAL(ohlc)[0];
+        REAL(result)[i+1*n] = REAL(ohlc)[1];
+        REAL(result)[i+2*n] = REAL(ohlc)[2];
+        REAL(result)[i+3*n] = REAL(ohlc)[3];
+        if(INTEGER(hasVolume))
+          REAL(result)[i+4*n] = REAL(ohlc)[4];
+        if(INTEGER(hasAdjusted))
+          REAL(result)[i+5*n] = REAL(ohlc)[5];
+        break;
+    }
 
   }
   SEXP dim;
