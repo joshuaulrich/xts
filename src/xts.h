@@ -29,11 +29,15 @@ INTERNAL SYMBOLS
 DATA TOOLS
 */
 #define  xts_ATTRIB(x)          coerceVector(do_xtsAttributes(x),LISTSXP)
+#define  xts_COREATTRIB(x)          coerceVector(do_xtsCoreAttributes(x),LISTSXP)
 
 /*
 FUNCTIONS
 */
 SEXP do_xtsAttributes(SEXP x);              // xtsAttributes
+SEXP do_xtsCoreAttributes(SEXP x);              // xtsCoreAttributes xts-specific attributes
+
 void copy_xtsAttributes(SEXP x, SEXP y);    
+void copy_xtsCoreAttributes(SEXP x, SEXP y);    
 
 #endif /* _XTS */

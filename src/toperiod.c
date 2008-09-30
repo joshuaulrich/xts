@@ -158,14 +158,10 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
   setAttrib(result, R_DimNamesSymbol, dimnames);
   UNPROTECT(1);
 
-  setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
-
-  setAttrib(result, xts_ClassSymbol, getAttrib(x, xts_ClassSymbol));
   setAttrib(result, xts_IndexSymbol, newindex);
-  setAttrib(result, xts_IndexClassSymbol, getAttrib(x, xts_IndexClassSymbol));
-  setAttrib(result, xts_IndexFormatSymbol, getAttrib(x, xts_IndexFormatSymbol));
-
   copy_xtsAttributes(x, result);
+  copy_xtsCoreAttributes(x, result);
+
   UNPROTECT(P);
   return result;
 }
