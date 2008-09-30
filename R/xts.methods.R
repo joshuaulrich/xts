@@ -33,6 +33,9 @@ function(x, i, j, drop = TRUE, ...)
       # this shouldn't happen either, though less important I suspect  FIXME
       i <- as.character(as.POSIXct(i)) 
 
+    if(is.logical(i))
+      i <- (1:NROW(x))[rep(i,length.out=NROW(x))]
+
     if (is.character(i)) {
       # enables subsetting by date style strings
       # must be able to process - and then allow for operations???
