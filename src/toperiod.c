@@ -46,18 +46,18 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
     // set the Open, and initialize High, Low and Volume
     switch(mode) {
       case INTSXP:
-        INTEGER(ohlc)[0] = INTEGER(x)[j];
-        INTEGER(ohlc)[1] = INTEGER(x)[j + 1*nrx];
-        INTEGER(ohlc)[2] = INTEGER(x)[j + 2*nrx];
+        INTEGER(ohlc)[0] = INTEGER(x)[j];           //OP
+        INTEGER(ohlc)[1] = INTEGER(x)[j + 1*nrx];   //HI
+        INTEGER(ohlc)[2] = INTEGER(x)[j + 2*nrx];   //LO
         if(INTEGER(hasVolume))
-          INTEGER(ohlc)[4] = (int)0;
+          INTEGER(ohlc)[4] = (int)0;                //VO
         break;
       case REALSXP:
-        REAL(ohlc)[0] = REAL(x)[j];           //OP
-        REAL(ohlc)[1] = REAL(x)[j + 1*nrx];   //HI
-        REAL(ohlc)[2] = REAL(x)[j + 2*nrx];   //LO
+        REAL(ohlc)[0] = REAL(x)[j];                 //OP
+        REAL(ohlc)[1] = REAL(x)[j + 1*nrx];         //HI
+        REAL(ohlc)[2] = REAL(x)[j + 2*nrx];         //LO
         if(INTEGER(hasVolume))
-          REAL(ohlc)[4] = (double)0;          //VO
+          REAL(ohlc)[4] = (double)0;                //VO
         break;
     }
 

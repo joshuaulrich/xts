@@ -63,7 +63,7 @@ function(x=NULL,
 `.xts` <-
 function(x=NULL, index, .indexCLASS="POSIXct",  row.names=FALSE, check=TRUE, unique=FALSE, ...) {
   if(check) {
-    if( !isOrdered(x, increasing=TRUE, strictly=unique) )
+    if( !isOrdered(index, increasing=TRUE, strictly=unique) )
       stop('index is not in',ifelse(unique, 'strictly', ''),'increasing order')
   }
   if(!is.numeric(index))
