@@ -45,8 +45,6 @@
     all <- rep(all, length.out=2)
 
   dots <- list(...)
-  if(length(dots) > 0)
-    cnamesdots <- lapply(dots, colnames) 
 
   xyNames <- as.character(c(list(x=deparse(substitute(x)),y=deparse(substitute(y))),
                as.character(as.list(match.call(expand.dots=FALSE)$...))))
@@ -66,7 +64,7 @@
   if(length(dots) > 0) {
 
     x <- .Call('do_merge_xts', x, y, all, fill[1], setclass, 
-               c(colnames(x),colnames(y)), PACKAGE='xts')
+               make.unique(c(colnames(x),colnames(y))), PACKAGE='xts')
                #make.colnames(x, deparse(substitute(x)), y, deparse(substitute(y))), PACKAGE="xts")
     for(i in 1:length(dots)) {
       if( !is.xts(dots[[i]]) ) {
@@ -82,12 +80,13 @@
                  c(colnames(x), colnames(dots[[i]])), PACKAGE="xts")
                   #make.colnames(x, NULL, dots[[i]], xyNames[i+2]),PACKAGE="xts")
     }
+    colnames(x) <- make.unique(colnames(x))
     return(x)
   } else {
     ncx <- 1:NCOL(x)
     ncy <- 1:NCOL(y)
     x <- .Call('do_merge_xts', x, y, all, fill[1], setclass, 
-               c(colnames(x), colnames(y)), PACKAGE="xts")
+               make.unique(c(colnames(x), colnames(y))), PACKAGE="xts")
                #make.colnames(x,deparse(substitute(x)),y, deparse(substitute(y))), PACKAGE="xts")
               # make.unique(c(colnamesX, colnamesY)), PACKAGE="xts")
     if(is.null(retclass)) {
