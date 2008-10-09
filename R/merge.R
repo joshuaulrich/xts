@@ -45,6 +45,8 @@
     all <- rep(all, length.out=2)
 
   dots <- list(...)
+  if(length(dots) > 0)
+    cnamesdots <- lapply(dots, colnames) 
 
   xyNames <- as.character(c(list(x=deparse(substitute(x)),y=deparse(substitute(y))),
                as.character(as.list(match.call(expand.dots=FALSE)$...))))
@@ -64,7 +66,8 @@
   if(length(dots) > 0) {
 
     x <- .Call('do_merge_xts', x, y, all, fill[1], setclass, 
-               make.colnames(x, deparse(substitute(x)), y, deparse(substitute(y))), PACKAGE="xts")
+               c(colnames(x),colnames(y)), PACKAGE='xts')
+               #make.colnames(x, deparse(substitute(x)), y, deparse(substitute(y))), PACKAGE="xts")
     for(i in 1:length(dots)) {
       if( !is.xts(dots[[i]]) ) {
         dots[[i]] <- try.xts(dots[[i]], error=FALSE)
@@ -76,14 +79,16 @@
         } else stop("can not convert 'y' to suitable class for merge")
       }
       x <- .Call('do_merge_xts', x, dots[[i]], all, fill[1], setclass, 
-                  make.colnames(x, NULL, dots[[i]], xyNames[i+2]),PACKAGE="xts")
+                 c(colnames(x), colnames(dots[[i]])), PACKAGE="xts")
+                  #make.colnames(x, NULL, dots[[i]], xyNames[i+2]),PACKAGE="xts")
     }
     return(x)
   } else {
     ncx <- 1:NCOL(x)
     ncy <- 1:NCOL(y)
     x <- .Call('do_merge_xts', x, y, all, fill[1], setclass, 
-               make.colnames(x,deparse(substitute(x)),y, deparse(substitute(y))), PACKAGE="xts")
+               c(colnames(x), colnames(y)), PACKAGE="xts")
+               #make.colnames(x,deparse(substitute(x)),y, deparse(substitute(y))), PACKAGE="xts")
               # make.unique(c(colnamesX, colnamesY)), PACKAGE="xts")
     if(is.null(retclass)) {
       # needed for original Ops.xts(e1,e2), now for zoo compat

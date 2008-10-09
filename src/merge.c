@@ -827,12 +827,19 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
 
 SEXP mergeXts (SEXP args, SEXP all, SEXP fill, SEXP retclass, SEXP colnames)
 {
-  SEXP _x, _y, result;
-  int P=0;
-
+  SEXP _x, _y, xtmp, ytmp, result;
+  int a, largs, P=0;
   PROTECT(_x = VECTOR_ELT(args, 0)); P++;
   PROTECT(_y = VECTOR_ELT(args, 1)); P++;
+
+  largs = LENGTH(args);
+
+  PROTECT(xtmp = do_merge_xts(_x, _y, all, fill, retclass, colnames)); P++;
+
+  for(a = 2; a < largs; a++) {
+    PROTECT(ytmp = VECTOR_ELT(args, a));P++;
+    PROTECT(xtmp = do_merge_xts(xtmp, ytmp, all, fill, retclass, colnames));P++;
+  }
   UNPROTECT(P);
-  result = do_merge_xts(_x, _y, all, fill, retclass, colnames);
-  return(result);
+  return(xtmp);
 }
