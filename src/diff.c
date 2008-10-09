@@ -35,6 +35,15 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
   }
 
   for(i = 0; i < nrs; i++) {
+  /*
+   need to figue out how many duplicate values we have, in order to know how far to go back.
+   probably best accomplished with some sort of look-ahead approach, though this may be messy
+   if k is negative...
+   
+   something like:
+     while( i+tmp+K < nrs && xindex[i] == xindex[i+tmp_K] )
+       tmp_K++;
+  */
   for(j = 0; j < ncs; j++) {
     ij = i + j * nrs;
 //Rprintf("i=%i\tK=%i\t(nrs+K)=%i\n",i,K,(nrs+K));

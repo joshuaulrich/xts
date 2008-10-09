@@ -1,7 +1,10 @@
 `na.omit.xts` <- function(object, ...) {
   xx <- stats:::na.omit.default(object,...)
   naa <- attr(xx,'na.action')
-  naa.index <- index(object)[naa]
+  if(length(naa) == 0)
+    return(xx)
+
+  naa.index <- .index(object)[naa]
 
   ROWNAMES <- attr(object,'.ROWNAMES')
   if(!is.null(ROWNAMES)) {
