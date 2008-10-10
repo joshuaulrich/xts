@@ -15,14 +15,18 @@
     setclass <- FALSE
   } else setclass <- TRUE
 
-  if( !is.xts(y) ) {
+  if( !is.xts(y) )
     y <- try.xts(y, error=FALSE)
-    if( !is.xts(y) && NROW(y) == NROW(x) ) {
+    
+  if( !is.xts(y) ) { # if unsuccessful
+    if( NROW(y) == NROW(x) ) {
+      # same length, but no index
       y <- structure(y, index=.index(x))
     } else
-    if( !is.xts(y) && NROW(y)==1 && NCOL(y)==1) {
+    if( NROW(y)==1 && NCOL(y)==1) {
+      # scalar
       y <- structure(rep(y, length.out=NROW(x)), index=.index(x))
-    } else stop("cannot convert 'y' to suitable class for merge")
+    } else stop(paste("cannot convert",deparse(substitute(y)),"to suitable class for merge"))
   }
 
   if( !missing(join) ) {
@@ -46,20 +50,20 @@
 
   dots <- list(...)
 
-  xyNames <- as.character(c(list(x=deparse(substitute(x)),y=deparse(substitute(y))),
-               as.character(as.list(match.call(expand.dots=FALSE)$...))))
-
-  make.colnames <- function(x, xname, y, yname, suffix=NULL) {
-    colnamesX <- colnames(x)
-    if(is.null(colnamesX)) {
-      colnamesX <- c(xname,paste(xname,1:(NCOL(x)-1),sep='.'))[1:NCOL(x)]
-    }
-    colnamesY <- colnames(y)
-    if(is.null(colnamesY)) {
-      colnamesY <- c(yname,paste(yname,1:(NCOL(y)-1),sep='.'))[1:NCOL(y)]
-    }
-    return(make.unique(c(colnamesX, colnamesY)))
-  }
+#  xyNames <- as.character(c(list(x=deparse(substitute(x)),y=deparse(substitute(y))),
+#               as.character(as.list(match.call(expand.dots=FALSE)$...))))
+#
+#  make.colnames <- function(x, xname, y, yname, suffix=NULL) {
+#    colnamesX <- colnames(x)
+#    if(is.null(colnamesX)) {
+#      colnamesX <- c(xname,paste(xname,1:(NCOL(x)-1),sep='.'))[1:NCOL(x)]
+#    }
+#    colnamesY <- colnames(y)
+#    if(is.null(colnamesY)) {
+#      colnamesY <- c(yname,paste(yname,1:(NCOL(y)-1),sep='.'))[1:NCOL(y)]
+#    }
+#    return(make.unique(c(colnamesX, colnamesY)))
+#  }
 
   if(length(dots) > 0) {
 
@@ -91,8 +95,10 @@
               # make.unique(c(colnamesX, colnamesY)), PACKAGE="xts")
     if(is.null(retclass)) {
       # needed for original Ops.xts(e1,e2), now for zoo compat
-      assign(xyNames$x, x[,ncx], parent.frame())
-      assign(xyNames$y, x[,-ncx],parent.frame())
+      #assign(xyNames$x, x[,ncx], parent.frame())
+      #assign(xyNames$y, x[,-ncx],parent.frame())
+      assign(deparse(substitute(x)), x[,ncx], parent.frame())
+      assign(deparse(substitute(y)), x[,-ncx],parent.frame())
       invisible(return(NULL))
     } else
     return(x)
