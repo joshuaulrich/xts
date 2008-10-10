@@ -3,11 +3,6 @@
   # scenario, but will handle k-merges via the overflow
   # ... arg.
   
-  # still need an implementation with do_merge_xts
-  # that can handle:
-  #  suffixes=
-  #
-  # to match the behavior of zoo
   if( missing(y) ) 
     return(x)
 
@@ -50,26 +45,30 @@
 
   dots <- list(...)
 
-#  xyNames <- as.character(c(list(x=deparse(substitute(x)),y=deparse(substitute(y))),
-#               as.character(as.list(match.call(expand.dots=FALSE)$...))))
-#
-#  make.colnames <- function(x, xname, y, yname, suffix=NULL) {
-#    colnamesX <- colnames(x)
-#    if(is.null(colnamesX)) {
-#      colnamesX <- c(xname,paste(xname,1:(NCOL(x)-1),sep='.'))[1:NCOL(x)]
-#    }
-#    colnamesY <- colnames(y)
-#    if(is.null(colnamesY)) {
-#      colnamesY <- c(yname,paste(yname,1:(NCOL(y)-1),sep='.'))[1:NCOL(y)]
-#    }
-#    return(make.unique(c(colnamesX, colnamesY)))
-#  }
+  xyNames <- as.character(c(list(x=deparse(substitute(x)),y=deparse(substitute(y))),
+               as.character(as.list(match.call(expand.dots=FALSE)$...))))
+
+  make.colnames <- function(x, xname, y, yname, suffix=NULL) {
+    colnamesX <- colnames(x)
+    if(is.null(colnamesX)) {
+      colnamesX <- c(paste(xname,1:NCOL(x),sep='.'))
+    }
+    colnamesY <- colnames(y)
+    if(is.null(colnamesY)) {
+      colnamesY <- c(paste(yname,1:NCOL(y),sep='.'))
+    }
+    if(!is.null(suffix) && length(suffix)==2) {
+      return(c(paste(colnamesX,suffix[1],sep='.'),paste(colnamesY,suffix[2],sep='.')))
+    } else return(c(colnamesX, colnamesY))
+  }
 
   if(length(dots) > 0) {
 
     x <- .Call('do_merge_xts', x, y, all, fill[1], setclass, 
-               make.unique(c(colnames(x),colnames(y))), PACKAGE='xts')
-               #make.colnames(x, deparse(substitute(x)), y, deparse(substitute(y))), PACKAGE="xts")
+               #make.unique(c(colnames(x),colnames(y))), PACKAGE='xts')
+               make.colnames(x,deparse(substitute(x)),
+                             y,deparse(substitute(y)),
+                             suffix=suffixes), PACKAGE="xts")
     for(i in 1:length(dots)) {
       if( !is.xts(dots[[i]]) ) {
         dots[[i]] <- try.xts(dots[[i]], error=FALSE)
@@ -82,23 +81,28 @@
       }
       x <- .Call('do_merge_xts', x, dots[[i]], all, fill[1], setclass, 
                  c(colnames(x), colnames(dots[[i]])), PACKAGE="xts")
-                  #make.colnames(x, NULL, dots[[i]], xyNames[i+2]),PACKAGE="xts")
+                 #make.colnames(x, NULL,
+                 #              dots[[i]], xyNames[i+2],
+                 #              suffix=suffixes),PACKAGE="xts")
     }
     colnames(x) <- make.unique(colnames(x))
     return(x)
   } else {
     ncx <- 1:NCOL(x)
     ncy <- 1:NCOL(y)
+    cnames <- c(colnames(x), colnames(y))
+    cnames <- if(is.null(cnames)) { NULL } else { make.unique(cnames) }
     x <- .Call('do_merge_xts', x, y, all, fill[1], setclass, 
-               make.unique(c(colnames(x), colnames(y))), PACKAGE="xts")
-               #make.colnames(x,deparse(substitute(x)),y, deparse(substitute(y))), PACKAGE="xts")
-              # make.unique(c(colnamesX, colnamesY)), PACKAGE="xts")
+               cnames, PACKAGE="xts")
+               #make.unique(c(colnames(x), colnames(y))), PACKAGE="xts")
+               #make.unique(make.colnames(x,deparse(substitute(x)),
+               #              y,deparse(substitute(y)),
+               #              suffix=suffixes)), PACKAGE="xts")
+    #colnames(x) <- make.unique(colnames(x))
     if(is.null(retclass)) {
       # needed for original Ops.xts(e1,e2), now for zoo compat
-      #assign(xyNames$x, x[,ncx], parent.frame())
-      #assign(xyNames$y, x[,-ncx],parent.frame())
-      assign(deparse(substitute(x)), x[,ncx], parent.frame())
-      assign(deparse(substitute(y)), x[,-ncx],parent.frame())
+      assign(xyNames$x, x[,ncx], parent.frame())
+      assign(xyNames$y, x[,-ncx],parent.frame())
       invisible(return(NULL))
     } else
     return(x)

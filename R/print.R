@@ -6,6 +6,12 @@ function(x,fmt,...) {
     fmt <- TRUE
   
   xx <- coredata(x, fmt)
-  print(xx)
+  if(length(xx) == 0) {
+    cat('Data:\n')
+    print(numeric(0))
+    cat('\n')
+    cat('Index:\n')
+    print(index(x))
+  } else print(xx)
 }
 

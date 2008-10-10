@@ -16,17 +16,18 @@ function(x=NULL,
          frequency=NULL,
          row.names=FALSE,
          unique=TRUE,
+         col.names=NULL,
          ...)
 {
   if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
 
-  if(NROW(x) != length(order.by))
-    stop("data and index have different lengths")
+  if(NROW(x) > length(order.by))
+    stop("index must be the same at least as long as data")
 
   orderBy <- class(order.by)
 
-  if( !isOrdered(order.by, strictly=!unique) ) {
+  if(!is.null(x) && !isOrdered(order.by, strictly=!unique) ) {
     indx <- order(order.by)
     x <- x[indx,]
     order.by <- order.by[indx]
@@ -36,19 +37,22 @@ function(x=NULL,
   on.exit( Sys.setenv(TZ=tz) )
   Sys.setenv(TZ='GMT')
 
-  z <- structure(.Data=as.matrix(x),
+  if(!is.null(x) && length(col.names) == NCOL(x)) {
+    dimnames <- list(NULL, col.names)
+   } else dimnames=NULL
+
+  if(!is.null(x)) {
+    x <- as.matrix(x)
+  } else x <- numeric(0)
+
+  z <- structure(.Data=x,
                  index=as.numeric(as.POSIXct(order.by)),
                  class=c('xts','zoo'),
                  .indexCLASS=orderBy,
-                 dimnames=NULL, ...)
+                 dimnames=dimnames, ...)
     
-#  z <- structure(zoo(x=x,
-#                 order.by=as.numeric(as.POSIXct(order.by)),
-#                 frequency=frequency),
-#                 class=c('xts','zoo'), .indexCLASS=orderBy, 
-#                 dimnames=NULL, ...)
-  if(NCOL(z) == 1)
-    dim(z) <- c(NROW(z), 1)
+  #if(NCOL(z) == 1)
+  #  dim(z) <- c(NROW(z), 1)
 
   if(!is.null(dim(x))) {
     attr(z,'.ROWNAMES') <- dimnames(z)[[1]]
@@ -66,13 +70,17 @@ function(x=NULL, index, .indexCLASS="POSIXct",  row.names=FALSE, check=TRUE, uni
     if( !isOrdered(index, increasing=TRUE, strictly=unique) )
       stop('index is not in',ifelse(unique, 'strictly', ''),'increasing order')
   }
-  if(!is.numeric(index))
-    index <- as.numeric(index)
-  if(NROW(x) != length(index))
-    stop("data and index must have same length")
+  if(!is.numeric(index) && timeBased(index))
+    index <- as.numeric(as.POSIXct(index))
+  if(!is.null(x) && NROW(x) > length(index))
+    stop("index must be set for each observation")
+
+  if(!is.null(x)) {
+    x <- as.matrix(x)
+  } else x <- numeric(0)
 
   xx <- structure(.Data=x,
-            dim=c(NROW(x),NCOL(x)),
+#            dim=c(NROW(x),NCOL(x)),
             index=index,
             .indexCLASS=.indexCLASS,
             class=c('xts','zoo'), ...)

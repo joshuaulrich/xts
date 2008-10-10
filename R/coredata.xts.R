@@ -20,7 +20,9 @@ function(x, fmt=FALSE, ...) {
       x.attr$dimnames <- list(format(index(x)),dimnames(x)[[2]])
     } 
   }
-  xx <- structure(x, dim=x.attr$dim, dimnames=x.attr$dimnames) 
+  if(length(x) == 0) {
+    xx <- x
+  } else xx <- structure(x, dim=x.attr$dim, dimnames=x.attr$dimnames) 
 
   # attributes not to be kept
   original.attr <- x.attr[!names(x.attr) %in%

@@ -3,6 +3,7 @@ function(x, i, j, drop = TRUE, ...)
 {
     sys.TZ <- Sys.getenv('TZ') 
     Sys.setenv(TZ='GMT')
+    on.exit(Sys.setenv(TZ=sys.TZ))
 
     original.cols <- NCOL(x)
     original.attr <- xtsAttributes(x)

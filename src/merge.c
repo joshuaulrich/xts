@@ -3,6 +3,7 @@
 #include <Rdefines.h>
 #include "xts.h"
 
+#define ZWXTS 43434343
 /* 
 
   This is a merge_join algorithm used to
@@ -23,26 +24,33 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   int nrx, ncx, nry, ncy, len, merge_all, original_index_type;
   int left_join, right_join;
   int i = 0, j = 0, xp = 1, yp = 1; // x and y positions in index
+  int mode;
   int ij, ij_original, ij_result;
   int p = 0;
   SEXP xindex, yindex, index, result, attr;
 
-  nrx = nrows(x);
+  PROTECT( xindex = getAttrib(x, install("index")) );
+  PROTECT( yindex = getAttrib(y, install("index")) );
+
+  // if object is zero-width
+  nrx = LENGTH(x)==0 ? nrows(xindex) : nrows(x);
   ncx = ncols(x);
   
-  nry = nrows(y);
+  // if object is zero-width
+  nry = LENGTH(y)==0 ? nrows(yindex) : nrows(y);
   ncy = ncols(y);
 
   len = nrx + nry;
 
-  PROTECT( xindex = getAttrib(x, install("index")) );
-  PROTECT( yindex = getAttrib(y, install("index")) );
+  mode = TYPEOF(x);
+
 
   /* at present we are failing the call if the indexing is of
      mixed type.  This should probably instead simply coerce
      to REAL so as not to lose any information (at the expense
      of conversion cost and memory), and issue a warning. */
-  if( TYPEOF(xindex) != TYPEOF(yindex) ) 
+  //if( TYPEOF(xindex) != TYPEOF(yindex) ) 
+  if( TYPEOF(xindex) != TYPEOF(yindex) )
   {
     PROTECT(xindex = coerceVector(xindex, REALSXP)); p++;
     PROTECT(yindex = coerceVector(yindex, REALSXP)); p++;
@@ -183,7 +191,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
             case INTSXP:
               LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
@@ -207,7 +215,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           ij_result = i + (j+ncx) * num_rows;
           ij_original = (yp-1) + j * nry; //num_rows;
           //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
               break;
@@ -247,7 +255,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           ij_original = (xp-1) + j * nrx; //num_rows;
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
@@ -273,7 +281,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         for(j = 0; j < ncy; j++) { // y-values
           ij_result = i + (j+ncx) * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
             case INTSXP:
               LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
@@ -310,7 +318,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         ij_result = i + j * num_rows;
         ij_original = (xp-1) + j * nrx; //num_rows;
         //REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
-        switch( TYPEOF(x) ) {
+        switch( mode ) {
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
@@ -337,7 +345,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         ij_result = i + (j+ncx) * num_rows;
         ij_original = (yp-1) + j * nry; //num_rows;
         //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
-        switch( TYPEOF(x) ) {
+        switch( mode ) {
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
               break;
@@ -371,7 +379,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           ij_result = i + j * num_rows;
           ij_original = (xp-1) + j * nrx; //num_rows;
           //REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
@@ -395,7 +403,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         for(j = 0; j < ncy; j++) { // y-values
           ij_result = i + (j+ncx) * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
             case INTSXP:
               LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
@@ -429,7 +437,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
             case INTSXP:
               LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
@@ -453,7 +461,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           ij_result = i + (j+ncx) * num_rows;
           ij_original = (yp-1) + j * nry; //num_rows;
           //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
               case LGLSXP:
                 LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
                 break;
@@ -495,7 +503,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
             case INTSXP:
               LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
@@ -519,7 +527,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           ij_result = i + (j+ncx) * num_rows;
           ij_original = (yp-1) + j * nry; //num_rows;
           //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
               break;
@@ -557,7 +565,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           ij_original = (xp-1) + j * nrx; //num_rows;
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
@@ -583,7 +591,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         for(j = 0; j < ncy; j++) { // y-values
           ij_result = i + (j+ncx) * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
             case INTSXP:
               LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
@@ -619,7 +627,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         ij_result = i + j * num_rows;
         ij_original = (xp-1) + j * nrx; //num_rows;
         //REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
-        switch( TYPEOF(x) ) {
+        switch( mode ) {
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
@@ -646,7 +654,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         ij_result = i + (j+ncx) * num_rows;
         ij_original = (yp-1) + j * nry; //num_rows;
         //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
-        switch( TYPEOF(x) ) {
+        switch( mode ) {
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
               break;
@@ -679,7 +687,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           ij_result = i + j * num_rows;
           ij_original = (xp-1) + j * nrx; //num_rows;
           //REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
@@ -703,7 +711,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         for(j = 0; j < ncy; j++) { // y-values
           ij_result = i + (j+ncx) * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
             case INTSXP:
               LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
@@ -735,7 +743,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
             case LGLSXP:
             case INTSXP:
               LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
@@ -759,7 +767,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           ij_result = i + (j+ncx) * num_rows;
           ij_original = (yp-1) + j * nry; //num_rows;
           //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
-          switch( TYPEOF(x) ) {
+          switch( mode ) {
               case LGLSXP:
                 LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
                 break;
