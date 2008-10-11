@@ -29,6 +29,11 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   int p = 0;
   SEXP xindex, yindex, index, result, attr;
 
+  int *int_result, *int_x, *int_y;
+  int *int_index, *int_xindex, *int_yindex;
+  double *real_result, *real_x, *real_y;
+  double *real_index, *real_xindex, *real_yindex;
+
   PROTECT( xindex = getAttrib(x, install("index")) );
   PROTECT( yindex = getAttrib(y, install("index")) );
 
@@ -43,7 +48,6 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   len = nrx + nry;
 
   mode = TYPEOF(x);
-
 
   /* at present we are failing the call if the indexing is of
      mixed type.  This should probably instead simply coerce
@@ -81,6 +85,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
    */
   
   if( TYPEOF(xindex) == REALSXP ) { 
+  real_xindex = REAL(xindex);
+  real_yindex = REAL(yindex);
   while( (xp + yp) <= (len + 1) ) {
     if( xp > nrx ) {
       yp++;
@@ -92,20 +98,23 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
       //if(merge_all) i++;
       if(left_join) i++;
     } else
-    if(REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ]) {
+    //if(REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ]) {
+    if( real_xindex[ xp-1 ] == real_yindex[ yp-1 ] ) {
       // INNER JOIN
       // this will be the only result all=FALSE
       yp++;
       xp++;
       i++;
     } else
-    if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
+    //if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
+    if( real_xindex[ xp-1 ] < real_yindex[ yp-1 ] ) {
       // LEFT JOIN
       xp++;
       //if(merge_all) i++;
       if(left_join) i++;
     } else
-    if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
+    //if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
+    if( real_xindex[ xp-1 ] > real_yindex[ yp-1 ] ) {
       // RIGHT JOIN
       yp++;
       //if(merge_all) i++;
@@ -114,6 +123,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   } 
   } else
   if( TYPEOF(xindex) == INTSXP ) {
+  int_xindex = INTEGER(xindex);
+  int_yindex = INTEGER(yindex);
   while( (xp + yp) <= (len + 1) ) {
     if( xp > nrx ) {
       yp++;
@@ -125,18 +136,21 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
       //if(merge_all) i++;
       if(left_join) i++;
     } else
-    if(INTEGER(xindex)[ xp-1 ] == INTEGER(yindex)[ yp-1 ]) {
+    //if(INTEGER(xindex)[ xp-1 ] == INTEGER(yindex)[ yp-1 ]) {
+    if( int_xindex[ xp-1 ] == int_yindex[ yp-1 ] ) {
       // this will be the only result all=FALSE
       yp++;
       xp++;
       i++;
     } else
-    if( INTEGER(xindex)[ xp-1 ]  < INTEGER(yindex)[ yp-1 ] ) {
+    //if( INTEGER(xindex)[ xp-1 ]  < INTEGER(yindex)[ yp-1 ] ) {
+    if( int_xindex[ xp-1 ] < int_yindex[ yp-1 ] ) {
       xp++;
       //if(merge_all) i++;
       if(left_join) i++;
     } else
-    if( INTEGER(xindex)[ xp-1 ]  > INTEGER(yindex)[ yp-1 ] ) {
+    //if( INTEGER(xindex)[ xp-1 ]  > INTEGER(yindex)[ yp-1 ] ) {
+    if( int_xindex[ xp-1 ] > int_yindex[ yp-1 ] ) {
       yp++;
       //if(merge_all) i++;
       if(right_join) i++;
@@ -175,6 +189,33 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
     PROTECT( y = coerceVector(y, TYPEOF(x)) ); p++;
   }
 
+  /* use pointers instead of function calls */
+  switch(TYPEOF(x)) {
+    case INTSXP:
+        int_x = INTEGER(x);
+        int_y = INTEGER(y);
+        int_result = INTEGER(result);
+        break;
+    case REALSXP:
+        real_x = REAL(x);
+        real_y = REAL(y);
+        real_result = REAL(result);
+        break;
+    default:
+        break;
+  }
+
+  switch(TYPEOF(xindex)) {
+    case INTSXP:
+        int_index = INTEGER(index);
+        break;
+    case REALSXP:
+        real_index = REAL(index);
+        break;
+    default:
+        break;
+  }
+
   /* There are two type of supported index types, each branched from here */
   if( TYPEOF(xindex) == REALSXP ) {
 
@@ -187,7 +228,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
       //if(merge_all) {
       if(right_join) {
         //copyIndex(index, yindex, i, yp-1);
-        REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
+        //REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
+        real_index[ i ] = real_yindex[ yp-1 ];
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
@@ -220,10 +262,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
+              //INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
+              int_result[ ij_result ] = int_y[ ij_original ];
               break;
             case REALSXP:
-              REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+              //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+              real_result[ ij_result ] = real_y[ ij_original ];
               break;
             case CPLXSXP:
               COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];
@@ -249,7 +293,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
       if(left_join) {
 
         /* record new index value */
-        REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+        //REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+        real_index[ i ] = real_xindex[ xp-1 ];
 
         /* copy values from x and y to result */
         for(j = 0; j < ncx; j++) { // x-values
@@ -260,10 +305,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
+              //INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
+              int_result[ ij_result ] = int_x[ ij_original ];
               break;
             case REALSXP:
-              REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              //REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              real_result[ ij_result ] = real_x[ ij_original ];
               break;
             case CPLXSXP:
               COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
@@ -308,10 +355,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
     } else
 
     /* matching index values copy all column values from x and y to results */
-    if( REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ] ) {
+    //if( REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ] ) {
+    if( real_xindex[ xp-1 ] == real_yindex[ yp-1 ] ) {
 
       /* copy index FIXME this needs to handle INTEGER efficiently as well*/
-      REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+      //REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+      real_index[ i ] = real_xindex[ xp-1 ];
 
       /* copy x-values to result */
       for(j = 0; j < ncx; j++) { // x-values
@@ -323,10 +372,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
+              //INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
+              int_result[ ij_result ] = int_x[ ij_original ];
               break;
             case REALSXP:
-              REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              //REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              real_result[ ij_result ] = real_x[ ij_original ];
               break;
             case CPLXSXP:
               COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
@@ -350,10 +401,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
+              //INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
+              int_result[ ij_result ] = int_y[ ij_original ];
               break;
             case REALSXP:
-              REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+              //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+              real_result[ ij_result ] = real_y[ ij_original ];
               break;
             case CPLXSXP:
               COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];
@@ -370,11 +423,13 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
       yp++;
     } else
 
-    if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
+    //if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
+    if( real_xindex[ xp-1 ] < real_yindex[ yp-1 ] ) {
       //if(merge_all) {
       if(left_join) {
         //copyIndex(index, xindex, i, xp-1);
-        REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+        //REAL(index)[ i ] = REAL(xindex)[ xp-1 ]; 
+        real_index[ i ] = real_xindex[ xp-1 ];
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           ij_original = (xp-1) + j * nrx; //num_rows;
@@ -384,10 +439,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
+              //INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
+              int_result[ ij_result ] = int_x[ ij_original ];
               break;
             case REALSXP:
-              REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              //REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              real_result[ ij_result ] = real_x[ ij_original ];
               break;
             case CPLXSXP:
               COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
@@ -429,11 +486,13 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
       if(!left_join) i--;
     } else
 
-    if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
+    //if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
+    if( real_xindex[ xp-1 ] > real_yindex[ yp-1 ] ) {
       //if(merge_all) {
       if(right_join) {
         //copyIndex(index, yindex, i, yp-1);
-        REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
+        //REAL(index)[ i ] = REAL(yindex)[ yp-1 ]; 
+        real_index[ i ] = real_yindex[ yp-1 ];
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
@@ -466,10 +525,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
                 LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
                 break;
               case INTSXP:
-                INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
+                //INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
+                int_result[ ij_result ] = int_y[ ij_original ];
                 break;
               case REALSXP:
-                REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+                //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+                real_result[ ij_result ] = real_y[ ij_original ];
                 break;
               case CPLXSXP:
                 COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];
@@ -499,14 +560,15 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
       //if(merge_all) {
       if(right_join) {
         //copyIndex(index, yindex, i, yp-1);
-        INTEGER(index)[ i ] = INTEGER(yindex)[ yp-1 ]; 
+        int_index[ i ] = int_yindex[ yp-1 ];
+        //INTEGER(index)[ i ] = INTEGER(yindex)[ yp-1 ]; 
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
           switch( mode ) {
             case LGLSXP:
             case INTSXP:
-              LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
+              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ]; //NA_REAL;
@@ -532,10 +594,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
+              //INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
+              int_result[ ij_result ] = int_y[ ij_original ];
               break;
             case REALSXP:
-              REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+              //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+              real_result[ ij_result ] = real_y[ ij_original ];
               break;
             case CPLXSXP:
               COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];
@@ -559,7 +623,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
       if(left_join) {
 
         /* record new index value */
-        INTEGER(index)[ i ] = INTEGER(xindex)[ xp-1 ]; 
+        //INTEGER(index)[ i ] = INTEGER(xindex)[ xp-1 ]; 
+        int_index[ i ] = int_xindex[ xp-1 ];
 
         /* copy values from x and y to result */
         for(j = 0; j < ncx; j++) { // x-values
@@ -570,10 +635,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
+              int_result[ ij_result ] = int_x[ ij_original];
+              //INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
               break;
             case REALSXP:
-              REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              //REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              real_result[ ij_result ] = real_x[ ij_original ];
               break;
             case CPLXSXP:
               COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
@@ -594,7 +661,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           switch( mode ) {
             case LGLSXP:
             case INTSXP:
-              LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
+              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ]; //NA_REAL;
@@ -617,10 +684,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
     } else
 
     /* matching index values copy all column values from x and y to results */
-    if( INTEGER(xindex)[ xp-1 ] == INTEGER(yindex)[ yp-1 ] ) {
+    //if( INTEGER(xindex)[ xp-1 ] == INTEGER(yindex)[ yp-1 ] ) {
+    if( int_xindex[ xp-1 ] == int_yindex[ yp-1 ] ) {
 
       /* copy index FIXME this needs to handle INTEGER efficiently as well*/
-      INTEGER(index)[ i ] = INTEGER(xindex)[ xp-1 ]; 
+      //INTEGER(index)[ i ] = INTEGER(xindex)[ xp-1 ]; 
+      int_index[ i ] = int_xindex[ xp-1 ];
 
       /* copy x-values to result */
       for(j = 0; j < ncx; j++) { // x-values
@@ -632,10 +701,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
+              int_result[ ij_result ] = int_x[ ij_original ];
+              //INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
               break;
             case REALSXP:
-              REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              //REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              real_result[ ij_result ] = real_x[ ij_original ];
               break;
             case CPLXSXP:
               COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
@@ -659,10 +730,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
+              int_result[ ij_result ] = int_y[ ij_original ];
+              //INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
               break;
             case REALSXP:
-              REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+              //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+              real_result[ ij_result ] = real_y[ ij_original ];
               break;
             case CPLXSXP:
               COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];
@@ -679,10 +752,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
       yp++;
     } else
 
-    if( INTEGER(xindex)[ xp-1 ]  < INTEGER(yindex)[ yp-1 ] ) {
+    //if( INTEGER(xindex)[ xp-1 ]  < INTEGER(yindex)[ yp-1 ] ) {
+    if( int_xindex[ xp-1 ] < int_yindex[ yp-1 ] ) {
       if(left_join) {
         //copyIndex(index, xindex, i, xp-1);
-        INTEGER(index)[ i ] = INTEGER(xindex)[ xp-1 ]; 
+        //INTEGER(index)[ i ] = INTEGER(xindex)[ xp-1 ]; 
+        int_index[ i ] = int_xindex[ xp-1 ];
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           ij_original = (xp-1) + j * nrx; //num_rows;
@@ -692,10 +767,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
+              //INTEGER(result)[ ij_result ] = INTEGER(x)[ ij_original ];
+              int_result[ ij_result ] = int_x[ ij_original ];
               break;
             case REALSXP:
-              REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              //REAL(result)[ ij_result ] = REAL(x)[ ij_original ];
+              real_result[ ij_result ] = real_x[ ij_original ];
               break;
             case CPLXSXP:
               COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
@@ -736,10 +813,11 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
       if(!left_join) i--;
     } else
 
-    if( INTEGER(xindex)[ xp-1 ]  > INTEGER(yindex)[ yp-1 ] ) {
+    //if( INTEGER(xindex)[ xp-1 ]  > INTEGER(yindex)[ yp-1 ] ) {
+    if( int_xindex[ xp-1 ] > int_yindex[ yp-1 ] ) {
       if(right_join) {
-        //copyIndex(index, yindex, i, yp-1);
-        INTEGER(index)[ i ] = INTEGER(yindex)[ yp-1 ]; 
+        //INTEGER(index)[ i ] = INTEGER(yindex)[ yp-1 ]; 
+        int_index[ i ] = int_yindex[ yp-1 ];
         for(j = 0; j < ncx; j++) { // x-values
           ij_result = i + j * num_rows;
           //REAL(result)[ ij_result ] = NA_REAL;
@@ -772,10 +850,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
                 LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
                 break;
               case INTSXP:
-                INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
+                //INTEGER(result)[ ij_result ] = INTEGER(y)[ ij_original ];
+                int_result[ ij_result ] = int_y[ ij_original ];
                 break;
               case REALSXP:
-                REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+                //REAL(result)[ ij_result ] = REAL(y)[ ij_original ];
+                real_result[ ij_result ] = real_y[ ij_original ];
                 break;
               case CPLXSXP:
                 COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];

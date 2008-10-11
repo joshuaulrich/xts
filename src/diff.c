@@ -14,13 +14,18 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
   SEXP result;
   int nrs, ncs;
   int i, j, ij, iijj, K, NApad;
+  int mode;
   int P=0; //PROTECT counter
+  int *int_result, *int_x;
+  double *real_result, *real_x;
   
   nrs = nrows(x);
   ncs = ncols(x);
 
   K = INTEGER(k)[ 0 ];
   K = (K > nrs) ? nrs : K;
+
+  mode = TYPEOF(x);
 
   NApad = INTEGER(pad)[ 0 ];
 
@@ -32,6 +37,17 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
     } else {
       PROTECT(result = allocVector(TYPEOF(x), (nrs+K)*ncs)); P++;
     }
+  }
+
+  switch( TYPEOF(x) ) {
+    case INTSXP:
+        int_x = INTEGER(x);
+        int_result = INTEGER(result);
+        break;
+    case REALSXP:
+        real_x = REAL(x);
+        real_result = REAL(result);
+        break;
   }
 
   for(i = 0; i < nrs; i++) {
@@ -51,13 +67,15 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
        K < 0 && i > (nrs+K-1)) {
     /* Pad NA values at beginning */
       if(NApad) {
-      switch (TYPEOF(x)) {
+      switch ( mode ) {
         case LGLSXP:
         case INTSXP:
-             INTEGER(result)[ij] = NA_INTEGER;
+             //INTEGER(result)[ij] = NA_INTEGER;
+             int_result[ ij ] = NA_INTEGER;
              break;
         case REALSXP:
-             REAL(result)[ij] = NA_REAL;
+             //REAL(result)[ij] = NA_REAL;
+             real_result[ ij ] = NA_REAL;
              break;
         case CPLXSXP:
              COMPLEX(result)[ij].r = NA_REAL;
@@ -82,15 +100,17 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
       if(!NApad && K > 0) ij = i - K + j * (nrs - K);   // if not padding, start at the correct spot
       if(!NApad && K < 0) ij = i + j * (nrs + K);   // if not padding, start at the correct spot
 //Rprintf("i=%i;\tj=%i;\tij=%i;\tiijj=%i\n", i, j, ij, iijj);
-      switch (TYPEOF(x)) {
+      switch ( mode ) {
         case LGLSXP:
              LOGICAL(result)[ij] = LOGICAL(x)[iijj];
              break;
         case INTSXP:
-             INTEGER(result)[ij] = INTEGER(x)[iijj];
+             //INTEGER(result)[ij] = INTEGER(x)[iijj];
+             int_result[ ij ] = int_x[ iijj ];
              break;
         case REALSXP:
-             REAL(result)[ij] = REAL(x)[iijj];
+             //REAL(result)[ij] = REAL(x)[iijj];
+             real_result[ ij ] = real_x[ iijj ];
              break;
         case CPLXSXP:
              COMPLEX(result)[ij] = COMPLEX(x)[iijj];
