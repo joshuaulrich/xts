@@ -8,6 +8,7 @@ All modification are by Jeffrey A. Ryan 2008
 #include <R.h>
 #include <Rdefines.h>
 #include <Rinternals.h>
+#include "xts.h"
 
 // xtsExtractSubset {{{
 static SEXP xtsExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
@@ -105,6 +106,9 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
     nr = nrows(x);
     nc = ncols(x);
 
+    if( length(x)==0 )
+      return x;
+
     dim = getAttrib(x, R_DimSymbol);
 
     nrs = LENGTH(sr);
@@ -190,7 +194,7 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
                  RAW(result)[ij] = (Rbyte) 0;
                  break;
             default:
-                 error("matrix subscripting not handled for this type");
+                 error("xts subscripting not handled for this type");
                  break;
           }
         }
@@ -264,17 +268,8 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
         UNPROTECT(1);
     }
     }
-    setAttrib(result, install("class"), getAttrib(x, install("class")));
-    setAttrib(result, install(".indexCLASS"), getAttrib(x, install(".indexCLASS")));
-    setAttrib(result, install(".indexFORMAT"), getAttrib(x, install(".indexFORMAT")));
-    setAttrib(result, install(".CLASS"), getAttrib(x, install(".CLASS")));
-
-//    if(TYPEOF(index) == INTSXP || TYPEOF(index) == REALSXP) {
-//      setAttrib(result, install("index"), newindex);
-//      UNPROTECT(3);
-//    }
-//    else {
+    copy_xtsAttributes(x, result);
+    copy_xtsCoreAttributes(x, result);
     UNPROTECT(2);
-//    }
     return result;
 }

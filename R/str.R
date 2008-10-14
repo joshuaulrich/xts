@@ -4,7 +4,7 @@ function(object,...) {
   cat(paste("  Data:"))
   str(coredata(object),...)
   cat(paste("  Indexed by objects of class: "))
-  cat(paste('[',indexClass(object),']\n ',sep=''))
+  cat(paste('[',paste(indexClass(object),collapse=','),']\n ',sep=''))
   if(!is.null(CLASS(object)))
     cat(paste("  Original class: '",CLASS(object),"' ",sep=""),"\n")
   cat(paste("  xts Attributes: "),"\n")

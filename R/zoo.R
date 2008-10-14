@@ -37,7 +37,10 @@ function(x,order.by=index(x),frequency=NULL,...) {
 
 `as.zoo.xts` <-
 function(x,...) {
-  zoo(coredata(x),
+  cd <- coredata(x);
+  if( length(cd)==0 )
+    cd <- NULL
+  zoo(cd,
       order.by=index(x),
       ...)
 }

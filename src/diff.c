@@ -19,6 +19,9 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
   int *int_result, *int_x;
   double *real_result, *real_x;
   
+  int *int_oindex, *int_nindex;
+  double *real_oindex, *real_nindex;
+  
   nrs = nrows(x);
   ncs = ncols(x);
 
@@ -141,12 +144,18 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
     PROTECT(nindex = allocVector(TYPEOF(oindex), nRows));
     switch(TYPEOF(oindex)) {
       case REALSXP:
-        for( i = 0; i < nRows; i++)
-          REAL(nindex)[ i ] = REAL(oindex)[ i+incr ];
+        real_oindex = REAL(oindex);
+        real_nindex = REAL(nindex); 
+        for( i = 0; i < nRows; real_nindex++, real_oindex++, i++)
+          *real_nindex = *real_oindex;
+          //REAL(nindex)[ i ] = REAL(oindex)[ i+incr ];
         break;
       case INTSXP:
-        for( i = 0; i < nRows; i++)
-          INTEGER(nindex)[ i ] = INTEGER(oindex)[ i+incr ];
+        int_oindex = INTEGER(oindex);
+        int_nindex = INTEGER(nindex);
+        for( i = 0; i < nRows; int_nindex++, int_oindex++, i++)
+          *int_nindex = *int_oindex;
+          //INTEGER(nindex)[ i ] = INTEGER(oindex)[ i+incr ];
         break;
       default:
         break;

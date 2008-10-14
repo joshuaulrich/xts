@@ -37,13 +37,23 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   PROTECT( xindex = getAttrib(x, install("index")) );
   PROTECT( yindex = getAttrib(y, install("index")) );
 
-  // if object is zero-width
-  nrx = LENGTH(x)==0 ? nrows(xindex) : nrows(x);
+  nrx = nrows(x);
   ncx = ncols(x);
-  
+//Rprintf("nrx %i, ncx %i\n", nrx, ncx);
   // if object is zero-width
-  nry = LENGTH(y)==0 ? nrows(yindex) : nrows(y);
+  if( LENGTH(x)==0 ) {
+    nrx = nrows(xindex);
+    ncx = 0;
+  }
+//Rprintf("LENGTH(x) %i, nrx %i, ncx %i\n", LENGTH(x), nrx, ncx);
+  
+  nry = nrows(y);
   ncy = ncols(y);
+  // if object is zero-width
+  if( LENGTH(y)==0 ) {
+    nry = nrows(yindex);
+    ncy = 0;
+  }
 
   len = nrx + nry;
 
@@ -158,21 +168,14 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   } 
   }
 
+//Rprintf("num_rows %i, xp %i, yp %i\n",i, xp, yp);
+//UNPROTECT(2+p);
+//return R_NilValue;
+
   if(i == 0) {
     /* if no rows match, return an empty xts object, similar in style to zoo */
     UNPROTECT(2 + p);
     return R_NilValue;
-    /*
-    PROTECT(result=allocVector(TYPEOF(x),0));
-    setAttrib(result, install("index"), allocVector(TYPEOF(xindex), 0));
-    if(LOGICAL(retclass)[0]) 
-      setAttrib(result, install("class"), getAttrib(x, install("class")));
-    setAttrib(result, install(".indexCLASS"), getAttrib(x, install(".indexCLASS")));
-    setAttrib(result, install(".indexFORMAT"), getAttrib(x, install(".indexFORMAT")));
-    setAttrib(result, install(".CLASS"), getAttrib(x, install(".CLASS")));
-    UNPROTECT(1);
-    return result;
-    */
   }
 
   int num_rows = i;

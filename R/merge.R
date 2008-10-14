@@ -80,10 +80,10 @@
         } else stop("can not convert 'y' to suitable class for merge")
       }
       x <- .Call('do_merge_xts', x, dots[[i]], all, fill[1], setclass, 
-                 c(colnames(x), colnames(dots[[i]])), PACKAGE="xts")
-                 #make.colnames(x, NULL,
-                 #              dots[[i]], xyNames[i+2],
-                 #              suffix=suffixes),PACKAGE="xts")
+                 #c(colnames(x), colnames(dots[[i]])), PACKAGE="xts")
+                 make.colnames(x, NULL,
+                               dots[[i]], xyNames[i+2],
+                               suffix=suffixes),PACKAGE="xts")
     }
     colnames(x) <- make.unique(colnames(x))
     return(x)

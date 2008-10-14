@@ -46,6 +46,11 @@
 
 
 `lag.xts` <- function(x, k=1, na.pad=TRUE, ...) {
+  zooCompat <- getOption('xts.compat.zoo.lag')
+  if(is.logical(zooCompat) && zooCompat) {
+    k <- -k
+    if(missing(na.pad)) na.pad <- FALSE
+  }
   .Call('lagXts', x, as.integer(k), as.logical(na.pad))
 }
 
@@ -53,6 +58,13 @@
 {
   if(lag < 1 || differences < 1)
     stop("'diff.xts' defined only for positive lag and differences arguments")
+
+  zooCompat <- getOption('xts.compat.zoo.lag')
+  if(is.logical(zooCompat) && zooCompat) {
+    # this has to negated to satisfy the test in lag.xts... oh my
+    lag <- -lag
+    if(missing(na.pad)) na.pad <- FALSE
+  }
 
   if(differences > 1) {
     if(arithmetic && !log) { #log is FALSE or missing

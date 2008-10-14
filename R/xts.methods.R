@@ -10,15 +10,13 @@ function(x, i, j, drop = TRUE, ...)
     
     # test for negative subscripting in i
     if (!missing(i) && is.numeric(i) ) {
-      if(!isOrdered(i, strictly=FALSE))
-        return(x)
-
       if(any(i < 0)) {
         if(!all(i < 0))
           stop('only zeros may be mixed with negative subscripts')
         i <- (1:NROW(x))[i]
       }
     }
+
     # test for negative subscripting in j
     if (!missing(j) && is.numeric(j) && any(j < 0)) {
       if(!all(j < 0))
@@ -66,27 +64,27 @@ function(x, i, j, drop = TRUE, ...)
         }      
         
         i.tmp <- c(i.tmp,
-                   seq.int(binsearch(first.time, attr(x, 'index'), TRUE),
-                           binsearch(last.time, attr(x, 'index'), FALSE))
+                   seq.int(binsearch(first.time, .index(x),  TRUE),
+                           binsearch(last.time,  .index(x), FALSE))
                   )
       }
       i <- i.tmp
     }
   
-    # .subset is picky, 0's in the 'i' position cause failures
+    # .subset is picky, 0's in the 'i' position cause failures -- is this still nec? -jar
     zero.index <- binsearch(0, i, NULL)
     if(!is.na(zero.index))
       i <- i[ -zero.index ]
 
     if (missing(j)) {
       x <- .Call('do_subset_xts', x, as.integer(i), as.integer(1:original.cols), PACKAGE='xts')
-      if(!is.null(original.attr)) {
-        for(ii in 1:length(original.attr)) {
-          attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
-          if(names(original.attr)[ii]=='.ROWNAMES') attr(x,'.ROWNAMES') <- original.attr[[ii]][i]
-        }
-      }
-      if(!is.null(original.cols)) j <- 1:original.cols
+#      if(!is.null(original.attr)) {
+#        for(ii in 1:length(original.attr)) {
+#          attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
+#          if(names(original.attr)[ii]=='.ROWNAMES') attr(x,'.ROWNAMES') <- original.attr[[ii]][i]
+#        }
+#      }
+      #if(!is.null(original.cols)) j <- 1:original.cols # -- this is dead
     }
     else {
         j <- sapply(j, function(xx) {
@@ -95,11 +93,11 @@ function(x, i, j, drop = TRUE, ...)
                          } else xx
                        })
         x <- .Call('do_subset_xts', x, as.integer(i), as.integer(j), PACKAGE='xts')
-        if(!is.null(original.attr)) {
-          for(ii in 1:length(original.attr)) {
-            attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
-          }
-        }
+#        if(!is.null(original.attr)) {
+#          for(ii in 1:length(original.attr)) {
+#            attr(x,names(original.attr)[ii]) <- original.attr[[ii]]
+#          }
+#        }
     }
     x
 }
