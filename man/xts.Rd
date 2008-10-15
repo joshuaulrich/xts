@@ -11,7 +11,7 @@ Constructor function for creating an extensible time-series object.
 xts(x = NULL,
     order.by = index(x),
     frequency = NULL,
-    row.names = TRUE, 
+    row.names = FALSE, 
     col.names = NULL, 
     unique = TRUE,
     ...)
@@ -57,15 +57,15 @@ a standard zoo object, while providing an mechanism to customize
 the object's meta-data, as well as create custom methods to handle
 the object in a manner required by the user.
 
-Most, if not all, standard zoo methods will work without change.  Where
-changes where required (e.g. to return an xts object) new methods have been
-written. At present these modified methods include \code{"["}, \code{coredata},
-
-[add more here]
+Many xts-sepcific methods have been written to better handle the
+unique aspects of xts.  These include, \sQuote("["), merge, cbind,
+rbind, c, Ops, lag, diff, coredata, head and tail.  Additionally
+there are xts specific methods for converting amongst R's different
+time-series classes. 
 
 Subsetting via "[" methods offers the ability to specify dates by
 range, if they are enclosed in quotes.  The style borrows from
-python by creating ranges with a double colon "::" operator.  Each side of
+python by creating ranges with a double colon \dQuote{"::"} or \dQuote{"/"} operator.  Each side of
 the operator may be left blank, which would then default to the beginning
 and end of the data, respectively.  To specify a subset of times,
 it is only required that the time specified be in standard ISO format, with

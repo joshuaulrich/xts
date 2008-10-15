@@ -4,15 +4,14 @@
 
 SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
 {
-  int i;
+  int i, P=0;
   int nx = LENGTH(x) - 1;
   SEXP res;
   double *real_x;
   int *int_x;
 
-  PROTECT( res = allocVector(LGLSXP, 1) );
+  PROTECT( res = allocVector(LGLSXP, 1) ); P++;
   LOGICAL(res)[ 0 ] = 1; // default to true
-
 
   if(TYPEOF(x) == REALSXP) {
   /*
@@ -112,6 +111,6 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
   } else {
     error("'x' must be of type double or integer");
   }
-  UNPROTECT(1);
+  UNPROTECT(P);
   return res;
 }

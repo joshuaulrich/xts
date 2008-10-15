@@ -15,8 +15,8 @@ function(x=NULL,
          order.by=index(x),
          frequency=NULL,
          row.names=FALSE,
-         unique=TRUE,
          col.names=NULL,
+         unique=TRUE,
          ...)
 {
   if(!timeBased(order.by))
