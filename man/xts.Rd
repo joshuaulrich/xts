@@ -12,6 +12,7 @@ xts(x = NULL,
     order.by = index(x),
     frequency = NULL,
     row.names = TRUE, 
+    col.names = NULL, 
     unique = TRUE,
     ...)
 
@@ -23,7 +24,8 @@ is.xts(x)
   \item{order.by}{ a corresponding vector of unique times/dates - must be
 of a known time-based class. See details. }
   \item{frequency}{ numeric indicating frequency of \code{order.by}. See details. }
-  \item{row.names}{ should row.names be stripped to minimize memory requirements }
+  \item{row.names}{ should rownames be stripped to minimize memory requirements }
+  \item{col.names}{ colnames if any }
   \item{unique}{ should index be checked for unique time-stamps? }
   \item{\dots}{ additional attributes to be added. See details. }
 }

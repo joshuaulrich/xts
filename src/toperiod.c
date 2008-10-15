@@ -3,8 +3,13 @@
 #include <Rdefines.h>
 #include "xts.h"
 
+#ifndef MAX
 #define MAX(a,b) (a > b ? a : b)
+#endif
+
+#ifndef MIN
 #define MIN(a,b) (a < b ? a : b)
+#endif
 
 SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP first, SEXP colnames)
 {

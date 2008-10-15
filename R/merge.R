@@ -101,8 +101,8 @@
     #colnames(x) <- make.unique(colnames(x))
     if(is.null(retclass)) {
       # needed for original Ops.xts(e1,e2), now for zoo compat
-      assign(xyNames$x, x[,ncx], parent.frame())
-      assign(xyNames$y, x[,-ncx],parent.frame())
+      assign(xyNames[1], x[,ncx], parent.frame())
+      assign(xyNames[2], x[,-ncx],parent.frame())
       invisible(return(NULL))
     } else
     return(x)
@@ -152,8 +152,8 @@
   if(is.null(retclass)) {
     ncx <- 1:NCOL(x)
     # needed for original Ops.xts(e1,e2), now for zoo compat
-    assign(xyNames$x, x[,ncx], parent.frame())
-    assign(xyNames$y, x[,-ncx],parent.frame())
+    assign(xyNames[1], x[,ncx], parent.frame())
+    assign(xyNames[2], x[,-ncx],parent.frame())
     invisible(return(NULL))
   } else
   return(x)

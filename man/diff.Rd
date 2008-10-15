@@ -14,7 +14,8 @@ argument changes.
 }
 \arguments{
   \item{x}{ an \code{xts} object }
-  \item{lag}{ period to lag or difference over }
+  \item{k}{ period to lag over }
+  \item{lag}{ period to difference over }
   \item{differences}{ order of differencing }
   \item{arithmetic}{ should arithmetic or geometric differencing be used }
   \item{log}{ should (geometric) log differences be returned }
@@ -33,6 +34,10 @@ as \code{lag.ts}.
 Another notable difference is that \code{na.pad} is set to
 TRUE by default, to better reflect the transformation visually
 and within functions requiring positional matching of data.
+
+Backwards compatability with zoo can be achieved by setting
+\code{options(xts.compat.zoo.lag=TRUE)}. This will change the
+defaults of lag.xts to k=-1 and na.pad=FALSE.
 }
 \value{
 An \code{xts} object reflected the desired lag and/or differencing.

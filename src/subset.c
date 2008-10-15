@@ -100,6 +100,9 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
     SEXP attr, result, dim;
     int nr, nc, nrs, ncs;
     int i, j, ii, jj, ij, iijj;
+    int mode;
+    int *int_x, *int_result, *int_newindex, *int_index;
+    double *real_x, *real_result, *real_newindex, *real_index;
 
 //Rprintf("Inside xtsSubset\n");
 
@@ -115,8 +118,20 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
     ncs = LENGTH(sc);
 
 
-    result = allocVector(TYPEOF(x), nrs*ncs);
+    mode = TYPEOF(x);
+
+    result = allocVector(mode, nrs*ncs);
     PROTECT(result);
+
+
+    if( mode==INTSXP ) {
+      int_x = INTEGER(x);
+      int_result = INTEGER(result);
+    } else
+    if( mode==REALSXP ) {
+      real_x = REAL(x);
+      real_result = REAL(result);
+    }
 
     /* code to handle index of xts object efficiently */
     SEXP index, newindex;
@@ -128,8 +143,13 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
     if(TYPEOF(index) == INTSXP) {
       newindex = allocVector(INTSXP, LENGTH(sr));
       PROTECT(newindex);
+      int_newindex = INTEGER(newindex);
+      int_index = INTEGER(index);
+      int *int_sr;
+      int_sr = INTEGER(sr);
       for(indx = 0; indx < nrs; indx++) {
-        INTEGER(newindex)[indx] = INTEGER(index)[INTEGER(sr)[indx]-1];
+        int_newindex[indx] = int_index[ (int_sr[indx])-1];
+        //INTEGER(newindex)[indx] = INTEGER(index)[INTEGER(sr)[indx]-1];
       }
       setAttrib(result, install("index"), newindex);
       UNPROTECT(1);
@@ -172,13 +192,15 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
         }
         ij = i + j * nrs;
         if (ii == NA_INTEGER || jj == NA_INTEGER) {
-          switch (TYPEOF(x)) {
+          switch ( mode ) {
             case LGLSXP:
             case INTSXP:
-                 INTEGER(result)[ij] = NA_INTEGER;
+                 //INTEGER(result)[ij] = NA_INTEGER;
+                 int_result[ij] = NA_INTEGER;
                  break;
             case REALSXP:
-                 REAL(result)[ij] = NA_REAL;
+                 //REAL(result)[ij] = NA_REAL;
+                 real_result[ij] = NA_REAL;
                  break;
             case CPLXSXP:
                  COMPLEX(result)[ij].r = NA_REAL;
@@ -200,15 +222,17 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
         }
         else {
           iijj = ii + jj * nr;
-          switch (TYPEOF(x)) {
+          switch ( mode ) {
             case LGLSXP:
                  LOGICAL(result)[ij] = LOGICAL(x)[iijj];
                  break;
             case INTSXP:
-                 INTEGER(result)[ij] = INTEGER(x)[iijj];
+                 //INTEGER(result)[ij] = INTEGER(x)[iijj];
+                 int_result[ij] = int_x[iijj]; 
                  break;
             case REALSXP:
-                 REAL(result)[ij] = REAL(x)[iijj];
+                 //REAL(result)[ij] = REAL(x)[iijj];
+                 real_result[ij] = real_x[iijj];
                  break;
             case CPLXSXP:
                  COMPLEX(result)[ij] = COMPLEX(x)[iijj];

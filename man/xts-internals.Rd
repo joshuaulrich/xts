@@ -47,7 +47,9 @@ utilize the fast utility routines such as subsetting and merges, without
 having to call only from \R.  Obviously this places far
 more burden on the developer to not only understand the
 internal xts implementation, but also to understand all of
-what is documented for R-internals (and much that isn't).
+what is documented for R-internals (and much that isn't). At present the functions
+and macros
+available can be found in the \sQuote{xts.h} file in the src directory.
 
 There is no current documentation for this API.  The adventure
 starts here.  Future documentation is planned, not implemented.
