@@ -1,10 +1,10 @@
-rmerge <- function(x,y,...,
-                   all=TRUE,
-                   fill=NA,
-                   suffixes=NULL,
-                   join="outer",
-                   retside=TRUE,
-                   retclass="xts") {
+merge.xts <- function(x,y,...,
+                      all=TRUE,
+                      fill=NA,
+                      suffixes=NULL,
+                      join="outer",
+                      retside=TRUE,
+                      retclass="xts") {
 
   if(missing(y))
     return(x)
@@ -13,9 +13,20 @@ rmerge <- function(x,y,...,
   } else setclass <- TRUE
 
   mc <- match.call(expand=FALSE)
-  xName <- as.character(mc$x)
-  yName <- as.character(mc$y)
+  xName <- deparse(mc$x)
+  yName <- deparse(mc$y)
   dots <- mc$...
+
+  if(!missing(...) && length(all) > 2) {
+    xx <- list(x,y,...)
+    all <- rep(all, length.out=length(xx))
+    if(!base::all(all==TRUE) && !base::all(all==FALSE) ) {
+      xT <- xx[which(all)] 
+      xF <- xx[which(!all)] 
+      return((rmerge0(do.call('rmerge0',xT),
+                      do.call('rmerge0',xF), join="left"))[,c(which(!rev(all)),which(rev(all)))])
+    }
+  }
 
   tryXts <- function(y) {
   if(!is.xts(y)) {
@@ -34,7 +45,6 @@ rmerge <- function(x,y,...,
   return(y)
   }
 
-  y <- tryXts(y)
 
   if( !missing(join) ) { 
     # join logic applied to index:
@@ -52,10 +62,17 @@ rmerge <- function(x,y,...,
                  )   
   }
 
+  makeUnique <- function(cnames, nc, suff, dots) {
+    if(is.null(suff) || length(suff) != (length(dots)+2)) return(make.unique(cnames))
+    paste(cnames, rep(suff, times=nc),sep=".")
+  }
+
   if( length(all) == 1 ) 
     all <- rep(all, length.out=length(dots)+2)
   if( length(retside) == 1 ) 
     retside <- rep(retside, length.out=length(dots)+2)
+
+  y <- tryXts(y)
 
   COLNAMES <- c(colnames(x),colnames(y))
   if(length(COLNAMES) != (NCOL(x)+NCOL(y)))
@@ -69,8 +86,9 @@ rmerge <- function(x,y,...,
     yCOLNAMES <- rep(yName,NCOL(y))
   COLNAMES <- c(xCOLNAMES,yCOLNAMES)
 
+  nCOLS <- c(NCOL(x), NCOL(y), sapply(dots, function(x) NCOL(eval.parent(x))))
   CNAMES <- if(length(dots)==0) {
-              make.unique(COLNAMES)
+              makeUnique(COLNAMES, nCOLS, suffixes, dots)
             } else NULL
  
   x <- .Call("do_merge_xts",
@@ -79,51 +97,75 @@ rmerge <- function(x,y,...,
     for(i in 1:length(dots)) {
       currentCOLNAMES <- colnames(eval.parent(dots[[i]]))
       if(is.null(currentCOLNAMES))
-        currentCOLNAMES <- rep(as.character(dots[[i]]),NCOL(eval.parent(dots[[i]])))
+        currentCOLNAMES <- rep(deparse(dots[[i]]),NCOL(eval.parent(dots[[i]])))
       COLNAMES <- c(COLNAMES, currentCOLNAMES)
 
       if( i==length(dots) ) #last merge, set colnames now
-        CNAMES <- make.unique(COLNAMES)
+        CNAMES <- makeUnique(COLNAMES, nCOLS, suffixes, dots)
       x <- .Call("do_merge_xts",
                   x, tryXts(eval.parent(dots[[i]])), all,
                   fill[1], setclass, CNAMES, retside, PACKAGE="xts")
   
     }
   }
+if(retclass != 'xts') {
+  xx <- try(do.call(paste("as",retclass,sep="."), list(x)))
+  if(!inherits(xx,'try-error')) {
+    return(xx)
+  }
+}
 return(x)
 }
 
-`merge0.xts` <- function(x,y,...,all=TRUE, fill=NA, suffixes=NULL, join="outer", retclass='xts', 
-                        retside=TRUE) {
-  # merge is currently optimized for the 2 case
-  # scenario, but will handle k-merges via the overflow
-  # ... arg.
-  
-  if( missing(y) ) 
-    return(x)
+rmerge0 <- function(x,y,...,
+                   all=TRUE,
+                   fill=NA,
+                   suffixes=NULL,
+                   join="outer",
+                   retside=TRUE,
+                   retclass="xts") {
 
+  if(missing(y) || is.null(y))
+    return(x)
   if(is.logical(retclass) && !retclass) {
     setclass <- FALSE
   } else setclass <- TRUE
 
-  if( !is.xts(y) )
+  mc <- match.call(expand=FALSE)
+  xName <- deparse(mc$x)
+  yName <- deparse(mc$y)
+  dots <- mc$...
+
+#  if(!missing(...) && length(all) > 2) {
+#    x <- list(x,y,...)
+#    all <- rep(all, length.out=length(x))
+#    xT <- x[which(all)] 
+#    xF <- x[which(!all)] 
+#    return((rmerge0(do.call('rmerge0',xT), do.call('rmerge0',xF), join="left"))[,c(which(all),which(!all))])
+#  }
+
+  tryXts <- function(y) {
+  if(!is.xts(y)) {
     y <- try.xts(y, error=FALSE)
-    
-  if( !is.xts(y) ) { # if unsuccessful
-    if( NROW(y) == NROW(x) ) {
-      # same length, but no index
-      y <- structure(y, index=.index(x))
-    } else
-    if( NROW(y)==1 && NCOL(y)==1) {
-      # scalar
-      y <- structure(rep(y, length.out=NROW(x)), index=.index(x))
-    } else stop(paste("cannot convert",deparse(substitute(y)),"to suitable class for merge"))
+    if(!is.xts(y)) {
+      if (NROW(y) == NROW(x)) {
+        y <- structure(y, index = .index(x))
+      }
+      else if (NROW(y) == 1 && NCOL(y) == 1) {
+        y <- structure(rep(y, length.out = NROW(x)), index = .index(x))
+      }
+      else stop(paste("cannot convert", deparse(substitute(y)), 
+        "to suitable class for merge"))
+    }
+  }
+  return(y)
   }
 
-  if( !missing(join) ) {
+
+  if( !missing(join) ) { 
     # join logic applied to index:
     # inspired by: http://blogs.msdn.com/craigfr/archive/2006/08/03/687584.aspx
-    #
+    #   
     #  (full) outer - all cases, equivelant to all=c(TRUE,TRUE)
     #         left  - all x,    &&  y's that match x
     #         right - all  ,y   &&  x's that match x
@@ -133,126 +175,65 @@ return(x)
                     c(TRUE,  FALSE), #  left
                     c(FALSE, TRUE ), #  right
                     c(FALSE, FALSE)  #  inner
-                 )
+                 )   
   }
 
-  if( length(all) == 1 )
-    all <- rep(all, length.out=2)
-  if( length(retside) == 1 )
-    retside <- rep(retside, length.out=2)
-
-  dots <- list(...)
-
-  xyNames <- as.character(c(list(x=deparse(substitute(x)),y=deparse(substitute(y))),
-               as.character(as.list(match.call(expand.dots=FALSE)$...))))
-
-  make.colnames <- function(x, xname, y, yname, suffix=NULL) {
-    colnamesX <- colnames(x)
-    if(is.null(colnamesX)) {
-      colnamesX <- c(paste(xname,1:NCOL(x),sep='.'))
-    }
-    colnamesY <- colnames(y)
-    if(is.null(colnamesY)) {
-      colnamesY <- c(paste(yname,1:NCOL(y),sep='.'))
-    }
-    if(!is.null(suffix) && length(suffix)==2) {
-      return(c(paste(colnamesX,suffix[1],sep='.'),paste(colnamesY,suffix[2],sep='.')))
-    } else return(c(colnamesX, colnamesY))
+  makeUnique <- function(cnames, nc, suff, dots) {
+    if(is.null(suff) || length(suff) != (length(dots)+2)) return(make.unique(cnames))
+    paste(cnames, rep(suff, times=nc),sep=".")
   }
 
+  if( length(all) == 1 ) 
+    all <- rep(all, length.out=length(dots)+2)
+  if( length(retside) == 1 ) 
+    retside <- rep(retside, length.out=length(dots)+2)
+  y <- tryXts(y)
+
+  COLNAMES <- c(colnames(x),colnames(y))
+  if(length(COLNAMES) != (NCOL(x)+NCOL(y)))
+    COLNAMES <- c(rep(xName,NCOL(x)), rep(yName,NCOL(y)))
+
+  xCOLNAMES <- colnames(x)
+  if(is.null(xCOLNAMES))
+    xCOLNAMES <- rep(xName,NCOL(x))
+  yCOLNAMES <- colnames(y)
+  if(is.null(yCOLNAMES))
+    yCOLNAMES <- rep(yName,NCOL(y))
+  COLNAMES <- c(xCOLNAMES,yCOLNAMES)
+
+  nCOLS <- c(NCOL(x), NCOL(y), sapply(dots, function(x) NCOL(eval.parent(x))))
+#  CNAMES <- if(length(dots)==0) {
+#              makeUnique(COLNAMES, nCOLS, suffixes, dots)
+#            } else NULL
+  CNAMES <- NULL
+ 
+
+  x <- .Call("do_merge_xts",
+              x, y, all, fill[1], setclass, CNAMES, retside, PACKAGE="xts")
   if(length(dots) > 0) {
-
-    x <- .Call('do_merge_xts', x, y, all, fill[1], setclass, 
-               #make.unique(c(colnames(x),colnames(y))), PACKAGE='xts')
-               make.colnames(x,deparse(substitute(x)),
-                             y,deparse(substitute(y)),
-                             suffix=suffixes), retside, PACKAGE="xts")
     for(i in 1:length(dots)) {
-      if( !is.xts(dots[[i]]) ) {
-        dots[[i]] <- try.xts(dots[[i]], error=FALSE)
-        if( !is.xts(dots[[i]]) && NROW(dots[[i]]) == NROW(x) ) {
-          dots[[i]] <- structure(dots[[i]], index=.index(x))
-        } else
-        if( !is.xts(dots[[i]]) && NROW(dots[[i]])==1 && NCOL(dots[[i]])==1) {
-          dots[[i]] <- structure(rep(dots[[i]], length.out=NROW(x)), index=.index(x)) 
-        } else stop("can not convert 'y' to suitable class for merge")
-      }
-      x <- .Call('do_merge_xts', x, dots[[i]], all, fill[1], setclass, 
-                 #c(colnames(x), colnames(dots[[i]])), PACKAGE="xts")
-                 make.colnames(x, NULL,
-                               dots[[i]], xyNames[i+2],
-                               suffix=suffixes), retside, PACKAGE="xts")
-    }
-    colnames(x) <- make.unique(colnames(x))
-    return(x)
-  } else {
-    ncx <- 1:NCOL(x)
-    ncy <- 1:NCOL(y)
-    cnames <- c(colnames(x), colnames(y))
-    cnames <- if(is.null(cnames)) { NULL } else { make.unique(cnames) }
-    x <- .Call('do_merge_xts', x, y, all, fill[1], setclass, 
-               cnames, retside, PACKAGE="xts")
-               #make.unique(c(colnames(x), colnames(y))), PACKAGE="xts")
-               #make.unique(make.colnames(x,deparse(substitute(x)),
-               #              y,deparse(substitute(y)),
-               #              suffix=suffixes)), PACKAGE="xts")
-    #colnames(x) <- make.unique(colnames(x))
-    if(is.null(retclass)) {
-      # needed for original Ops.xts(e1,e2), now for zoo compat
-      assign(xyNames[1], x[,ncx], parent.frame())
-      assign(xyNames[2], x[,-ncx],parent.frame())
-      invisible(return(NULL))
-    } else
-    return(x)
-  }
-}
+      currentCOLNAMES <- colnames(eval.parent(dots[[i]]))
+      if(is.null(currentCOLNAMES))
+        currentCOLNAMES <- rep(deparse(dots[[i]]),NCOL(eval.parent(dots[[i]])))
+      COLNAMES <- c(COLNAMES, currentCOLNAMES)
 
-#`merge.xts0` <- function(x,y,...,all=TRUE, fill=NA, suffixes=NULL, join="outer", retclass='xts') {
-#  # this is for use withing Ops.xts, as it handles colnames differently
-#  if( missing(y) ) 
-#    return(x)
-#
-#  if(is.logical(retclass) && !retclass) {
-#    setclass <- FALSE
-#  } else setclass <- TRUE
-#
-#  if( !is.xts(y) ) {
-#    y <- try.xts(y, error=FALSE)
-#    if( !is.xts(y) && NROW(y) == NROW(x) ) {
-#      y <- structure(y, index=.index(x))
-#    } else
-#    if( !is.xts(y) && NROW(y)==1 && NCOL(y)==1) {
-#      y <- structure(rep(y, length.out=NROW(x)), index=.index(x))
-#    } else stop("cannot convert 'y' to suitable class for merge")
-#  }
-#
-#  if( !missing(join) ) {
-#    # join logic applied to index:
-#    # inspired by: http://blogs.msdn.com/craigfr/archive/2006/08/03/687584.aspx
-#    #
-#    #  (full) outer - all cases, equivelant to all=c(TRUE,TRUE)
-#    #         left  - all x,    &&  y's that match x
-#    #         right - all  ,y   &&  x's that match x
-#    #         inner - only x and y where index(x)==index(y)
-#    all <- switch(pmatch(join,c("outer","left","right","inner")),
-#                    c(TRUE,  TRUE ), #  outer
-#                    c(TRUE,  FALSE), #  left
-#                    c(FALSE, TRUE ), #  right
-#                    c(FALSE, FALSE)  #  inner
-#                 )
-#  }
-#
-#  if( length(all) == 1 )
-#    all <- rep(all, length.out=2)
-#
-#  x <- .Call('do_merge_xts', x, y, all, fill[1], setclass, c(colnames(x), colnames(y)), PACKAGE="xts")
-#
-#  if(is.null(retclass)) {
-#    ncx <- 1:NCOL(x)
-#    # needed for original Ops.xts(e1,e2), now for zoo compat
-#    assign(xyNames[1], x[,ncx], parent.frame())
-#    assign(xyNames[2], x[,-ncx],parent.frame())
-#    invisible(return(NULL))
-#  } else
-#  return(x)
-#}
+#      if( i==length(dots) ) #last merge, set colnames now
+#        CNAMES <- makeUnique(COLNAMES, nCOLS, suffixes, dots)
+      x <- .Call("do_merge_xts",
+                  x, tryXts(eval.parent(dots[[i]])), all,
+                  fill[1], setclass, CNAMES, retside, PACKAGE="xts")
+  
+    }
+  }
+return(x)
+}
+#library(xts)
+#x <- .xts(1:10, 1:10)
+#rmerge(x,x,x)
+#rmerge(x,x,1)
+#z <- as.zoo(x)
+#rmerge(x,z)
+#rmerge(x,x,z)
+#rmerge(x,1,z,z)
+#X <- .xts(1:1e6, 1:1e6)
+#system.time(rmerge(X,X,X,X,X,X,X))
