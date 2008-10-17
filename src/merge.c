@@ -19,7 +19,7 @@
 
 */
 // do_merge_xts {{{
-SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP colnames)
+SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP retside)
 {
   int nrx, ncx, nry, ncy, len, merge_all, original_index_type;
   int left_join, right_join;
@@ -37,11 +37,14 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   PROTECT( xindex = getAttrib(x, install("index")) );
   PROTECT( yindex = getAttrib(y, install("index")) );
 
+  if( TYPEOF(retside) != LGLSXP )
+    error("retside must be a logical value of TRUE or FALSE");
+
   nrx = nrows(x);
   ncx = ncols(x);
 //Rprintf("nrx %i, ncx %i\n", nrx, ncx);
   // if object is zero-width
-  if( LENGTH(x)==0 ) {
+  if( LENGTH(x)==0 || INTEGER(retside)[0]==0 ) {
     nrx = nrows(xindex);
     ncx = 0;
   }
@@ -50,7 +53,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   nry = nrows(y);
   ncy = ncols(y);
   // if object is zero-width
-  if( LENGTH(y)==0 ) {
+  if( LENGTH(y)==0 || INTEGER(retside)[1]==0) {
     nry = nrows(yindex);
     ncy = 0;
   }
@@ -901,6 +904,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
       setAttrib(result, R_DimNamesSymbol, dimnames);
       UNPROTECT(2);
     }
+  } else {
+    setAttrib(result, R_DimSymbol, R_NilValue);
   }
   
 
@@ -916,20 +921,22 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   return result;  
 } //}}}
 
-SEXP mergeXts (SEXP args, SEXP all, SEXP fill, SEXP retclass, SEXP colnames)
+SEXP mergeXts (SEXP x, SEXP y, SEXP args, SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP retside)
 {
   SEXP _x, _y, xtmp, ytmp, result;
   int a, largs, P=0;
-  PROTECT(_x = VECTOR_ELT(args, 0)); P++;
-  PROTECT(_y = VECTOR_ELT(args, 1)); P++;
+  //PROTECT(_x = VECTOR_ELT(args, 0)); P++;
+  //PROTECT(_y = VECTOR_ELT(args, 1)); P++;
 
   largs = LENGTH(args);
 
-  PROTECT(xtmp = do_merge_xts(_x, _y, all, fill, retclass, colnames)); P++;
+  PROTECT(xtmp = do_merge_xts(x, y, all, fill, retclass, colnames, retside)); P++;
 
-  for(a = 2; a < largs; a++) {
-    PROTECT(ytmp = VECTOR_ELT(args, a));P++;
-    PROTECT(xtmp = do_merge_xts(xtmp, ytmp, all, fill, retclass, colnames));P++;
+  if(largs > 0 ) {
+    for(a = 0; a < largs; a++) {
+      PROTECT(ytmp = VECTOR_ELT(args, a));P++;
+      PROTECT(xtmp = do_merge_xts(xtmp, ytmp, all, fill, retclass, colnames, retside));P++;
+    }
   }
   UNPROTECT(P);
   return(xtmp);
