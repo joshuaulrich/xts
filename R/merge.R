@@ -24,7 +24,7 @@ merge.xts <- function(x,y,...,
       xT <- xx[which(all)] 
       xF <- xx[which(!all)] 
       return((rmerge0(do.call('rmerge0',xT),
-                      do.call('rmerge0',xF), join="left"))[,c(which(!rev(all)),which(rev(all)))])
+                      do.call('rmerge0',xF), join="left"))[,c(which(all),which(!all))])
     }
   }
 
