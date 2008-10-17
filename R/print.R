@@ -11,7 +11,7 @@ function(x,fmt,...) {
     print(numeric(0))
     cat('\n')
     cat('Index:\n')
-    print(index(x))
+    str(index(x))
   } else print(xx)
 }
 

@@ -11,7 +11,7 @@ function(x, fmt=FALSE, ...) {
     fmt <- TRUE
   }
   
-  if(fmt) {
+  if(length(x) > 0 && fmt) {
     if(!is.null(indexFormat(x))) {
       x.attr$dimnames <- list(format(index(x), format=indexFormat(x)),
                               dimnames(x)[[2]])
