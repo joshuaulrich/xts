@@ -924,10 +924,10 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
 //SEXP mergeXts (SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP retside, SEXP args)
 SEXP mergeXts (SEXP args)
 {
-  SEXP _x, _y, xtmp, ytmp,  result, _INDEX;
+  SEXP _x, _y, xtmp, result, _INDEX;
   SEXP all, fill, retc, retclass, colnames, rets, retside;
-  int nr, nc, ncs=0, nrs=0, ncs_max;
-  int index_len, size=0;
+  int nr, nc, ncs=0, nrs=0;
+  int index_len;
   int j, i, n=0, P=0;
 
   SEXP argstart;
@@ -947,9 +947,7 @@ SEXP mergeXts (SEXP args)
   argstart = args; // use this to rewind list...
 
   n = 0;
-  //ncs_max = 0;
   while(args != R_NilValue) {
-    //ncs_max = (ncs_max > ncols(CAR(args))) ? ncs_max : ncols(CAR(args)); 
     ncs += ncols(CAR(args));
     args = CDR(args);
     n++;
@@ -1014,7 +1012,6 @@ SEXP mergeXts (SEXP args)
     copy_xtsAttributes(_INDEX, result);
   } else {
     PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, colnames, retside)); P++;
-    nr = nrows(result);
   }
 
   if(P > 0) UNPROTECT(P); 
