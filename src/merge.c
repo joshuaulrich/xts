@@ -921,23 +921,85 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   return result;  
 } //}}}
 
-SEXP mergeXts (SEXP x, SEXP y, SEXP args, SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP retside)
+//SEXP mergeXts (SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP retside, SEXP args)
+SEXP mergeXts (SEXP args)
 {
-  SEXP _x, _y, xtmp, ytmp, result;
-  int a, largs, P=0;
-  //PROTECT(_x = VECTOR_ELT(args, 0)); P++;
-  //PROTECT(_y = VECTOR_ELT(args, 1)); P++;
+  SEXP _x, _y, xtmp, ytmp,  result, _INDEX;
+  SEXP all, fill, retclass, colnames, retside;
+  int ncs=0, ncs_max;
+  int index_len, size=0;
+  int j, i, n=0, P=0;
 
-  largs = LENGTH(args);
+  SEXP argstart;
 
-  PROTECT(xtmp = do_merge_xts(x, y, all, fill, retclass, colnames, retside)); P++;
+  args = CDR(args);
+  all = CAR(args);
+  args = CDR(args);
+  fill = CAR(args);
+  args = CDR(args);
+  retclass = CAR(args);
+  args = CDR(args);
+  colnames = CAR(args);
+  args = CDR(args);
+  retside = CAR(args);
+  args = CDR(args);
+  // args should now correspond to the ... objects we are looking to merge 
+  argstart = args; // use this to rewind list...
 
-  if(largs > 0 ) {
-    for(a = 0; a < largs; a++) {
-      PROTECT(ytmp = VECTOR_ELT(args, a));P++;
-      PROTECT(xtmp = do_merge_xts(xtmp, ytmp, all, fill, retclass, colnames, retside));P++;
+  n = 0;
+  ncs_max = 0;
+  while(args != R_NilValue) {
+    ncs_max = (ncs_max > ncols(CAR(args))) ? ncs_max : ncols(CAR(args)); 
+    ncs += ncols(CAR(args));
+    args = CDR(args);
+    n++;
+  }
+
+  /* build an index to be used in all subsequent calls */
+  args = argstart;
+  _x = CAR(args);
+  args = CDR(args);
+  _y = CAR(args);
+  args = CDR(args);
+
+  PROTECT(_INDEX = do_merge_xts(_x, _y, all, fill, retclass, colnames, retside)); P++;
+  args = CDDR(args);
+  while(args != R_NilValue) {
+    PROTECT(_INDEX = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside)); P++;
+    args = CDR(args);
+  }
+ 
+  index_len = length(GET_xtsIndex(_INDEX));
+
+  /* now build PAIRLIST of each same sized vector for cbind */
+  PROTECT(result = allocVector(INTSXP, index_len * ncs)); P++; //length(GET_xtsIndex(_INDEX)))); P++;
+//Rprintf("result size: %i\n", index_len * ncs);
+
+  i = 0; 
+  PROTECT(retclass = allocVector(LGLSXP, 1)); P++;
+  LOGICAL(retclass)[0] = 1;
+  PROTECT(retside = allocVector(LGLSXP, 2)); P++;
+  LOGICAL(retside)[0] = 1;
+  LOGICAL(retside)[1] = 1;
+
+  
+  args = argstart;
+  PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside)); P++;
+  args = CDR(args);
+
+
+  int nc, ii;
+  while(ii = 0; args != R_NilValue; ii++) {
+    PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside)); P++;
+    args = CDR(args);
+    for(i=0; i < nrows(xtmp); i++) {
+      for(j=0; j < nc; j++) {
+         
+      }
     }
   }
-  UNPROTECT(P);
+
+  if(P > 0) UNPROTECT(P); 
   return(xtmp);
+  
 }

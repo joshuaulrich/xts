@@ -108,7 +108,7 @@ merge.xts <- function(x,y,...,
   
     }
   }
-if(retclass != 'xts') {
+if(!is.logical(retclass) && retclass != 'xts') {
   xx <- try(do.call(paste("as",retclass,sep="."), list(x)))
   if(!inherits(xx,'try-error')) {
     return(xx)
