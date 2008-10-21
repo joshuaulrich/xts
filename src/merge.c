@@ -955,19 +955,18 @@ SEXP mergeXts (SEXP args)
     n++;
   }
 
-    /* build an index to be used in all subsequent calls */
-    args = argstart;
-    _x = CAR(args);
-    args = CDR(args);
-    _y = CAR(args);
-    args = CDR(args);
-  
-    if(args != R_NilValue) {
+  /* build an index to be used in all subsequent calls */
+  args = argstart;
+  _x = CAR(args);
+  args = CDR(args);
+  _y = CAR(args);
+  args = CDR(args);
+
+  if(args != R_NilValue) {
     /* generalized n-case optimization
        currently if n>2 this is faster and more memory efficient
        we skip the extra overhead if n==2 */
 
-    /* must PROTECT else we clobber function defaults! */
     PROTECT(retc = allocVector(LGLSXP, 1)); P++;
     LOGICAL(retc)[0] = 1;
     PROTECT(rets = allocVector(LGLSXP, 2)); P++;
@@ -981,13 +980,6 @@ SEXP mergeXts (SEXP args)
       args = CDR(args);
     }
     index_len = length(GET_xtsIndex(_INDEX));
-  
-    /* must PROTECT else we clobber function defaults! */
-//    PROTECT(retclass = allocVector(LGLSXP, 1)); P++;
-//    LOGICAL(retclass)[0] = 1;
-//    PROTECT(retside = allocVector(LGLSXP, 2)); P++;
-//    LOGICAL(retside)[0] = 1;
-//    LOGICAL(retside)[1] = 1;
   
     args = argstart; // reset args
     int ii, jj, iijj, jj_result;
@@ -1005,15 +997,10 @@ SEXP mergeXts (SEXP args)
         for(ii=0; ii < nr; ii++) {
           iijj = ii + jj * nr;
           jj_result = iijj + (i * nr);
-          //INTEGER(result)[jj_result] = INTEGER(xtmp)[iijj];
           int_result[ jj_result ] = int_xtmp[ iijj ];
         }
       }
       UNPROTECT(1);
-    }
-    } else {
-      PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, colnames, retside)); P++;
-      nr = nrows(result);
     }
 
     SEXP dim;
@@ -1022,11 +1009,13 @@ SEXP mergeXts (SEXP args)
     INTEGER(dim)[1] = ncs;
     setAttrib(result, R_DimSymbol, dim);
 
-    if(n > 2) {
-      SET_xtsIndex(result, GET_xtsIndex(_INDEX));
-      copy_xtsCoreAttributes(_INDEX, result);
-      copy_xtsAttributes(_INDEX, result);
-    }
+    SET_xtsIndex(result, GET_xtsIndex(_INDEX));
+    copy_xtsCoreAttributes(_INDEX, result);
+    copy_xtsAttributes(_INDEX, result);
+  } else {
+    PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, colnames, retside)); P++;
+    nr = nrows(result);
+  }
 
   if(P > 0) UNPROTECT(P); 
   return(result);
