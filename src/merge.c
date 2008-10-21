@@ -991,8 +991,8 @@ SEXP mergeXts (SEXP args)
   int nc, nr, ii, jj, iijj, jj_result;
   for(i = 0; args != R_NilValue; i++, args = CDR(args)) {
 
-    xtmp = (SEXP) Calloc(index_len, SEXP);
-    PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside)); P++;
+    //xtmp = (SEXP)* Calloc(index_len, SEXP);
+    PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside));
 
     nc = ncols(xtmp);
     nr = nrows(xtmp);
@@ -1004,7 +1004,7 @@ SEXP mergeXts (SEXP args)
         INTEGER(result)[jj_result] = INTEGER(xtmp)[iijj];
       }
     }
-    Free(xtmp);
+    UNPROTECT(1);
   }
   SEXP dim;
   PROTECT(dim = allocVector(INTSXP, 2)); P++;
