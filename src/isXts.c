@@ -20,7 +20,7 @@ int isXts(SEXP x)
     }
   }
   UNPROTECT(1);
-  return 0;
+  return FALSE;
 
 }
 

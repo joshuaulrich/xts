@@ -1,3 +1,22 @@
+mergeXts <- function(..., 
+                     all=TRUE,
+                     fill=NA,
+                     suffixes=NULL,
+                     join="outer",
+                     retside=TRUE,
+                     retclass="xts") {
+  if(is.logical(retclass) && !retclass) {
+    setclass=FALSE
+  } else setclass <- TRUE
+
+  .External('mergeXts',
+            all,
+            fill,
+            setclass=setclass,
+            colnames=NULL,
+            retside=retside,
+            ...)
+}
 merge.xts <- function(x,y,...,
                       all=TRUE,
                       fill=NA,

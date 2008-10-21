@@ -34,6 +34,9 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   double *real_result, *real_x, *real_y;
   double *real_index, *real_xindex, *real_yindex;
 
+  if(!isXts(x)) error("'x' is not of class 'xts'"); 
+  if(!isXts(y)) error("'x' is not of class 'xts'"); 
+
   PROTECT( xindex = getAttrib(x, install("index")) );
   PROTECT( yindex = getAttrib(y, install("index")) );
 

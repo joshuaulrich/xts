@@ -56,4 +56,5 @@ SEXP do_xtsCoreAttributes(SEXP x);          // xtsCoreAttributes xts-specific at
 void copy_xtsAttributes(SEXP x, SEXP y);    
 void copy_xtsCoreAttributes(SEXP x, SEXP y);    
 
+int isXts(SEXP x);
 #endif /* _XTS */
