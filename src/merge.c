@@ -926,7 +926,7 @@ SEXP mergeXts (SEXP args)
 {
   SEXP _x, _y, xtmp, ytmp,  result, _INDEX;
   SEXP all, fill, retclass, colnames, retside;
-  int ncs=0, ncs_max;
+  int ncs=0, nrs=0, ncs_max;
   int index_len, size=0;
   int j, i, n=0, P=0;
 
@@ -984,27 +984,40 @@ SEXP mergeXts (SEXP args)
 
   
   args = argstart; // reset args
-  PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside)); P++;
-  args = CDR(args);
+//  PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside)); P++;
+//  args = CDR(args);
 
 
-  int nc, ii, jj, iijj, jj_result;
-  for(i = 0; args != R_NilValue; i++) {
+  int nc, nr, ii, jj, iijj, jj_result;
+  for(i = 0; args != R_NilValue; i++, args = CDR(args)) {
+
+    xtmp = (SEXP) Calloc(index_len, SEXP);
     PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside)); P++;
-    args = CDR(args);
-    for(ii=0; ii < nrows(xtmp); ii++) {
-      nc = ncols(xtmp);
-      for(jj=0; jj < nc; jj++) {
-        iijj = ii + jj * nc;
-        jj_result = ii + jj * nc * i;
-Rprintf("ii:%i, jj:%i, iijj:%i, jj_result:%i\n",ii,jj, iijj, jj_result);
-        //Rprintf("i:%i\tii:%i\tjj:%i\tiijj:%i\tjj_result:%i\n",i,ii,jj,iijj,jj_result);
-        //INTEGER(result)[jj_result] = INTEGER(xtmp)[iijj];
+
+    nc = ncols(xtmp);
+    nr = nrows(xtmp);
+    for(jj=0; jj < nc; jj++) {
+      for(ii=0; ii < nr; ii++) {
+        iijj = ii + jj * nr;
+        jj_result = iijj + (i * nr);
+//Rprintf("i: %i, ii:%i, jj:%i, iijj:%i, jj_result:%i\n",i, ii,jj, iijj, jj_result);
+        INTEGER(result)[jj_result] = INTEGER(xtmp)[iijj];
       }
     }
+    Free(xtmp);
   }
+  SEXP dim;
+  PROTECT(dim = allocVector(INTSXP, 2)); P++;
+  INTEGER(dim)[0] = nr;
+  INTEGER(dim)[1] = ncs;
+  setAttrib(result, R_DimSymbol, dim);
+
+  SET_xtsIndex(result, GET_xtsIndex(_INDEX));
+  copy_xtsCoreAttributes(_INDEX, result);
+  copy_xtsAttributes(_INDEX, result);
+
 
   if(P > 0) UNPROTECT(P); 
-  return(xtmp);
+  return(result);
   
 }
