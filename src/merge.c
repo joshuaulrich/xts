@@ -972,10 +972,10 @@ SEXP mergeXts (SEXP args)
   index_len = length(GET_xtsIndex(_INDEX));
 
   /* now build PAIRLIST of each same sized vector for cbind */
-  PROTECT(result = allocVector(INTSXP, index_len * ncs)); P++; //length(GET_xtsIndex(_INDEX)))); P++;
-//Rprintf("result size: %i\n", index_len * ncs);
+  PROTECT(result = allocVector(INTSXP, index_len * ncs)); P++;
 
   i = 0; 
+  /* must PROTECT else we clobber function defaults! */
   PROTECT(retclass = allocVector(LGLSXP, 1)); P++;
   LOGICAL(retclass)[0] = 1;
   PROTECT(retside = allocVector(LGLSXP, 2)); P++;
@@ -983,18 +983,23 @@ SEXP mergeXts (SEXP args)
   LOGICAL(retside)[1] = 1;
 
   
-  args = argstart;
+  args = argstart; // reset args
   PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside)); P++;
   args = CDR(args);
 
 
-  int nc, ii;
-  while(ii = 0; args != R_NilValue; ii++) {
+  int nc, ii, jj, iijj, jj_result;
+  for(i = 0; args != R_NilValue; i++) {
     PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside)); P++;
     args = CDR(args);
-    for(i=0; i < nrows(xtmp); i++) {
-      for(j=0; j < nc; j++) {
-         
+    for(ii=0; ii < nrows(xtmp); ii++) {
+      nc = ncols(xtmp);
+      for(jj=0; jj < nc; jj++) {
+        iijj = ii + jj * nc;
+        jj_result = ii + jj * nc * i;
+Rprintf("ii:%i, jj:%i, iijj:%i, jj_result:%i\n",ii,jj, iijj, jj_result);
+        //Rprintf("i:%i\tii:%i\tjj:%i\tiijj:%i\tjj_result:%i\n",i,ii,jj,iijj,jj_result);
+        //INTEGER(result)[jj_result] = INTEGER(xtmp)[iijj];
       }
     }
   }
