@@ -925,8 +925,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
 SEXP mergeXts (SEXP args)
 {
   SEXP _x, _y, xtmp, ytmp,  result, _INDEX;
-  SEXP all, fill, retclass, colnames, retside;
-  int ncs=0, nrs=0, ncs_max;
+  SEXP all, fill, retc, retclass, colnames, rets, retside;
+  int nr, nc, ncs=0, nrs=0, ncs_max;
   int index_len, size=0;
   int j, i, n=0, P=0;
 
@@ -947,75 +947,86 @@ SEXP mergeXts (SEXP args)
   argstart = args; // use this to rewind list...
 
   n = 0;
-  ncs_max = 0;
+  //ncs_max = 0;
   while(args != R_NilValue) {
-    ncs_max = (ncs_max > ncols(CAR(args))) ? ncs_max : ncols(CAR(args)); 
+    //ncs_max = (ncs_max > ncols(CAR(args))) ? ncs_max : ncols(CAR(args)); 
     ncs += ncols(CAR(args));
     args = CDR(args);
     n++;
   }
 
-  /* build an index to be used in all subsequent calls */
-  args = argstart;
-  _x = CAR(args);
-  args = CDR(args);
-  _y = CAR(args);
-  args = CDR(args);
-
-  PROTECT(_INDEX = do_merge_xts(_x, _y, all, fill, retclass, colnames, retside)); P++;
-  args = CDDR(args);
-  while(args != R_NilValue) {
-    PROTECT(_INDEX = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside)); P++;
+    /* build an index to be used in all subsequent calls */
+    args = argstart;
+    _x = CAR(args);
     args = CDR(args);
-  }
- 
-  index_len = length(GET_xtsIndex(_INDEX));
-
-  /* now build PAIRLIST of each same sized vector for cbind */
-  PROTECT(result = allocVector(INTSXP, index_len * ncs)); P++;
-
-  i = 0; 
-  /* must PROTECT else we clobber function defaults! */
-  PROTECT(retclass = allocVector(LGLSXP, 1)); P++;
-  LOGICAL(retclass)[0] = 1;
-  PROTECT(retside = allocVector(LGLSXP, 2)); P++;
-  LOGICAL(retside)[0] = 1;
-  LOGICAL(retside)[1] = 1;
-
+    _y = CAR(args);
+    args = CDR(args);
   
-  args = argstart; // reset args
-//  PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside)); P++;
-//  args = CDR(args);
+    if(args != R_NilValue) {
+    /* generalized n-case optimization
+       currently if n>2 this is faster and more memory efficient
+       we skip the extra overhead if n==2 */
 
-
-  int nc, nr, ii, jj, iijj, jj_result;
-  for(i = 0; args != R_NilValue; i++, args = CDR(args)) {
-
-    //xtmp = (SEXP)* Calloc(index_len, SEXP);
-    PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside));
-
-    nc = ncols(xtmp);
-    nr = nrows(xtmp);
-    for(jj=0; jj < nc; jj++) {
-      for(ii=0; ii < nr; ii++) {
-        iijj = ii + jj * nr;
-        jj_result = iijj + (i * nr);
-//Rprintf("i: %i, ii:%i, jj:%i, iijj:%i, jj_result:%i\n",i, ii,jj, iijj, jj_result);
-        INTEGER(result)[jj_result] = INTEGER(xtmp)[iijj];
-      }
+    /* must PROTECT else we clobber function defaults! */
+    PROTECT(retc = allocVector(LGLSXP, 1)); P++;
+    LOGICAL(retc)[0] = 1;
+    PROTECT(rets = allocVector(LGLSXP, 2)); P++;
+    LOGICAL(rets)[0] = 0;
+    LOGICAL(rets)[1] = 0;
+  
+    PROTECT(_INDEX = do_merge_xts(_x, _y, all, fill, retc, colnames, rets)); P++;
+    args = CDDR(args);
+    while(args != R_NilValue) {
+      PROTECT(_INDEX = do_merge_xts(_INDEX, CAR(args), all, fill, retc, colnames, rets)); P++;
+      args = CDR(args);
     }
-    UNPROTECT(1);
-  }
-  SEXP dim;
-  PROTECT(dim = allocVector(INTSXP, 2)); P++;
-  INTEGER(dim)[0] = nr;
-  INTEGER(dim)[1] = ncs;
-  setAttrib(result, R_DimSymbol, dim);
+    index_len = length(GET_xtsIndex(_INDEX));
+  
+    /* must PROTECT else we clobber function defaults! */
+//    PROTECT(retclass = allocVector(LGLSXP, 1)); P++;
+//    LOGICAL(retclass)[0] = 1;
+//    PROTECT(retside = allocVector(LGLSXP, 2)); P++;
+//    LOGICAL(retside)[0] = 1;
+//    LOGICAL(retside)[1] = 1;
+  
+    args = argstart; // reset args
+    int ii, jj, iijj, jj_result;
+    int *int_result, *int_xtmp;
+    PROTECT(result = allocVector(INTSXP, index_len * ncs)); P++;
+  
+    int_result = INTEGER(result);
+    for(i = 0; args != R_NilValue; i++, args = CDR(args)) {
+  
+      PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside));
+      int_xtmp = INTEGER(xtmp);
+      nc = ncols(xtmp);
+      nr = nrows(xtmp);
+      for(jj=0; jj < nc; jj++) {
+        for(ii=0; ii < nr; ii++) {
+          iijj = ii + jj * nr;
+          jj_result = iijj + (i * nr);
+          //INTEGER(result)[jj_result] = INTEGER(xtmp)[iijj];
+          int_result[ jj_result ] = int_xtmp[ iijj ];
+        }
+      }
+      UNPROTECT(1);
+    }
+    } else {
+      PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, colnames, retside)); P++;
+      nr = nrows(result);
+    }
 
-  SET_xtsIndex(result, GET_xtsIndex(_INDEX));
-  copy_xtsCoreAttributes(_INDEX, result);
-  copy_xtsAttributes(_INDEX, result);
+    SEXP dim;
+    PROTECT(dim = allocVector(INTSXP, 2)); P++;
+    INTEGER(dim)[0] = nr;
+    INTEGER(dim)[1] = ncs;
+    setAttrib(result, R_DimSymbol, dim);
 
+    if(n > 2) {
+      SET_xtsIndex(result, GET_xtsIndex(_INDEX));
+      copy_xtsCoreAttributes(_INDEX, result);
+      copy_xtsAttributes(_INDEX, result);
+    }
 
   if(P > 0) UNPROTECT(P); 
   return(result);
