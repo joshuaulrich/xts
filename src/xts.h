@@ -37,7 +37,7 @@ DATA TOOLS
 
 // attr(x, '.indexCLASS') or indexClass(x)
 #define  GET_xtsIndexClass(x)           getAttrib(x, xts_IndexClassSymbol)
-#define  SET_xtsIndexvalue(x,value)     setAttrib(x, xts_IndexvalueSymbol, value)
+#define  SET_xtsIndexClass(x,value)     setAttrib(x, xts_IndexvalueSymbol, value)
 
 // attr(x, '.indexFORMAT') or indexFormat(x)
 #define  GET_xtsIndexFormat(x)          getAttrib(x, xts_IndexFormatSymbol)
@@ -50,11 +50,12 @@ DATA TOOLS
 /*
 FUNCTIONS
 */
-SEXP do_xtsAttributes(SEXP x);              // xtsAttributes
-SEXP do_xtsCoreAttributes(SEXP x);          // xtsCoreAttributes xts-specific attributes
+SEXP do_xtsAttributes(SEXP x);              // xtsAttributes i.e. user-added attributes
+SEXP do_xtsCoreAttributes(SEXP x);          /* xtsCoreAttributes xts-specific attributes
+                                               CLASS, .indexFORMAT, .indexCLASS & class */
 
-void copy_xtsAttributes(SEXP x, SEXP y);    
-void copy_xtsCoreAttributes(SEXP x, SEXP y);    
+void copy_xtsAttributes(SEXP x, SEXP y);    // internal only
+void copy_xtsCoreAttributes(SEXP x, SEXP y);// internal only    
 
-int isXts(SEXP x);
+int isXts(SEXP x);                          // is.xts analogue
 #endif /* _XTS */

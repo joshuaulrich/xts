@@ -966,7 +966,7 @@ SEXP mergeXts (SEXP args)
   if(args != R_NilValue) {
     /* generalized n-case optimization
        currently if n>2 this is faster and more memory efficient
-       we skip the extra overhead if n==2 */
+       than recursively building a merged object, object by object. */
 
     PROTECT(retc = allocVector(LGLSXP, 1)); P++;
     LOGICAL(retc)[0] = 1;
@@ -976,7 +976,7 @@ SEXP mergeXts (SEXP args)
   
     PROTECT(_INDEX = do_merge_xts(_x, _y, all, fill, retc, colnames, rets)); P++;
     args = CDDR(args);
-    while(args != R_NilValue) {
+    while(args != R_NilValue) { // merge all objects into one zero-width common index
       PROTECT(_INDEX = do_merge_xts(_INDEX, CAR(args), all, fill, retc, colnames, rets)); P++;
       args = CDR(args);
     }
@@ -985,23 +985,45 @@ SEXP mergeXts (SEXP args)
     args = argstart; // reset args
     int ii, jj, iijj, jj_result;
     int *int_result, *int_xtmp;
-    PROTECT(result = allocVector(INTSXP, index_len * ncs)); P++;
-  
-    int_result = INTEGER(result);
-    for(i = 0; args != R_NilValue; i++, args = CDR(args)) {
-  
-      PROTECT(xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside));
-      int_xtmp = INTEGER(xtmp);
+    double *real_result, *real_xtmp;
+
+    PROTECT(result = allocVector(TYPEOF(_INDEX), index_len * ncs)); P++;
+    switch(TYPEOF(result)) {
+      case INTSXP:
+        int_result = INTEGER(result);
+        break;
+      case REALSXP:
+        real_result = REAL(result);
+        break;
+    }
+
+    for(i = 0; args != R_NilValue; i++, args = CDR(args)) { // merge each object with index
+      xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside);
       nc = ncols(xtmp);
       nr = nrows(xtmp);
-      for(jj=0; jj < nc; jj++) {
-        for(ii=0; ii < nr; ii++) {
-          iijj = ii + jj * nr;
-          jj_result = iijj + (i * nr);
-          int_result[ jj_result ] = int_xtmp[ iijj ];
-        }
+
+      switch(TYPEOF(xtmp)) { // by type, insert merged data into result object
+        case INTSXP:
+          int_xtmp = INTEGER(xtmp);
+          for(jj=0; jj < nc; jj++) {
+            for(ii=0; ii < nr; ii++) {
+              iijj = ii + jj * nr;
+              jj_result = iijj + (i * nr);
+              int_result[ jj_result ] = int_xtmp[ iijj ];
+            }
+          }
+          break;
+        case REALSXP:
+          real_xtmp = REAL(xtmp);
+          for(jj=0; jj < nc; jj++) {
+            for(ii=0; ii < nr; ii++) {
+              iijj = ii + jj * nr;
+              jj_result = iijj + (i * nr);
+              real_result[ jj_result ] = real_xtmp[ iijj ];
+            }
+          }
+          break;
       }
-      UNPROTECT(1);
     }
 
     SEXP dim;
@@ -1013,11 +1035,9 @@ SEXP mergeXts (SEXP args)
     SET_xtsIndex(result, GET_xtsIndex(_INDEX));
     copy_xtsCoreAttributes(_INDEX, result);
     copy_xtsAttributes(_INDEX, result);
-  } else {
+  } else { /* 2-case optimization --- simply call main routine */
     PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, colnames, retside)); P++;
   }
-
   if(P > 0) UNPROTECT(P); 
   return(result);
-  
 }

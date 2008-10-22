@@ -6,7 +6,7 @@ function(..., deparse.level = 1) {
       y <- dat[[1]]
       if( length(dat) > 0 )
         dat <- dat[-1]
-      x <- merge.xts(x, y, all=all, fill=fill, suffixes=suffixes, retclass="xts")
+      x <- merge.xts(x, y, all=TRUE, fill=NA, suffixes=NULL, retclass="xts")
     }
     x
 }
