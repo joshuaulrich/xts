@@ -11,7 +11,12 @@ function(x,fmt,...) {
     print(numeric(0))
     cat('\n')
     cat('Index:\n')
-    str(index(x))
+    index <- index(x)
+    if(length(index) == 0) {
+      print(index)
+    } else {
+      str(index(x))
+    }
   } else print(xx)
 }
 

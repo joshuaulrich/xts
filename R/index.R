@@ -1,10 +1,14 @@
 `index.xts` <-
 function(x, ...) {
   value <- indexClass(x)
+  if(is.null(value))
+    return(.index(x))
 
   sys.TZ <- Sys.getenv('TZ')
   Sys.setenv(TZ='GMT')
   x.index  <- as.POSIXct(.index(x))
+  if(length(x.index) == 0)
+    return(integer())
 
   if(!is.list(value)) 
     value <- as.list(value)

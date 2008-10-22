@@ -76,18 +76,14 @@ function(x=NULL, index, .indexCLASS="POSIXct",  row.names=FALSE, check=TRUE, uni
     stop("index must be set for each observation")
 
   if(!is.null(x)) {
-    x <- as.matrix(x)
+    if(!is.matrix(x))
+      x <- as.matrix(x)
   } else x <- numeric(0)
 
-  xx <- structure(.Data=x,
-#            dim=c(NROW(x),NCOL(x)),
+  structure(.Data=x,
             index=index,
             .indexCLASS=.indexCLASS,
             class=c('xts','zoo'), ...)
-  if(row.names) {
-    #???
-  }
-  xx
 }
 
 `reclass` <-

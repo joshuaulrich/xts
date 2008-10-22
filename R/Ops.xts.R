@@ -23,5 +23,10 @@ function(e1, e2)
   if(.Generic %in% c("+","-","*","/","^","%%","%/%")) {
     .Call('add_xts_class', e)
   }
-  else e
+  else 
+  if(is.null(attr(e,'index'))) {
+    .xts(e, .index(e1))
+  } else {
+  e
+  }
 }

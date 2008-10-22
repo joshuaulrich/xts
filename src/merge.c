@@ -180,8 +180,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
 
   if(i == 0) {
     /* if no rows match, return an empty xts object, similar in style to zoo */
+    PROTECT( result = allocVector(TYPEOF(x), 0) ); p++;
+    PROTECT( index  = allocVector(TYPEOF(xindex), 0) ); p++;
+    SET_xtsIndex(result, index);
+    setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
     UNPROTECT(2 + p);
-    return R_NilValue;
+    return result;
   }
 
   int num_rows = i;
