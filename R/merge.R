@@ -9,6 +9,30 @@ mergeXts <- function(...,
     setclass=FALSE
   } else setclass <- TRUE
 
+  mc <- match.call(expand=FALSE)
+  dots <- mc$...
+
+  if( !missing(join) ) { 
+    # join logic applied to index:
+    # inspired by: http://blogs.msdn.com/craigfr/archive/2006/08/03/687584.aspx
+    #   
+    #  (full) outer - all cases, equivelant to all=c(TRUE,TRUE)
+    #         left  - all x,    &&  y's that match x
+    #         right - all  ,y   &&  x's that match x
+    #         inner - only x and y where index(x)==index(y)
+    all <- switch(pmatch(join,c("outer","left","right","inner")),
+                    c(TRUE,  TRUE ), #  outer
+                    c(TRUE,  FALSE), #  left
+                    c(FALSE, TRUE ), #  right
+                    c(FALSE, FALSE)  #  inner
+                 )   
+  }
+
+  if( length(all) == 1 ) 
+    all <- rep(all, length.out=length(dots))
+  if( length(retside) == 1 ) 
+    retside <- rep(retside, length.out=length(dots))
+
   .External('mergeXts',
             all,
             fill,
