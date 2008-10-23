@@ -1,4 +1,4 @@
-mergeXts <- function(..., 
+merge.xts <- function(..., 
                      all=TRUE,
                      fill=NA,
                      suffixes=NULL,
@@ -8,12 +8,16 @@ mergeXts <- function(...,
   if(is.logical(retclass) && !retclass) {
     setclass=FALSE
   } else setclass <- TRUE
-
+  
   mc <- match.call(expand=FALSE)
   dots <- mc$...
   if(is.null(suffixes))
-    #suffixes <- unlist(lapply(dots, deparse))
     suffixes <- all.vars(match.call(), unique=FALSE)[1:length(dots)]
+
+  if( length(suffixes) != length(dots) ) {
+    warning("length of suffixes and does not match number of merged objects")
+    suffixes <- rep(suffixes, length.out=length(dots))
+  }
   i <- 0
   names.or.colnames <- function(x) {
     i <<- i + 1
@@ -43,18 +47,32 @@ mergeXts <- function(...,
 
   if( length(all) != 2 ) 
     all <- rep(all[1], 2)
+  if( length(dots) > 2 )
+    retside <- TRUE
   if( length(retside) != 2 ) 
     retside <- rep(retside[1], 2)
 
-  .External('mergeXts',
+  x <- .External('mergeXts',
             all=all[1:2],
             fill=fill,
             setclass=setclass,
             colnames=cnames,
             retside=retside,
             ...)
+  if(!is.logical(retclass) && retclass != 'xts') {
+    asFun <- paste("as", retclass, sep=".")
+    if(!exists(asFun)) {
+      warning(paste("could not locate",asFun,"returning 'xts' object instead"))
+      return(x)
+    }
+    xx <- try(do.call(asFun, list(x)))
+    if(!inherits(xx,'try-error')) {
+      return(xx)
+    }
+  }
+  return(x)
 }
-merge.xts <- function(x,y,...,
+.merge.xts <- function(x,y,...,
                       all=TRUE,
                       fill=NA,
                       suffixes=NULL,

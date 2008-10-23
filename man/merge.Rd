@@ -9,19 +9,16 @@ merge-join style merge allows for optimally efficient
 joins.
 }
 \usage{
-merge.xts(x,
-          y,
-          ...,
+merge.xts(...,
           all = TRUE,
           fill = NA,
           suffixes = NULL,
           join = "outer",
+          retside = TRUE,
           retclass = "xts")
 }
 \arguments{
-  \item{x}{ an \sQuote{xts} object }
-  \item{y}{ an object coercible to \sQuote{xts} }
-  \item{\dots}{ additional objects to be merged }
+  \item{\dots}{ one or more xts objects, or objects coercible to class xts }
   \item{all}{ a logical vector indicating merge type }
   \item{fill}{ values to be used for missing elements }
   \item{suffixes}{ to be added to merged column names }
@@ -29,7 +26,7 @@ merge.xts(x,
   \item{retclass}{ object to return }
 }
 \details{
-Implemented entirely in custom C-level code,
+Implemented almost entirely in custom C-level code,
 it is possible using either the \code{all} argument or
 the \code{join} argument to implement all common
 database join operations: \sQuote{outer} (full outer - all rows), 
@@ -41,6 +38,14 @@ The above join types can also be expressed as a vector of
 logical values passed to \code{all}.  c(TRUE,TRUE) or TRUE for \sQuote{join="outer"},
 c(FALSE,FALSE) or FALSE for \sQuote{join="inner"}, c(TRUE, FALSE) for \sQuote{join="left"},
 and c(FALSE,TRUE) for \sQuote{join="right"}.
+
+Note that the \code{all} and \code{join} arguments imply a two case scenario.  For merging
+more than two objects, they will simply fall back to a full outer, or full inner join, as
+left and right can be ambiguous with respect to sides.
+
+To do something along the lines of merge.zoo's method of joining based on
+an all argument of the same length of the arguments to join, see the example.  A solution
+to provide this automatically is in development.
 
 If \code{retclass} is \code{NULL}, the joined objects will be split
 and reassigned silently back to the original environment they are called
@@ -55,11 +60,7 @@ elements of the objects passed in to be merged.
 \author{ Jeffrey A. Ryan }
 \note{
 This is a highly optimized merge, specifically designed for ordered data.
-At present the \ldots argument is used in a recursive style loop
-structure, and as such is not optimized so highly.  While on merges
-of two objects speed and memory improvements on the order of
-100x over zoo are possible, merging 100's of objects causing
-significant performance loss.
+
 }
 \examples{
 (x <- xts(4:10, Sys.Date()+4:10))
@@ -69,6 +70,9 @@ merge(x,y)
 merge(x,y, join='inner')
 merge(x,y, join='left')
 merge(x,y, join='right')
+
+merge.zoo(zoo(x),zoo(y),zoo(x), all=c(TRUE, FALSE, TRUE))
+merge(merge(x,x),y,join='left')[,c(1,3,2)]
 }
 \keyword{ manip }
 \keyword{ utilities }

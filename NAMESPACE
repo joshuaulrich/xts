@@ -99,7 +99,7 @@ S3method(plot,xts)
 export(lag.xts)
 export(diff.xts)
 export(merge.xts)
-export(mergeXts)
+#export(mergeXts)
 S3method(lag,xts)
 S3method(diff,xts)
 S3method(first,default)
@@ -150,6 +150,7 @@ S3method(as.zoo,xts)
 
 # data.frame specific methods
 S3method(as.xts,data.frame)
+S3method(as.data.frame, xts)
 
 # matrix specific methods
 S3method(as.xts,matrix)
