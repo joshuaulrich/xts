@@ -11,6 +11,19 @@ mergeXts <- function(...,
 
   mc <- match.call(expand=FALSE)
   dots <- mc$...
+  if(is.null(suffixes))
+    #suffixes <- unlist(lapply(dots, deparse))
+    suffixes <- all.vars(match.call(), unique=FALSE)[1:length(dots)]
+  i <- 0
+  names.or.colnames <- function(x) {
+    i <<- i + 1
+    cnames <- colnames(eval.parent(x))
+    if(is.null(cnames))
+      cnames <- rep("",ncol(eval.parent(x)))
+    return(paste(cnames,suffixes[i],sep='.'))
+  }
+  cnames <- make.unique(unlist(lapply(dots, names.or.colnames)))
+
 
   if( !missing(join) ) { 
     # join logic applied to index:
@@ -28,16 +41,16 @@ mergeXts <- function(...,
                  )   
   }
 
-  if( length(all) == 1 ) 
-    all <- rep(all, length.out=length(dots))
-  if( length(retside) == 1 ) 
-    retside <- rep(retside, length.out=length(dots))
+  if( length(all) != 2 ) 
+    all <- rep(all[1], 2)
+  if( length(retside) != 2 ) 
+    retside <- rep(retside[1], 2)
 
   .External('mergeXts',
-            all,
-            fill,
+            all=all[1:2],
+            fill=fill,
             setclass=setclass,
-            colnames=NULL,
+            colnames=cnames,
             retside=retside,
             ...)
 }

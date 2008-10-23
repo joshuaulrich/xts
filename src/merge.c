@@ -978,16 +978,16 @@ SEXP mergeXts (SEXP args)
     LOGICAL(rets)[0] = 0;
     LOGICAL(rets)[1] = 0;
   
-    PROTECT(_INDEX = do_merge_xts(_x, _y, all, fill, retc, colnames, rets)); P++;
+    PROTECT(_INDEX = do_merge_xts(_x, _y, all, fill, retc, R_NilValue, rets)); P++;
     //PROTECT(_all = allocVector(LGLSXP,2)); P++;
     //LOGICAL(_all)[0] = LOGICAL(all)[0];
     //LOGICAL(_all)[1] = LOGICAL(all)[1];
     //args = CDDR(args);
     while(args != R_NilValue) { // merge all objects into one zero-width common index
-      PROTECT(_INDEX = do_merge_xts(_INDEX, CAR(args), all, fill, retc, colnames, rets)); P++;
+      PROTECT(_INDEX = do_merge_xts(_INDEX, CAR(args), all, fill, retc, R_NilValue, rets)); P++;
 //Rprintf("length of _INDEX: %i\n", length(GET_xtsIndex(_INDEX)));
       args = CDR(args);
-      i++;
+      //i++;
     }
     index_len = length(GET_xtsIndex(_INDEX));
   
@@ -1009,12 +1009,12 @@ SEXP mergeXts (SEXP args)
     ncs = 0;
 //    LOGICAL(_all)[0] = 1;
 //    LOGICAL(_all)[1] = LOGICAL(all)[0];
-    for(i = 0; args != R_NilValue; i++, args = CDR(args)) { // merge each object with index
-      xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, colnames, retside);
+    for(i = 0, nc=0; args != R_NilValue; i = i+nc, args = CDR(args)) { // merge each object with index
+      xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, /*colnames*/R_NilValue, retside);
       nc = ncols(xtmp);
       ncs += nc;
       nr = nrows(xtmp);
-//Rprintf("index_len: %i, nc: %i, nr: %i, ncs: %i\n", index_len, nc, nr, ncs);
+//Rprintf("i: %i, index_len: %i, nc: %i, nr: %i, ncs: %i\n", i, index_len, nc, nr, ncs);
 
       switch(TYPEOF(xtmp)) { // by type, insert merged data into result object
         case INTSXP:
@@ -1022,7 +1022,9 @@ SEXP mergeXts (SEXP args)
           for(jj=0; jj < nc; jj++) {
             for(ii=0; ii < nr; ii++) {
               iijj = ii + jj * nr;
-              jj_result = iijj + (i * nr);
+              //jj_result = iijj + (i * nr);
+              jj_result = ii + ( (i+jj) * nr);
+//Rprintf("jj_result: %i, newjj: %i, jj: %i, ii: %i\n", jj_result, ii + ((i+jj) * nr), jj, ii );
               int_result[ jj_result ] = int_xtmp[ iijj ];
             }
           }
@@ -1032,7 +1034,7 @@ SEXP mergeXts (SEXP args)
           for(jj=0; jj < nc; jj++) {
             for(ii=0; ii < nr; ii++) {
               iijj = ii + jj * nr;
-              jj_result = iijj + (i * nr);
+              jj_result = ii + ( (i+jj) * nr);
               real_result[ jj_result ] = real_xtmp[ iijj ];
             }
           }
@@ -1045,13 +1047,21 @@ SEXP mergeXts (SEXP args)
     INTEGER(dim)[0] = index_len;
     INTEGER(dim)[1] = ncs;
     setAttrib(result, R_DimSymbol, dim);
+    SEXP dimnames;
+    PROTECT(dimnames = allocVector(VECSXP, 2)); P++;
+    SET_VECTOR_ELT(dimnames, 0, R_NilValue); // rownames are always NULL in xts
+    SET_VECTOR_ELT(dimnames, 1, colnames);
+    setAttrib(result, R_DimNamesSymbol, dimnames);
+
 
     SET_xtsIndex(result, GET_xtsIndex(_INDEX));
     copy_xtsCoreAttributes(_INDEX, result);
     copy_xtsAttributes(_INDEX, result);
+
   } else { /* 2-case optimization --- simply call main routine */
     PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, colnames, retside)); P++;
   }
+
   if(P > 0) UNPROTECT(P); 
   return(result);
 }
