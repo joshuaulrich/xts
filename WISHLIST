@@ -45,7 +45,8 @@
 * merge.xts, cbind [done!]
 
 
-* indexClass and index<- should warn if non-unique index values are applied
+* indexClass and index<- should warn if non-unique index values are applied [ less important now that we
+  are moving to allow non-unique index values ]
 
 
 * add zooreg as a handled class, possibly mts if necessary
@@ -71,7 +72,7 @@
 * [.xts<- replacement method
 
 
-* cbind/rbind xts methods required to maintain xts object - 
+* cbind/rbind xts methods required to maintain xts object - [ 50% done - jar ]
 
 
 * aggregate.xts (dispatch to NextMethod or call aggregate.zoo and
@@ -127,10 +128,10 @@
   [done 2/16/2008 - jar]
 
 * create a matrix of time-series types and attributes for comparison
-  documentation
+  documentation [ done - jar ]
 
 * write an introductory vignette for 'xts', possibly an article for R news
-  [in progress 2/16/2008 - jar]
+  [ done - jar ]
 
 * web page on R-Forge
 
