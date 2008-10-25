@@ -19,11 +19,12 @@ merge.xts <- function(...,
     suffixes <- rep(suffixes, length.out=length(dots))
   }
   i <- 0
+  nframe <- sys.nframe()
   names.or.colnames <- function(x) {
     i <<- i + 1
-    cnames <- colnames(eval.parent(x))
+    cnames <- colnames(eval.parent(x, n=nframe))
     if(is.null(cnames))
-      cnames <- rep("",ncol(eval.parent(x)))
+      cnames <- rep("",ncol(eval.parent(x, n=nframe)))
     return(paste(cnames,suffixes[i],sep='.'))
   }
   cnames <- make.unique(unlist(lapply(dots, names.or.colnames)))

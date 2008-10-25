@@ -88,9 +88,9 @@ export(apply.daily,
        apply.monthly,
        apply.quarterly,
        apply.yearly)
-#export(rbind.xts,
-#       cbind.xts,
-#       c.xts)
+export(rbind.xts,
+       cbind.xts,
+       c.xts)
 export(axTicksByTime)
 S3method(plot,xts)
 
