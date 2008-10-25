@@ -38,11 +38,11 @@ construction.
 New subset.c, rbind.c, and merge.c code to handle [.xts, c.xts, rbind.xts, cbind.xts
 and merge.xts operations.
 
-Speed improvements range from 30-1300x over similar operations when compared
+Speed improvements range from 30-13000x over similar operations when compared
 to other popular R-based time-series tools.
 
 Additional C and R code has been added to speed up diff() and lag() operations,
-as well as provide basic Ops tools that are nearly as fast as native
+as well as provide basic Ops tools that are as fast or faster than native
 data-type operations, while maintaining all the functionality of xts.
 
 All of the internal reliance on zoo has been removed.  The goal is to
