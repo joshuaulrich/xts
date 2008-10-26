@@ -1,7 +1,7 @@
 # dimnames will return the actual dimnames of the xts object
 # dimnames<-.xts will force the rownames to always be NULL
 
-`.dimnames.xts` <-
+`dimnames.xts` <-
 function(x) {
   list(as.character(index(x)), colnames(unclass(x)))
 }

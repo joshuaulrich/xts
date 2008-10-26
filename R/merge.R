@@ -21,14 +21,20 @@ merge.xts <- function(...,
   i <- 0
   nframe <- sys.nframe()
   names.or.colnames <- function(x) {
+    if( length(eval.parent(x, n=nframe)) == 0 )
+      return(NULL)
     i <<- i + 1
     cnames <- colnames(eval.parent(x, n=nframe))
-    if(is.null(cnames))
+    if(is.null(cnames) && !is.null(ncol(eval.parent(x, n=nframe))))
       cnames <- rep("",ncol(eval.parent(x, n=nframe)))
     return(paste(cnames,suffixes[i],sep='.'))
   }
-  cnames <- make.unique(unlist(lapply(dots, names.or.colnames)))
-
+  makeUnique <- function(x) {
+    if(all(unlist(lapply(x,function(xx) is.null(xx))))) {
+      NULL
+    } else make.unique(x)
+  }
+  cnames <- makeUnique(unlist(lapply(dots, names.or.colnames)))
 
   if( !missing(join) ) { 
     # join logic applied to index:
@@ -44,10 +50,17 @@ merge.xts <- function(...,
                     c(FALSE, TRUE ), #  right
                     c(FALSE, FALSE)  #  inner
                  )   
+    if( length(dots) > 2 ) {
+      all <- all[1]
+      warning("'join' only applicable to two object merges")
+    }
   }
 
-  if( length(all) != 2 ) 
+  if( length(all) != 2 ) {
+    if( length(all) > 2 )
+      warning("'all' must be of length two")
     all <- rep(all[1], 2)
+  }
   if( length(dots) > 2 )
     retside <- TRUE
   if( length(retside) != 2 ) 

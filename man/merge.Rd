@@ -40,7 +40,8 @@ c(FALSE,FALSE) or FALSE for \sQuote{join="inner"}, c(TRUE, FALSE) for \sQuote{jo
 and c(FALSE,TRUE) for \sQuote{join="right"}.
 
 Note that the \code{all} and \code{join} arguments imply a two case scenario.  For merging
-more than two objects, they will simply fall back to a full outer, or full inner join, as
+more than two objects, they will simply fall back to a full outer or full inner join,
+depending on the first position of all, as
 left and right can be ambiguous with respect to sides.
 
 To do something along the lines of merge.zoo's method of joining based on
@@ -51,6 +52,9 @@ If \code{retclass} is \code{NULL}, the joined objects will be split
 and reassigned silently back to the original environment they are called
 from.  This is for backward compatibility with zoo, though unused
 by xts.
+
+If \code{retclass} is \code{FALSE} the object will be stripped of
+its class attribute.  This is for internal use.
 }
 \value{
 A new \code{xts} object containing the appropriate
@@ -73,6 +77,10 @@ merge(x,y, join='right')
 
 merge.zoo(zoo(x),zoo(y),zoo(x), all=c(TRUE, FALSE, TRUE))
 merge(merge(x,x),y,join='left')[,c(1,3,2)]
+
+# zero-width objects (only index values) can be used
+xi <- xts( , index(x))
+merge(y, xi)
 }
 \keyword{ manip }
 \keyword{ utilities }

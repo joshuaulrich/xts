@@ -955,10 +955,12 @@ SEXP mergeXts (SEXP args)
 
   n = 0;
   while(args != R_NilValue) {
-    ncs += ncols(CAR(args));
+    if( length(CAR(args)) > 0 )
+      ncs += ncols(CAR(args));
     args = CDR(args);
     n++;
   }
+//Rprintf("ncols/ncs: %i\n",ncs);
 
   /* build an index to be used in all subsequent calls */
   args = argstart;
@@ -1007,8 +1009,6 @@ SEXP mergeXts (SEXP args)
     }
 
     ncs = 0;
-//    LOGICAL(_all)[0] = 1;
-//    LOGICAL(_all)[1] = LOGICAL(all)[0];
     for(i = 0, nc=0; args != R_NilValue; i = i+nc, args = CDR(args)) { // merge each object with index
       xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, /*colnames*/R_NilValue, retside);
       nc = ncols(xtmp);
@@ -1047,12 +1047,12 @@ SEXP mergeXts (SEXP args)
     INTEGER(dim)[0] = index_len;
     INTEGER(dim)[1] = ncs;
     setAttrib(result, R_DimSymbol, dim);
+
     SEXP dimnames;
     PROTECT(dimnames = allocVector(VECSXP, 2)); P++;
     SET_VECTOR_ELT(dimnames, 0, R_NilValue); // rownames are always NULL in xts
     SET_VECTOR_ELT(dimnames, 1, colnames);
     setAttrib(result, R_DimNamesSymbol, dimnames);
-
 
     SET_xtsIndex(result, GET_xtsIndex(_INDEX));
     copy_xtsCoreAttributes(_INDEX, result);

@@ -14,8 +14,6 @@
 function(x=NULL,
          order.by=index(x),
          frequency=NULL,
-         row.names=FALSE,
-         col.names=NULL,
          unique=TRUE,
          ...)
 {
@@ -37,31 +35,19 @@ function(x=NULL,
   on.exit( Sys.setenv(TZ=tz) )
   Sys.setenv(TZ='GMT')
 
-  if(!is.null(x) && length(col.names) == NCOL(x)) {
-    dimnames <- list(NULL, col.names)
-   } else dimnames=NULL
-
-  if(!is.null(x)) {
+  if(!is.null(x) || length(x) != 0 ) {
     x <- as.matrix(x)
   } else x <- numeric(0)
 
-  z <- structure(.Data=x,
-                 index=as.numeric(as.POSIXct(order.by)),
-                 class=c('xts','zoo'),
-                 .indexCLASS=orderBy,
-                 dimnames=dimnames, ...)
-    
-  #if(NCOL(z) == 1)
-  #  dim(z) <- c(NROW(z), 1)
-
-  if(!is.null(dim(x))) {
-    attr(z,'.ROWNAMES') <- dimnames(z)[[1]]
-    colnames(z) <- colnames(x)
-    if(row.names)
-      rownames(z) <- as.character(index(z))
-  }
-
-  return(z)
+  x <- structure(.Data=x,
+            index=as.numeric(as.POSIXct(order.by)),
+            class=c('xts','zoo'),
+            .indexCLASS=orderBy,
+            ...)
+  if(!is.null(attributes(x)$dimnames[[1]]))
+    # this is very slow if user adds rownames, but maybe that is deserved :)
+    dimnames(x) <- dimnames(x) # removes row.names
+  x
 }
 
 `.xts` <-
