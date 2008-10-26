@@ -35,5 +35,15 @@ function(x, y, ...) {
 
 `rbind.xts` <-
 function(x, y, ..., deparse.level=1) {
-  .Call('do_rbind_xts',x, y)
+  if( missing(...) )
+    return(.Call('do_rbind_xts',x, y))
+  dots <- list(...)
+  x <- .Call('do_rbind_xts', x, y)
+  while( length(dots) > 0 ) {
+    y <- dots[[1]]
+    if( length(dots) > 0)
+      dots <- dots[-1]
+    x <- .Call('do_rbind_xts',x,y)
+  }
+  return(x)
 }

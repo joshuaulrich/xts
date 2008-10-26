@@ -4,6 +4,7 @@
 #include "xts.h"
 
 SEXP do_rbind_xts (SEXP x, SEXP y)
+//SEXP do_rbind_xts (SEXP args)
 {
   int nrx, ncx, nry, ncy, len;
   int i, j, ij, ij_x, ij_y, xp=1, yp=1;
@@ -436,24 +437,14 @@ SEXP rbindXts (SEXP args)
   int j, i, n=0, P=0;
 
   SEXP argstart;
-
-  args = CDR(args);
-  PROTECT(all = CAR(args)); P++;
-  args = CDR(args);
-  PROTECT(fill = CAR(args)); P++;
-  args = CDR(args);
-  PROTECT(retclass = CAR(args)); P++;
-  args = CDR(args);
-  PROTECT(colnames = CAR(args)); P++;
-  args = CDR(args);
-  PROTECT(retside = CAR(args)); P++;
-  args = CDR(args);
   // args should now correspond to the ... objects we are looking to merge 
   argstart = args; // use this to rewind list...
 
-  n = 0;
+  ncs = ncols(CAR(args));
+  n = 1; // n: number of args passed in
   while(args != R_NilValue) {
-    ncs += ncols(CAR(args));
+    if(ncs != ncols(CAR(args)))
+      error("number of columns in c/rbind must match");
     args = CDR(args);
     n++;
   }
@@ -469,18 +460,7 @@ SEXP rbindXts (SEXP args)
     /* generalized n-case optimization
        currently if n>2 this is faster and more memory efficient
        than recursively building a merged object, object by object. */
-
-    PROTECT(retc = allocVector(LGLSXP, 1)); P++;
-    LOGICAL(retc)[0] = 1;
-    PROTECT(rets = allocVector(LGLSXP, 2)); P++;
-    LOGICAL(rets)[0] = 0;
-    LOGICAL(rets)[1] = 0;
-  
-    PROTECT(_INDEX = do_merge_xts(_x, _y, all, fill, retc, R_NilValue, rets)); P++;
-    //PROTECT(_all = allocVector(LGLSXP,2)); P++;
-    //LOGICAL(_all)[0] = LOGICAL(all)[0];
-    //LOGICAL(_all)[1] = LOGICAL(all)[1];
-    //args = CDDR(args);
+    PROTECT(_INDEX = do_rbind_xts(_x, _y)); P++;
     while(args != R_NilValue) { // merge all objects into one zero-width common index
       PROTECT(_INDEX = do_merge_xts(_INDEX, CAR(args), all, fill, retc, R_NilValue, rets)); P++;
 //Rprintf("length of _INDEX: %i\n", length(GET_xtsIndex(_INDEX)));
@@ -557,7 +537,7 @@ SEXP rbindXts (SEXP args)
     copy_xtsAttributes(_INDEX, result);
 
   } else { /* 2-case optimization --- simply call main routine */
-    PROTECT(result = do_rbind_xts(_x, _y, all, fill, retclass, colnames, retside)); P++;
+    PROTECT(result = do_rbind_xts(_x, _y)); P++;
   }
 
   if(P > 0) UNPROTECT(P); 
