@@ -11,8 +11,6 @@ Constructor function for creating an extensible time-series object.
 xts(x = NULL,
     order.by = index(x),
     frequency = NULL,
-    row.names = FALSE, 
-    col.names = NULL, 
     unique = TRUE,
     ...)
 
@@ -24,8 +22,6 @@ is.xts(x)
   \item{order.by}{ a corresponding vector of unique times/dates - must be
 of a known time-based class. See details. }
   \item{frequency}{ numeric indicating frequency of \code{order.by}. See details. }
-  \item{row.names}{ should rownames be stripped to minimize memory requirements }
-  \item{col.names}{ colnames if any }
   \item{unique}{ should index be checked for unique time-stamps? }
   \item{\dots}{ additional attributes to be added. See details. }
 }
@@ -98,6 +94,7 @@ Most users will benefit the most by using the
 \code{as.xts} and \code{reclass} functions to
 automagically handle \emph{all} data abjects
 as one would handle a \code{zoo} object.
+
 }
 \seealso{ \code{\link{as.xts}}, \code{\link{reclass}},
           \code{\link{xtsAttributes}} }

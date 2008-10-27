@@ -23,6 +23,7 @@ merge.xts(...,
   \item{fill}{ values to be used for missing elements }
   \item{suffixes}{ to be added to merged column names }
   \item{join}{ type of database join }
+  \item{retside}{ which side of the merged object should be returned (2-case only) }
   \item{retclass}{ object to return }
 }
 \details{

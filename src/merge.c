@@ -966,6 +966,11 @@ SEXP mergeXts (SEXP args)
   args = argstart;
   PROTECT(_x = CAR(args)); P++;
   args = CDR(args);
+  if(args == R_NilValue) {// no y arg
+    UNPROTECT(P);
+    return(_x);
+  }
+
   PROTECT(_y = CAR(args)); P++;
   args = CDR(args);
 

@@ -39,14 +39,14 @@ function(x, y, ..., deparse.level=1) {
     return(.Call('do_rbind_xts',x, y))
   
   dots <- list(...)
-  if(colnames(x) != colnames(y))
+  if(!is.null(colnames(y)) && colnames(x) != colnames(y))
     warning('column names differ')
   x <- .Call('do_rbind_xts', x, y)
   while( length(dots) > 0 ) {
     y <- dots[[1]]
     if( length(dots) > 0)
       dots <- dots[-1]
-    if(colnames(x) != colnames(y))
+    if(!is.null(colnames(y)) && colnames(x) != colnames(y))
       warning('column names differ')
     x <- .Call('do_rbind_xts',x,y)
   }
