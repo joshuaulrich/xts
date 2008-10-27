@@ -22,7 +22,7 @@ function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
 }
 
 `as.data.frame.xts` <-
-function(x,row.names=NULL,optional=NULL,...) {
+function(x,row.names=NULL,optional=FALSE,...) {
   if(missing(row.names))
     row.names <- as.character(index(x))
   as.data.frame(coredata(x),row.names,optional,...)

@@ -19,15 +19,14 @@ endpoints(x, on="months", k=1)
 zero added to the beginning of the vector, and the index of the last
 observation in \code{x} at the end.
 
-Valid values for the argument \code{on} include: \dQuote{secs} (seconds),
+Valid values for the argument \code{on} include: \dQuote{ms} (milliseconds),
+\dQuote{milliseconds} (milliseconds), \dQuote{secs} (seconds),
 \dQuote{seconds}, \dQuote{mins} (minutes), \dQuote{minutes},
 \dQuote{hours}, \dQuote{days}, \dQuote{weeks}, \dQuote{months}, \dQuote{quarters},
 and \dQuote{years}.
 
 The \code{k} argument is only valid for values of \code{on}
-equaling \dQuote{minutes} and \dQuote{seconds}. All other values
-will ignore the \code{k} argument.
-}
+equaling \dQuote{minutes} and \dQuote{seconds}.}
 \value{
 A numeric vector of endpoints beginning with 0
 and ending with the a value equal to the length of

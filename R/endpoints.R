@@ -39,6 +39,8 @@ function(x,on='months',k=1) {
   if(on == 'seconds' || on == 'secs') {
     #c(0, which(diff(as.POSIXlt(index(x))$sec %/% k + 1) != 0), NROW(x)) 
     c(0, which(diff(.index(x) %/%  k + 1) != 0), NROW(x))
+  if(on == 'milliseconds' || on == 'ms') {
+    c(0, which(diff(.index(xms)%/%.001%/%k + 1) != 0), NROW(x))
   } else {
     stop('unsupported "on" argument')
   }
