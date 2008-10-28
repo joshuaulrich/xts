@@ -37,6 +37,12 @@ function(x, ..., error=TRUE)
 
 `try.xts` <- use.xts
 
+.merge.xts.scalar <- function(x, length.out, ...) {
+  if( length(x) == 1 && is.numeric(x) )
+    return(matrix(rep(x, length.out=length.out)))
+  return("can't convert argument to be merged")  
+}
+
 `use.reclass` <- function(x) {
   xx <- match.call()
   xxObj <- eval.parent(xx[[-1]][[2]],1)
@@ -46,3 +52,4 @@ function(x, ..., error=TRUE)
 }
 
 `Reclass` <- use.reclass
+

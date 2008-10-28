@@ -27,7 +27,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   int mode;
   int ij, ij_original, ij_result;
   int p = 0;
-  SEXP xindex, yindex, index, result, attr;
+  SEXP xindex, yindex, index, result, attr, len_xindex;
 
   int *int_result, *int_x, *int_y;
   int *int_index, *int_xindex, *int_yindex;
@@ -41,14 +41,20 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   /* convert to xts object if needed */
   if( !isXts(y) ) {
     SEXP s, t;
-    PROTECT(s = t = allocList(2)); p++;
+    PROTECT(s = t = allocList(4)); p++;
     SET_TYPEOF(s, LANGSXP);
     SETCAR(t, install("try.xts")); t = CDR(t);
-    SETCAR(t, y);
+    SETCAR(t, y); t = CDR(t);
+    PROTECT( len_xindex = allocVector(INTSXP, 1));
+    INTEGER(len_xindex)[0] = length(xindex);
+    SETCAR(t, len_xindex);
+    UNPROTECT(1);
+    SET_TAG(t, install("length.out")); t = CDR(t);
+    SETCAR(t, install(".merge.xts.scalar"));
+    SET_TAG(t, install("error"));
     PROTECT(y = eval(s, env)); p++;
   } /* end conversion process */
 
-  //if(!isXts(y)) error("'y' is not of class 'xts'"); 
   if( isXts(y) ) {
     PROTECT( yindex = getAttrib(y, xts_IndexSymbol) );
   } else {
