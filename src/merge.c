@@ -954,6 +954,7 @@ SEXP mergeXts (SEXP args)
 {
   SEXP s, t;
   SEXP _x, _y, xtmp, result, _INDEX;
+  /* colnames should be renamed as suffixes, as colnames need to be added at the C level */
   SEXP all, _all, fill, retc, retclass, colnames, rets, retside, env;
   int nr, nc, ncs=0, nrs=0;
   int index_len;
@@ -1084,7 +1085,44 @@ SEXP mergeXts (SEXP args)
     copy_xtsAttributes(_INDEX, result);
 
   } else { /* 2-case optimization --- simply call main routine */
-    PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, colnames, retside, env)); P++;
+/*
+    SEXP x_names, y_names;
+    SEXP x_dimnames = getAttrib(_x, R_DimNamesSymbol); PROTECT(x_dimnames); P++;
+    SEXP y_dimnames = getAttrib(_y, R_DimNamesSymbol); PROTECT(y_dimnames); P++;
+    if(x_dimnames == R_NilValue && length(_x) > 0) {
+      x_names = allocVector(STRSXP, ncols(_x)); PROTECT(x_names); P++;
+      for(i = 0; i < ncols(_x); i++)
+        SET_STRING_ELT(x_names, i, mkChar(""));
+    } else {
+      //x_names = allocVector(STRSXP, length(VECTOR_ELT(x_dimnames,1))) ; P++;
+      x_names = VECTOR_ELT(x_dimnames, 1);
+    } 
+    if(y_dimnames == R_NilValue && length(_y) > 0) {
+      y_names = allocVector(STRSXP, ncols(_y)); PROTECT(y_names); P++;
+      for(i = 0; i < ncols(_y); i++)
+        SET_STRING_ELT(y_names, i, mkChar(""));
+    } else {
+      //y_names = allocVector(STRSXP, length(VECTOR_ELT(y_dimnames,1))) ; P++;
+      y_names = VECTOR_ELT(y_dimnames, 1);
+    }
+
+    SEXP dimnames, dimnamescol;
+    int collen = length(x_names)+length(y_names);
+
+    PROTECT(dimnamescol = allocVector(STRSXP, collen)); P++;
+    for( i = 0; i < length(x_names); i++ ) {
+      SET_STRING_ELT(dimnamescol, i, STRING_ELT(x_names,i));
+    }
+    for(j=0 ; i < collen ;j++, i++ ) {
+      SET_STRING_ELT(dimnamescol, i, STRING_ELT(y_names,j));
+    }
+    PROTECT(dimnames = allocVector(VECSXP, 2)); P++;
+    SET_VECTOR_ELT(dimnames, 0, R_NilValue); // rownames are always NULL in xts
+    SET_VECTOR_ELT(dimnames, 1, dimnamescol);
+*/    
+//    PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, /*colnames*/ R_NilValue, retside, env)); P++;
+//    setAttrib(result, R_DimNamesSymbol, dimnames);
+    PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, /*colnames*/ R_NilValue, retside, env)); P++;
   }
 
   if(P > 0) UNPROTECT(P); 

@@ -3,7 +3,8 @@
 
 `dimnames.xts` <-
 function(x) {
-  list(as.character(index(x)), colnames(unclass(x)))
+  list(NULL, colnames(unclass(x)))
+  #list(as.character(index(x)), colnames(unclass(x)))
 }
 
 `dimnames<-.xts` <-

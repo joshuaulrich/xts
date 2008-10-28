@@ -13,6 +13,7 @@ merge.xts <- function(...,
   dots <- mc$...
   if(is.null(suffixes))
     suffixes <- all.vars(match.call(), unique=FALSE)[1:length(dots)]
+    suffixes <- as.character(match.call()[-1])[1:length(dots)]
 
   if( length(suffixes) != length(dots) ) {
     warning("length of suffixes and does not match number of merged objects")
@@ -34,7 +35,8 @@ merge.xts <- function(...,
       NULL
     } else make.unique(x)
   }
-  cnames <- makeUnique(unlist(lapply(dots, names.or.colnames)))
+  cnames <- suffixes
+  #cnames <- makeUnique(unlist(lapply(dots, names.or.colnames)))
 
   if( !missing(join) ) { 
     # join logic applied to index:

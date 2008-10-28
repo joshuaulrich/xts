@@ -12,9 +12,9 @@ like zoo.
 \tabular{ll}{
 Package: \tab xts\cr
 Type: \tab Package\cr
-Version: \tab 0.1-0\cr
-Revision: \tab 144\cr
-Date: \tab 2008-07-25\cr
+Version: \tab 0.6-1\cr
+Revision: \tab 300\cr
+Date: \tab 2008-10-28\cr
 License: \tab GPL-3\cr
 }
 Easily convert one of \R's many time-series (and non-time-series)
