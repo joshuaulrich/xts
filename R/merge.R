@@ -19,14 +19,14 @@ merge.xts <- function(...,
     suffixes <- rep(suffixes, length.out=length(dots))
   }
   i <- 0
-  nframe <- sys.nframe()
+  sframe <- rev(sys.frames())[[1]]
   names.or.colnames <- function(x) {
-    if( length(eval.parent(x, n=nframe)) == 0 )
+    if( length(eval(x, envir=sframe)) == 0 )
       return(NULL)
     i <<- i + 1
-    cnames <- colnames(eval.parent(x, n=nframe))
-    if(is.null(cnames) && !is.null(ncol(eval.parent(x, n=nframe))))
-      cnames <- rep("",ncol(eval.parent(x, n=nframe)))
+    cnames <- colnames(eval(x, envir=sframe))
+    if(is.null(cnames) && !is.null(ncol(eval(x, envir=sframe))))
+      cnames <- rep("",ncol(eval(x, envir=sframe)))
     return(paste(cnames,suffixes[i],sep='.'))
   }
   makeUnique <- function(x) {
