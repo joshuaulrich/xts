@@ -19,6 +19,9 @@ function(x, ..., error=TRUE)
     if(is.character(error)) {
       message(error)
     } else  
+    if(is.function(error)) {
+      return(error(x, ...))
+    } else 
     if(error) {
       message(gsub('\n','',xx))
     } else {

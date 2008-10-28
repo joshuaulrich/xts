@@ -75,6 +75,12 @@ external developers access to the reclassing tools within
 as well as provide a more robust and seemless end-user experience,
 regardless of the end-user's choice of data-classes.
 
+The \code{error} argument to try.xts accepts a logical value,
+indicating where an error should be thrown, a character string
+allowing for custom error messages to be displayed, or
+a function of the form \code{f(x, ...)}, to be called
+upon construction error.
+
 See the accompanying vignette for more details on the above usage
 and the package in general.
 }

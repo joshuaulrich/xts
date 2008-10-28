@@ -72,6 +72,7 @@ merge.xts <- function(...,
             setclass=setclass,
             colnames=cnames,
             retside=retside,
+            env=new.env(),
             ...)
   if(!is.logical(retclass) && retclass != 'xts') {
     asFun <- paste("as", retclass, sep=".")

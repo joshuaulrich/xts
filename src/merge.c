@@ -19,7 +19,7 @@
 
 */
 // do_merge_xts {{{
-SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP retside)
+SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP retside, SEXP env)
 {
   int nrx, ncx, nry, ncy, len, merge_all, original_index_type;
   int left_join, right_join;
@@ -34,11 +34,26 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   double *real_result, *real_x, *real_y;
   double *real_index, *real_xindex, *real_yindex;
 
-  if(!isXts(x)) error("'x' is not of class 'xts'"); 
-  if(!isXts(y)) error("'x' is not of class 'xts'"); 
-
+  /* we do not check that 'x' is an xts object.  Dispatch and mergeXts
+    (should) make this unecessary.  So we just get the index value */
   PROTECT( xindex = getAttrib(x, install("index")) );
-  PROTECT( yindex = getAttrib(y, install("index")) );
+
+  /* convert to xts object if needed */
+  if( !isXts(y) ) {
+    SEXP s, t;
+    PROTECT(s = t = allocList(2)); p++;
+    SET_TYPEOF(s, LANGSXP);
+    SETCAR(t, install("try.xts")); t = CDR(t);
+    SETCAR(t, y);
+    PROTECT(y = eval(s, env)); p++;
+  } /* end conversion process */
+
+  //if(!isXts(y)) error("'y' is not of class 'xts'"); 
+  if( isXts(y) ) {
+    PROTECT( yindex = getAttrib(y, xts_IndexSymbol) );
+  } else {
+    PROTECT( yindex = getAttrib(x, xts_IndexSymbol) );
+  }
 
   if( TYPEOF(retside) != LGLSXP )
     error("retside must be a logical value of TRUE or FALSE");
@@ -928,11 +943,12 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   return result;  
 } //}}}
 
-//SEXP mergeXts (SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP retside, SEXP args)
+//SEXP mergeXts (SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP retside, SEXP env, SEXP args)
 SEXP mergeXts (SEXP args)
 {
+  SEXP s, t;
   SEXP _x, _y, xtmp, result, _INDEX;
-  SEXP all, _all, fill, retc, retclass, colnames, rets, retside;
+  SEXP all, _all, fill, retc, retclass, colnames, rets, retside, env;
   int nr, nc, ncs=0, nrs=0;
   int index_len;
   int j, i, n=0, P=0;
@@ -949,6 +965,8 @@ SEXP mergeXts (SEXP args)
   PROTECT(colnames = CAR(args)); P++;
   args = CDR(args);
   PROTECT(retside = CAR(args)); P++;
+  args = CDR(args);
+  PROTECT(env = CAR(args)); P++;
   args = CDR(args);
   // args should now correspond to the ... objects we are looking to merge 
   argstart = args; // use this to rewind list...
@@ -985,13 +1003,9 @@ SEXP mergeXts (SEXP args)
     LOGICAL(rets)[0] = 0;
     LOGICAL(rets)[1] = 0;
   
-    PROTECT(_INDEX = do_merge_xts(_x, _y, all, fill, retc, R_NilValue, rets)); P++;
-    //PROTECT(_all = allocVector(LGLSXP,2)); P++;
-    //LOGICAL(_all)[0] = LOGICAL(all)[0];
-    //LOGICAL(_all)[1] = LOGICAL(all)[1];
-    //args = CDDR(args);
+    PROTECT(_INDEX = do_merge_xts(_x, _y, all, fill, retc, R_NilValue, rets, env)); P++;
     while(args != R_NilValue) { // merge all objects into one zero-width common index
-      PROTECT(_INDEX = do_merge_xts(_INDEX, CAR(args), all, fill, retc, R_NilValue, rets)); P++;
+      PROTECT(_INDEX = do_merge_xts(_INDEX, CAR(args), all, fill, retc, R_NilValue, rets, env)); P++;
 //Rprintf("length of _INDEX: %i\n", length(GET_xtsIndex(_INDEX)));
       args = CDR(args);
       //i++;
@@ -1015,7 +1029,7 @@ SEXP mergeXts (SEXP args)
 
     ncs = 0;
     for(i = 0, nc=0; args != R_NilValue; i = i+nc, args = CDR(args)) { // merge each object with index
-      xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, /*colnames*/R_NilValue, retside);
+      xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, /*colnames*/R_NilValue, retside, env);
       nc = ncols(xtmp);
       ncs += nc;
       nr = nrows(xtmp);
@@ -1064,7 +1078,7 @@ SEXP mergeXts (SEXP args)
     copy_xtsAttributes(_INDEX, result);
 
   } else { /* 2-case optimization --- simply call main routine */
-    PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, colnames, retside)); P++;
+    PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, colnames, retside, env)); P++;
   }
 
   if(P > 0) UNPROTECT(P); 
