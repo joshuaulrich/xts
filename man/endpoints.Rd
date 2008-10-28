@@ -25,6 +25,7 @@ Valid values for the argument \code{on} include: \dQuote{us} (microseconds),
 \dQuote{seconds}, \dQuote{mins} (minutes), \dQuote{minutes},
 \dQuote{hours}, \dQuote{days}, \dQuote{weeks}, \dQuote{months}, \dQuote{quarters},
 and \dQuote{years}.
+}
 \value{
 A numeric vector of endpoints beginning with 0
 and ending with the a value equal to the length of
