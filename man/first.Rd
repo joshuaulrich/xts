@@ -1,10 +1,10 @@
 \name{first}
 \alias{first}
 \alias{first.default}
-\alias{first.zoo}
+\alias{first.xts}
 \alias{last}
 \alias{last.default}
-\alias{last.zoo}
+\alias{last.xts}
 \title{ Return First or Last n Elements of A Data Object }
 \description{
 A generic function to return the first or last

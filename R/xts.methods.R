@@ -33,7 +33,7 @@ function(x, i, j, drop = TRUE, ...)
       i <- as.character(as.POSIXct(i)) 
 
     if(is.logical(i))
-      i <- (1:NROW(x))[rep(i,length.out=NROW(x))]
+      i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]
 
     if (is.character(i)) {
       # enables subsetting by date style strings

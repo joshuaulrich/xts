@@ -10,7 +10,7 @@ function(x,n=1,keep=FALSE,...)
   xx <- try.xts(x)
   if(is.xts(xx)) {
     xx <- last.xts(x, n=n, keep=keep, ...)
-    reclass(xx)
+    return(reclass(xx))
   }
   if(is.null(dim(x))) {
     if(n > 0) {

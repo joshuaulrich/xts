@@ -167,6 +167,10 @@ S3method(as.xts,its)
 # irts (package:tseries) specific methods
 S3method(as.xts,irts)
 
+# fts (package:fts) specific methods
+S3method(as.xts,fts)
+export(as.fts.xts)
+
 # Date specific methods
 S3method(as.xts,Date)
 
