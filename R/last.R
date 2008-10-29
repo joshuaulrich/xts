@@ -7,6 +7,11 @@ function(x,...)
 `last.default` <-
 function(x,n=1,keep=FALSE,...)
 {
+  xx <- try.xts(x)
+  if(is.xts(xx)) {
+    xx <- last.xts(x, n=n, keep=keep, ...)
+    reclass(xx)
+  }
   if(is.null(dim(x))) {
     if(n > 0) {
       xx <- x[(NROW(x)-n+1):NROW(x)]
@@ -29,13 +34,13 @@ function(x,n=1,keep=FALSE,...)
     }
   }
 }
-`last.zoo` <-
+`last.xts` <-
 function(x,n=1,keep=FALSE,...)
 {
   if(is.character(n)) {
-    if(!inherits(index(x),'POSIXt') && !inherits(index(x),'Date'))
-      stop(paste('subsetting by date is only possible with objects having',
-           'time based indexes'))
+#    if(!inherits(index(x),'POSIXt') && !inherits(index(x),'Date'))
+#      stop(paste('subsetting by date is only possible with objects having',
+#           'time based indexes'))
     # n period set
     np <- strsplit(n," ",fixed=TRUE)[[1]]
     if(length(np) > 2 || length(np) < 1)

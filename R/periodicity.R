@@ -13,7 +13,7 @@
   if( timeBased(x) || !is.xts(x) )
     x <- try.xts(x, error='periodicity need to be timeBased or xtsible')
 
-  p <- median(diff( .index(x) ))
+  p <- mean(diff( .index(x) ))
 
   if( is.na(p) ) stop("can not calculate periodicity of 1 observation")
 

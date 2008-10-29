@@ -104,8 +104,8 @@ S3method(lag,xts)
 S3method(diff,xts)
 S3method(first,default)
 S3method(last,default)
-S3method(first,zoo)
-S3method(last,zoo)
+S3method(first,xts)
+S3method(last,xts)
 S3method(print,periodicity)
 
 # xts methods
@@ -170,6 +170,15 @@ S3method(as.xts,irts)
 # Date specific methods
 S3method(as.xts,Date)
 
+# POSIX specific methods
+S3method(as.xts,POSIXt)
+
+# yearmon/yearqtr specific methods
+S3method(as.xts,yearmon)
+S3method(as.xts,yearqtr)
+
+# timeDate specific methods
+S3method(as.xts,timeDate)
 ## currently unexported functions that _may_ be exported at some point
 
 #export(startof,endof,firstof,lastof)

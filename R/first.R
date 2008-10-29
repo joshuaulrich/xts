@@ -7,6 +7,11 @@ function(x,...)
 `first.default` <-
 function(x,n=1,keep=FALSE,...)
 {
+  xx <- try.xts(x, error=FALSE)
+  if(is.xts(xx)) {
+    xx <- first.xts(x, n=n, keep=keep)
+    reclass(xx)
+  }
   if(is.null(dim(x))) {
     if(n > 0) {
       xx <- x[1:n]
@@ -30,14 +35,14 @@ function(x,n=1,keep=FALSE,...)
   }
 }
 
-`first.zoo` <-
+`first.xts` <-
 function(x,n=1,keep=FALSE,...)
 {
   if(is.character(n)) {
     # n period set
-    if(!inherits(index(x),'POSIXt') && !inherits(index(x),'Date'))
-      stop(paste('subsetting by date is only possible with objects having',
-           'time based indexes'))
+#    if(!inherits(index(x),'POSIXt') && !inherits(index(x),'Date'))
+#      stop(paste('subsetting by date is only possible with objects having',
+#           'time based indexes'))
     np <- strsplit(n," ",fixed=TRUE)[[1]]
     if(length(np) > 2 || length(np) < 1)
       stop(paste("incorrectly specified",sQuote("n"),sep=" "))
