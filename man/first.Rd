@@ -23,9 +23,9 @@ last(x,...)
 
 \method{last}{default}(x,n=1,keep=FALSE,...)
 
-\method{first}{zoo}(x,n=1,keep=FALSE,...)
+\method{first}{xts}(x,n=1,keep=FALSE,...)
 
-\method{last}{zoo}(x,n=1,keep=FALSE,...)
+\method{last}{xts}(x,n=1,keep=FALSE,...)
 }
 \arguments{
   \item{x}{ 1 or 2 dimensional data object }
@@ -40,9 +40,8 @@ method behaves much like \code{head} and \code{tail} from
 \pkg{base}, except by default only the \emph{first} or
 \emph{last} observation will be returned.
 
-The more useful method for the zoo class allows for
-time based subsetting, given a zoo object whose index is
-inherited from either \code{POSIXt} or \code{Date}.
+The more useful method for the xts class allows for
+time based subsetting, given an xtsible object.
 
 \code{n} may be either a numeric value, indicating the number of
 observations to return - forward from \code{first}, or backwards from \code{last},
@@ -90,5 +89,13 @@ last(1:100)
 data(LakeHuron)
 first(LakeHuron,10)
 last(LakeHuron)
+
+x <- xts(1:100, Sys.Date()+1:100)
+first(x, 10)
+first(x, '1 day')
+first(x, '4 days')
+first(x, 'month')
+last(x, '2 months')
+last(x, '6 weeks')
 }
 \keyword{ utilities }
