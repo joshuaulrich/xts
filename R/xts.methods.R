@@ -71,6 +71,10 @@ function(x, i, j, drop = TRUE, ...)
       i <- i.tmp
     }
   
+    if(!isOrdered(i,strictly=FALSE)) {
+      i <- sort(i)
+      # possibly can test for dup=TRUE here, if we implement a global option
+    }
     # .subset is picky, 0's in the 'i' position cause failures -- is this still nec? -jar
     zero.index <- binsearch(0, i, NULL)
     if(!is.na(zero.index))
