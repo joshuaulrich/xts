@@ -86,6 +86,11 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
 
   mode = TYPEOF(x);
 
+  /* this needs to be handled better than failing.  Ideally on could merge all types based
+     on some underlying type ordering.  For now, we fail... */
+  if(TYPEOF(x) != TYPEOF(y))
+    error("mismatched data types");
+
   /* at present we are failing the call if the indexing is of
      mixed type.  This should probably instead simply coerce
      to REAL so as not to lose any information (at the expense

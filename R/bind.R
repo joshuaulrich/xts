@@ -35,6 +35,8 @@ function(x, y, ...) {
 
 `rbind.xts` <-
 function(x, y, ..., deparse.level=1) {
+  if(missing(y)) 
+    return(x)
   if( missing(...) )
     return(.Call('do_rbind_xts',x, y))
   

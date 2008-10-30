@@ -28,6 +28,9 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
   K = INTEGER(k)[ 0 ];
   K = (K > nrs) ? nrs : K;
 
+  if(TYPEOF(x) == LGLSXP)
+    PROTECT(x = coerceVector(x, INTSXP)); P++;
+
   mode = TYPEOF(x);
 
   NApad = INTEGER(pad)[ 0 ];
@@ -43,6 +46,7 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
   }
 
   switch( TYPEOF(x) ) {
+    case LGLSXP:
     case INTSXP:
         int_x = INTEGER(x);
         int_result = INTEGER(result);
@@ -50,6 +54,9 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
     case REALSXP:
         real_x = REAL(x);
         real_result = REAL(result);
+        break;
+    default:
+        error("unsupported type");
         break;
   }
 
