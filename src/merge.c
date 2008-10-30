@@ -1122,7 +1122,7 @@ SEXP mergeXts (SEXP args)
 */    
 //    PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, /*colnames*/ R_NilValue, retside, env)); P++;
 //    setAttrib(result, R_DimNamesSymbol, dimnames);
-    PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, /*colnames*/ R_NilValue, retside, env)); P++;
+    PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, colnames /*R_NilValue*/, retside, env)); P++;
   }
 
   if(P > 0) UNPROTECT(P); 

@@ -11,32 +11,19 @@ merge.xts <- function(...,
   
   mc <- match.call(expand=FALSE)
   dots <- mc$...
-  if(is.null(suffixes))
-    suffixes <- all.vars(match.call(), unique=FALSE)[1:length(dots)]
-    suffixes <- as.character(match.call()[-1])[1:length(dots)]
-
-  if( length(suffixes) != length(dots) ) {
+  if(is.null(suffixes)) {
+    syms <- as.character(dots)
+  } else
+  if(length(suffixes) != length(dots)) {
     warning("length of suffixes and does not match number of merged objects")
-    suffixes <- rep(suffixes, length.out=length(dots))
-  }
-  i <- 0
-  sframe <- rev(sys.frames())[[1]]
-  names.or.colnames <- function(x) {
-    if( length(eval(x, envir=sframe)) == 0 )
-      return(NULL)
-    i <<- i + 1
-    cnames <- colnames(eval(x, envir=sframe))
-    if(is.null(cnames) && !is.null(ncol(eval(x, envir=sframe))))
-      cnames <- rep("",ncol(eval(x, envir=sframe)))
-    return(paste(cnames,suffixes[i],sep='.'))
-  }
-  makeUnique <- function(x) {
-    if(all(unlist(lapply(x,function(xx) is.null(xx))))) {
-      NULL
-    } else make.unique(x)
-  }
-  cnames <- suffixes
-  #cnames <- makeUnique(unlist(lapply(dots, names.or.colnames)))
+    syms <- as.character(dots)
+  } else syms <- suffixes
+  .env <- rev(sys.frames())[[1]]
+  .times <- unlist(lapply(dots, function(x) {
+                         nc <- ncol(eval(x, envir=.env))
+                         ifelse(is.null(nc), 0, nc)
+                         }))
+  cnames <- make.names(rep(syms, .times), unique=TRUE)
 
   if( !missing(join) ) { 
     # join logic applied to index:
