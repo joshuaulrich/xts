@@ -45,16 +45,27 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
     SET_TYPEOF(s, LANGSXP);
     SETCAR(t, install("try.xts")); t = CDR(t);
     SETCAR(t, y); t = CDR(t);
-    PROTECT( len_xindex = allocVector(INTSXP, 1));
+    PROTECT( len_xindex = allocVector(INTSXP, 1)); p++;
     INTEGER(len_xindex)[0] = length(xindex);
     SETCAR(t, len_xindex);
-    UNPROTECT(1);
     SET_TAG(t, install("length.out")); t = CDR(t);
     SETCAR(t, install(".merge.xts.scalar"));
     SET_TAG(t, install("error"));
     PROTECT(y = eval(s, env)); p++;
   } /* end conversion process */
+/*
+UNPROTECT(p+1);
+return(y);
+*/
+  mode = TYPEOF(x);
 
+  /* this needs to be handled better than failing.  Ideally on could merge all types based
+     on some underlying type ordering.  For now, we fail... */
+/*
+  if(TYPEOF(x) != TYPEOF(y)) {
+    PROTECT(y = coerceVector(y, mode)); p++;
+  }
+*/
   if( isXts(y) ) {
     PROTECT( yindex = getAttrib(y, xts_IndexSymbol) );
   } else {
@@ -72,7 +83,6 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
     nrx = nrows(xindex);
     ncx = 0;
   }
-//Rprintf("LENGTH(x) %i, nrx %i, ncx %i\n", LENGTH(x), nrx, ncx);
   
   nry = nrows(y);
   ncy = ncols(y);
@@ -84,12 +94,6 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
 
   len = nrx + nry;
 
-  mode = TYPEOF(x);
-
-  /* this needs to be handled better than failing.  Ideally on could merge all types based
-     on some underlying type ordering.  For now, we fail... */
-  if(TYPEOF(x) != TYPEOF(y))
-    error("mismatched data types");
 
   /* at present we are failing the call if the indexing is of
      mixed type.  This should probably instead simply coerce
@@ -200,7 +204,6 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   } 
   }
 
-//Rprintf("num_rows %i, xp %i, yp %i\n",i, xp, yp);
 //UNPROTECT(2+p);
 //return R_NilValue;
 
@@ -222,7 +225,6 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
      either here or in the calling R code.  I suspect here is
      more useful if other function can call the C code as well. */
   PROTECT( result = allocVector(TYPEOF(x), (ncx + ncy) * num_rows) );
-
   /* need to coerce y to typeof x */
   if( TYPEOF(x) != TYPEOF(y) ) {
     PROTECT( y = coerceVector(y, TYPEOF(x)) ); p++;
@@ -940,7 +942,6 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   } else {
     setAttrib(result, R_DimSymbol, R_NilValue);
   }
-  
 
   setAttrib(result, xts_IndexSymbol, index);
   if(LOGICAL(retclass)[0])
@@ -990,7 +991,6 @@ SEXP mergeXts (SEXP args)
     args = CDR(args);
     n++;
   }
-//Rprintf("ncols/ncs: %i\n",ncs);
 
   /* build an index to be used in all subsequent calls */
   args = argstart;
@@ -1031,6 +1031,7 @@ SEXP mergeXts (SEXP args)
 
     PROTECT(result = allocVector(TYPEOF(_INDEX), index_len * ncs)); P++;
     switch(TYPEOF(result)) {
+      case LGLSXP:
       case INTSXP:
         int_result = INTEGER(result);
         break;
@@ -1048,6 +1049,7 @@ SEXP mergeXts (SEXP args)
 //Rprintf("i: %i, index_len: %i, nc: %i, nr: %i, ncs: %i\n", i, index_len, nc, nr, ncs);
 
       switch(TYPEOF(xtmp)) { // by type, insert merged data into result object
+        case LGLSXP:
         case INTSXP:
           int_xtmp = INTEGER(xtmp);
           for(jj=0; jj < nc; jj++) {
@@ -1090,43 +1092,6 @@ SEXP mergeXts (SEXP args)
     copy_xtsAttributes(_INDEX, result);
 
   } else { /* 2-case optimization --- simply call main routine */
-/*
-    SEXP x_names, y_names;
-    SEXP x_dimnames = getAttrib(_x, R_DimNamesSymbol); PROTECT(x_dimnames); P++;
-    SEXP y_dimnames = getAttrib(_y, R_DimNamesSymbol); PROTECT(y_dimnames); P++;
-    if(x_dimnames == R_NilValue && length(_x) > 0) {
-      x_names = allocVector(STRSXP, ncols(_x)); PROTECT(x_names); P++;
-      for(i = 0; i < ncols(_x); i++)
-        SET_STRING_ELT(x_names, i, mkChar(""));
-    } else {
-      //x_names = allocVector(STRSXP, length(VECTOR_ELT(x_dimnames,1))) ; P++;
-      x_names = VECTOR_ELT(x_dimnames, 1);
-    } 
-    if(y_dimnames == R_NilValue && length(_y) > 0) {
-      y_names = allocVector(STRSXP, ncols(_y)); PROTECT(y_names); P++;
-      for(i = 0; i < ncols(_y); i++)
-        SET_STRING_ELT(y_names, i, mkChar(""));
-    } else {
-      //y_names = allocVector(STRSXP, length(VECTOR_ELT(y_dimnames,1))) ; P++;
-      y_names = VECTOR_ELT(y_dimnames, 1);
-    }
-
-    SEXP dimnames, dimnamescol;
-    int collen = length(x_names)+length(y_names);
-
-    PROTECT(dimnamescol = allocVector(STRSXP, collen)); P++;
-    for( i = 0; i < length(x_names); i++ ) {
-      SET_STRING_ELT(dimnamescol, i, STRING_ELT(x_names,i));
-    }
-    for(j=0 ; i < collen ;j++, i++ ) {
-      SET_STRING_ELT(dimnamescol, i, STRING_ELT(y_names,j));
-    }
-    PROTECT(dimnames = allocVector(VECSXP, 2)); P++;
-    SET_VECTOR_ELT(dimnames, 0, R_NilValue); // rownames are always NULL in xts
-    SET_VECTOR_ELT(dimnames, 1, dimnamescol);
-*/    
-//    PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, /*colnames*/ R_NilValue, retside, env)); P++;
-//    setAttrib(result, R_DimNamesSymbol, dimnames);
     PROTECT(result = do_merge_xts(_x, _y, all, fill, retclass, colnames /*R_NilValue*/, retside, env)); P++;
   }
 

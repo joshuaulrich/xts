@@ -38,9 +38,11 @@ function(x, ..., error=TRUE)
 `try.xts` <- use.xts
 
 .merge.xts.scalar <- function(x, length.out, ...) {
-  if( length(x) == 1 && is.numeric(x) )
+  if( length(x) == 1 )
     return(matrix(rep(x, length.out=length.out)))
-  return("can't convert argument to be merged")  
+  if( NROW(x) == length.out )
+    return(x)
+  stop("can't convert argument to be merged")  
 }
 
 `use.reclass` <- function(x) {

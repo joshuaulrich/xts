@@ -21,6 +21,9 @@ merge.xts <- function(...,
   .env <- rev(sys.frames())[[1]]
   .times <- unlist(lapply(dots, function(x) {
                          nc <- ncol(eval(x, envir=.env))
+                         if(is.null(nc) && (is.numeric(eval(x, envir=.env)) 
+                                            || is.integer(eval(x, envir=.env))
+                                            || is.logical(eval(x, envir=.env)))) nc <- 1
                          ifelse(is.null(nc), 0, nc)
                          }))
   cnames <- make.names(rep(syms, .times), unique=TRUE)
