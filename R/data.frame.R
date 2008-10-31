@@ -2,8 +2,6 @@
 
 `re.data.frame` <-
 function(x,...) {
-  if(dim(x)[2] < 2)
-    return(as.vector(x))
   data.frame(x,...)
 }
 
