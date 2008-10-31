@@ -5,7 +5,12 @@
 
 SEXP diffXts(SEXP x, SEXP lag, SEXP diff, SEXP arith, SEXP nap, SEXP dots)
 {
-   
+  // unimplemented so far -- wrapper in R does it all.
+  /*
+  if(TYPEOF(x) == LGLSXP) {
+    PROTECT(x = coerceVector(x, INTSXP)); P++;
+  }
+  */
 }
 
 
@@ -17,6 +22,7 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
   int mode;
   int P=0; //PROTECT counter
   int *int_result, *int_x;
+  int *lgl_result, *lgl_x;
   double *real_result, *real_x;
   
   int *int_oindex, *int_nindex;
@@ -27,9 +33,6 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
 
   K = INTEGER(k)[ 0 ];
   K = (K > nrs) ? nrs : K;
-
-  if(TYPEOF(x) == LGLSXP)
-    PROTECT(x = coerceVector(x, INTSXP)); P++;
 
   mode = TYPEOF(x);
 
@@ -47,6 +50,9 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
 
   switch( TYPEOF(x) ) {
     case LGLSXP:
+        lgl_x = LOGICAL(x);
+        lgl_result = LOGICAL(result);
+        break;
     case INTSXP:
         int_x = INTEGER(x);
         int_result = INTEGER(result);
@@ -54,6 +60,11 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
     case REALSXP:
         real_x = REAL(x);
         real_result = REAL(result);
+        break;
+    case CPLXSXP:
+    case STRSXP:
+    case VECSXP:
+    case RAWSXP:
         break;
     default:
         error("unsupported type");
@@ -79,6 +90,8 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
       if(NApad) {
       switch ( mode ) {
         case LGLSXP:
+             lgl_result[ ij ] = NA_INTEGER;
+             break;
         case INTSXP:
              //INTEGER(result)[ij] = NA_INTEGER;
              int_result[ ij ] = NA_INTEGER;
@@ -112,7 +125,8 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
 //Rprintf("i=%i;\tj=%i;\tij=%i;\tiijj=%i\n", i, j, ij, iijj);
       switch ( mode ) {
         case LGLSXP:
-             LOGICAL(result)[ij] = LOGICAL(x)[iijj];
+             //LOGICAL(result)[ij] = LOGICAL(x)[iijj];
+             lgl_result[ ij ] = lgl_x[ iijj ];
              break;
         case INTSXP:
              //INTEGER(result)[ij] = INTEGER(x)[iijj];
