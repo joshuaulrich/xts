@@ -14,8 +14,8 @@ function(e1, e2)
     .Class <- "matrix"
     NextMethod(.Generic)
     } else {
-      e1 <- merge.xts(e1, .xts(,.index(e2)), all=FALSE, retclass=FALSE)
-      e2 <- merge.xts(e2, .xts(,.index(e1)), all=FALSE, retclass=FALSE)
+      e1 <- merge.xts(e1, e2, all=FALSE, retclass=FALSE, retside=c(TRUE,FALSE))
+      e2 <- merge.xts(e2, e1, all=FALSE, retclass=FALSE, retside=c(TRUE,FALSE))
       .Class <- "matrix"
       NextMethod(.Generic)
     }
