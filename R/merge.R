@@ -17,15 +17,13 @@ merge.xts <- function(...,
   if(length(suffixes) != length(dots)) {
     warning("length of suffixes and does not match number of merged objects")
     syms <- as.character(dots)
-  } else syms <- suffixes
-  .env <- rev(sys.frames())[[1]]
-  .times <- unlist(lapply(dots, function(x) {
-                         nc <- ncol(eval(x, envir=.env))
-                         if(is.null(nc) && length(eval(x, envir=.evv)) > 0)
-                            nc <- 1
-                         ifelse(is.null(nc), 0, nc)
-                         }))
-  cnames <- make.names(rep(syms, .times), unique=TRUE)
+  } else {
+    syms <- as.character(suffixes)
+    sfx  <- as.character(suffixes)
+  }
+
+  .times <- .External('number_of_cols', ...)
+  symnames <- rep(syms, .times)  # moved call to make.names inside of mergeXts/do_merge_xts
 
   if( !missing(join) ) { 
     # join logic applied to index:
@@ -61,7 +59,8 @@ merge.xts <- function(...,
             all=all[1:2],
             fill=fill,
             setclass=setclass,
-            colnames=cnames,
+            symnames=symnames,
+            suffixes=suffixes,
             retside=retside,
             env=new.env(),
             ...)
