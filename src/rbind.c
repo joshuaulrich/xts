@@ -25,6 +25,14 @@ SEXP do_rbind_xts (SEXP x, SEXP y)
 
   len = nrx + nry;
 
+  /* need to convert different types of x and y if needed */
+  if( TYPEOF(x) != TYPEOF(y) ) {
+    warning("mismatched types: converting objects to numeric");  // FIXME  not working!!!????
+    PROTECT(x = coerceVector(x, REALSXP)); P++;
+    PROTECT(y = coerceVector(y, REALSXP)); P++;
+  } 
+
+
   mode = TYPEOF(x);
 
   if(ncx != ncy)
@@ -41,12 +49,6 @@ SEXP do_rbind_xts (SEXP x, SEXP y)
 
   PROTECT(newindex = allocVector(TYPEOF(xindex), len)); P++;
   PROTECT(result   = allocVector(TYPEOF(x), len * ncx)); P++;
-
-  /* need to convert different types of x and y if needed */
-  if( TYPEOF(x) != TYPEOF(y) ) {
-    PROTECT(x = coerceVector(x, REALSXP)); P++;
-    PROTECT(y = coerceVector(y, REALSXP)); P++;
-  } 
 
   switch( TYPEOF(x) ) {
     case INTSXP:

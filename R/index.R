@@ -12,7 +12,7 @@ function(x, ...) {
 
   if(!is.list(value)) 
     value <- as.list(value)
-  if(!value[[1]] %in% c('dates','chron','POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr') )
+  if(!value[[1]] %in% c('multitime','dates','chron','POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr') )
        stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
 
   if(value[[1]]=='timeDate') {
