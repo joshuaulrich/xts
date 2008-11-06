@@ -158,6 +158,7 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
 
   setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
   if(!NApad) { // No NA padding
+Rprintf("NApad FALSE\n");
     SEXP oindex, nindex, dims;
     int nRows = (K > 0) ? nrs-K : nrs+K;
     int incr  = (K > 0) ? K : 0;
@@ -166,16 +167,20 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
     switch(TYPEOF(oindex)) {
       case REALSXP:
         real_oindex = REAL(oindex);
+        real_oindex = real_oindex + incr;
         real_nindex = REAL(nindex); 
         for( i = 0; i < nRows; real_nindex++, real_oindex++, i++)
           *real_nindex = *real_oindex;
+        //for( i = 0; i < nRows; i++)
           //REAL(nindex)[ i ] = REAL(oindex)[ i+incr ];
         break;
       case INTSXP:
         int_oindex = INTEGER(oindex);
+        int_oindex = int_oindex + incr;
         int_nindex = INTEGER(nindex);
         for( i = 0; i < nRows; int_nindex++, int_oindex++, i++)
           *int_nindex = *int_oindex;
+        //for( i = 0; i < nRows; i++)
           //INTEGER(nindex)[ i ] = INTEGER(oindex)[ i+incr ];
         break;
       default:
