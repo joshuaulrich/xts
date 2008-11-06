@@ -158,7 +158,6 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
 
   setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
   if(!NApad) { // No NA padding
-Rprintf("NApad FALSE\n");
     SEXP oindex, nindex, dims;
     int nRows = (K > 0) ? nrs-K : nrs+K;
     int incr  = (K > 0) ? K : 0;
