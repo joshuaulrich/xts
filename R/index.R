@@ -16,7 +16,7 @@ function(x, ...) {
        stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
 
   if(value[[1]]=='timeDate') {
-    stopifnot('package:fSeries' %in% search() | require('fSeries',quietly=TRUE))
+    stopifnot('package:timeDate' %in% search() | require('timeDate',quietly=TRUE))
     x.index <- do.call(paste('as',value[[1]],sep='.'),list(x.index))
   } 
   else if(value[[1]] %in% c('chron','dates','POSIXt','POSIXct','POSIXlt','yearmon','yearqtr')) {
@@ -36,7 +36,8 @@ function(x, ...) {
   #}
 
   Sys.setenv(TZ=sys.TZ)
-  
+  if(class(x.index)[1] %in% c('chron'))
+    attr(x, 'tzone') <- NULL
   x.index
 }
 

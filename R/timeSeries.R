@@ -2,7 +2,7 @@
 
 `re.timeSeries` <-
 function(x,...) {
-  stopifnot("package:fSeries" %in% search() || require("fSeries", quietly=TRUE))
+  stopifnot("package:timeSeries" %in% search() || require("timeSeries", quietly=TRUE))
 
   # strip all non-'core' attributes so they're not attached to the Data slot
   x.attr <- attributes(x)

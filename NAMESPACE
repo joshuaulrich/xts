@@ -161,7 +161,7 @@ S3method(as.data.frame, xts)
 S3method(as.xts,matrix)
 S3method(as.matrix,xts)
 
-# timeSeries (package:fSeries) specific methods
+# timeSeries (package:timeSeries) specific methods
 #export(xts.as.timeSeries)
 S3method(as.xts,timeSeries)
 

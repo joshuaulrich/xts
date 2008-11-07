@@ -27,7 +27,9 @@ function(x=NULL,
 
   if(!is.null(x) && !isOrdered(order.by, strictly=!unique) ) {
     indx <- order(order.by)
-    x <- x[indx,]
+    if(is.matrix(x)) {
+      x <- x[indx,]
+    } else x <- x[indx]
     order.by <- order.by[indx]
   }
 
