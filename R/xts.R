@@ -148,6 +148,8 @@ function(x,...) {
   UseMethod('as.xts')
 }
 
+#as.xts.default <- function(x, ...) x
+
 `re.xts` <-
 function(x,...) {
   # simply return the object
