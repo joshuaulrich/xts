@@ -34,7 +34,7 @@ function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,...) {
 
   order.by <- do.call(paste('as',dateFormat,sep='.'),list(x@positions))
 
-  xts(as.matrix(x@Data),
+  xts(as.matrix(x@.Data),  
       order.by=order.by,
       format=x@format,
       FinCenter=FinCenter,

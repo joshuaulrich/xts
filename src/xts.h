@@ -11,6 +11,9 @@ Copyright Jeffrey A. Ryan 2008
 This source is distributed with the same license
 as the full xts software, GPL3.
 */
+#include <R.h>
+#include <Rinternals.h>
+#include <Rdefines.h>
 
 #ifndef _XTS
 #define _XTS
@@ -53,6 +56,14 @@ FUNCTIONS
 SEXP do_xtsAttributes(SEXP x);              // xtsAttributes i.e. user-added attributes
 SEXP do_xtsCoreAttributes(SEXP x);          /* xtsCoreAttributes xts-specific attributes
                                                CLASS, .indexFORMAT, .indexCLASS & class */
+SEXP add_xts_class(SEXP x);
+SEXP lagXts(SEXP x, SEXP k, SEXP pad);
+SEXP do_is_ordered(SEXP x, SEXP increasing, SEXP strictly);
+SEXP mergeXts(SEXP args);
+SEXP do_rbind_xts(SEXP x, SEXP y);
+SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc);
+SEXP number_of_cols(SEXP args);
+SEXP col_names(SEXP args);
 
 void copy_xtsAttributes(SEXP x, SEXP y);    // internal only
 void copy_xtsCoreAttributes(SEXP x, SEXP y);// internal only    
