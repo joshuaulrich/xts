@@ -969,6 +969,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
 } //}}}
 
 //SEXP mergeXts (SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP retside, SEXP env, SEXP args)
+/* called via .External("mergeXts", ...) */
 SEXP mergeXts (SEXP args) // mergeXts {{{
 {
   SEXP s, t;

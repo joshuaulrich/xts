@@ -29,4 +29,6 @@ void R_init_xts(DllInfo *info)
                      NULL,
                      externalMethods);
   R_useDynamicSymbols(info, TRUE);
+  R_RegisterCCallable("xts","do_is_ordered", (DL_FUNC) &do_is_ordered);
+  R_RegisterCCallable("xts","isXts", (DL_FUNC) &isXts);
 }
