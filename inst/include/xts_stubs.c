@@ -8,6 +8,14 @@
 # define attribute_hidden
 #endif
 
+/*
+  To aid those looking for answers on interfacing compiled code
+  from another package.
+
+  static RETURNTYPE(*fun)(ARG1,ARG2) = NULL     where ARGS are the types accepted, comma seperated
+    fun = ( RETURNTYPE(*)(ARG1,ARG2)) R_GetCCallable("PACKAGENAME", "FUNCTIONNAME")
+
+*/
 int attribute_hidden isXts(SEXP x)
 {
   static int(*fun)(SEXP) = NULL;
