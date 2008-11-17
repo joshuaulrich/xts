@@ -13,7 +13,7 @@
 SEXP do_xtsAttributes(SEXP x)
 {
   SEXP a, values, names;
-  int nattr=0, i=0, P=0;
+  int i=0, P=0;
 
   a = ATTRIB(x);
   if(length(a) <= 0)
@@ -58,7 +58,7 @@ SEXP do_xtsAttributes(SEXP x)
 SEXP do_xtsCoreAttributes(SEXP x)
 {
   SEXP a, values, names;
-  int nattr=0, i=0, P=0;
+  int i=0, P=0;
 
   a = ATTRIB(x);
   if(length(a) <= 0)

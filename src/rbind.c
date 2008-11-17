@@ -289,7 +289,7 @@ SEXP do_rbind_xts (SEXP x, SEXP y)
           break;
         case REALSXP:
           //REAL(result)[ ij ] = REAL(x)[ ij_x ];
-          real_result[ ij ] - real_x[ ij_x ];
+          real_result[ ij ] = real_x[ ij_x ];
           break;
         case CPLXSXP:
           COMPLEX(result)[ ij ] = COMPLEX(x)[ ij_x ];

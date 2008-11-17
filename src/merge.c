@@ -3,7 +3,6 @@
 #include <Rdefines.h>
 #include "xts.h"
 
-#define ZWXTS 43434343
 /* 
 
   This is a merge_join algorithm used to
@@ -21,11 +20,11 @@
 // do_merge_xts {{{
 SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP suffixes, SEXP retside, SEXP env)
 {
-  int nrx, ncx, nry, ncy, len, merge_all, original_index_type;
+  int nrx, ncx, nry, ncy, len;
   int left_join, right_join;
   int i = 0, j = 0, xp = 1, yp = 1; // x and y positions in index
   int mode;
-  int ij, ij_original, ij_result;
+  int ij_original, ij_result;
   int p = 0;
   SEXP xindex, yindex, index, result, attr, len_xindex;
   SEXP s, t, unique;
@@ -36,7 +35,13 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   double *real_index, *real_xindex, *real_yindex;
 
   /* we do not check that 'x' is an xts object.  Dispatch and mergeXts
-    (should) make this unecessary.  So we just get the index value */
+    (should) make this unecessary.  So we just get the index value 
+
+    This assumption seems to be invalid when dispatched from cbind.xts
+    So we need to check that the objects are not NULL, or at least
+    treat NULL objects as zero-width with an index that matches the non-null
+   
+  */
   PROTECT( xindex = getAttrib(x, install("index")) );
 
   /* convert to xts object if needed */
@@ -972,13 +977,13 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
 /* called via .External("mergeXts", ...) */
 SEXP mergeXts (SEXP args) // mergeXts {{{
 {
-  SEXP s, t;
+  //SEXP s, t;
   SEXP _x, _y, xtmp, result, _INDEX;
   /* colnames should be renamed as suffixes, as colnames need to be added at the C level */
-  SEXP all, _all, fill, retc, retclass, symnames, suffixes, rets, retside, env;
-  int nr, nc, ncs=0, nrs=0;
+  SEXP all, fill, retc, retclass, symnames, suffixes, rets, retside, env;
+  int nr, nc, ncs=0;
   int index_len;
-  int j, i, n=0, P=0;
+  int i, n=0, P=0;
 
   SEXP argstart;
 
@@ -1007,9 +1012,21 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
     args = CDR(args);
     n++;
   }
+//Rprintf("ncs: %i,\tn: %i\n", ncs, n);
+
 
   /* build an index to be used in all subsequent calls */
   args = argstart;
+
+  /* test for NULLs that may be present from cbind dispatch */
+  /*
+  _x = R_NilValue;
+  while(_x == R_NilValue) {
+    _x = CAR(args);
+    args = CDR(args);
+  }
+  PROTECT(_x); P++;
+  */
   PROTECT(_x = CAR(args)); P++;
   args = CDR(args);
   if(args == R_NilValue) {// no y arg

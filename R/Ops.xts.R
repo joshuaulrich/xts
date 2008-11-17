@@ -25,7 +25,9 @@ function(e1, e2)
   }
   else 
   if(is.null(attr(e,'index'))) {
-    .xts(e, .index(e1))
+    if(is.xts(e1)) {
+      .xts(e, .index(e1))
+    } else .xts(e, .index(e2))
   } else {
   e
   }

@@ -11,14 +11,14 @@ R_CallMethodDef callMethods[] = {
   {"isXts",                 (DL_FUNC) &isXts,                   1},
   {"do_rbind_xts",          (DL_FUNC) &do_rbind_xts,            2},
   {"do_subset_xts",         (DL_FUNC) &do_subset_xts,           3},
-  NULL
+  {NULL,                    NULL,                               0}
 };
 
 static const
 R_ExternalMethodDef externalMethods[] = {
   {"number_of_cols",        (DL_FUNC) &number_of_cols,          1},
   {"mergeXts",              (DL_FUNC) &mergeXts,                1},
-  NULL
+  {NULL,                    NULL,                               0}
 };
 
 void R_init_xts(DllInfo *info)

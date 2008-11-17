@@ -11,6 +11,7 @@ SEXP diffXts(SEXP x, SEXP lag, SEXP diff, SEXP arith, SEXP nap, SEXP dots)
     PROTECT(x = coerceVector(x, INTSXP)); P++;
   }
   */
+  return R_NilValue;
 }
 
 
@@ -85,7 +86,7 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
     ij = i + j * nrs;
 //Rprintf("i=%i\tK=%i\t(nrs+K)=%i\n",i,K,(nrs+K));
     if(i < K ||
-       K < 0 && i > (nrs+K-1)) {
+       (K < 0 && i > (nrs+K-1)) ) { // added parens per compiler warning
     /* Pad NA values at beginning */
       if(NApad) {
       switch ( mode ) {

@@ -1,17 +1,15 @@
 `cbind.xts` <-
-function(..., all=TRUE, fill=NA, suffixes=NULL, deparse.level=1) {
-   if( deparse.level != 1)
-     .NotYetUsed("deparse.level != 1")
-
+function(..., all=TRUE, fill=NA, suffixes=NULL) {
    sc <- sys.call(sys.parent())
    mc <- match.call(call=sc,expand=FALSE)
    dots <- mc$...
+   length.args <- sum(.External("number_of_cols",...,PACKAGE="xts"))
    if(is.null(suffixes))
-     suffixes <- all.vars(match.call(call=sc), unique=FALSE)[1:length(dots)]
+     suffixes <- all.vars(match.call(call=sc), unique=FALSE)[1:length.args]
  
-   if( length(suffixes) != length(dots) ) {
+   if( length(suffixes) != length.args ) {
      warning("length of suffixes and does not match number of merged objects")
-     suffixes <- rep(suffixes, length.out=length(dots))
+     suffixes <- rep(suffixes, length.out=length.args)
    }
 
    merge.xts(..., all=all, fill=fill, suffixes=suffixes)

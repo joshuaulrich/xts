@@ -41,7 +41,7 @@ use.xts <- try.xts <- function(x, ..., error=TRUE)
 
 use.reclass <- Reclass <- function(x) {
   xx <- match.call()
-  xxObj <- eval.parent(xx[[-1]][[2]],1)
+  xxObj <- eval.parent(parse(text=all.vars(xx)[1]), 1)
   inObj <- try.xts(xxObj, error=FALSE)
   xx <- eval(match.call()[[-1]])
   reclass(xx, inObj)
