@@ -1,5 +1,7 @@
 \name{xts-package}
 \alias{xts-package}
+\alias{Lag.xts}
+\alias{Next.xts}
 \docType{package}
 \title{
 xts: extensible time-series
@@ -13,8 +15,7 @@ like zoo.
 Package: \tab xts\cr
 Type: \tab Package\cr
 Version: \tab 0.0-16\cr
-Revision: \tab 144\cr
-Date: \tab 2008-06-19\cr
+Date: \tab 2008-11-17\cr
 License: \tab GPL-3\cr
 }
 Easily convert one of \R's many time-series (and non-time-series)
