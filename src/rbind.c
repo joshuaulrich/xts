@@ -3,13 +3,15 @@
 #include <Rdefines.h>
 #include "xts.h"
 
-SEXP do_rbind_xts (SEXP x, SEXP y)
-//SEXP do_rbind_xts (SEXP args)
+
+//SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env) {{{
+SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
 {
   int nrx, ncx, nry, ncy, len;
   int i, j, ij, ij_x, ij_y, xp=1, yp=1;
   int P=0; // PROTECT counter
   int mode;
+  SEXP s, t;
   SEXP result, xindex, yindex, newindex;
 
   int *int_result, *int_x, *int_y;
@@ -24,6 +26,27 @@ SEXP do_rbind_xts (SEXP x, SEXP y)
   ncy = ncols(y);
 
   len = nrx + nry;
+
+  if( isNull(x) || isNull(y) ) {
+    /* Handle NULL values by returning non-null object */
+    if(!isNull(x)) return x;
+    return y;
+  }
+
+  if( !isXts(x) ) {
+    PROTECT(s = t = allocList(2)); P++;
+    SET_TYPEOF(s, LANGSXP);
+    SETCAR(t, install("try.xts")); t = CDR(t);
+    SETCAR(t, x); t = CDR(t);
+    PROTECT(x = eval(s, env)); P++;
+  }
+  if( !isXts(y) ) {
+    PROTECT(s = t = allocList(2)); P++;
+    SET_TYPEOF(s, LANGSXP);
+    SETCAR(t, install("try.xts")); t = CDR(t);
+    SETCAR(t, y); t = CDR(t);
+    PROTECT(y = eval(s, env)); P++;
+  }
 
   /* need to convert different types of x and y if needed */
   if( TYPEOF(x) != TYPEOF(y) ) {
@@ -427,4 +450,43 @@ SEXP do_rbind_xts (SEXP x, SEXP y)
   setAttrib(result, xts_ClassSymbol, getAttrib(x, xts_ClassSymbol));
   copy_xtsAttributes(x, result);
   return result;
-} 
+} //}}}
+
+// SEXP rbindXts ( .External("rbindXts", ...) ) {{{
+SEXP rbindXts (SEXP args)
+{
+  SEXP _x, _y;
+  SEXP env;
+  int P=0;
+
+  args = CDR(args); // 'rbindXts' call name
+  PROTECT(env = CAR(args)); P++;  // env
+  args = CDR(args);  
+
+  PROTECT(_x = CAR(args)); P++;
+  args = CDR(args);
+
+  if(args == R_NilValue) {
+    UNPROTECT(P);
+    return(_x);
+  }
+
+  PROTECT(_y = CAR(args)); P++;
+  args = CDR(args);
+
+  PROTECT(_x = do_rbind_xts(_x, _y, env)); P++;
+  while(args != R_NilValue) {
+    PROTECT(_x = do_rbind_xts(_x, CAR(args), env)); P++;
+    args = CDR(args);
+  }
+
+/*
+  if( args == R_NilValue ) {
+    PROTECT(result = do_rbind_xts(_x, _y, env)); P++;
+  } else {
+    result = R_NilValue;
+  }
+*/
+  if(P > 0) UNPROTECT(P);
+  return _x;
+} //}}}

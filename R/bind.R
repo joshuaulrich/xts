@@ -26,29 +26,38 @@ function(..., all=TRUE, fill=NA, suffixes=NULL) {
 }
 
 `c.xts` <-
-function(x, y, ...) {
-  rbind.xts(x, y, ...)
+function(...) {
+  .External("rbindXts", env=new.env(), ..., PACKAGE="xts")
 }
 
+rbind.xts <- function(..., deparse.level=1)
+{
+  .External("rbindXts", env=new.env(), ..., PACKAGE="xts")
+}
 
-`rbind.xts` <-
-function(x, y, ..., deparse.level=1) {
-  if(missing(y)) 
-    return(x)
-  if( missing(...) )
-    return(.Call('do_rbind_xts',x, y))
-  
+`.rbind.xts` <-
+function(..., deparse.level=1) {
+#  if(missing(y)) 
+#    return(x)
+#  if( missing(...) )
+#    return(.Call('do_rbind_xts',x, y))
+#  
   dots <- list(...)
-  if(!is.null(colnames(y)) && colnames(x) != colnames(y))
-    warning('column names differ')
-  x <- .Call('do_rbind_xts', x, y)
+  if(length(dots) < 2) return(dots[[1]])
+  x <- dots[[1]]
+  dots <- dots[-1]
+#  y <- dots[[2]]
+#  if(!is.null(colnames(y)) && colnames(x) != colnames(y))
+#    warning('column names differ')
+#  x <- .Call('do_rbind_xts', x, y)
+  env <- new.env()
   while( length(dots) > 0 ) {
     y <- dots[[1]]
     if( length(dots) > 0)
       dots <- dots[-1]
     if(!is.null(colnames(y)) && colnames(x) != colnames(y))
       warning('column names differ')
-    x <- .Call('do_rbind_xts',x,y)
+    x <- .Call('do_rbind_xts',x,y,env, PACKAGE="xts")
   }
   return(x)
 }

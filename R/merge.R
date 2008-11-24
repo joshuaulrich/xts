@@ -22,7 +22,7 @@ merge.xts <- function(...,
     sfx  <- as.character(suffixes)
   }
 
-  .times <- .External('number_of_cols', ...)
+  .times <- .External('number_of_cols', ..., PACKAGE="xts")
   symnames <- rep(syms, .times)  # moved call to make.names inside of mergeXts/do_merge_xts
 
   if( !missing(join) ) { 
@@ -63,7 +63,7 @@ merge.xts <- function(...,
             suffixes=suffixes,
             retside=retside,
             env=new.env(),
-            ...)
+            ..., PACKAGE="xts")
   if(!is.logical(retclass) && retclass != 'xts') {
     asFun <- paste("as", retclass, sep=".")
     if(!exists(asFun)) {

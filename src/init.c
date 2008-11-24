@@ -9,7 +9,7 @@ R_CallMethodDef callMethods[] = {
   {"lagXts",                (DL_FUNC) &lagXts,                  3},
   {"do_is_ordered",         (DL_FUNC) &do_is_ordered,           3},
   {"isXts",                 (DL_FUNC) &isXts,                   1},
-  {"do_rbind_xts",          (DL_FUNC) &do_rbind_xts,            2},
+  {"do_rbind_xts",          (DL_FUNC) &do_rbind_xts,            3},
   {"do_subset_xts",         (DL_FUNC) &do_subset_xts,           3},
   {NULL,                    NULL,                               0}
 };
@@ -18,6 +18,7 @@ static const
 R_ExternalMethodDef externalMethods[] = {
   {"number_of_cols",        (DL_FUNC) &number_of_cols,          1},
   {"mergeXts",              (DL_FUNC) &mergeXts,                1},
+  {"rbindXts",              (DL_FUNC) &rbindXts,                1},
   {NULL,                    NULL,                               0}
 };
 

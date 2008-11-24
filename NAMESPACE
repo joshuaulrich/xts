@@ -91,6 +91,7 @@ export(apply.daily,
 export(rbind.xts,
        cbind.xts,
        c.xts)
+
 export(axTicksByTime)
 S3method(plot,xts)
 

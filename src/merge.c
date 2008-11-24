@@ -42,6 +42,11 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
     treat NULL objects as zero-width with an index that matches the non-null
    
   */
+  if( isNull(x) || isNull(y) ) {
+    if(!isNull(x)) return(x);
+    return(y);
+  }
+
   PROTECT( xindex = getAttrib(x, install("index")) );
 
   /* convert to xts object if needed */
@@ -1029,7 +1034,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   */
   PROTECT(_x = CAR(args)); P++;
   args = CDR(args);
-  if(args == R_NilValue) {// no y arg
+  if(args == R_NilValue || isNull(CAR(args)) ) {// no y arg or y==NULL
     UNPROTECT(P);
     return(_x);
   }
@@ -1050,7 +1055,9 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   
     PROTECT(_INDEX = do_merge_xts(_x, _y, all, fill, retc, R_NilValue, R_NilValue, rets, env)); P++;
     while(args != R_NilValue) { // merge all objects into one zero-width common index
-      PROTECT(_INDEX = do_merge_xts(_INDEX, CAR(args), all, fill, retc, R_NilValue, R_NilValue, rets, env)); P++;
+      if( !isNull(CAR(args)) ) {
+        PROTECT(_INDEX = do_merge_xts(_INDEX, CAR(args), all, fill, retc, R_NilValue, R_NilValue, rets, env)); P++;
+      }
 //Rprintf("length of _INDEX: %i\n", length(GET_xtsIndex(_INDEX)));
       args = CDR(args);
       //i++;
@@ -1081,6 +1088,11 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
     for(i = 0, nc=0; args != R_NilValue; i = i+nc, args = CDR(args)) { // merge each object with index
       // i is object current being merged/copied
       // nc is offset in current object
+      if( isNull(CAR(args)) ) {
+        i = i-nc;
+        continue;  // if NULL is passed, skip to the next object.
+      }
+
       xtmp = do_merge_xts(_INDEX, CAR(args), all, fill, retclass, /*colnames*/R_NilValue, R_NilValue, retside, env);
       nc = ncols(xtmp);
       ncs += nc;
