@@ -9,6 +9,11 @@ if (!any(sapply(c("Date", "POSIXct", "chron", "dates", "times",
     } else TRUE
 }
 
+make.timeBased <- function(x, class='POSIXct', ...)
+{
+  do.call(class, list(x,...))
+}
+
 `period.sum` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")

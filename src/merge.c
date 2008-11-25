@@ -1034,7 +1034,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   */
   PROTECT(_x = CAR(args)); P++;
   args = CDR(args);
-  if(args == R_NilValue || isNull(CAR(args)) ) {// no y arg or y==NULL
+  if(args == R_NilValue || (isNull(CAR(args)) && length(args) == 1)) {// no y arg or y==NULL
     UNPROTECT(P);
     return(_x);
   }
