@@ -22,12 +22,12 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
   int i, j, ij, iijj, K, NApad;
   int mode;
   int P=0; //PROTECT counter
-  int *int_result, *int_x;
-  int *lgl_result, *lgl_x;
-  double *real_result, *real_x;
+  int *int_result=NULL, *int_x=NULL;
+  int *lgl_result=NULL, *lgl_x=NULL;
+  double *real_result=NULL, *real_x=NULL;
   
-  int *int_oindex, *int_nindex;
-  double *real_oindex, *real_nindex;
+  int *int_oindex=NULL, *int_nindex=NULL;
+  double *real_oindex=NULL, *real_nindex=NULL;
   
   nrs = nrows(x);
   ncs = ncols(x);

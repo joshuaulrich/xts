@@ -29,10 +29,10 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   SEXP xindex, yindex, index, result, attr, len_xindex;
   SEXP s, t, unique;
 
-  int *int_result, *int_x, *int_y;
-  int *int_index, *int_xindex, *int_yindex;
-  double *real_result, *real_x, *real_y;
-  double *real_index, *real_xindex, *real_yindex;
+  int *int_result=NULL, *int_x=NULL, *int_y=NULL;
+  int *int_index=NULL, *int_xindex=NULL, *int_yindex=NULL;
+  double *real_result=NULL, *real_x=NULL, *real_y=NULL;
+  double *real_index=NULL, *real_xindex=NULL, *real_yindex=NULL;
 
   /* we do not check that 'x' is an xts object.  Dispatch and mergeXts
     (should) make this unecessary.  So we just get the index value 
@@ -1024,14 +1024,6 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   args = argstart;
 
   /* test for NULLs that may be present from cbind dispatch */
-  /*
-  _x = R_NilValue;
-  while(_x == R_NilValue) {
-    _x = CAR(args);
-    args = CDR(args);
-  }
-  PROTECT(_x); P++;
-  */
   PROTECT(_x = CAR(args)); P++;
   args = CDR(args);
   if(args == R_NilValue || (isNull(CAR(args)) && length(args) == 1)) {// no y arg or y==NULL
@@ -1066,8 +1058,8 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   
     args = argstart; // reset args
     int ii, jj, iijj, jj_result;
-    int *int_result, *int_xtmp;
-    double *real_result, *real_xtmp;
+    int *int_result=NULL, *int_xtmp=NULL;
+    double *real_result=NULL, *real_xtmp=NULL;
 
     PROTECT(result = allocVector(TYPEOF(_INDEX), index_len * ncs)); P++;
     switch(TYPEOF(result)) {

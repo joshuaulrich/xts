@@ -11,13 +11,12 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
   int i, j, ij, ij_x, ij_y, xp=1, yp=1;
   int P=0; // PROTECT counter
   int mode;
-  SEXP s, t;
   SEXP result, xindex, yindex, newindex;
 
-  int *int_result, *int_x, *int_y;
-  int *int_newindex, *int_xindex, *int_yindex;
-  double *real_result, *real_x, *real_y;
-  double *real_newindex, *real_xindex, *real_yindex;
+  int *int_result=NULL, *int_x=NULL, *int_y=NULL;
+  int *int_newindex=NULL, *int_xindex=NULL, *int_yindex=NULL;
+  double *real_result=NULL, *real_x=NULL, *real_y=NULL;
+  double *real_newindex=NULL, *real_xindex=NULL, *real_yindex=NULL;
 
   nrx = nrows(x);
   ncx = ncols(x);
@@ -34,18 +33,10 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
   }
 
   if( !isXts(x) ) {
-    PROTECT(s = t = allocList(2)); P++;
-    SET_TYPEOF(s, LANGSXP);
-    SETCAR(t, install("try.xts")); t = CDR(t);
-    SETCAR(t, x); t = CDR(t);
-    PROTECT(x = eval(s, env)); P++;
+    PROTECT( x = tryXts(x) ); P++;
   }
   if( !isXts(y) ) {
-    PROTECT(s = t = allocList(2)); P++;
-    SET_TYPEOF(s, LANGSXP);
-    SETCAR(t, install("try.xts")); t = CDR(t);
-    SETCAR(t, y); t = CDR(t);
-    PROTECT(y = eval(s, env)); P++;
+    PROTECT( y = tryXts(y) ); P++;
   }
 
   /* need to convert different types of x and y if needed */
@@ -88,13 +79,16 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
         break;
   }
 
-  if( TYPEOF(xindex) == REALSXP ) {  //FIXME
+  /*
+  The main body of code to follow branches based on the type
+  of index, removing the need to test at each position.
+  */
+  if( TYPEOF(xindex) == REALSXP ) {
   real_newindex = REAL(newindex);
   real_xindex = REAL(xindex);
   real_yindex = REAL(yindex);
   for( i = 0; i < len; i++ ) {
     if( xp > nrx ) { 
-      //REAL(newindex)[ i ] = REAL(yindex)[ yp-1 ];
       real_newindex[ i ] = real_yindex[ yp-1 ];
       for(j = 0; j < ncx; j++) {
         ij = i + j * len;
@@ -104,11 +98,9 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
             LOGICAL(result)[ ij ] = LOGICAL(y)[ ij_y ];
             break;
           case INTSXP:
-            //INTEGER(result)[ ij ] = INTEGER(y)[ ij_y ];
             int_result[ ij ] = int_y[ ij_y ];
             break;
           case REALSXP:
-            //REAL(result)[ ij ] = REAL(y)[ ij_y ];
             real_result[ ij ] = real_y[ ij_y ];
             break;
           case CPLXSXP:
@@ -124,7 +116,6 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
       yp++;
     } else
     if( yp > nry ) {
-      //REAL(newindex)[ i ] = REAL(xindex)[ xp-1 ];
       real_newindex[ i ] = real_xindex[ xp-1 ];
       for(j = 0; j < ncx; j++) {
         ij = i + j * len;
@@ -134,11 +125,9 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
             LOGICAL(result)[ ij ] = LOGICAL(x)[ ij_x ];
             break;
           case INTSXP:
-            //INTEGER(result)[ ij ] = INTEGER(x)[ ij_x ];
             int_result[ ij ] = int_x[ ij_x ];
             break;
           case REALSXP:
-            //REAL(result)[ ij ] = REAL(x)[ ij_x ];
             real_result[ ij ] = real_x[ ij_x ];
             break;
           case CPLXSXP:
@@ -153,10 +142,7 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
       }
       xp++;
     } else
-    //if(REAL(xindex)[ xp-1 ] == REAL(yindex)[ yp-1 ]) {
     if( real_xindex[ xp-1 ] == real_yindex[ yp-1 ] ) {
-      //REAL(newindex)[ i ]   = REAL(xindex)[ xp-1 ];
-      //REAL(newindex)[ i+1 ] = REAL(yindex)[ yp-1 ];
       real_newindex[ i ] = real_xindex[ xp-1 ];
       real_newindex[ i+ 1 ] = real_yindex[ yp-1 ];
       for(j = 0; j < ncx; j++) {
@@ -169,14 +155,10 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
           LOGICAL(result)[ ij+1 ] = LOGICAL(y)[ ij_y ];
           break;
         case INTSXP:
-          //INTEGER(result)[ ij ]     = INTEGER(x)[ ij_x ];
-          //INTEGER(result)[ ij+1 ]   = INTEGER(y)[ ij_y ];
           int_result[ ij ] = int_x[ ij_x ];
           int_result[ ij+1 ] = int_y[ ij_y ];
           break;
         case REALSXP:
-          //REAL(result)[ ij ]     = REAL(x)[ ij_x ];
-          //REAL(result)[ ij+1 ]   = REAL(y)[ ij_y ];
           real_result[ ij ] = real_x[ ij_x ];
           real_result[ ij+1 ] = real_y[ ij_y ];
           break;
@@ -196,9 +178,7 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
       xp++;
       i++;  // need to increase i as we now have filled in 2 values
     } else
-    //if( REAL(xindex)[ xp-1 ]  < REAL(yindex)[ yp-1 ] ) {
     if( real_xindex[ xp-1 ] < real_yindex[ yp-1 ] ) {
-      //REAL(newindex)[ i ] = REAL(xindex)[ xp-1 ];
       real_newindex[ i ] = real_xindex[ xp-1 ];
       for(j = 0; j < ncx; j++) {
         ij = i + j * len;
@@ -208,11 +188,9 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
             LOGICAL(result)[ ij ] = LOGICAL(x)[ ij_x ];
             break;
           case INTSXP:
-            //INTEGER(result)[ ij ] = INTEGER(x)[ ij_x ];
             int_result[ ij ] = int_x[ ij_x ];
             break;
           case REALSXP:
-            //REAL(result)[ ij ] = REAL(x)[ ij_x ];
             real_result[ ij ] = real_x[ ij_x ];
             break;
           case CPLXSXP:
@@ -227,9 +205,7 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
       }
       xp++;
     } else
-    //if( REAL(xindex)[ xp-1 ]  > REAL(yindex)[ yp-1 ] ) {
     if( real_xindex[ xp-1 ] > real_yindex[ yp-1 ] ) {
-      //REAL(newindex)[ i ] = REAL(yindex)[ yp-1 ];
       real_newindex[ i ] = real_yindex[ yp-1 ];
       for(j = 0; j < ncx; j++) {
         ij = i + j * len;
@@ -239,11 +215,9 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
             LOGICAL(result)[ ij ] = LOGICAL(y)[ ij_y ];
             break;
           case INTSXP:
-            //INTEGER(result)[ ij ] = INTEGER(y)[ ij_y ];
             int_result[ ij ] = int_y[ ij_y ];
             break;
           case REALSXP:
-            //REAL(result)[ ij ] = REAL(y)[ ij_y ];
             real_result[ ij ] = real_y[ ij_y ];
             break;
           case CPLXSXP:

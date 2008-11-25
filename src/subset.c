@@ -101,8 +101,8 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
     int nr, nc, nrs, ncs;
     int i, j, ii, jj, ij, iijj;
     int mode;
-    int *int_x, *int_result, *int_newindex, *int_index;
-    double *real_x, *real_result, *real_newindex, *real_index;
+    int *int_x=NULL, *int_result=NULL, *int_newindex=NULL, *int_index=NULL;
+    double *real_x=NULL, *real_result=NULL, *real_newindex=NULL, *real_index=NULL;
 
 //Rprintf("Inside xtsSubset\n");
 
@@ -157,8 +157,13 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
     if(TYPEOF(index) == REALSXP) {
       newindex = allocVector(REALSXP, LENGTH(sr));
       PROTECT(newindex);
+      real_newindex = REAL(newindex);
+      real_index = REAL(index);
+      int *int_sr;
+      int_sr = INTEGER(sr);
       for(indx = 0; indx < nrs; indx++) {
-        REAL(newindex)[indx] = REAL(index)[INTEGER(sr)[indx]-1];
+        real_newindex[indx] = real_index[ (int_sr[indx])-1 ];
+        //REAL(newindex)[indx] = REAL(index)[INTEGER(sr)[indx]-1];
       }
       setAttrib(result, install("index"), newindex);
       UNPROTECT(1);

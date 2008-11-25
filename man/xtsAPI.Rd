@@ -39,6 +39,8 @@ Internal use SYMBOLS:
 
 Callable from R:
   SEXP mergeXts(SEXP args)
+  SEXP rbindXts(SEXP args)
+  SEXP tryXts(SEXP x)
 }
 }
 \author{ Jeffrey A. Ryan }

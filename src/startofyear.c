@@ -33,7 +33,7 @@ void do_startofyear (int *from, int *to, int *fromto, int *origin) {
   */
 
   int days_before_origin = origin[0] - from[0];
-  int days_after_origin  = nyear[0] - days_before_origin - 1;
+  //int days_after_origin  = nyear[0] - days_before_origin - 1; //why is this here?
 
   int tmp=0;
 

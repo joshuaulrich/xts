@@ -67,6 +67,8 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc);
 SEXP number_of_cols(SEXP args);
 SEXP col_names(SEXP args);
 
+SEXP tryXts(SEXP x);
+
 
 void copy_xtsAttributes(SEXP x, SEXP y);    // internal only
 void copy_xtsCoreAttributes(SEXP x, SEXP y);// internal only    

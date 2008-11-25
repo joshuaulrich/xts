@@ -26,7 +26,7 @@ SEXP number_of_cols (SEXP args)
 SEXP col_names (SEXP args)
 {
   SEXP num_cols, sym_names, coln, dimnames, argstart;
-  int c, i=0, nc, P=0;
+  int c, i=0, P=0;
 
   argstart = args;
   PROTECT( num_cols = number_of_cols(args) ); P++;

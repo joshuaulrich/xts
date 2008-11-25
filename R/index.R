@@ -102,6 +102,10 @@ function(x, ...) {
 `.indexwday` <- function(x) {
   as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$wday
 }
+`.indexbday` <- function(x) {
+  # is business day T/F
+  as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$wday %% 6 > 0
+}
 `.indexyday` <- function(x) {
   as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$yday
 }

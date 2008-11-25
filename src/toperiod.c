@@ -15,7 +15,7 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
 {
   SEXP result, ohlc, xindex, newindex, dimnames;
 
-  int i, j=0, jstart, ii, nrx, ncx, ncr, n, P=0;
+  int i, j=0, jstart, nrx, ncx, ncr, n, P=0;
   nrx = nrows(x);
   ncx = ncols(x);
   n = nrows(endpoints) - 1;

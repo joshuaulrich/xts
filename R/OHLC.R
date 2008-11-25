@@ -1,6 +1,29 @@
 # functions from quantmod to check for OHLC style/columns
 # NOT TO BE EXPORTED
 #
+`OHLCV` <- 
+function (x) 
+{
+    if (is.OHLCV(x)) 
+        return(x[, has.OHLCV(x, 1)])
+    NULL
+}
+
+`is.OHLCV` <-
+function(x)
+{
+  all(has.Op(x),has.Hi(x),has.Lo(x),has.Cl(x),has.Vo(x))
+}
+
+`has.OHLCV` <-
+function(x,which=FALSE)
+{
+  if(which) {
+    c(has.Op(x,1),has.Hi(x,1),has.Lo(x,1),has.Cl(x,1),has.Vo(x,1))
+  } else {
+    c(has.Op(x),has.Hi(x),has.Lo(x),has.Cl(x),has.Vo(x))
+  }
+}
 
 `OHLC` <- 
 function (x) 

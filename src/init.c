@@ -9,6 +9,7 @@ R_CallMethodDef callMethods[] = {
   {"lagXts",                (DL_FUNC) &lagXts,                  3},
   {"do_is_ordered",         (DL_FUNC) &do_is_ordered,           3},
   {"isXts",                 (DL_FUNC) &isXts,                   1},
+  {"tryXts",                (DL_FUNC) &tryXts,                  1},
   {"do_rbind_xts",          (DL_FUNC) &do_rbind_xts,            3},
   {"do_subset_xts",         (DL_FUNC) &do_subset_xts,           3},
   {NULL,                    NULL,                               0}
@@ -31,8 +32,10 @@ void R_init_xts(DllInfo *info)
                      externalMethods);
 
   R_useDynamicSymbols(info, TRUE);
-
+#define RegisterXTS(routine) R_RegisterCCallable("xts","routine",(DL_FUNC) &routine)
   /* used by external packages linking to internal xts code from C */
-  R_RegisterCCallable("xts",    "do_is_ordered",    (DL_FUNC) &do_is_ordered);
-  R_RegisterCCallable("xts",    "isXts",            (DL_FUNC) &isXts        );
+  R_RegisterCCallable("xts",    "do_is_ordered",    (DL_FUNC) &do_is_ordered    );
+  R_RegisterCCallable("xts",    "isXts",            (DL_FUNC) &isXts            );
+  R_RegisterCCallable("xts",    "tryXts",           (DL_FUNC) &tryXts           );
+  RegisterXTS(rbindXts);
 }
