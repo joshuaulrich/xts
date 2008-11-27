@@ -1,8 +1,9 @@
-`cbind.xts` <-
-function(..., all=TRUE, fill=NA, suffixes=NULL) {
-   sc <- sys.call(sys.parent())
-   mc <- gsub('cbind|cbind.xts','merge.xts',deparse(match.call(call=sc)))
-   return(eval(parse(text=mc)))
+cbind.xts <- function(..., all=TRUE, fill=NA, suffixes=NULL) {
+  merge.xts(..., all=all, fill=fill, suffixes=suffixes)
+} 
+#   sc <- sys.call(sys.parent())
+#   mc <- gsub('cbind|cbind.xts','merge.xts',deparse(match.call(call=sc)))
+#   return(eval(parse(text=mc)))
 #   dots <- mc$...
 #   length.args <- sum(.External("number_of_cols",...,PACKAGE="xts"))
 #   if(is.null(suffixes))
@@ -24,7 +25,7 @@ function(..., all=TRUE, fill=NA, suffixes=NULL) {
 #     x <- merge.xts(x, y, all=TRUE, fill=NA, suffixes=NULL, retclass="xts")
 #   }
 #   x
-}
+#}
 
 `c.xts` <-
 function(...) {
