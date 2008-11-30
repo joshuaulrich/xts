@@ -7,14 +7,12 @@ Concatenate or bind two or more xts objects
 along a time-based index.
 }
 \usage{
-\method{c}{xts}(x, y, ...)
+\method{c}{xts}(...)
 
-\method{rbind}{xts}(x, y, ..., deparse.level = 1)
+\method{rbind}{xts}(..., deparse.level = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{ an \code{xts} object }
-  \item{y}{ an object coercible to class \code{xts} or numeric }
   \item{\dots}{ additional objects to bind }
   \item{deparse.level}{ not implemented }
 }
@@ -31,11 +29,11 @@ For traditional merge operations, see \code{merge.xts}.
 \value{
 An \code{xts} object with one row per row
 for each object concatenated.
-
 }
 \author{ Jeffrey A. Ryan }
 \note{ 
-This differers from merge.zoo in that non-unique values are allowed.
+This differs from merge.zoo in that non-unique values are allowed,
+in addition to the completely different algorithms used internally.
 
 All operations may not behave as expected on objects with non-unique
 indices.  You have been warned.
