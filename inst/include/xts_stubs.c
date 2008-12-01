@@ -12,6 +12,8 @@
   To aid those looking for answers on interfacing compiled code
   from another package.
 
+  This is simply constructing a function pointer for use.
+
   static RETURNTYPE(*fun)(ARG1,ARG2) = NULL     where ARGS are the types accepted, comma seperated
     fun = ( RETURNTYPE(*)(ARG1,ARG2)) R_GetCCallable("PACKAGENAME", "FUNCTIONNAME")
 
