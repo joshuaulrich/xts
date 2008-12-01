@@ -1,0 +1,12 @@
+Package: linkXTS
+Type: Package
+Title: Tests the interface to xts.so
+Version: 1.0
+Date: 2008-11-12
+Depends: xts
+LinkingTo: xts
+Author: Jeffrey A. Ryan
+Maintainer: Jeffrey A. Ryan <jeff.a.ryan@gmail.com>
+Description: More about what it does (maybe more than one line)
+License: GPL3
+LazyLoad: yes
