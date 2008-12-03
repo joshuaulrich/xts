@@ -116,11 +116,14 @@ function(x, i, j, drop = TRUE, ...)
 # and index value is left untouched
 
 `[<-.xts` <-
+#`xtsreplacement` <-
 function(x, i, j, value) 
 {
     sys.TZ <- Sys.getenv('TZ') 
     Sys.setenv(TZ='GMT')
     on.exit(Sys.setenv(TZ=sys.TZ))
+    if (!missing(i)) {
+
     if (timeBased(i)) 
       # this shouldn't happen either, though less important I suspect  FIXME
       i <- as.character(as.POSIXct(i)) 
@@ -168,6 +171,7 @@ function(x, i, j, value)
     zero.index <- binsearch(0, i, NULL)
     if(!is.na(zero.index))
       i <- i[ -zero.index ]
+    }
 
     .Class <- "matrix"
     NextMethod(.Generic)
