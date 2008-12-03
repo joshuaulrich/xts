@@ -43,5 +43,13 @@ Callable from R:
   SEXP tryXts(SEXP x)
 }
 }
+\examples{
+\dontrun{
+# some example code to look at
+
+file.show(system.file('api_example/README', package="xts"))
+file.show(system.file('api_example/src/checkOrder.c', package="xts"))
+}
+}
 \author{ Jeffrey A. Ryan }
 \keyword{ utilities }
