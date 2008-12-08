@@ -148,6 +148,9 @@ S3method(as.integer,xts)
 S3method(as.complex,xts)
 S3method(as.logical,xts)
 
+# list specific methods
+S3method(as.list.xts)
+
 # ts specific methods
 S3method(as.xts,ts)
 
