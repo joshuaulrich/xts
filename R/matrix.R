@@ -1,7 +1,10 @@
 # functions for matrix <--> xts conversions
 `as.matrix.xts` <-
 function(x, ...) {
-  structure(coredata(x), dimnames=list(as.character(index(x)), colnames(x)))
+  cd <- coredata(x)
+  dimnames(cd) <- list( as.character(index(x)),  colnames(x) )
+  cd
+#  structure(coredata(x), dimnames=list(as.character(index(x)), colnames(x)))
 }
 
 `re.matrix` <-

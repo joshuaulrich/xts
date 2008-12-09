@@ -1,9 +1,4 @@
-`coredata.xts` <-
-function(x, fmt=FALSE, ...) {
-##  DIM <- dim(x)
-##  attributes(x) <- NULL
-##  return(structure(x, dim=DIM))
-
+coredata.xts <- function(x, fmt=FALSE, ...) {
   x.attr <- attributes(x)
 
   if(is.character(fmt)) {
@@ -18,21 +13,22 @@ function(x, fmt=FALSE, ...) {
       indexFormat(x) <- NULL  # remove before printing
     } else {
       x.attr$dimnames <- list(format(index(x)),dimnames(x)[[2]])
+      #attributes not to be kept
+      original.attr <- x.attr[!names(x.attr) %in%
+                            c('dim','dimnames')]
+      xx <- structure(x, dim=x.attr$dim, dimnames=x.attr$dimnames) 
+      for(i in names(original.attr)) {
+        attr(xx,i) <- NULL
+      }
+      return(xx)
     } 
   }
+
   if(length(x) == 0) {
-    xx <- x
-  } else xx <- structure(x, dim=x.attr$dim, dimnames=x.attr$dimnames) 
+    return(x)
+  } else 
+  return(.Call("coredata", x, PACKAGE="xts"))
 
-  # attributes not to be kept
-  original.attr <- x.attr[!names(x.attr) %in%
-                          c('dim','dimnames')]
-
-  for(i in names(original.attr)) {
-    attr(xx,i) <- NULL
-  }
-
-  return(xx)
 }
 
 `xcoredata.default` <-
