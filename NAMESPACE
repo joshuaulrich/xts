@@ -147,6 +147,10 @@ S3method(as.double,xts)
 S3method(as.integer,xts)
 S3method(as.complex,xts)
 S3method(as.logical,xts)
+S3method(cumsum, xts)
+S3method(cumprod, xts)
+S3method(cummin, xts)
+S3method(cummax, xts)
 
 # list specific methods
 S3method(as.list,xts)
