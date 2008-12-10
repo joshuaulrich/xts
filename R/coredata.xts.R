@@ -13,15 +13,15 @@ coredata.xts <- function(x, fmt=FALSE, ...) {
       indexFormat(x) <- NULL  # remove before printing
     } else {
       x.attr$dimnames <- list(format(index(x)),dimnames(x)[[2]])
+    }
       #attributes not to be kept
-      original.attr <- x.attr[!names(x.attr) %in%
-                            c('dim','dimnames')]
-      xx <- structure(x, dim=x.attr$dim, dimnames=x.attr$dimnames) 
-      for(i in names(original.attr)) {
-        attr(xx,i) <- NULL
-      }
-      return(xx)
-    } 
+    original.attr <- x.attr[!names(x.attr) %in%
+                          c('dim','dimnames')]
+    xx <- structure(x, dim=dim(x), dimnames=x.attr$dimnames) 
+    for(i in names(original.attr)) {
+      attr(xx,i) <- NULL
+    }
+    return(xx)
   }
 
   if(length(x) == 0) {
