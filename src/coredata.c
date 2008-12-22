@@ -5,7 +5,8 @@ SEXP coredata (SEXP x)
 {
   SEXP result;
   int i, j, ncs, nrs;
-  PROTECT(result = allocVector(TYPEOF(x), length(x)));
+  int P=0;
+  PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
   switch(TYPEOF(x)) {
     case REALSXP:
       memcpy(REAL(result), REAL(x), length(result) * sizeof(double));
@@ -30,11 +31,21 @@ SEXP coredata (SEXP x)
       error("currently unsupported data type");
       break;
   }
-  SEXP dim;
-  PROTECT(dim = allocVector(INTSXP, 2));
+  SEXP dim, dimnames, newdimnames, colnames;
+  PROTECT(dim = allocVector(INTSXP, 2)); P++;
   INTEGER(dim)[0] = nrows(x);
   INTEGER(dim)[1] = ncols(x);
   setAttrib(result, R_DimSymbol, dim);
-  UNPROTECT(2);
+
+  PROTECT(dimnames = getAttrib(x, R_DimNamesSymbol)); P++;
+  if( !isNull(dimnames) ) {  // only column-names exist for xts objects
+    PROTECT(newdimnames = allocVector(VECSXP, 2)); P++;
+    PROTECT(colnames = allocVector(STRSXP, ncols(x))); P++;
+    colnames = VECTOR_ELT(dimnames, 1);
+    SET_VECTOR_ELT(dimnames, 0, R_NilValue); // row-names are forced back to NULL here
+    SET_VECTOR_ELT(dimnames, 1, colnames); 
+    setAttrib(result, R_DimNamesSymbol, dimnames);
+  }
+  UNPROTECT(P);
   return result;
 }
