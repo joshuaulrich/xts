@@ -1,9 +1,9 @@
 ##
-## Unit Test for timeSeries class from Rmetrics fSeries package
+## Unit Test for timeSeries class from Rmetrics timeSeries package
 ## 
 ## 
 
-library(fSeries)
+library(timeSeries)
 data(sample_matrix)
 
 ###############################################################################

@@ -33,6 +33,7 @@ function(x,...) {
   if(is.null(dim) || dim[2]==1) {
     attr(x,'dim') <- attr(x, 'dimnames') <- NULL
   }
+  tsp(x) <- attr(x, '.tsp')
   zoo:::as.ts.zoo(x)
 }
 
@@ -85,9 +86,10 @@ function(x,dateFormat,...) {
             frequency=frequency(x),
             .CLASS='ts',
             .CLASSnames=c('frequency'),
-#            .tsp=tsp(x),
+            .tsp=tsp(x),
 #            .frequency=frequency(x),
             ...)
+  attr(xx, 'tsp') <- NULL
   xx
 }
 

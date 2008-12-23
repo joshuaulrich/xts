@@ -29,7 +29,7 @@ test.data.frame_reclass_subset_reclass_j1 <- function() {
 # subsetting to 1 col converts to simple numeric - can't successfully handle
 
 test.data.frame_reclass_subset_as.xts_j1 <- function() {
-  checkIdentical(sample.data.frame[,1],reclass(as.xts(sample.data.frame)[,1]))
+  checkIdentical(sample.data.frame[,1,drop=FALSE],reclass(as.xts(sample.data.frame)[,1]))
 }
 test.data.frame_reclass_subset_data.frame_j1 <- function() {
   # subsetting results in a vector, so can't be converted to xts

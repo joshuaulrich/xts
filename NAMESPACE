@@ -202,3 +202,5 @@ S3method(as.xts,timeDate)
 
 #export(startof,endof,firstof,lastof)
 
+# as.Date.numeric fix
+S3method('as.Date', 'numeric')
