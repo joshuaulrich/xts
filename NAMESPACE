@@ -156,7 +156,8 @@ S3method(cummax, xts)
 S3method(as.list,xts)
 
 # ts specific methods
-S3method(as.xts,ts)
+S3method(as.xts, ts)
+S3method(as.ts, xts)
 
 # zoo specific methods
 importFrom(zoo,as.zoo)
