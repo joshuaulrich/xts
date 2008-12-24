@@ -30,12 +30,10 @@ function(x,...) {
   #ts(coredata(x), start=tsp.attr[1],frequency=freq.attr)
   dim <- attr(x, 'dim')
   dn <- attr(x,'dimnames')
-  if(is.null(dim) || dim[2]==1) {
+  if(!is.null(dim) && dim[2]==1) {
     attr(x,'dim') <- attr(x, 'dimnames') <- NULL
   }
   as.ts(x)
-  #tsp(x) <- attr(x, '.tsp')
-  #zoo:::as.ts.zoo(x)
 }
 
 `as.xts.ts` <-
@@ -87,7 +85,7 @@ function(x,dateFormat,...) {
             frequency=frequency(x),
             .CLASS='ts',
             .CLASSnames=c('frequency'),
-#            .tsp=tsp(x),
+            .tsp=tsp(x),
 #            .frequency=frequency(x),
             ...)
   attr(xx, 'tsp') <- NULL
@@ -98,7 +96,11 @@ function(x,dateFormat,...) {
 `as.ts.xts` <-
 function(x,...) {
   #if(attr(x,'.CLASS')=='ts') return(re.ts(x,...))
-  if(!is.null(dim(x)) && dim(x)[[2]]==1)
+  TSP <- attr(x, '.tsp')
+  attr(x, '.tsp') <- NULL
+  x <- ts(coredata(x), frequency=frequency(x), ...)
+  if(!is.null(dim(x)) && dim(x)[2]==1)
     dim(x) <- NULL
-  ts(coredata(x), frequency=frequency(x), ...)
+  tsp(x) <- TSP
+  x
 }
