@@ -16,16 +16,16 @@ SEXP runSum (SEXP x, SEXP n)
   SEXP result;
   int P=0;
   int i, nrs;
-  int *int_n;
+  int *int_n=NULL;
   if(TYPEOF(n) != INTSXP) {
     // assure that 'n' is an integer
     PROTECT(n = coerceVector(n, INTSXP)); P++;
   }
   int_n = INTEGER(n); // get the first element (everything from R is a vector)
 
-  int *int_result, *int_x;
+  int *int_result=NULL, *int_x=NULL;
   int int_sum = 0;
-  double *real_result, *real_x;
+  double *real_result=NULL, *real_x=NULL;
   double real_sum = 0.0;
 
   PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
