@@ -3,6 +3,7 @@ useDynLib(xts)
 
 # imports
 importFrom(stats, lag)
+importFrom(stats, as.ts)
 
 # debugging
 export(firstof,

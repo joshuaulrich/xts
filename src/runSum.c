@@ -18,9 +18,10 @@ SEXP runSum (SEXP x, SEXP n)
   int i, nrs;
   int *int_n;
   if(TYPEOF(n) != INTSXP) {
+    // assure that 'n' is an integer
     PROTECT(n = coerceVector(n, INTSXP)); P++;
   }
-  int_n = INTEGER(n);
+  int_n = INTEGER(n); // get the first element (everything from R is a vector)
 
   int *int_result, *int_x;
   int int_sum = 0;
@@ -30,23 +31,16 @@ SEXP runSum (SEXP x, SEXP n)
   PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
 
   switch(TYPEOF(x)) {
-    // still need to implement other types, and checking
+    /* still need to implement other types, and checking
+    //  
+    // The branch by type allows for fewer type checks/branching
+    // within the algorithm, providing a _much_ faster mechanism
+    // to calculate the sum
+    */
     case REALSXP:
       real_result = REAL(result);
       real_x = REAL(x);
       int_result = int_x = NULL;
-      break;
-    case INTSXP:
-      int_result = INTEGER(result);
-      int_x = INTEGER(x);
-      real_result = real_x = NULL;
-      break;
-  }
-
-
-  switch(TYPEOF(x)) {
-    // still need to implement other types, and checking
-    case REALSXP:
       for(i = 0; i < (*int_n); i++) {
         real_result[i] = NA_REAL;
         real_sum = real_sum + real_x[i];
@@ -57,7 +51,10 @@ SEXP runSum (SEXP x, SEXP n)
         real_result[i] = real_result[i-1] + real_x[i] - real_x[i-(*int_n)];
       break;
     case INTSXP:
-      for(i = 0; i < (*int_n); i++) {
+      int_result = INTEGER(result);
+      int_x = INTEGER(x);
+      real_result = real_x = NULL;
+      for(i = 0; i < (*int_n); i++) {  // (*int_n) is faster that INTEGER(n)[1], a constant would be equal
         int_result[i] = NA_INTEGER;
         int_sum = int_sum + int_x[i];
       }
@@ -66,6 +63,11 @@ SEXP runSum (SEXP x, SEXP n)
       for(i = (*int_n); i < nrs; i++)
         int_result[i] = int_result[i-1] + int_x[i] - int_x[i-(*int_n)];
       break;
+    /*
+    case STRSXP:  fail!
+    case LGLSXP:
+    case CPLXSXP:
+    */
   }
 
   /* there are MACROS and functions in xts.h that will do this */
