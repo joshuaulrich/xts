@@ -2,15 +2,11 @@
 #include <Rinternals.h>
 #include <Rdefines.h>
 
-SEXP add_xts_class (SEXP x) //, SEXP class)
+SEXP add_class (SEXP x, SEXP class)
 {
-  SEXP class;
-  PROTECT(class = allocVector(STRSXP, 2));
-  SET_STRING_ELT(class, 0, mkChar("xts")); //STRING_ELT(class, 0));
-  SET_STRING_ELT(class, 1, mkChar("zoo")); //STRING_ELT(class, 1));
+  if(NAMED(x) == 2)
+    x = duplicate(x);
 
-  setAttrib(x, install("class"), class);
-  UNPROTECT(1);
-
-  return x;
+  setAttrib(x, R_ClassSymbol, class);
+  return(x);
 }

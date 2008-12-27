@@ -1,6 +1,7 @@
 `Ops.xts` <-
 function(e1, e2)
 {
+  CLASS <- .Class
   e <- if (missing(e2)) {
       .Class <- "matrix"
       NextMethod(.Generic)
@@ -21,7 +22,8 @@ function(e1, e2)
     }
   }
   if(.Generic %in% c("+","-","*","/","^","%%","%/%")) {
-    .Call('add_xts_class', e)
+    #.Call('add_xts_class', e)
+    .Call('add_class', e, CLASS, PACKAGE="xts")
   }
   else 
   if(is.null(attr(e,'index'))) {
