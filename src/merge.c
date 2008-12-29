@@ -132,10 +132,6 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   if( TYPEOF(all) != LGLSXP )
     error("all must be a logical value of TRUE or FALSE");
 
-  if( TYPEOF(fill) != TYPEOF(x) ) {
-    PROTECT( fill = coerceVector(fill, TYPEOF(x)) ); p++; // p is used to make sure our UNPROTECT is correct
-  } 
-
   //merge_all = INTEGER(all)[ 0 ];
 
   left_join = INTEGER(all)[ 0 ];
@@ -245,11 +241,18 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   /* coercion/matching of TYPE for x and y needs to be checked,
      either here or in the calling R code.  I suspect here is
      more useful if other function can call the C code as well. */
-  PROTECT( result = allocVector(TYPEOF(x), (ncx + ncy) * num_rows) );
   /* need to coerce y to typeof x */
   if( TYPEOF(x) != TYPEOF(y) ) {
-    PROTECT( y = coerceVector(y, TYPEOF(x)) ); p++;
+    PROTECT( x = coerceVector(x, REALSXP) ); p++;
+    PROTECT( y = coerceVector(y, REALSXP) ); p++;
   }
+  PROTECT( result = allocVector(TYPEOF(x), (ncx + ncy) * num_rows) );
+
+  if( TYPEOF(fill) != TYPEOF(x) ) {
+    PROTECT( fill = coerceVector(fill, TYPEOF(x)) ); p++; // p is used to make sure our UNPROTECT is correct
+  } 
+
+  mode = TYPEOF(x);
 
   /* use pointers instead of function calls */
   switch(TYPEOF(x)) {

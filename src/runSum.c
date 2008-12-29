@@ -58,6 +58,8 @@ SEXP runSum (SEXP x, SEXP n)
     // The branch by type allows for fewer type checks/branching
     // within the algorithm, providing a _much_ faster mechanism
     // to calculate the sum
+    // 
+    // need a fast way to remove/skip leading NAs ... josh???
     */
     case REALSXP:
       real_result = REAL(result);
@@ -69,8 +71,10 @@ SEXP runSum (SEXP x, SEXP n)
       }
       real_result[ (*int_n)-1 ] = real_sum;
       nrs = nrows(x);
-      for(i = (*int_n); i < nrs; i++)
+      for(i = (*int_n); i < nrs; i++) {
+        if(real_x[i]==NA_REAL) error("Series contains non-leading NAs");
         real_result[i] = real_result[i-1] + real_x[i] - real_x[i-(*int_n)];
+      }
       break;
     case INTSXP:
       int_result = INTEGER(result);
@@ -82,12 +86,14 @@ SEXP runSum (SEXP x, SEXP n)
       }
       int_result[ (*int_n)-1 ] = int_sum;
       nrs = nrows(x);
-      for(i = (*int_n); i < nrs; i++)
+      for(i = (*int_n); i < nrs; i++) {
+        if(int_x[i]==NA_INTEGER) error("Series contains non-leading NAs");
         int_result[i] = int_result[i-1] + int_x[i] - int_x[i-(*int_n)];
+      }
       break;
     /*
     case STRSXP:  fail!
-    case LGLSXP:
+    case LGLSXP:  convert to int??
     case CPLXSXP:
     */
   }
