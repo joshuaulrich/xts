@@ -1,5 +1,5 @@
 `.subset.xts` <- `[.xts` <-
-function(x, i, j, drop = TRUE, ...) 
+function(x, i, j, drop = FALSE, ...) 
 {
     sys.TZ <- Sys.getenv('TZ') 
     Sys.setenv(TZ='GMT')
@@ -99,6 +99,7 @@ function(x, i, j, drop = TRUE, ...)
                            which(xx==colnames(x))
                          } else xx
                        })
+        
         return(.Call('do_subset_xts', x, as.integer(i), as.integer(j), PACKAGE='xts'))
 #        if(!is.null(original.attr)) {
 #          for(ii in 1:length(original.attr)) {

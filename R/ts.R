@@ -101,6 +101,7 @@ function(x,...) {
   x <- ts(coredata(x), frequency=frequency(x), ...)
   if(!is.null(dim(x)) && dim(x)[2]==1)
     dim(x) <- NULL
-  tsp(x) <- TSP
+  if(!is.null(TSP))
+    tsp(x) <- TSP
   x
 }

@@ -1,5 +1,5 @@
 /*
-Code currently borrowed from main/src/subset.c to see how to create a function to subset
+Code currently borrowed from R's main/src/subset.c to see how to create a function to subset
 an xts object in it's entirety
 
 All modification are by Jeffrey A. Ryan 2008
@@ -103,8 +103,6 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
     int mode;
     int *int_x=NULL, *int_result=NULL, *int_newindex=NULL, *int_index=NULL;
     double *real_x=NULL, *real_result=NULL, *real_newindex=NULL, *real_index=NULL;
-
-//Rprintf("Inside xtsSubset\n");
 
     nr = nrows(x);
     nc = ncols(x);

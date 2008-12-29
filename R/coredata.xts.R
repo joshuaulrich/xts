@@ -17,7 +17,11 @@ coredata.xts <- function(x, fmt=FALSE, ...) {
       #attributes not to be kept
     original.attr <- x.attr[!names(x.attr) %in%
                           c('dim','dimnames')]
-    xx <- structure(x, dim=dim(x), dimnames=x.attr$dimnames) 
+    if(is.null(dim(x))) {
+      xx <- structure(unclass(x), names=x.attr$dimnames[[1]])
+    } else {
+      xx <- structure(unclass(x), dim=dim(x), dimnames=x.attr$dimnames) 
+    }
     for(i in names(original.attr)) {
       attr(xx,i) <- NULL
     }
