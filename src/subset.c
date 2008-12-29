@@ -21,7 +21,7 @@
 
 
 /*
-Code currently borrowed from R's main/src/subset.c to see how to create a function to subset
+Base code borrowed from R's main/src/subset.c to see how to create a function to subset
 an xts object in it's entirety
 
 All modification are by Jeffrey A. Ryan 2008
