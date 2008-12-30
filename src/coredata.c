@@ -46,7 +46,6 @@ SEXP coredata (SEXP x)
       ncs = ncols(x); nrs = nrows(x);
       for(j=0; j< ncs; j++)
       for(i=0; i< nrs; i++)
-        //Rprintf("i: %i, j: %i, i+j*nrs: %i\n", i, j, i+j*nrs);
         SET_STRING_ELT(result, i+j*nrs, STRING_ELT(x, i+j*nrs));
       break;
     default:
@@ -61,11 +60,11 @@ SEXP coredata (SEXP x)
     setAttrib(result, R_DimSymbol, dim);
   
     PROTECT(dimnames = getAttrib(x, R_DimNamesSymbol)); P++;
-    if( !isNull(dimnames) ) {  // only column-names exist for xts objects
+    if( !isNull(dimnames) ) {  /* only column-names exist for xts objects */
       PROTECT(newdimnames = allocVector(VECSXP, 2)); P++;
       PROTECT(colnames = allocVector(STRSXP, ncols(x))); P++;
       colnames = VECTOR_ELT(dimnames, 1);
-      SET_VECTOR_ELT(dimnames, 0, R_NilValue); // row-names are forced back to NULL here
+      SET_VECTOR_ELT(dimnames, 0, R_NilValue);
       SET_VECTOR_ELT(dimnames, 1, colnames); 
       setAttrib(result, R_DimNamesSymbol, dimnames);
     }

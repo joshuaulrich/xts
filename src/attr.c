@@ -40,16 +40,18 @@ SEXP do_xtsAttributes(SEXP x)
   a = ATTRIB(x);
   if(length(a) <= 0)
     return R_NilValue;
-  PROTECT(a); P++; // all attributes
+  PROTECT(a); P++; /* all attributes */
   PROTECT(values = allocVector(VECSXP, length(a))); P++;
   PROTECT(names  = allocVector(STRSXP, length(a))); P++;
 
-  //PROTECT(a = getAttrib(ATTRIB(x),R_NamesSymbol));  // this gets all names
-  //PROTECT(a = VECTOR_ELT(AS_LIST(ATTRIB(x)),1));    // this gets individual values
+  /*PROTECT(a = getAttrib(ATTRIB(x),R_NamesSymbol));  *//* this gets all names */
+  /*PROTECT(a = VECTOR_ELT(AS_LIST(ATTRIB(x)),1));    *//* this gets individual values */
   
-  // CAR gets the first element of the dotted pair list
-  // CDR gets the rest of the dotted pair list
-  // TAG gets the symbol/name of the first element of dotted pair list
+  /*
+   CAR gets the first element of the dotted pair list
+   CDR gets the rest of the dotted pair list
+   TAG gets the symbol/name of the first element of dotted pair list
+  */
   for( /* a=ATTRIB(a) */; a != R_NilValue; a = CDR(a) ) {
     if(TAG(a) != xts_IndexSymbol &&
        TAG(a) != xts_ClassSymbol &&
@@ -70,7 +72,7 @@ SEXP do_xtsAttributes(SEXP x)
     return R_NilValue;
   }
 
-  SET_LENGTH(values, i); // truncate list back to i-size
+  SET_LENGTH(values, i); /* truncate list back to i-size */
   SET_LENGTH(names,  i);
   setAttrib(values, R_NamesSymbol, names);
   UNPROTECT(P);
@@ -85,16 +87,20 @@ SEXP do_xtsCoreAttributes(SEXP x)
   a = ATTRIB(x);
   if(length(a) <= 0)
     return R_NilValue;
-  PROTECT(a); P++; // all attributes
+  PROTECT(a); P++; /* all attributes */
   PROTECT(values = allocVector(VECSXP, length(a))); P++;
   PROTECT(names  = allocVector(STRSXP, length(a))); P++;
 
-  //PROTECT(a = getAttrib(ATTRIB(x),R_NamesSymbol));  // this gets all names
-  //PROTECT(a = VECTOR_ELT(AS_LIST(ATTRIB(x)),1));    // this gets individual values
-  
-  // CAR gets the first element of the dotted pair list
-  // CDR gets the rest of the dotted pair list
-  // TAG gets the symbol/name of the first element of dotted pair list
+  /*
+  PROTECT(a = getAttrib(ATTRIB(x),R_NamesSymbol));
+  PROTECT(a = VECTOR_ELT(AS_LIST(ATTRIB(x)),1)); 
+  */
+
+  /*
+   CAR gets the first element of the dotted pair list
+   CDR gets the rest of the dotted pair list
+   TAG gets the symbol/name of the first element of dotted pair list
+  */
   for( /* a=ATTRIB(a) */; a != R_NilValue; a = CDR(a) ) {
     if(TAG(a) == xts_ClassSymbol ||
        TAG(a) == xts_IndexFormatSymbol ||
@@ -111,7 +117,7 @@ SEXP do_xtsCoreAttributes(SEXP x)
     return R_NilValue;
   }
 
-  SET_LENGTH(values, i); // truncate list back to i-size
+  SET_LENGTH(values, i); /* truncate list back to i-size */
   SET_LENGTH(names,  i);
   setAttrib(values, R_NamesSymbol, names);
   UNPROTECT(P);
@@ -122,10 +128,7 @@ void copy_xtsAttributes(SEXP x, SEXP y)
 {
   SEXP attr;
   int P=0;
-  //attr = coerceVector(xts_ATTRIB(x), LISTSXP);
   attr = xts_ATTRIB(x);
-  //if(length(attr) <= 0 || y == R_NilValue)
-  //  return y;
 
   if(length(attr) > 0 || y != R_NilValue) {
     PROTECT(attr); P++;
@@ -140,10 +143,7 @@ void copy_xtsCoreAttributes(SEXP x, SEXP y)
 {
   SEXP attr;
   int P=0;
-  //attr = coerceVector(xts_ATTRIB(x), LISTSXP);
   attr = xts_COREATTRIB(x);
-  //if(length(attr) <= 0 || y == R_NilValue)
-  //  return y;
 
   if(length(attr) > 0 || y != R_NilValue) {
     PROTECT(attr); P++;
