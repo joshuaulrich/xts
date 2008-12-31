@@ -13,7 +13,7 @@ like zoo.
 Package: \tab xts\cr
 Type: \tab Package\cr
 Version: \tab 0.6-3\cr
-Date: \tab 2008-12-29\cr
+Date: \tab 2008-12-31\cr
 License: \tab GPL-3\cr
 }
 Easily convert one of \R's many time-series (and non-time-series)

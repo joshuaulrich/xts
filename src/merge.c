@@ -273,8 +273,10 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           ij_result = i + j * num_rows;
           switch( mode ) {
             case LGLSXP:
+              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
+              break;
             case INTSXP:
-              LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ];
+              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
@@ -358,8 +360,10 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           ij_result = i + (j+ncx) * num_rows;
           switch( mode ) {
             case LGLSXP:
+              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
+              break;
             case INTSXP:
-              LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ];
+              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
@@ -470,8 +474,10 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           ij_result = i + (j+ncx) * num_rows;
           switch( mode ) {
             case LGLSXP:
+              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ]; 
+              break;
             case INTSXP:
-              LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; 
+              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ]; 
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
@@ -500,8 +506,10 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           ij_result = i + j * num_rows;
           switch( mode ) {
             case LGLSXP:
+              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
+              break;
             case INTSXP:
-              LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ];
+              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
@@ -649,6 +657,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           //REAL(result)[ ij_result ] = NA_REAL;
           switch( mode ) {
             case LGLSXP:
+              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ]; //NA_INTEGER;
+              break;
             case INTSXP:
               INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
               break;
@@ -774,23 +784,24 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               break;
           }
         }
-        for(j = 0; j < ncy; j++) { // y-values
+        for(j = 0; j < ncy; j++) { /* y-values */
           ij_result = i + (j+ncx) * num_rows;
-          //REAL(result)[ ij_result ] = NA_REAL;
           switch( mode ) {
             case LGLSXP:
+              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
+              break;
             case INTSXP:
-              LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
+              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];
               break;
             case REALSXP:
-              REAL(result)[ ij_result ] = REAL(fill)[ 0 ]; //NA_REAL;
+              REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
               break;
             case CPLXSXP:
-              COMPLEX(result)[ ij_result ].r = REAL(fill)[ 0 ]; //NA_REAL;  This is a bug...
-              COMPLEX(result)[ ij_result ].i = REAL(fill)[ 0 ]; //NA_REAL;
+              COMPLEX(result)[ ij_result ].r = REAL(fill)[ 0 ];
+              COMPLEX(result)[ ij_result ].i = REAL(fill)[ 0 ];
               break;
             case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0)); //NA_STRING);
+              SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
               break;
             default:
               error("unsupported data type");
@@ -812,8 +823,9 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           //REAL(result)[ ij_result ] = NA_REAL;
           switch( mode ) {
             case LGLSXP:
+              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ]; //NA_INTEGER;
             case INTSXP:
-              LOGICAL(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
+              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ]; //NA_REAL;

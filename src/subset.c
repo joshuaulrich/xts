@@ -54,7 +54,7 @@ static SEXP xtsExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
         if (0 <= ii && ii < nx && ii != NA_LOGICAL)
         LOGICAL(result)[i] = LOGICAL(x)[ii];
         else
-        LOGICAL(result)[i] = NA_INTEGER;
+        LOGICAL(result)[i] = NA_LOGICAL;
         break;
     case INTSXP:
         if (0 <= ii && ii < nx && ii != NA_INTEGER)
