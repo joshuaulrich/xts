@@ -74,4 +74,5 @@ void copy_xtsAttributes(SEXP x, SEXP y);    // internal only
 void copy_xtsCoreAttributes(SEXP x, SEXP y);// internal only    
 
 int isXts(SEXP x);                          // is.xts analogue
+int firstNonNA(SEXP x);
 #endif /* _XTS */
