@@ -61,3 +61,10 @@ function(key,  vec, start=TRUE) {
   } else rec
 }
 
+naCheck <- function(x, n=0) {
+  # fails to check when NCOL > 1, fix soon :)
+  NAs <- .Call("naCheck", x, TRUE)
+  invisible(list(NAs=NAs,
+                 nonNA=(1+NAs):NROW(x),
+                 beg=n+NAs))
+}
