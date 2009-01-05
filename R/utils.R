@@ -62,9 +62,12 @@ function(key,  vec, start=TRUE) {
 }
 
 naCheck <- function(x, n=0) {
-  # fails to check when NCOL > 1, fix soon :)
-  NAs <- .Call("naCheck", x, TRUE)
-  invisible(list(NAs=NAs,
-                 nonNA=(1+NAs):NROW(x),
-                 beg=n+NAs))
+  if(is.null(dim(x)[2])) {
+    NAs <- .Call("naCheck", x, TRUE)
+  } else NAs <- .Call("naCheck", rowSums(x), TRUE)
+  ret <- list()
+  ret$NAs <- NAs
+  ret$nonNA <- (1:NAs):NROW(x)
+  ret$beg <- n+NAs
+  invisible(ret)
 }

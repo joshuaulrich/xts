@@ -34,11 +34,12 @@ int firstNonNA (SEXP x)
   double *real_x=NULL;
 
   nr = nrows(x);
+
   switch(TYPEOF(x)) {
     case INTSXP:
       int_x = INTEGER(x);
       for(i=0; i<nr; i++) {
-        if(int_x[i] != NA_INTEGER) {
+        if(int_x[i]!=NA_INTEGER) {
           break;
         }
       }
@@ -46,7 +47,7 @@ int firstNonNA (SEXP x)
     case REALSXP:
       real_x = REAL(x);
       for(i=0; i<nr; i++) {
-        if(real_x[i] != NA_REAL) {
+        if(!ISNA(real_x[i])) {
           break;
         }
       }
@@ -55,6 +56,13 @@ int firstNonNA (SEXP x)
       error("unsupported type");
       break;
   }
+  /*
+  SEXP leadingNA;
+  PROTECT(leadingNA = allocVector(INTSXP, 1));
+  INTEGER(leadingNA)[0] = i;
+  UNPROTECT(1);
+  return(leadingNA);
+  */
   return(i);
 }
 
@@ -65,6 +73,7 @@ SEXP naCheck (SEXP x, SEXP check)
   _first = firstNonNA(x);
   PROTECT(first = allocVector(INTSXP, 1));
   INTEGER(first)[0] = _first;
+
 
   if(LOGICAL(check)[0]) {
   /* check for NAs in rest of data */
@@ -85,7 +94,7 @@ SEXP naCheck (SEXP x, SEXP check)
     case REALSXP:
       real_x = REAL(x);
       for(i=_first; i<nr; i++) {
-        if(real_x[i] == NA_REAL) {
+        if(ISNA(real_x[i])) {
           error("Series contains non-leading NAs");  
         }
       }
