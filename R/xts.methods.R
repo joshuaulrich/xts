@@ -70,15 +70,23 @@ function(x, i, j, drop = FALSE, ...)
             first.time <- .index(x)[1]
           } else first.time <- tBR[1]
 
-          # the last index value ot be found
+          # the last index value to be found
           if(is.na(tBR[2])) {
             last.time  <- .index(x)[NROW(x)]
           } else last.time <- tBR[2]
 
+          # check if range requested is in index
+          first.index <- first(.index(x))
+          last.index  <- last(.index(x))
+          if( (first.time < first.index || first.time > last.index) &&
+             (last.time  > last.index  || last.time  < first.index)) {
+            # outside of index, do nothing
+          } else {          
           i.tmp <- c(i.tmp,
                      seq.int(binsearch(first.time, .index(x),  TRUE),
                             binsearch(last.time,  .index(x), FALSE))
                     )
+          }
         } else {
           # if single date is given - get start and end points if resolution of
           # series is greater than the time specified
@@ -88,10 +96,17 @@ function(x, i, j, drop = FALSE, ...)
             tBR <- timeBasedRange(dates)
             first.time <- tBR[1]
             last.time  <- tBR[2]
-            i.tmp <- c(i.tmp,
-                       seq.int(binsearch(first.time, .index(x),  TRUE),
-                               binsearch(last.time,  .index(x), FALSE))
-                      )
+            first.index <- first(.index(x))
+            last.index  <- last(.index(x))
+            if( (first.time < first.index || first.time > last.index) &&
+               (last.time  > last.index  || last.time  < first.index)) {
+              # outside of index, do nothing
+            } else {          
+              i.tmp <- c(i.tmp,
+                         seq.int(binsearch(first.time, .index(x),  TRUE),
+                                 binsearch(last.time,  .index(x), FALSE))
+                        )
+            }
           } else {
             i2 <- binsearch(timeBasedRange(ii)[1], .index(x), NULL)
             if(!is.na(i2))

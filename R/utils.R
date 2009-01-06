@@ -33,6 +33,8 @@ function(key,  vec, start=TRUE) {
 
   while(hi >= lo) {
     mid <- round((lo + hi) / 2)
+    if(mid == 0)
+      return(NA)
     if(mid != 0 && key < vec[mid]) {
       hi <- mid - 1
     } else 
