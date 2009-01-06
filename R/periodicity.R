@@ -18,10 +18,22 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+time.frequency <- function(x) {
+  x <- gsub(":|/|-| ", "", x)
+  nc <- nchar(x)
+  if(nc < 4) stop("unrecognizable time.scale")
+  if(nc ==  4) res <- 2678400 * 12 #"years"
+  if(nc  >  4) res <- 2678400      #"monthly"
+  if(nc  >  6) res <- 86400        #"daily"
+  if(nc  >  8) res <- 3600         #"hourly"
+  if(nc  > 10) res <- 60           #"minute"
+  if(nc  > 12) res <- 1            #"seconds"
+  return(res)
+}
 
 `periodicity` <- function(x, ...) {
   if( timeBased(x) || !is.xts(x) )
-    x <- try.xts(x, error='periodicity need to be timeBased or xtsible')
+    x <- try.xts(x, error='\'x\' needs to be timeBased or xtsible')
 
   p <- median(diff( .index(x) ))
 

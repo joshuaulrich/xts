@@ -34,6 +34,36 @@
 #include <Rinternals.h>
 #include "xts.h"
 
+/*
+SEXP do_runsum (SEXP x, SEXP n, SEXP result)
+{
+
+}
+
+SEXP do_run (SEXP x, SEXP n, (*void)FUN)
+{
+  SEXP result;
+  int P=0;
+  int i, nrs;
+  int *int_n=NULL;
+  if(TYPEOF(n) != INTSXP) {
+    // assure that 'n' is an integer
+    PROTECT(n = coerceVector(n, INTSXP)); P++;
+  }
+  int_n = INTEGER(n); // get the first element (everything from R is a vector)
+
+  int *int_result=NULL, *int_x=NULL;
+  int int_sum = 0;
+  double *real_result=NULL, *real_x=NULL;
+  double real_sum = 0.0;
+
+  PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
+
+  int _firstNonNA = firstNonNA(x);
+
+}
+*/
+
 SEXP runSum (SEXP x, SEXP n)
 {
   SEXP result;
@@ -57,12 +87,9 @@ SEXP runSum (SEXP x, SEXP n)
 
   switch(TYPEOF(x)) {
     /* still need to implement other types, and checking
-    //  
     // The branch by type allows for fewer type checks/branching
     // within the algorithm, providing a _much_ faster mechanism
     // to calculate the sum
-    // 
-    // need a fast way to remove/skip leading NAs ... josh???
     */
     case REALSXP:
       real_result = REAL(result);
@@ -70,7 +97,7 @@ SEXP runSum (SEXP x, SEXP n)
       int_result = int_x = NULL;
       for(i = 0; i < (*int_n)+_firstNonNA; i++) {
         real_result[i] = NA_REAL;
-        if(i > _firstNonNA)
+        if(i >= _firstNonNA)
           real_sum = real_sum + real_x[i];
       }
       real_result[ (*int_n) + _firstNonNA - 1 ] = real_sum;
@@ -86,7 +113,7 @@ SEXP runSum (SEXP x, SEXP n)
       real_result = real_x = NULL;
       for(i = 0; i < (*int_n)+_firstNonNA; i++) {  // (*int_n) is faster that INTEGER(n)[1], a constant would be equal
         int_result[i] = NA_INTEGER;
-        if(i > _firstNonNA)
+        if(i >= _firstNonNA)
           int_sum = int_sum + int_x[i];
       }
       int_result[ (*int_n) + _firstNonNA -1 ] = int_sum;

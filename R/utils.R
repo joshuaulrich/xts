@@ -27,17 +27,16 @@ function(key,  vec, start=TRUE) {
   # TRUE return the _next_ observation (e.g. 20070801 if
   # missing would return 20070802 if available
   # FALSE would return the _previous_ obs.
-
   found <- FALSE
   lo <- 1; hi <- length(vec);
   rec <- NULL
 
   while(hi >= lo) {
     mid <- round((lo + hi) / 2)
-    if(key < vec[mid]) {
+    if(mid != 0 && key < vec[mid]) {
       hi <- mid - 1
     } else 
-    if( key > vec[mid] ) {
+    if(mid != 0 && key > vec[mid]) {
       lo <- mid + 1
     } else {
       found <- TRUE

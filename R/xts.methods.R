@@ -75,19 +75,30 @@ function(x, i, j, drop = FALSE, ...)
             last.time  <- .index(x)[NROW(x)]
           } else last.time <- tBR[2]
 
+          i.tmp <- c(i.tmp,
+                     seq.int(binsearch(first.time, .index(x),  TRUE),
+                            binsearch(last.time,  .index(x), FALSE))
+                    )
         } else {
           # if single date is given - get start and end points if resolution of
           # series is greater than the time specified
-          dates <- paste(ii,ii,sep='/')
-          tBR <- timeBasedRange(dates)
-          first.time <- tBR[1]
-          last.time  <- tBR[2]
+          time.specified <- time.frequency(ii)
+          if( periodicity(x)$frequency < time.specified ) {
+            dates <- paste(ii,ii,sep='/')
+            tBR <- timeBasedRange(dates)
+            first.time <- tBR[1]
+            last.time  <- tBR[2]
+            i.tmp <- c(i.tmp,
+                       seq.int(binsearch(first.time, .index(x),  TRUE),
+                               binsearch(last.time,  .index(x), FALSE))
+                      )
+          } else {
+            i2 <- binsearch(timeBasedRange(ii)[1], .index(x), NULL)
+            if(!is.na(i2))
+              i.tmp <- c(i.tmp, i2)
+          }
         }      
         
-        i.tmp <- c(i.tmp,
-                   seq.int(binsearch(first.time, .index(x),  TRUE),
-                           binsearch(last.time,  .index(x), FALSE))
-                  )
       }
       i <- i.tmp
     }
@@ -103,7 +114,8 @@ function(x, i, j, drop = FALSE, ...)
 
     if (missing(j)) {
       if(length(x)==0) {
-        return(.xts(rep(NA,length(i)), .index(x)[i]))
+        x.tmp <- .xts(rep(NA,length(i)), .index(x)[i])
+        return((colnames(x.tmp) <- colnames(x)))
       } else 
       return(.Call('do_subset_xts', x, as.integer(i), as.integer(1:original.cols), PACKAGE='xts'))
 #      if(!is.null(original.attr)) {
