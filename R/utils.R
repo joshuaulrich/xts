@@ -68,7 +68,7 @@ naCheck <- function(x, n=0) {
   } else NAs <- .Call("naCheck", rowSums(x), TRUE)
   ret <- list()
   ret$NAs <- NAs
-  ret$nonNA <- (1:NAs):NROW(x)
+  ret$nonNA <- (1+NAs):NROW(x)
   ret$beg <- n+NAs
   invisible(ret)
 }
