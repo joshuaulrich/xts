@@ -29,7 +29,7 @@ int firstNonNA (SEXP x)
     check for leading NA values, throw error if found
   */
 
-  int i, nr;
+  int i=0, nr;
   int *int_x=NULL;
   double *real_x=NULL;
 
