@@ -22,9 +22,9 @@
 `.subset.xts` <- `[.xts` <-
 function(x, i, j, drop = FALSE, ...) 
 {
-    sys.TZ <- Sys.getenv('TZ') 
-    Sys.setenv(TZ='GMT')
-    on.exit(Sys.setenv(TZ=sys.TZ))
+#    sys.TZ <- Sys.getenv('TZ') 
+#    Sys.setenv(TZ='GMT')
+#    on.exit(Sys.setenv(TZ=sys.TZ))
 
     original.cols <- NCOL(x)
     original.attr <- xtsAttributes(x)
@@ -61,6 +61,13 @@ function(x, i, j, drop = FALSE, ...)
       # must be able to process - and then allow for operations???
 
       i.tmp <- NULL
+      adjust.time <- function(Ftime,Findex,Ltime,Lindex) {
+        # used to adjust requested time to actual time in object
+        if( (Ltime < Findex) || (Ftime > Lindex) ) return(NA)
+        Ftime <- max(Findex, Ftime)
+        Ltime <- min(Lindex, Ltime)
+        return(list(first.time=Ftime,last.time=Ltime))
+      }
       for(ii in i) {
         if(!identical(grep("(::)|/",ii),integer(0))) {
           tBR <- timeBasedRange(ii)
@@ -75,45 +82,40 @@ function(x, i, j, drop = FALSE, ...)
             last.time  <- .index(x)[NROW(x)]
           } else last.time <- tBR[2]
 
-          # check if range requested is in index
-          first.index <- first(.index(x))
-          last.index  <- last(.index(x))
-          if( (first.time < first.index || first.time > last.index) &&
-             (last.time  > last.index  || last.time  < first.index)) {
-            # outside of index, do nothing
-          } else {          
-          i.tmp <- c(i.tmp,
-                     seq.int(binsearch(first.time, .index(x),  TRUE),
-                            binsearch(last.time,  .index(x), FALSE))
-                    )
-          }
+#          # check if range requested is in index
+#          first.index <- first(.index(x))
+#          last.index  <- last(.index(x))
+#          adjusted.times <- adjust.time(first.time, first.index,
+#                                        last.time, last.index)
+#          if(length(adjusted.times) > 1) {
+#            i.tmp <- c(i.tmp,
+#                       seq.int(binsearch(first.time, .index(x),  TRUE),
+#                              binsearch(last.time,  .index(x), FALSE))
+#                      )
+#          }
         } else {
           # if single date is given - get start and end points if resolution of
           # series is greater than the time specified
-          time.specified <- time.frequency(ii)
-          if( periodicity(x)$frequency < time.specified ) {
             dates <- paste(ii,ii,sep='/')
             tBR <- timeBasedRange(dates)
             first.time <- tBR[1]
             last.time  <- tBR[2]
-            first.index <- first(.index(x))
-            last.index  <- last(.index(x))
-            if( (first.time < first.index || first.time > last.index) &&
-               (last.time  > last.index  || last.time  < first.index)) {
-              # outside of index, do nothing
-            } else {          
-              i.tmp <- c(i.tmp,
-                         seq.int(binsearch(first.time, .index(x),  TRUE),
-                                 binsearch(last.time,  .index(x), FALSE))
-                        )
-            }
-          } else {
-            i2 <- binsearch(timeBasedRange(ii)[1], .index(x), NULL)
-            if(!is.na(i2))
-              i.tmp <- c(i.tmp, i2)
-          }
-        }      
-        
+        }
+        first.index <- first(.index(x))
+        last.index  <- last(.index(x))
+        adjusted.times <- adjust.time(first.time, first.index,
+                                      last.time, last.index)
+        if(length(adjusted.times) > 1) {
+          i.tmp <- c(i.tmp,
+                     seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
+                             binsearch(adjusted.times$last.time,  .index(x), FALSE))
+                     )
+        }
+          #} else {
+          #  i2 <- binsearch(timeBasedRange(ii)[1], .index(x), NULL)
+          #  if(!is.na(i2))
+          #    i.tmp <- c(i.tmp, i2)
+          #}
       }
       i <- i.tmp
     }

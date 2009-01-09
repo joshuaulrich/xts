@@ -40,7 +40,14 @@
 
 */
 /* do_merge_xts {{{ */
-SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP colnames, SEXP suffixes, SEXP retside, SEXP env,
+SEXP do_merge_xts (SEXP x, SEXP y,
+                   SEXP all,
+                   SEXP fill,
+                   SEXP retclass,
+                   SEXP colnames, 
+                   SEXP suffixes,
+                   SEXP retside,
+                   SEXP env,
                    int coerce)
 {
   int nrx, ncx, nry, ncy, len;
@@ -52,7 +59,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
   SEXP xindex, yindex, index, result, attr, len_xindex;
   SEXP s, t, unique;
 
-  int *int_result=NULL, *int_x=NULL, *int_y=NULL;
+  int *int_result=NULL, *int_x=NULL, *int_y=NULL, int_fill;
   int *int_index=NULL, *int_xindex=NULL, *int_yindex=NULL;
   double *real_result=NULL, *real_x=NULL, *real_y=NULL;
   double *real_index=NULL, *real_xindex=NULL, *real_yindex=NULL;
@@ -66,7 +73,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
    
     2009/01/07: calling merge(NA,x) or merge(1,1,xts) causes a segfault;
                 calling merge(1,x) causes the xts-info (none!) from the 1st arg
-                to be used, resulting in a classless object.
+                to be used, resulting in a classless object. [fixed - jar]
   */
   if( isNull(x) || isNull(y) ) {
     if(!isNull(x)) return(x);
@@ -240,11 +247,13 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
     case INTSXP:
         int_x = INTEGER(x);
         int_y = INTEGER(y);
+        int_fill = INTEGER(fill)[0];
         int_result = INTEGER(result);
         break;
     case REALSXP:
         real_x = REAL(x);
         real_y = REAL(y);
+        /*real_fill = REAL(fill)[0];*/
         real_result = REAL(result);
         break;
     default:
@@ -280,7 +289,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];
+              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];*/
+              int_result[ ij_result ] = int_fill;
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
@@ -367,7 +377,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];
+              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];*/
+              int_result[ ij_result ] = int_fill;
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
@@ -481,7 +492,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ]; 
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ]; 
+              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ]; */
+              int_result[ ij_result ] = int_fill;
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
@@ -513,7 +525,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];
+              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];*/
+              int_result[ ij_result ] = int_fill;
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
@@ -574,7 +587,8 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
           switch( mode ) {
             case LGLSXP:
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];
+              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];*/
+              int_result[ ij_result ] = int_fill;
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
@@ -664,7 +678,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ]; //NA_INTEGER;
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
+              int_result[ ij_result ] = int_fill;
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ]; //NA_REAL;
@@ -795,7 +809,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
               LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
               break;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];
+              int_result[ ij_result ] = int_fill;
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
@@ -829,7 +843,7 @@ SEXP do_merge_xts (SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP coln
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ]; //NA_INTEGER;
             case INTSXP:
-              INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ]; //NA_INTEGER;
+              int_result[ ij_result ] = int_fill;
               break;
             case REALSXP:
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ]; //NA_REAL;
