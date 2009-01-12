@@ -35,11 +35,11 @@ SEXP number_of_cols (SEXP args)
   PROTECT(tcols = allocVector(INTSXP, length(args))); P++;
   int i=0;
   for(;args != R_NilValue; i++, args=CDR(args)) {
-    if( TAG(args) == R_NilValue ) {
+/*    if( TAG(args) == R_NilValue ) { */
       if( length(CAR(args)) > 0) {
         INTEGER(tcols)[i] = ncols(CAR(args));
       } else INTEGER(tcols)[i] = (int)0;
-    }
+/*    } */
   }
   UNPROTECT(P);
   return tcols;

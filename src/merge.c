@@ -59,7 +59,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   SEXP xindex, yindex, index, result, attr, len_xindex;
   SEXP s, t, unique;
 
-  int *int_result=NULL, *int_x=NULL, *int_y=NULL, int_fill;
+  int *int_result=NULL, *int_x=NULL, *int_y=NULL, int_fill=0;
   int *int_index=NULL, *int_xindex=NULL, *int_yindex=NULL;
   double *real_result=NULL, *real_x=NULL, *real_y=NULL;
   double *real_index=NULL, *real_xindex=NULL, *real_yindex=NULL;
