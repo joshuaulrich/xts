@@ -36,13 +36,13 @@ use.xts <- try.xts <- function(x, ..., error=TRUE)
   xx <- try(as.xts(x,...),silent=TRUE)
   if(inherits(xx,'try-error')) {
     if(is.character(error)) {
-      message(error)
+      stop(error)
     } else  
     if(is.function(error)) {
       return(error(x, ...))
     } else 
     if(error) {
-      message(gsub('\n','',xx))
+      stop(gsub('\n','',xx))
     } else {
       return(x) 
     }
