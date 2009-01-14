@@ -28,23 +28,25 @@
                        ...) {
   series.title <- deparse(substitute(x))
 
-  if(is.null(y))
-    xycoords <- xy.coords(x)
-  time.scale <- periodicity(x)$scale
+  #time.scale <- periodicity(x)$scale
   ep <- axTicksByTime(x,major.ticks, format=major.format)
 
   otype <- type
 
   if(is.OHLC(x) && type %in% c('candles','bars')) {
     x <- x[,has.OHLC(x, TRUE)]
-    plot(1:NROW(x),seq(min(x),max(x), length.out=NROW(x)), type="n", axes=FALSE, ann=FALSE, ...)
+    xycoords <- list(x=.index(x), y=seq(min(x),max(x),length.out=NROW(x)))
+    type <- "n"
   } else {
     if(NCOL(x) > 1) warning('only the univariate series will be plotted')
-    plot(1:NROW(x),xycoords$y, type=type, axes=FALSE, ann=FALSE, ...)
+    if(is.null(y))
+      xycoords <- xy.coords(.index(x), x[,1])
   }
 
+  plot(xycoords$x, xycoords$y, type=type, axes=FALSE, ann=FALSE, ...)
+
   if(auto.grid) {
-    abline(v=ep, col='grey', lty=4)
+    abline(v=xycoords$x[ep], col='grey', lty=4)
     grid(NA,NULL)
   }
 
@@ -59,8 +61,8 @@
 
   if(axes) {
     if(minor.ticks)
-      axis(1, at=1:NROW(x), labels=FALSE, col='#BBBBBB')
-    axis(1, at=ep, labels=names(ep), las=1, lwd=1, mgp=c(3,2,0)) 
+      axis(1, at=xycoords$x, labels=FALSE, col='#BBBBBB')
+    axis(1, at=xycoords$x[ep], labels=names(ep), las=1, lwd=1, mgp=c(3,2,0)) 
     axis(2)
   }
   
@@ -75,9 +77,9 @@
 function(x, width=0.2, order=1:4, bar.col='grey', candle.col='white',...) {
   # order = position of c(O,H,L,C)
   # draw HL bars
-  segments(1:NROW(x), x[,order[2]], 1:NROW(x), x[,order[3]], col=bar.col,...)
+  segments(.index(x), x[,order[2]], .index(x), x[,order[3]], col=bar.col,...)
   # draw candles
-  rect(1:NROW(x)-width, x[,order[1]], 1:NROW(x)+ width, x[,order[4]], col=candle.col, ...)
+  rect(.index(x) - width, x[,order[1]], .index(x) + width, x[,order[4]], col=candle.col, ...)
 }
 
 `plot.ohlc.bars` <- function() {
