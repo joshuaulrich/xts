@@ -162,3 +162,62 @@ SEXP na_locf (SEXP x)
   UNPROTECT(P);
   return(result);
 }
+
+SEXP na_omit_xts (SEXP x)
+{
+  SEXP not_na_index, col_index, result;
+
+  int i, j, ij, nr, nc; 
+  int not_NA;
+
+  nr = nrows(x);
+  nc = ncols(x);
+  not_NA = nr;
+  
+  int *int_x=NULL, *int_not_na_index=NULL;
+
+  switch(TYPEOF(x)) {
+    case INTSXP:
+      int_x = INTEGER(x);
+      for(i=0; i<nr; i++) {
+        for(j=0; j<nc; j++) {
+          ij = i + j*nr;
+          if(int_x[ij] == NA_INTEGER) {
+            not_NA--;
+            break;
+          }   
+        }   
+      }
+      break;
+    default:
+      error("unsupported type");
+      break;
+  }
+
+  if(not_NA==0 || not_NA==nr)
+    return(x);
+
+  PROTECT(not_na_index = allocVector(INTSXP, not_NA));
+  int_not_na_index = INTEGER(not_na_index);
+  not_NA = 0;
+  for(i=0; i<nr; i++) {
+    for(j=0; j<nc; j++) {
+      ij = i + j*nr;
+      if(int_x[ij] == NA_INTEGER)
+        break;
+      if(j==(nc-1)) {
+        /* make it to end of column, OK*/
+        int_not_na_index[not_NA] = i+1;
+        not_NA++;
+      }   
+    }   
+  }
+  PROTECT(col_index = allocVector(INTSXP, nc));
+  for(i=0; i<nc; i++)
+    INTEGER(col_index)[i] = i+1;
+
+  PROTECT(result = do_subset_xts(x, not_na_index, col_index));
+  UNPROTECT(3);
+  return(result);
+}
+
