@@ -57,3 +57,12 @@
   rbind(x,tmp)
 }
 
+na.locf.xts <- function(x, na.rm=FALSE, ...) {
+    x <- if(dim(x)[2] > 1) {
+      .xts(apply(x, 2, function(x) .Call('na_locf', x, PACKAGE='xts')),
+           .index(x))
+    } else .Call("na_locf", x, PACKAGE="xts")
+    if(na.rm) {
+      return(structure(na.omit(x),na.action=NULL))
+    } else x
+}

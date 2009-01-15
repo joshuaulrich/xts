@@ -22,11 +22,12 @@
 #include <R.h>
 #include <Rdefines.h>
 #include <Rinternals.h>
+#include "xts.h"
 
 int firstNonNA (SEXP x)
 {
   /*
-    check for leading NA values, throw error if found
+    Internal use only; called by naCheck below.
   */
 
   int i=0, nr;
@@ -56,18 +57,14 @@ int firstNonNA (SEXP x)
       error("unsupported type");
       break;
   }
-  /*
-  SEXP leadingNA;
-  PROTECT(leadingNA = allocVector(INTSXP, 1));
-  INTEGER(leadingNA)[0] = i;
-  UNPROTECT(1);
-  return(leadingNA);
-  */
   return(i);
 }
 
 SEXP naCheck (SEXP x, SEXP check)
 {
+  /*
+    Check for leading NA values, throw error if found
+  */
   SEXP first;
   int _first;
   _first = firstNonNA(x);
@@ -104,7 +101,64 @@ SEXP naCheck (SEXP x, SEXP check)
       break;
   }
   }
- 
   UNPROTECT(1);
   return(first);
+}
+
+SEXP na_locf (SEXP x)
+{
+  /* only works on univariate data */
+  SEXP result;
+
+  int i, nr, _first, P=0;
+  _first = firstNonNA(x);
+
+  int *int_x=NULL, *int_result=NULL;
+  double *real_x=NULL, *real_result=NULL;
+
+  if(ncols(x) > 1)
+    error("na.locf.xts only handle univariate, dimensioned data");
+
+  nr = nrows(x);
+
+  PROTECT(result = allocVector(TYPEOF(x), nrows(x))); P++;
+
+  switch(TYPEOF(x)) {
+    case INTSXP:
+      int_x = INTEGER(x);
+      int_result = INTEGER(result);
+      /* copy leading NAs */
+      for(i=0; i < (_first+1); i++) {
+        int_result[i] = int_x[i];
+      }
+      /* result[_first] now has first value */
+      for(i=_first+1; i<nr; i++) {
+        int_result[i] = int_x[i];
+        if(int_result[i] == NA_INTEGER)
+          int_result[i] = int_result[i-1];
+      }
+      break;
+    case REALSXP:
+      real_x = REAL(x);
+      real_result = REAL(result);
+      for(i=0; i < (_first+1); i++) {
+        real_result[i] = real_x[i];
+      }
+      for(i=_first+1; i<nr; i++) {
+        real_result[i] = real_x[i];
+        if(ISNA(real_result[i]))
+          real_result[i] = real_result[i-1];
+      }
+      break;
+    default:
+      error("unsupported type");
+      break;
+  }
+  setAttrib(result, R_DimSymbol, getAttrib(x, R_DimSymbol));
+  setAttrib(result, R_DimNamesSymbol, getAttrib(x, R_DimNamesSymbol));
+  setAttrib(result, xts_IndexSymbol, getAttrib(x, xts_IndexSymbol));
+  copy_xtsCoreAttributes(x, result);
+  copy_xtsAttributes(x, result);
+  UNPROTECT(P);
+  return(result);
 }
