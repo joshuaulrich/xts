@@ -70,8 +70,20 @@
 
   if(!'main' %in% names(dots)) title(main=series.title)
   do.call('title',list(...))
-
+  assign(".plot.xts",recordPlot(),.GlobalEnv)
 }
+
+lines.xts <- function(x, ...)
+{
+  last.plot <- if(exists(".plot.xts",.GlobalEnv)) {
+                 get(".plot.xts", .GlobalEnv) } else NULL
+  if( identical(last.plot, recordPlot()) ) {
+    lines.default(recordPlot()[[1]][[3]][[2]][[1]]$x,
+                  x, ...)
+  } else zoo:::lines.zoo(x, ...)
+  assign(".plot.xts",recordPlot(),.GlobalEnv)
+}
+
 
 `plot.ohlc.candles` <-
 function(x, width=0.2, order=1:4, bar.col='grey', candle.col='white',...) {

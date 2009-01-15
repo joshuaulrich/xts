@@ -97,7 +97,9 @@ export(rbind.xts,
 export(axTicksByTime)
 
 export(plot.xts)
+export(lines.xts)
 S3method(plot,xts)
+S3method(lines,xts)
 
 #export(Lag.xts, Next.xts) #, Diff.xts)
 
