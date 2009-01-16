@@ -20,7 +20,7 @@
 
 
 `na.omit.xts` <- function(object, ...) {
-  xx <- stats:::na.omit.default(object,...)
+  xx <- .Call('na_omit_xts', object, PACKAGE="xts")
   naa <- attr(xx,'na.action')
   if(length(naa) == 0)
     return(xx)

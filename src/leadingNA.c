@@ -165,16 +165,16 @@ SEXP na_locf (SEXP x)
 
 SEXP na_omit_xts (SEXP x)
 {
-  SEXP not_na_index, col_index, result;
+  SEXP na_index, not_na_index, col_index, result;
 
   int i, j, ij, nr, nc; 
-  int not_NA;
+  int not_NA, NA;
 
   nr = nrows(x);
   nc = ncols(x);
   not_NA = nr;
   
-  int *int_x=NULL, *int_not_na_index=NULL;
+  int *int_x=NULL, *int_na_index=NULL, *int_not_na_index=NULL;
 
   switch(TYPEOF(x)) {
     case INTSXP:
@@ -198,13 +198,21 @@ SEXP na_omit_xts (SEXP x)
     return(x);
 
   PROTECT(not_na_index = allocVector(INTSXP, not_NA));
+  PROTECT(na_index = allocVector(INTSXP, nr-not_NA));
+
+  /* pointers for efficiency as INTEGER in package code is a function call*/
   int_not_na_index = INTEGER(not_na_index);
-  not_NA = 0;
+  int_na_index = INTEGER(na_index);
+
+  not_NA = NA = 0;
   for(i=0; i<nr; i++) {
     for(j=0; j<nc; j++) {
       ij = i + j*nr;
-      if(int_x[ij] == NA_INTEGER)
+      if(int_x[ij] == NA_INTEGER) {
+        int_na_index[NA] = i+1;
+        NA++;
         break;
+      }
       if(j==(nc-1)) {
         /* make it to end of column, OK*/
         int_not_na_index[not_NA] = i+1;
@@ -212,12 +220,22 @@ SEXP na_omit_xts (SEXP x)
       }   
     }   
   }
+
   PROTECT(col_index = allocVector(INTSXP, nc));
   for(i=0; i<nc; i++)
     INTEGER(col_index)[i] = i+1;
 
   PROTECT(result = do_subset_xts(x, not_na_index, col_index));
-  UNPROTECT(3);
+
+  SEXP class;
+  PROTECT(class = allocVector(STRSXP, 1));
+  SET_STRING_ELT(class, 0, mkChar("omit"));
+  setAttrib(na_index, R_ClassSymbol, class);
+  UNPROTECT(1);
+
+  setAttrib(result, install("na.action"), na_index);
+  UNPROTECT(4);
+
   return(result);
 }
 
