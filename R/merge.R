@@ -35,6 +35,7 @@ merge.xts <- function(...,
   if(is.null(suffixes)) {
     syms <- names(dots)
     syms[nchar(syms)==0] <- as.character(dots)[nchar(syms)==0]
+    if(is.null(syms)) syms <- as.character(dots)
   } else
   if(length(suffixes) != length(dots)) {
     warning("length of suffixes and does not match number of merged objects")

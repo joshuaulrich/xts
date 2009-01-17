@@ -175,14 +175,38 @@ SEXP na_omit_xts (SEXP x)
   not_NA = nr;
   
   int *int_x=NULL, *int_na_index=NULL, *int_not_na_index=NULL;
+  double *real_x=NULL;
 
   switch(TYPEOF(x)) {
+    case LGLSXP:
+      for(i=0; i<nr; i++) {
+        for(j=0; j<nc; j++) {
+          ij = i + j*nr;
+          if(LOGICAL(x)[ij] == NA_LOGICAL) {
+            not_NA--;
+            break;
+          }   
+        }   
+      }
+      break;
     case INTSXP:
       int_x = INTEGER(x);
       for(i=0; i<nr; i++) {
         for(j=0; j<nc; j++) {
           ij = i + j*nr;
           if(int_x[ij] == NA_INTEGER) {
+            not_NA--;
+            break;
+          }   
+        }   
+      }
+      break;
+    case REALSXP:
+      real_x = REAL(x);
+      for(i=0; i<nr; i++) {
+        for(j=0; j<nc; j++) {
+          ij = i + j*nr;
+          if(ISNA(real_x[ij])) {
             not_NA--;
             break;
           }   
@@ -205,20 +229,44 @@ SEXP na_omit_xts (SEXP x)
   int_na_index = INTEGER(na_index);
 
   not_NA = NA = 0;
-  for(i=0; i<nr; i++) {
-    for(j=0; j<nc; j++) {
-      ij = i + j*nr;
-      if(int_x[ij] == NA_INTEGER) {
-        int_na_index[NA] = i+1;
-        NA++;
-        break;
+  switch(TYPEOF(x)) {
+    case INTSXP:
+      for(i=0; i<nr; i++) {
+        for(j=0; j<nc; j++) {
+          ij = i + j*nr;
+          if(int_x[ij] == NA_INTEGER) {
+            int_na_index[NA] = i+1;
+            NA++;
+            break;
+          }
+          if(j==(nc-1)) {
+            /* make it to end of column, OK*/
+            int_not_na_index[not_NA] = i+1;
+            not_NA++;
+          }   
+        }   
       }
-      if(j==(nc-1)) {
-        /* make it to end of column, OK*/
-        int_not_na_index[not_NA] = i+1;
-        not_NA++;
-      }   
-    }   
+      break;
+    case REALSXP:
+      for(i=0; i<nr; i++) {
+        for(j=0; j<nc; j++) {
+          ij = i + j*nr;
+          if(ISNA(real_x[ij])) {
+            int_na_index[NA] = i+1;
+            NA++;
+            break;
+          }
+          if(j==(nc-1)) {
+            /* make it to end of column, OK*/
+            int_not_na_index[not_NA] = i+1;
+            not_NA++;
+          }   
+        }   
+      }
+      break;
+    default:
+      error("unsupported type");
+      break;
   }
 
   PROTECT(col_index = allocVector(INTSXP, nc));

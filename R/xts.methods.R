@@ -103,6 +103,8 @@ function(x, i, j, drop = FALSE, ...)
                              binsearch(adjusted.times$last.time,  .index(x), FALSE))
                      )
         } # else leave i.tmp == NULL
+        if(!isOrdered(i.tmp, strict=FALSE)) # fixed non-match within range bug
+          i.tmp <- NULL
       }
       i <- i.tmp
     }
