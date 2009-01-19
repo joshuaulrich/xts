@@ -27,9 +27,10 @@
 
 
 //SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env) {{{
-SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
+SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env, SEXP dup)
 {
-  int nrx, ncx, nry, ncy, len;
+  int nrx, ncx, nry, ncy, truelen, len;
+  int no_duplicate = LOGICAL(dup)[0];
   int i, j, ij, ij_x, ij_y, xp=1, yp=1, add_y=0;
   int P=0; // PROTECT counter
   int mode;
@@ -46,7 +47,7 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
   nry = nrows(y);
   ncy = ncols(y);
 
-  len = nrx + nry;
+  truelen = len = nrx + nry;
 
   if( isNull(x) || isNull(y) ) {
     /* Handle NULL values by returning non-null object */
@@ -110,6 +111,9 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
   real_xindex = REAL(xindex);
   real_yindex = REAL(yindex);
   for( i = 0; i < len; i++ ) {
+    if( i >= truelen ) {
+      break;
+    } else 
     if( xp > nrx ) { 
       real_newindex[ i ] = real_yindex[ yp-1 ];
       for(j = 0; j < ncx; j++) {
@@ -167,12 +171,18 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
     if( real_xindex[ xp-1 ] == real_yindex[ yp-1 ] ) {
       if( real_xindex[ xp-1 ] < real_xindex[ xp   ] )
         add_y = 1;  /* add y values only if next xindex is new */
+      if(no_duplicate) {
+        add_y = 0;
+        truelen--;
+      }
       real_newindex[ i ] = real_xindex[ xp-1 ];
       if(add_y) real_newindex[ i+ 1 ] = real_yindex[ yp-1 ];
       for(j = 0; j < ncx; j++) {
       ij = i + j * len;
       ij_x = (xp-1) + j * nrx;
       ij_y = (yp-1) + j * nry;
+
+
       switch( mode ) {
         case LGLSXP:
           LOGICAL(result)[ ij ] = LOGICAL(x)[ ij_x ];
@@ -199,9 +209,9 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
       }
       }
       xp++;
-      if(add_y) { 
+      if(no_duplicate || add_y) { 
         yp++;
-        i++;  // need to increase i as we now have filled in 2 values
+        if(!no_duplicate) i++;  // need to increase i as we now have filled in 2 values
         add_y = 0;
       }
     } else
@@ -260,14 +270,17 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
       yp++;
     }
   }
-  } else
+  } else 
   if( TYPEOF(xindex) == INTSXP ) {
   int_newindex = INTEGER(newindex);
   int_xindex = INTEGER(xindex);
   int_yindex = INTEGER(yindex);
   for(i = 0; i < len; i++) {
+    /*Rprintf("xp:%i, yp:%i, i:%i\n",xp,yp,i);*/
+    if( i >= truelen ) {
+      break;
+    } else 
     if( xp > nrx ) { 
-      //INTEGER(newindex)[ i ] = INTEGER(yindex)[ yp-1 ];
       int_newindex[ i ] = int_yindex[ yp-1 ];
       for(j = 0; j < ncx; j++) {
         ij = i + j * len;
@@ -277,11 +290,9 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
             LOGICAL(result)[ ij ] = LOGICAL(y)[ ij_y ];
             break;
           case INTSXP:
-            //INTEGER(result)[ ij ] = INTEGER(y)[ ij_y ];
             int_result[ ij ] = int_y[ ij_y ];
             break;
           case REALSXP:
-            //REAL(result)[ ij ] = REAL(y)[ ij_y ];
             real_result[ ij ] = real_y[ ij_y ];
             break;
           case CPLXSXP:
@@ -298,7 +309,6 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
       
     } else
     if( yp > nry ) {
-      //INTEGER(newindex)[ i ] = INTEGER(xindex)[ xp-1 ];
       int_newindex[ i ] = int_xindex[ xp-1 ];
       for(j = 0; j < ncx; j++) {
       ij = i + j * len;
@@ -308,11 +318,9 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
           LOGICAL(result)[ ij ] = LOGICAL(x)[ ij_x ];
           break;
         case INTSXP:
-          //INTEGER(result)[ ij ] = INTEGER(x)[ ij_x ];
           int_result[ ij ] = int_x[ ij_x ];
           break;
         case REALSXP:
-          //REAL(result)[ ij ] = REAL(x)[ ij_x ];
           real_result[ ij ] = real_x[ ij_x ];
           break;
         case CPLXSXP:
@@ -330,6 +338,10 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
     if( int_xindex[ xp-1 ] == int_yindex[ yp-1 ] ) {
       if( int_xindex[ xp-1 ] < int_xindex[ xp  ] )
         add_y = 1;
+      if(no_duplicate) {
+        add_y = 0;
+        truelen--;
+      }
       int_newindex[ i ] = int_xindex[ xp-1 ];
       if(add_y) int_newindex[ i+1 ] = int_yindex[ yp-1 ];
       for(j = 0; j < ncx; j++) {
@@ -362,15 +374,13 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
       }
       }
       xp++;
-      if(add_y) {
+      if(no_duplicate || add_y) {
         yp++;
-        i++;  // need to increase i as we now have filled in 2 values
+        if(!no_duplicate) i++;  // need to increase i as we now have filled in 2 values
         add_y = 0;
       }
     } else
-    //if( INTEGER(xindex)[ xp-1 ]  < INTEGER(yindex)[ yp-1 ] ) {
     if( int_xindex[ xp-1 ] < int_yindex[ yp-1 ] ) {
-      //INTEGER(newindex)[ i ] = INTEGER(xindex)[ xp-1 ];
       int_newindex[ i ] = int_xindex[ xp-1 ];
       for(j = 0; j < ncx; j++) {
       ij = i + j * len;
@@ -380,11 +390,9 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
           LOGICAL(result)[ ij ] = LOGICAL(x)[ ij_x ];
           break;
         case INTSXP:
-          //INTEGER(result)[ ij ] = INTEGER(x)[ ij_x ];
           int_result[ ij ] = int_x[ ij_x ];
           break;
         case REALSXP:
-          //REAL(result)[ ij ] = REAL(x)[ ij_x ];
           real_result[ ij ] = real_x[ ij_x ];
           break;
         case CPLXSXP:
@@ -399,9 +407,7 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
       }
       xp++;
     } else
-    //if( INTEGER(xindex)[ xp-1 ]  > INTEGER(yindex)[ yp-1 ] ) {
     if( int_xindex[ xp-1 ] > int_yindex[ yp-1 ] ) {
-      //INTEGER(newindex)[ i ] = INTEGER(yindex)[ yp-1 ];
       int_newindex[ i ] = int_yindex[ yp-1 ];
       for(j = 0; j < ncx; j++) {
       ij = i + j * len;
@@ -411,11 +417,9 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
           LOGICAL(result)[ ij ] = LOGICAL(y)[ ij_y ];
           break;
         case INTSXP:
-          //LOGICAL(result)[ ij ] = LOGICAL(y)[ ij_y ];
           int_result[ ij ] = int_y[ ij_y ];
           break;
         case REALSXP:
-          //REAL(result)[ ij ] = REAL(y)[ ij_y ];
           real_result[ ij ] = real_y[ ij_y ];
           break;
         case CPLXSXP:
@@ -429,25 +433,30 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
       }
       }
       yp++;
-    }
-  }
+    }}
   }
 
-  UNPROTECT(P);
+  if(truelen != len) {
+    PROTECT(result = lengthgets(result, truelen * ncx)); P++;  /* reset length */
+  }
   setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
   SEXP dim;
   PROTECT(dim = allocVector(INTSXP, 2));
-  INTEGER(dim)[0] = len;
+  INTEGER(dim)[0] = truelen;
   INTEGER(dim)[1] = INTEGER(getAttrib(x, R_DimSymbol))[1];
   UNPROTECT(1);
   setAttrib(result, R_DimSymbol, dim);
   setAttrib(result, R_DimNamesSymbol, getAttrib(x, R_DimNamesSymbol));
   
+  if(truelen != len) {
+    PROTECT(newindex = lengthgets(newindex, truelen)); P++;
+  }
   setAttrib(result, xts_IndexSymbol, newindex);
   setAttrib(result, xts_IndexClassSymbol, getAttrib(x, xts_IndexClassSymbol));
   setAttrib(result, xts_IndexFormatSymbol, getAttrib(x, xts_IndexFormatSymbol));
   setAttrib(result, xts_ClassSymbol, getAttrib(x, xts_ClassSymbol));
   copy_xtsAttributes(x, result);
+  UNPROTECT(P);
   return result;
 } //}}}
 
@@ -455,12 +464,14 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env)
 SEXP rbindXts (SEXP args)
 {
   SEXP _x, _y;
-  SEXP env;
+  SEXP env, dup;
   int P=0;
 
   args = CDR(args); // 'rbindXts' call name
   PROTECT(env = CAR(args)); P++;  // env
   args = CDR(args);  
+  PROTECT(dup = CAR(args)); P++;
+  args = CDR(args);
 
   PROTECT(_x = CAR(args)); P++;
   args = CDR(args);
@@ -473,9 +484,9 @@ SEXP rbindXts (SEXP args)
   PROTECT(_y = CAR(args)); P++;
   args = CDR(args);
 
-  PROTECT(_x = do_rbind_xts(_x, _y, env)); P++;
+  PROTECT(_x = do_rbind_xts(_x, _y, env, dup)); P++;
   while(args != R_NilValue) {
-    PROTECT(_x = do_rbind_xts(_x, CAR(args), env)); P++;
+    PROTECT(_x = do_rbind_xts(_x, CAR(args), env, dup)); P++;
     args = CDR(args);
   }
 

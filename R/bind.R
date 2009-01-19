@@ -50,12 +50,12 @@ cbind.xts <- function(..., all=TRUE, fill=NA, suffixes=NULL) {
 
 `c.xts` <-
 function(...) {
-  .External("rbindXts", env=new.env(), ..., PACKAGE="xts")
+  .External("rbindXts", env=new.env(), dup=FALSE, ..., PACKAGE="xts")
 }
 
 rbind.xts <- function(..., deparse.level=1)
 {
-  .External("rbindXts", env=new.env(), ..., PACKAGE="xts")
+  .External("rbindXts", env=new.env(), dup=FALSE, ..., PACKAGE="xts")
 }
 
 `.rbind.xts` <-

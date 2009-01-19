@@ -61,7 +61,7 @@ SEXP add_class(SEXP x, SEXP class);
 SEXP lagXts(SEXP x, SEXP k, SEXP pad);
 SEXP do_is_ordered(SEXP x, SEXP increasing, SEXP strictly);
 SEXP mergeXts(SEXP args);
-SEXP do_rbind_xts(SEXP x, SEXP y, SEXP env);
+SEXP do_rbind_xts(SEXP x, SEXP y, SEXP env, SEXP dup);
 SEXP rbindXts(SEXP args);
 SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc);
 SEXP number_of_cols(SEXP args);

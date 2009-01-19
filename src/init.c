@@ -33,7 +33,7 @@ R_CallMethodDef callMethods[] = {
   {"do_is_ordered",         (DL_FUNC) &do_is_ordered,           3},
   {"isXts",                 (DL_FUNC) &isXts,                   1},
   {"tryXts",                (DL_FUNC) &tryXts,                  1},
-  {"do_rbind_xts",          (DL_FUNC) &do_rbind_xts,            3},
+  {"do_rbind_xts",          (DL_FUNC) &do_rbind_xts,            4},
   {"do_subset_xts",         (DL_FUNC) &do_subset_xts,           3},
   {NULL,                    NULL,                               0}
 };
