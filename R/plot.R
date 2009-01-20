@@ -75,10 +75,11 @@
 
 lines.xts <- function(x, ...)
 {
+  getxvalues <- function(x) x[[1]][[3]][[2]][[1]]$x
   last.plot <- if(exists(".plot.xts",.GlobalEnv)) {
                  get(".plot.xts", .GlobalEnv) } else NULL
-  if( identical(last.plot, recordPlot()) ) {
-    lines.default(recordPlot()[[1]][[3]][[2]][[1]]$x,
+  if( identical(getxvalues(last.plot), getxvalues(recordPlot())) ) {
+    lines.default(getxvalues(recordPlot()),
                   x, ...)
   } else zoo:::lines.zoo(x, ...)
   assign(".plot.xts",recordPlot(),.GlobalEnv)

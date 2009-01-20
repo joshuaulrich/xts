@@ -101,12 +101,12 @@ function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"),  check=TRUE, unique=F
 `reclass` <-
 function(x, match.to, error=FALSE, ...) {
   if(!missing(match.to) && is.xts(match.to)) {
-    if(NROW(x) != length(index(match.to)))
+    if(NROW(x) != length(.index(match.to)))
       if(error) {
         stop('incompatible match.to attibutes')
       } else return(x)
 
-    if(!is.xts(x)) x <- xts(coredata(x),index(match.to))
+    if(!is.xts(x)) x <- .xts(coredata(x),.index(match.to), .indexCLASS=indexClass(match.to))
     CLASS(x) <- CLASS(match.to)
     xtsAttributes(x) <- xtsAttributes(match.to)
   }

@@ -27,7 +27,7 @@ We will also be adding more facilities for high frequency data
 management. As well as using large data to benchmark and improve
 the base xts functionality.
 
-Estimated time-table for release is???
+RELEASED!
 
 IMPLEMENTED CHANGES:
 Internal structure now includes a numeric conversion of POSIXct as the index
@@ -45,6 +45,6 @@ Additional C and R code has been added to speed up diff() and lag() operations,
 as well as provide basic Ops tools that are as fast or faster than native
 data-type operations, while maintaining all the functionality of xts.
 
-All of the internal reliance on zoo has been removed.  The goal is to
-have 'xts' merely suggest 'zoo', though it will always carry the same basic
-matrix+index structure that makes zoo so useful.
+xts now uses very little of zoo for basic functionality, though many zoo methods are
+left as primary methods for xts (though standard S3 inheritence). zoo is standard
+for interface and functionality.
