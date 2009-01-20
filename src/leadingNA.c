@@ -63,7 +63,7 @@ int firstNonNA (SEXP x)
 SEXP naCheck (SEXP x, SEXP check)
 {
   /*
-    Check for leading NA values, throw error if found
+    Check for non-leading NA values, throw error if found
   */
   SEXP first;
   int _first;
