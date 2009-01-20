@@ -1,11 +1,13 @@
 \name{timeBased}
 \alias{timeBased}
+\alias{is.timeBased}
 \title{ Check if Class is Time-Based }
 \description{
 Used to verify that the object is one of the
 known time-based classes in R.
 }
 \usage{
+is.timeBased(x)
 timeBased(x)
 }
 \arguments{

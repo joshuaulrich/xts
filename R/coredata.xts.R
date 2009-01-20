@@ -1,18 +1,59 @@
-`coredata.xts` <-
-function(x,...) {
+#
+#   xts: eXtensible time-series 
+#
+#   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
+#
+#   Contributions from Joshua M. Ulrich
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+coredata.xts <- function(x, fmt=FALSE, ...) {
   x.attr <- attributes(x)
 
-  xx <- structure(x,dimnames=x.attr$dimnames) #,index=x.attr$index)
-
-  # attributes not to be kept
-  original.attr <- x.attr[!names(x.attr) %in%
+  if(is.character(fmt)) {
+    indexFormat(x) <- fmt
+    fmt <- TRUE
+  }
+  
+  if(length(x) > 0 && fmt) {
+    if(!is.null(indexFormat(x))) {
+      x.attr$dimnames <- list(format(index(x), format=indexFormat(x)),
+                              dimnames(x)[[2]])
+      indexFormat(x) <- NULL  # remove before printing
+    } else {
+      x.attr$dimnames <- list(format(index(x)),dimnames(x)[[2]])
+    }
+      #attributes not to be kept
+    original.attr <- x.attr[!names(x.attr) %in%
                           c('dim','dimnames')]
-
-  for(i in names(original.attr)) {
-    attr(xx,i) <- NULL
+    if(is.null(dim(x))) {
+      xx <- structure(unclass(x), names=x.attr$dimnames[[1]])
+    } else {
+      xx <- structure(unclass(x), dim=dim(x), dimnames=x.attr$dimnames) 
+    }
+    for(i in names(original.attr)) {
+      attr(xx,i) <- NULL
+    }
+    return(xx)
   }
 
-  return(xx)
+  if(length(x) == 0) {
+    return(x)
+  } else 
+  return(.Call("coredata", x, PACKAGE="xts"))
+
 }
 
 `xcoredata.default` <-
@@ -34,11 +75,15 @@ function(x,...) {
 }
 
 `xcoredata<-.default` <- function(x,value) {
-  for(att in names(value)) {
-    if(!att %in% c('dim','dimnames'))
-      attr(x,att) <- value[[att]]
+  if(is.null(value)) {
+    return(coredata(x))
+  } else {
+    for(att in names(value)) {
+      if(!att %in% c('dim','dimnames'))
+        attr(x,att) <- value[[att]]
+    }
+  return(x)
   }
-  x
 }
 
 `xtsAttributes` <-
@@ -50,13 +95,14 @@ function(x, user=NULL) {
 
   if(is.null(user)) {
   # Both xts and user attributes
-    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES')
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT')
     xa <- x.attr[!names(x.attr) %in% rm.attr]
   }
   else
   if(user) {
   # Only user attributes
-    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES',x.attr$.CLASSnames)
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT', 
+                 x.attr$.CLASSnames)
     xa <- x.attr[!names(x.attr) %in% rm.attr]
   } else {
   # Only xts attributes
@@ -80,7 +126,8 @@ function(x,value) {
     }
   } else
   for(nv in names(value)) {
-    if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES','.CLASSnames'))
+    if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES','.CLASSnames',
+                  '.indexCLASS','.indexFORMAT'))
       attr(x,nv) <- value[[nv]]
   }
   x

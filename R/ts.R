@@ -1,3 +1,24 @@
+#
+#   xts: eXtensible time-series 
+#
+#   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
+#
+#   Contributions from Joshua M. Ulrich
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 # methods for handling ts <--> xts
 
 `re.ts2` <-
@@ -30,10 +51,10 @@ function(x,...) {
   #ts(coredata(x), start=tsp.attr[1],frequency=freq.attr)
   dim <- attr(x, 'dim')
   dn <- attr(x,'dimnames')
-  if(is.null(dim) || dim[2]==1) {
+  if(!is.null(dim) && dim[2]==1) {
     attr(x,'dim') <- attr(x, 'dimnames') <- NULL
   }
-  zoo:::as.ts.zoo(x)
+  as.ts(x)
 }
 
 `as.xts.ts` <-
@@ -85,14 +106,23 @@ function(x,dateFormat,...) {
             frequency=frequency(x),
             .CLASS='ts',
             .CLASSnames=c('frequency'),
-#            .tsp=tsp(x),
+            .tsp=tsp(x),
 #            .frequency=frequency(x),
             ...)
+  attr(xx, 'tsp') <- NULL
   xx
 }
 
-#`as.ts.xts` <-
-#function(x,...) {
-#  if(attr(x,'.CLASS')=='ts') return(re.ts(x,...))
-#  ts(coredata(x),...)
-#}
+
+`as.ts.xts` <-
+function(x,...) {
+  #if(attr(x,'.CLASS')=='ts') return(re.ts(x,...))
+  TSP <- attr(x, '.tsp')
+  attr(x, '.tsp') <- NULL
+  x <- ts(coredata(x), frequency=frequency(x), ...)
+  if(!is.null(dim(x)) && dim(x)[2]==1)
+    dim(x) <- NULL
+  if(!is.null(TSP))
+    tsp(x) <- TSP
+  x
+}

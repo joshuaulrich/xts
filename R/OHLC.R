@@ -1,6 +1,50 @@
+#
+#   xts: eXtensible time-series 
+#
+#   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
+#
+#   Contributions from Joshua M. Ulrich
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 # functions from quantmod to check for OHLC style/columns
 # NOT TO BE EXPORTED
 #
+`OHLCV` <- 
+function (x) 
+{
+    if (is.OHLCV(x)) 
+        return(x[, has.OHLCV(x, 1)])
+    NULL
+}
+
+`is.OHLCV` <-
+function(x)
+{
+  all(has.Op(x),has.Hi(x),has.Lo(x),has.Cl(x),has.Vo(x))
+}
+
+`has.OHLCV` <-
+function(x,which=FALSE)
+{
+  if(which) {
+    c(has.Op(x,1),has.Hi(x,1),has.Lo(x,1),has.Cl(x,1),has.Vo(x,1))
+  } else {
+    c(has.Op(x),has.Hi(x),has.Lo(x),has.Cl(x),has.Vo(x))
+  }
+}
 
 `OHLC` <- 
 function (x) 

@@ -32,7 +32,8 @@ A simple and reliable way to convert many different
 objects into a uniform format for use within \R.
 
 It is possible with a call to \code{as.xts} to
-convert objects of class \code{timeSeries}, \code{ts},
+convert objects of class \code{timeSeries}, \code{ts}, \code{irts},
+\code{fts},
 \code{its}, \code{matrix}, \code{data.frame}, and \code{zoo}.
 
 \code{xtsible} safely checks whether an object can be converted to
@@ -45,7 +46,8 @@ xts methods and arguments specific to each coercible type.
 Additional name=value pairs may be passed to the function
 to be added to the new object. A special print.xts method
 will assure that the attributes are hidden from view, but will
-be available via \R's standard \code{attr} function.
+be available via \R's standard \code{attr} function, as well
+as the \code{xtsAttributes} function.
 
 The returned object will preserve all relevant attribute/slot
 data within itself, allowing for temporary conversion to use
@@ -60,7 +62,7 @@ as there would be no available storage slot/attribute.
 \code{Reclass} is designed for top-level use, where it is
 desirable to have the object returned from an arbitrary
 function in the same class as the object passed in.  Most
-functions within \R are unable to return objects
+functions within \R are not designed to return objects
 matching the original object's class.  While this tool is
 highly experimental at present, it attempts to handle
 conversion and reconversion transparently.  The caveats are

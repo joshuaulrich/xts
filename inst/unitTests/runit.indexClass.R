@@ -28,7 +28,7 @@ test.convert_POSIXct2yearqtr <- function() {
 
 }
 test.convert_POSIXct2timeDate <- function() {
-  library(fSeries)
+  library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
@@ -64,7 +64,7 @@ test.convert_Date2yearqtr <- function() {
   checkTrue(inherits(index(x),'yearqtr'))
 }
 test.convert_Date2timeDate <- function() {
-  library(fSeries)
+  library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
@@ -100,7 +100,7 @@ test.convert_chron2yearqtr <- function() {
   checkTrue(inherits(index(x),'yearqtr'))
 }
 test.convert_chron2timeDate <- function() {
-  library(fSeries)
+  library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
@@ -136,7 +136,7 @@ test.convert_yearmon2yearqtr <- function() {
   checkTrue(inherits(index(x),'yearqtr'))
 }
 test.convert_yearmon2timeDate <- function() {
-  library(fSeries)
+  library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
@@ -172,7 +172,7 @@ test.convert_yearqtr2yearqtr <- function() {
   checkTrue(inherits(index(x),'yearqtr'))
 }
 test.convert_yearqtr2timeDate <- function() {
-  library(fSeries)
+  library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
@@ -208,7 +208,7 @@ test.convert_timeDate2yearqtr <- function() {
   checkTrue(inherits(index(x),'yearqtr'))
 }
 test.convert_timeDate2timeDate <- function() {
-  library(fSeries)
+  library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
@@ -231,7 +231,7 @@ test.indexClass_full_index <- function() {
   checkException((indexClass(convert_xts) <- index(convert_xts)))
 }
 test.indexClass_unquoted_symbol <- function() {
-  library(fSeries)
+  library(timeDate)
   checkException((indexClass(convert_xts) <- timeDate))
 }
 test.indexClass_missing_object <- function() {

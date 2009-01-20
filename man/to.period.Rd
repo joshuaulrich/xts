@@ -42,7 +42,13 @@ to.monthly(x,indexAt='yearmon',drop.time=FALSE,name,...)
 to.quarterly(x,indexAt='yearqtr',drop.time=FALSE,name,...)
 to.yearly(x,drop.time=TRUE,name,...)
 
-to.period(x, period = 'months', k = 1, indexAt, name=NULL, ...)
+to.period(x,
+          period = 'months', 
+          k = 1, 
+          indexAt, 
+          name=NULL,
+          OHLC = TRUE,
+          ...)
 }
 \arguments{
   \item{x}{ a univariate or OHLC type time-series object } 
@@ -51,6 +57,7 @@ to.period(x, period = 'months', k = 1, indexAt, name=NULL, ...)
   \item{drop.time}{ remove time component of POSIX datestamp (if any) }
   \item{k}{ number of sub periods to aggregate on (only for minutes and seconds) }
   \item{name}{ override column names }
+  \item{OHLC}{ should an OHLC object be returned }
   \item{\dots}{ additional arguments }
 }
 \details{

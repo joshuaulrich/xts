@@ -1,14 +1,23 @@
-`time<-.xts` <- `index<-.xts` <- function(x, value) {
-  if(length(index(x)) != length(value)) stop('length of index vectors does not match')
+#
+#   xts: eXtensible time-series 
+#
+#   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
+#
+#   Contributions from Joshua M. Ulrich
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-  if(!class(value)[1] %in% c('dates','chron','POSIXt','POSIXlt','POSIXct',
-                             'Date','timeDate','yearmon','yearqtr') )
-       stop(paste('unsupported',sQuote('index'),
-                  'index type of class',sQuote(class(value))))
-
-  attr(x, 'index') <- value
-  return(x)
-}
 
 `convertIndex` <-
 function(x,value) {
@@ -18,8 +27,7 @@ function(x,value) {
 
 `indexClass` <-
 function(x) {
-  if(!is.xts(x)) x <- as.xts(x)
-  class(index(x))
+  attr(x, '.indexCLASS')
 }
 
 `indexClass<-` <-
@@ -28,39 +36,14 @@ function(x,value) {
 }
 
 `indexClass<-.xts` <-
-function(x,value) {
-  if(value[[1]][1] %in% indexClass(x)[1]) return(x)
+function(x, value) {
+  if(!is.character(value) && length(value) != 1)
+    stop('improperly specified value for indexClass')
 
-  original.indexClass <- indexClass(x)
-
-  sys.TZ <- Sys.getenv('TZ')
-  Sys.setenv(TZ='GMT')
-  index(x) <- as.POSIXct(index(x))
-
-  if(!is.list(value)) value <- as.list(value)
-  if(!value[[1]] %in% c('dates','chron','POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr') )
+  if(!value[1] %in% c('dates','chron','POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr') )
        stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
 
-  if(value[[1]]=='timeDate') {
-    stopifnot('package:fSeries' %in% search() | require('fSeries',quietly=TRUE))
-    index(x) <- do.call(paste('as',value[[1]],sep='.'),list(index(x)))
-  } 
-  else if(value[[1]] %in% c('chron','dates','POSIXt','POSIXct','POSIXlt','yearmon','yearqtr')) {
-    if('POSIXt' %in% value[[1]]) value[[1]] <- value[[2]] # get specific ct/lt value
-    if(value[[1]] %in% c('dates','chron')) {
-      stopifnot('package:chron' %in% search() | require('chron',quietly=TRUE))
-      value[[1]] <- 'chron'
-    } 
-    index(x) <- do.call(paste('as',value[[1]],sep='.'),list(index(x)))
-  } else index(x) <- do.call("as.Date",list(index(x)))
-
-  if('timeDate' == original.indexClass[1]) {
-    # remove unnecessary 'control' attribute
-    x <- structure(x,index=structure(index(x),control=NULL))
-  }
-
-  Sys.setenv(TZ=sys.TZ)
-  
+  attr(x, '.indexCLASS') <- value
   x
 }
 

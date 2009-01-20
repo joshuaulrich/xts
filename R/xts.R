@@ -1,7 +1,29 @@
+#
+#   xts: eXtensible time-series 
+#
+#   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
+#
+#   Contributions from Joshua M. Ulrich
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 # xts core functions
 #   additional methods are in correspondingly named .R files
 #   current conversions include:
 #     timeSeries, its, irts, ts, matrix, data.frame, and zoo
+#     MISSING: fts, tis, fame
 #
 #  this file includes the main xts constructor as well as the reclass
 #  function.
@@ -10,30 +32,70 @@
 #  are also defined below
 
 `xts` <-
-function(x=NULL,order.by=index(x),frequency=NULL,...) {
-#  if(!any(sapply(c('Date','POSIXct','chron','dates','times','timeDate','yearmon','yearqtr'),
-#     function(xx) inherits(order.by,xx)))) {
+function(x=NULL,
+         order.by=index(x),
+         frequency=NULL,
+         unique=TRUE,
+         ...)
+{
+  if(is.null(x) && missing(order.by))
+    return(structure(.xts(,0),index=integer()))
+ 
   if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
-#  }
-    orderBy <- class(order.by)
-    if('timeDate' %in% orderBy) {
-      z <- structure(zoo(x=coredata(x),
-                     order.by=as.POSIXct(order.by),
-                     frequency=frequency),
-                     class=c('xts','zoo'),...)
-      indexClass(z) <- 'timeDate'
-    } else {
-      z <- structure(zoo(x=x,
-                     order.by=order.by,
-                     frequency=frequency),
-                     class=c('xts','zoo'),...)
-    }
-  if(!is.null(dim(x))) {
-    attr(z,'.ROWNAMES') <- dimnames(z)[[1]]
-    rownames(z) <- as.character(index(z))
+
+  if(NROW(x) > length(order.by))
+    stop("index must be the same at least as long as data")
+
+  orderBy <- class(order.by)
+
+  if(!is.null(x) && !isOrdered(order.by, strictly=!unique) ) {
+    indx <- order(order.by)
+    if(is.matrix(x)) {
+      x <- x[indx,]
+    } else x <- x[indx]
+    order.by <- order.by[indx]
   }
-  return(z)
+
+  tz <- Sys.getenv('TZ')
+  on.exit( Sys.setenv(TZ=tz) )
+  Sys.setenv(TZ='GMT')
+
+  if(!is.null(x) || length(x) != 0 ) {
+    x <- as.matrix(x)
+  } else x <- numeric(0)
+
+  x <- structure(.Data=x,
+            index=as.numeric(as.POSIXct(order.by)),
+            class=c('xts','zoo'),
+            .indexCLASS=orderBy,
+            ...)
+  if(!is.null(attributes(x)$dimnames[[1]]))
+    # this is very slow if user adds rownames, but maybe that is deserved :)
+    dimnames(x) <- dimnames(x) # removes row.names
+  x
+}
+
+`.xts` <-
+function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"),  check=TRUE, unique=FALSE, ...) {
+  if(check) {
+    if( !isOrdered(index, increasing=TRUE, strictly=unique) )
+      stop('index is not in',ifelse(unique, 'strictly', ''),'increasing order')
+  }
+  if(!is.numeric(index) && timeBased(index))
+    index <- as.numeric(as.POSIXct(index))
+  if(!is.null(x) && NROW(x) > length(index))
+    stop("index must be set for each observation")
+
+  if(!is.null(x)) {
+    if(!is.matrix(x))
+      x <- as.matrix(x)
+  } else x <- numeric(0)
+
+  structure(.Data=x,
+            index=index,
+            .indexCLASS=.indexCLASS,
+            class=c('xts','zoo'), ...)
 }
 
 `reclass` <-
@@ -54,7 +116,7 @@ function(x, match.to, error=FALSE, ...) {
     if(!is.null(dim(x))) {
       if(!is.null(attr(x,'.ROWNAMES'))) {
         rownames(x) <- attr(x,'.ROWNAMES')[1:NROW(x)]
-      } else rownames(x) <- NULL
+      } #else rownames(x) <- NULL
     }
     attr(x,'.ROWNAMES') <- NULL
     if(is.null(attr(x,'.RECLASS')) || attr(x,'.RECLASS')) {#should it be reclassed?
@@ -100,13 +162,17 @@ function(x,value) {
 
 `is.xts` <-
 function(x) {
-  inherits(x,'xts')
+  inherits(x,'xts') &&
+  is.numeric(.index(x)) &&
+  !is.null(indexClass(x))
 }
 
 `as.xts` <-
 function(x,...) {
   UseMethod('as.xts')
 }
+
+#as.xts.default <- function(x, ...) x
 
 `re.xts` <-
 function(x,...) {

@@ -10,6 +10,7 @@ Plotting methods for xts objects.
          auto.grid = TRUE,
          major.ticks = "auto",
          minor.ticks = TRUE,
+         major.format = TRUE,
          bar.col = "grey",
          candle.col = "white",
          ann = TRUE, axes = TRUE, ...)
@@ -21,6 +22,7 @@ Plotting methods for xts objects.
   \item{auto.grid}{ should grid lines be drawn }
   \item{major.ticks}{ should major tickmarks be drawn and labeled }
   \item{minor.ticks}{ should minor tickmarks be drawn }
+  \item{major.format}{ passed along to axTicksByTime. See also }
   \item{bar.col}{ the color of the bars when type is \sQuote{bars} or \sQuote{candles} }
   \item{candle.col}{ the color of the candles when type is \sQuote{candles} }
   \item{ann}{ passed \sQuote{par} graphical parameter }

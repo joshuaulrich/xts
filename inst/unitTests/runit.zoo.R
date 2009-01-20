@@ -31,9 +31,11 @@ test.convert_zoo_to_xts_i1j1 <- function() {
   checkIdentical(sample.xts[1,1],as.xts(sample.zoo)[1,1])
 }
 test.zoo_reclass <- function() {
+  DEACTIVATED("rownames are not kept yet in current xts-dev")
   checkIdentical(sample.zoo,reclass(as.xts(sample.zoo)))
 }
 test.zoo_reclass_subset_reclass_j1 <- function() {
+  DEACTIVATED("rownames are not kept yet in current xts-dev")
   checkIdentical(sample.zoo[,1],reclass(as.xts(sample.zoo))[,1])
 }
 test.zoo_reclass_subset_as.xts_j1 <- function() {

@@ -2,32 +2,58 @@
 useDynLib(xts)
 
 # imports
-#importFrom(stats, lag)
+importFrom(stats, lag)
+importFrom(stats, as.ts)
 
 # debugging
 export(firstof,
        lastof)
 
-export(timeBased,
+export(is.timeBased,
+       timeBased,
        timeBasedRange,
        timeBasedSeq)
 
+export(.indexsec,
+       .indexmin,
+       .indexhour,
+       .indexday,
+       .indexDate,
+       .indexmon,
+       .indexmday,
+       .indexwday,
+       .indexyday,
+       .indexisdst,
+       .indexyear,
+       .indexweek)
+
+export(isOrdered)
+
+export(.subset.xts)
+
 # user visible core xts functions
-export(xts)
+export(xts, .xts)
 export(as.xts)
 export(is.xts)
+export(endpoints)
+export(dimnames.xts)
+export('dimnames<-.xts')
 export(xcoredata)
 export('xcoredata<-')
+export(.index)
+export('.index<-')
 export(xtsible)
 export(use.xts, try.xts)
 export(Reclass, use.reclass)
 export(reclass)
-export(endpoints)
+
 export(CLASS)
 export('CLASS<-')
+export(indexFormat)
+export('indexFormat<-')
 export(indexClass)
-export(convertIndex)
 export('indexClass<-')
+export(convertIndex)
 export(nseconds,
        nminutes,
        nhours,
@@ -64,48 +90,86 @@ export(apply.daily,
        apply.monthly,
        apply.quarterly,
        apply.yearly)
-#export(rbind.xts,
-#       cbind.xts,
-#       c.xts)
+export(rbind.xts,
+       cbind.xts,
+       c.xts)
+
 export(axTicksByTime)
+
+export(plot.xts)
+export(lines.xts)
 S3method(plot,xts)
+S3method(lines,xts)
 
-export(Lag.xts, Next.xts) #, Diff.xts)
+#export(Lag.xts, Next.xts) #, Diff.xts)
 
-#S3method(lag,xts)
-#S3method(diff,xts)
+export(lag.xts)
+export(diff.xts)
+export(merge.xts)
+#export(mergeXts)
+S3method(lag,xts)
+S3method(diff,xts)
 S3method(first,default)
 S3method(last,default)
-S3method(first,zoo)
-S3method(last,zoo)
+S3method(first,xts)
+S3method(last,xts)
 S3method(print,periodicity)
 
 # xts methods
 importFrom(zoo,coredata)
+importFrom(zoo, index)
 importFrom(zoo,'index<-')
 importFrom(zoo,'time<-')
+importFrom(zoo, na.locf)
 importFrom(stats,na.omit)
+importFrom(stats,start)
+importFrom(stats,end)
 S3method(coredata,xts)
 S3method(xcoredata,default)
 S3method('xcoredata<-',default)
 S3method(as.xts,xts)
 S3method('[',xts)
+S3method('[<-',xts)
 S3method(str,xts)
+S3method(start, xts)
+S3method(end, xts)
 S3method(na.omit,xts)
+S3method(na.locf,xts)
 S3method(print,xts)
 S3method(print,CLASS)
 S3method('CLASS<-',xts)
 S3method('indexClass<-',xts)
+S3method('indexFormat<-',xts)
+S3method('index',xts)
 S3method('index<-',xts)
 S3method('time<-',xts)
 S3method('xtsAttributes<-',xts)
+S3method(merge,xts)
 S3method(rbind,xts)
 S3method(cbind,xts)
 S3method(c,xts)
 S3method(Ops,xts)
+S3method(as.numeric,xts)
+S3method(as.xts,numeric)
+S3method(as.double,xts)
+S3method(as.xts,double)
+S3method(as.integer,xts)
+S3method(as.xts,integer)
+S3method(as.complex,xts)
+S3method(as.xts,complex)
+S3method(as.logical,xts)
+S3method(as.xts,logical)
+S3method(cumsum, xts)
+S3method(cumprod, xts)
+S3method(cummin, xts)
+S3method(cummax, xts)
+
+# list specific methods
+S3method(as.list,xts)
 
 # ts specific methods
-S3method(as.xts,ts)
+S3method(as.xts, ts)
+S3method(as.ts, xts)
 
 # zoo specific methods
 importFrom(zoo,as.zoo)
@@ -114,11 +178,13 @@ S3method(as.zoo,xts)
 
 # data.frame specific methods
 S3method(as.xts,data.frame)
+S3method(as.data.frame, xts)
 
 # matrix specific methods
 S3method(as.xts,matrix)
+S3method(as.matrix,xts)
 
-# timeSeries (package:fSeries) specific methods
+# timeSeries (package:timeSeries) specific methods
 #export(xts.as.timeSeries)
 S3method(as.xts,timeSeries)
 
@@ -129,10 +195,25 @@ S3method(as.xts,its)
 # irts (package:tseries) specific methods
 S3method(as.xts,irts)
 
+# fts (package:fts) specific methods
+S3method(as.xts,fts)
+export(as.fts.xts)
+
 # Date specific methods
 S3method(as.xts,Date)
 
+# POSIX specific methods
+S3method(as.xts,POSIXt)
+
+# yearmon/yearqtr specific methods
+S3method(as.xts,yearmon)
+S3method(as.xts,yearqtr)
+
+# timeDate specific methods
+S3method(as.xts,timeDate)
 ## currently unexported functions that _may_ be exported at some point
 
 #export(startof,endof,firstof,lastof)
 
+# as.Date.numeric fix
+S3method('as.Date', 'numeric')

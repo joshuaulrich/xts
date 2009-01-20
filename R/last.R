@@ -1,3 +1,24 @@
+#
+#   xts: eXtensible time-series 
+#
+#   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
+#
+#   Contributions from Joshua M. Ulrich
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 `last` <-
 function(x,...)
 {
@@ -7,6 +28,11 @@ function(x,...)
 `last.default` <-
 function(x,n=1,keep=FALSE,...)
 {
+  xx <- try.xts(x, error=FALSE)
+  if(is.xts(xx)) {
+    xx <- last.xts(x, n=n, keep=keep, ...)
+    return(reclass(xx))
+  }
   if(is.null(dim(x))) {
     if(n > 0) {
       xx <- x[(NROW(x)-n+1):NROW(x)]
@@ -29,13 +55,13 @@ function(x,n=1,keep=FALSE,...)
     }
   }
 }
-`last.zoo` <-
+`last.xts` <-
 function(x,n=1,keep=FALSE,...)
 {
   if(is.character(n)) {
-    if(!inherits(index(x),'POSIXt') && !inherits(index(x),'Date'))
-      stop(paste('subsetting by date is only possible with objects having',
-           'time based indexes'))
+#    if(!inherits(index(x),'POSIXt') && !inherits(index(x),'Date'))
+#      stop(paste('subsetting by date is only possible with objects having',
+#           'time based indexes'))
     # n period set
     np <- strsplit(n," ",fixed=TRUE)[[1]]
     if(length(np) > 2 || length(np) < 1)
