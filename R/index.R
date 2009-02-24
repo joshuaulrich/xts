@@ -25,8 +25,8 @@ function(x, ...) {
   if(is.null(value))
     return(.index(x))
 
-  sys.TZ <- Sys.getenv('TZ')
-  Sys.setenv(TZ='GMT')
+  #sys.TZ <- Sys.getenv('TZ')
+  #Sys.setenv(TZ='GMT')
   x.index  <- as.POSIXct(.index(x))
   if(length(x.index) == 0)
     return(integer())
@@ -56,7 +56,7 @@ function(x, ...) {
     #x <- structure(x,index=structure(index(x),control=NULL))
   #}
 
-  Sys.setenv(TZ=sys.TZ)
+  #Sys.setenv(TZ=sys.TZ)
   if(class(x.index)[1] %in% c('chron'))
     attr(x, 'tzone') <- NULL
   x.index

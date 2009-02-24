@@ -146,9 +146,9 @@ function(x, i, j, drop = FALSE, ...)
 #`xtsreplacement` <-
 function(x, i, j, value) 
 {
-    sys.TZ <- Sys.getenv('TZ') 
-    Sys.setenv(TZ='GMT')
-    on.exit(Sys.setenv(TZ=sys.TZ))
+    #sys.TZ <- Sys.getenv('TZ') 
+    #Sys.setenv(TZ='GMT')
+    #on.exit(Sys.setenv(TZ=sys.TZ))
     if (!missing(i)) {
 
     if (timeBased(i)) 

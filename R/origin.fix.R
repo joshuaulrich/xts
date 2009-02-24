@@ -28,7 +28,7 @@
 }
 
 `as.POSIXct.numeric` <- function(x, tz="", origin='1970-01-01', ...) {
-  as.POSIXct(origin,tz=tz,...) + x
+  structure(x, class=c("POSIXt", "POSIXct"))
 }
 
 `as.POSIXlt.numeric` <- function(x, tz="", origin='1970-01-01', ...) {

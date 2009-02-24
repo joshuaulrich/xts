@@ -57,9 +57,9 @@ function(x=NULL,
     order.by <- order.by[indx]
   }
 
-  tz <- Sys.getenv('TZ')
-  on.exit( Sys.setenv(TZ=tz) )
-  Sys.setenv(TZ='GMT')
+  #tz <- Sys.getenv('TZ')
+  #on.exit( Sys.setenv(TZ=tz) )
+  #Sys.setenv(TZ='GMT')
 
   if(!is.null(x) || length(x) != 0 ) {
     x <- as.matrix(x)
