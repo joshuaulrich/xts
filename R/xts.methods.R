@@ -52,7 +52,7 @@ function(x, i, j, drop = FALSE, ...)
     
     if (timeBased(i)) 
       # this shouldn't happen either, though less important I suspect  FIXME
-      i <- as.character(as.POSIXct(i)) 
+      i <- as.character(i) 
 
     if(is.logical(i))
       i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]
@@ -153,7 +153,7 @@ function(x, i, j, value)
 
     if (timeBased(i)) 
       # this shouldn't happen either, though less important I suspect  FIXME
-      i <- as.character(as.POSIXct(i)) 
+      i <- as.character(i) 
 
     if(is.logical(i))
       i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]

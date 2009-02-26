@@ -66,7 +66,7 @@ function(x=NULL,
   } else x <- numeric(0)
 
   x <- structure(.Data=x,
-            index=as.numeric(as.POSIXct(order.by)),
+            index=as.numeric(as.POSIXct(as.character(order.by))),
             class=c('xts','zoo'),
             .indexCLASS=orderBy,
             ...)
