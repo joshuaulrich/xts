@@ -96,6 +96,9 @@ function(year=1970,month=12,day=31,hour=23,min=59,sec=59,tz="") {
       day <- ifelse(month %in% 2 && year%%400 %in% 0,28,29)
     } else day <- mon.lengths[month]
   }
+  # horrible workaround of bug? in strptime. -- jar
+  if(c(year,month,day,hour,min,sec) == c(1969,12,31,23,59,59) &&
+     Sys.getenv("TZ") %in% c("","GMT","UTC")) sec <- 58.9 
   ISOdatetime(year,month,day,hour,min,sec,tz)
 }
 
