@@ -85,11 +85,19 @@ SEXP runSum (SEXP x, SEXP n)
 
   int _firstNonNA = firstNonNA(x);
 
+  
   switch(TYPEOF(x)) {
     /* still need to implement other types, and checking
     // The branch by type allows for fewer type checks/branching
     // within the algorithm, providing a _much_ faster mechanism
     // to calculate the sum
+    //
+    // This part of the code should probably be a function
+    // call to a function pointer passed in to the top-level
+    // call... maybe???
+    // This should make it easier to extend the framework
+    // and _more_ importantly allow for user-level C
+    // functions (via R) to be used ad hoc
     */
     case REALSXP:
       real_result = REAL(result);
