@@ -103,6 +103,9 @@ function(x, retclass=NULL, length.out=NULL) {
   }
 
   if(!is.null(retclass)) convert.to <- retclass
+  if(convert.to == 'POSIXct') {
+    structure(SEQ, class=c('POSIXt','POSIXct'))  # need to force the TZ to be used
+  } else
   do.call(paste('as',convert.to,sep='.'), list(SEQ))
 
 }

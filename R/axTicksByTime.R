@@ -27,7 +27,7 @@ axTicksByTime <- function(x, ticks.on='auto', k=1,
     
     tick.opts <- c("years", "months", "weeks", "days", "hours", 
         "minutes", "seconds")
-    tick.k.opts <- c(10, 5, 2, 1, 7, 1, 1, 1, 4, 2, 1, 30, 15, 
+    tick.k.opts <- c(10, 5, 2, 1, 6, 1, 1, 1, 4, 2, 1, 30, 15, 
         1, 1)
     if (ticks.on %in% tick.opts) {
         cl <- ticks.on[1]
