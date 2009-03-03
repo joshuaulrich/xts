@@ -34,3 +34,32 @@
 `as.POSIXlt.numeric` <- function(x, tz="", origin='1970-01-01', ...) {
   as.POSIXlt(as.POSIXct(origin,tz="UTC",...) + x, tz=tz)
 }
+
+as.POSIXct.Date <- function(x, ...)
+{
+  structure(as.POSIXct("1970-01-01") + unclass(x)*86400,
+            class=c("POSIXt","POSIXct"))
+}
+
+as.Date.POSIXct <- function(x, ...)
+{
+  z <- floor(unclass((x - unclass(as.POSIXct('1970-01-01'))))/86400)
+  attr(z, 'tzone') <- NULL
+  structure(z, class="Date")
+}
+
+as.POSIXlt.Date <- function(x, ...)
+{
+  as.POSIXlt(xts:::as.POSIXct.Date(x))
+}
+
+as.POSIXct.yearmon <- function(x, ...)
+{
+  structure(as.POSIXct("1970-01-01") + unclass(as.Date(x))*86400,
+            class=c("POSIXt","POSIXct"))
+}
+
+as.POSIXlt.yearmon <- function(x, ...)
+{
+  as.POSIXlt(xts:::as.POSIXct.yearmon(x))
+}
