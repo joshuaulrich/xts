@@ -37,8 +37,7 @@
 
 as.POSIXct.Date <- function(x, ...)
 {
-  structure(as.POSIXct("1970-01-01") + unclass(x)*86400,
-            class=c("POSIXt","POSIXct"))
+  as.POSIXct(as.character(x))
 }
 
 as.Date.POSIXct <- function(x, ...)
