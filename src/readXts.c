@@ -1,52 +1,79 @@
 #include <R.h>
 #include <Rinternals.h>
 
-#define rawTo(X, MODE) \
+#define RAWTO(X, MODE) \
         PROTECT(t = s = allocList(4)); \
         SET_TYPEOF(s, LANGSXP); \
         SETCAR(t, install("readBin")); t = CDR(t); \
         SETCAR(t, X); t = CDR(t); \
         PROTECT(what = allocVector(MODE, 0)); \
         SETCAR(t, what);  t = CDR(t); \
+        UNPROTECT(1); \
         PROTECT(n = allocVector(INTSXP,1)); \
-        INTEGER(n)[0] = length(index); \
+        INTEGER(n)[0] = length(X); \
         SETCAR(t, n); \
+        UNPROTECT(1); \
         PROTECT(X = eval(s, R_GlobalEnv)); \
-        
-        
        
-SEXP readXts (SEXP x, SEXP indexCLASS)
+SEXP readXts (SEXP x, SEXP indextype, SEXP datatype, SEXP indexCLASS)
 {
   SEXP index;
   SEXP s, t, n, what;
   int i, j, r=0;
-  int lenx = length(x);
+  int lenx = length(x), incr;
+  int index_mode, data_mode;
+  int index_size, data_size;
 
-  PROTECT(index = allocVector(RAWSXP, (int)(length(x)/3)));
+  switch(TYPEOF(indextype)) {
+    case INTSXP:
+      index_size = sizeof(INTEGER(indextype));
+      break;
+    case REALSXP:
+      index_size = sizeof(REAL(indextype));
+      break;
+    default:
+      error("unsupported index type");
+  }
+  switch(TYPEOF(datatype)) {
+    case INTSXP:
+      data_size = sizeof(INTEGER(datatype)[0]);
+      break;
+    case REALSXP:
+      data_size = sizeof(REAL(datatype)[0]);
+      break;
+    default:
+      error("unsupported data type");
+  }
+
+  incr = (index_size + data_size);
+
+/*Rprintf("lenx: %d, index_size: %d, data_size: %d, incr: %d\n", lenx, index_size, data_size, incr);*/
+  PROTECT(index = allocVector(RAWSXP, (int)(lenx/incr)*index_size));
+/*Rprintf("length(index): %d\n", length(index));*/
   
-  unsigned char *rawx=NULL, *rawindex=NULL;
-  rawindex = RAW(index);
-  rawx   = RAW(x);
+  unsigned char *raw_x=NULL, *raw_index=NULL;
+  raw_index = RAW(index);
+  raw_x   = RAW(x);
 
-  for(i=0; i < lenx; i=i+12) {
-    for(j=0; j < 4; j++, r++) {
-      rawindex[r] = rawx[i+j];
+  for(i=0; i < lenx; i=i+incr) {
+    for(j=0; j < index_size; j++, r++) {
+      raw_index[r] = raw_x[i+j];
     }
   }
-  rawTo(index, INTSXP);
+  RAWTO(index, TYPEOF(indextype));
 
   SEXP data;
-  PROTECT(data = allocVector(RAWSXP, (int)((length(x)/3)*2)));
-  unsigned char *rawdata=NULL;
-  rawdata = RAW(data);
+  PROTECT(data = allocVector(RAWSXP, (int)(lenx/incr)*data_size));
+  unsigned char *raw_data=NULL;
+  raw_data = RAW(data);
 
   r = 0;
-  for(i=4; i < lenx; i=i+12) {
-    for(j=0; j < 8; j++, r++) {
-      rawdata[r] = rawx[i+j];
+  for(i=index_size; i < lenx; i=i+incr) {
+    for(j=0; j < data_size; j++, r++) {
+      raw_data[r] = raw_x[i+j];
     }
   }
-  rawTo(data, REALSXP);
+  RAWTO(data, TYPEOF(datatype));
 
   setAttrib(data, install("index"), index);
   SEXP klass;
@@ -55,6 +82,6 @@ SEXP readXts (SEXP x, SEXP indexCLASS)
   SET_STRING_ELT(klass, 1, mkChar("zoo"));
   setAttrib(data, install("class"), klass);
   setAttrib(data, install(".indexCLASS"), indexCLASS);
-  UNPROTECT(11);
+  UNPROTECT(7);
   return(data);
 }
