@@ -1041,8 +1041,9 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
     LOGICAL(rets)[0] = 0; /* don't return left */
     LOGICAL(rets)[1] = 0; /* don't return right */
   
-    if( isNull(_y) )
+    if( isNull(_y) ) {
       PROTECT(_y = duplicate(_x)); P++;
+    }
 
     PROTECT(_INDEX = do_merge_xts(_x,
                                   _y, 
