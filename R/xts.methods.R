@@ -22,11 +22,7 @@
 `.subset.xts` <- `[.xts` <-
 function(x, i, j, drop = FALSE, ...) 
 {
-#  unsure of how to proceed here.  I dislike the standard TZ mechanisms...
-#    sys.TZ <- Sys.getenv('TZ') 
-#    Sys.setenv(TZ='GMT')
-#    on.exit(Sys.setenv(TZ=sys.TZ))
-
+    check.TZ(x)
     original.cols <- NCOL(x)
     original.attr <- xtsAttributes(x)
     

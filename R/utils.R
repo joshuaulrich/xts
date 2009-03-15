@@ -42,6 +42,20 @@ function(key,  vec, start=TRUE) {
       lo <- mid + 1
     } else {
       found <- TRUE
+      i <- 0
+      if(!is.null(start)) {
+      if(!start) {
+        while(1) {
+          if(mid==length(vec) || vec[mid+1] != key) break
+          mid <- mid+1
+        }
+      } else {
+        while(1) {
+          if(mid==1 || vec[mid-1] != key) break
+          mid <- mid-1
+        }
+      }
+      }
       rec <- mid
       break
     }

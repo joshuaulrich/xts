@@ -65,10 +65,12 @@ function(x=NULL,
     x <- as.matrix(x)
   } else x <- numeric(0)
 
+  index <- as.numeric(as.POSIXct(order.by))
   x <- structure(.Data=x,
-            index=as.numeric(as.POSIXct((order.by))),
+            index=index,
             class=c('xts','zoo'),
             .indexCLASS=orderBy,
+            .indexTZ=Sys.getenv("TZ"),  # TZ in force on creation
             ...)
   if(!is.null(attributes(x)$dimnames[[1]]))
     # this is very slow if user adds rownames, but maybe that is deserved :)
@@ -94,7 +96,7 @@ function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"),  check=TRUE, unique=F
 
   structure(.Data=x,
             index=index,
-            .indexCLASS=.indexCLASS,
+            .indexCLASS=.indexCLASS,.indexTZ=Sys.getenv("TZ"),
             class=c('xts','zoo'), ...)
 }
 

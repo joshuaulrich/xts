@@ -95,13 +95,13 @@ function(x, user=NULL) {
 
   if(is.null(user)) {
   # Both xts and user attributes
-    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT')
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT', '.indexTZ')
     xa <- x.attr[!names(x.attr) %in% rm.attr]
   }
   else
   if(user) {
   # Only user attributes
-    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT', 
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT','.indexTZ', 
                  x.attr$.CLASSnames)
     xa <- x.attr[!names(x.attr) %in% rm.attr]
   } else {
@@ -127,7 +127,7 @@ function(x,value) {
   } else
   for(nv in names(value)) {
     if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES','.CLASSnames',
-                  '.indexCLASS','.indexFORMAT'))
+                  '.indexCLASS','.indexFORMAT','.indexTZ'))
       attr(x,nv) <- value[[nv]]
   }
   x

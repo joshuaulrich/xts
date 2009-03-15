@@ -1,6 +1,22 @@
 #include <R.h>
 #include <Rinternals.h>
 
+/*
+  xts objects are to able to be stored in a native format
+  to facilitate loading and on-disk retrieval ops that
+  mimic traditional DB operations.
+
+  The current (Version 1) on disk structure
+  is a header block, followed by a C struct.
+
+  VERSION: 4 byte integer
+  STRUCTURE_LEN: 4 byte integer
+  STRUCTURE_TYPES: (currently using R mapping e.g. 13 = INTEGER)
+  NROWS: 4 byte integer (long?)
+  STRUCTs:
+
+*/
+
 #define RAWTO(X, MODE) \
         PROTECT(t = s = allocList(4)); \
         SET_TYPEOF(s, LANGSXP); \
@@ -50,29 +66,41 @@ SEXP readXts (SEXP x, SEXP indextype, SEXP datatype, SEXP indexCLASS)
 /*Rprintf("lenx: %d, index_size: %d, data_size: %d, incr: %d\n", lenx, index_size, data_size, incr);*/
   PROTECT(index = allocVector(RAWSXP, (int)(lenx/incr)*index_size));
 /*Rprintf("length(index): %d\n", length(index));*/
+
+  SEXP data;
+  PROTECT(data = allocVector(RAWSXP, (int)(lenx/incr)*data_size));
+
+/*
+  for(i in length of datatype list)
+    identify size of current data type i
+    alloc tmp var for bytes
+    make pointer
+    data assign to raw_data
+    non-data (index/ID) assign to list variable
+    next datatype
+*/
   
   unsigned char *raw_x=NULL, *raw_index=NULL;
   raw_index = RAW(index);
   raw_x   = RAW(x);
+  unsigned char *raw_data=NULL;
+  raw_data = RAW(data);
 
+  /* copy index */
   for(i=0; i < lenx; i=i+incr) {
     for(j=0; j < index_size; j++, r++) {
       raw_index[r] = raw_x[i+j];
     }
   }
   RAWTO(index, TYPEOF(indextype));
-
-  SEXP data;
-  PROTECT(data = allocVector(RAWSXP, (int)(lenx/incr)*data_size));
-  unsigned char *raw_data=NULL;
-  raw_data = RAW(data);
-
+  /* copy data */
   r = 0;
   for(i=index_size; i < lenx; i=i+incr) {
     for(j=0; j < data_size; j++, r++) {
       raw_data[r] = raw_x[i+j];
     }
   }
+
   RAWTO(data, TYPEOF(datatype));
 
   setAttrib(data, install("index"), index);

@@ -18,24 +18,20 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-`str.xts` <-
-function(object,...) {
-  if(length(object) == 0) {
-    cat("An 'xts' object of zero-width\n")
-  } else {
-  cat(paste("An",sQuote('xts'),"object from",
-      index(first(object)),"to",index(last(object)),
-      "containing:\n"))
-  cat(paste("  Data:"))
-  str(coredata(object))
-  cat(paste("  Indexed by objects of class: "))
-  cat(paste('[',paste(indexClass(object),collapse=','),'] ',sep=''))
-  cat(paste("TZ: ", indexTZ(object), "\n", sep=""))
-  if(!is.null(CLASS(object)))
-    cat(paste("  Original class: '",CLASS(object),"' ",sep=""),"\n")
-  cat(paste("  xts Attributes: "),"\n")
-  str(xtsAttributes(object),...)
-  }
+indexTZ <- function(x, ...)
+{
+  UseMethod("indexTZ")
 }
 
+indexTZ.xts <- function(x, ...)
+{
+  attr(x, ".indexTZ")
+}
+
+check.TZ <- function(x, ...)
+{
+  STZ <- Sys.getenv("TZ")
+  if(!is.null(indexTZ(x)) && !identical(STZ, indexTZ(x)))
+    warning(paste("timezone of object (",indexTZ(x),
+                  ") is different than current timezone (",STZ,").",sep=""))
+}

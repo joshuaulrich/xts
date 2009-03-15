@@ -19,23 +19,24 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-`index.xts` <-
+index.xts <- time.xts <-
 function(x, ...) {
   value <- indexClass(x)
   if(is.null(value))
     return(.index(x))
 
-  #sys.TZ <- Sys.getenv('TZ')
-  #Sys.setenv(TZ='GMT')
-  x.index  <- as.POSIXct(.index(x))
+  x.index  <- structure(.index(x), class=c("POSIXt","POSIXct"))
   if(length(x.index) == 0)
     return(integer())
 
   if(!is.list(value)) 
     value <- as.list(value)
-  if(!value[[1]] %in% c('multitime','dates','chron','POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr') )
+  if(!value[[1]] %in% c('multitime','dates','chron',
+                        'POSIXt','POSIXlt','POSIXct',
+                        'Date','timeDate',
+                        'yearmon','yearqtr') ) {
        stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
-
+  }
   if(value[[1]]=='timeDate') {
     stopifnot('package:timeDate' %in% search() | require('timeDate',quietly=TRUE))
     x.index <- do.call(paste('as',value[[1]],sep='.'),list(x.index))
@@ -47,18 +48,9 @@ function(x, ...) {
       value[[1]] <- 'chron'
     } 
     x.index <- do.call(paste('as',value[[1]],sep='.'),list(x.index))
-  } else x.index <- do.call("as.Date",list(x.index))
-
-  #
-  #if('timeDate' == value[[1]]) {
-    # this will fail now... jar
-    # remove unnecessary 'control' attribute
-    #x <- structure(x,index=structure(index(x),control=NULL))
-  #}
-
-  #Sys.setenv(TZ=sys.TZ)
+  } else x.index <- as.Date(as.character(x.index))
   if(class(x.index)[1] %in% c('chron'))
-    attr(x, 'tzone') <- NULL
+    attr(x.index, 'tzone') <- NULL
   x.index
 }
 
@@ -78,7 +70,9 @@ function(x, ...) {
 }
 
 `.index` <- function(x, ...) {
-  attr(x, 'index')
+  if(is.list(attr(x, "index"))) {
+    attr(x, 'index')[[1]]
+  } else attr(x, "index")
 }
 
 `.index<-` <- function(x, value) {

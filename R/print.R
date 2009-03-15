@@ -21,6 +21,7 @@
 
 `print.xts` <-
 function(x,fmt,...) {
+  check.TZ(x)
   if(missing(fmt)) 
     fmt <- indexFormat(x)
   if(is.null(fmt))
