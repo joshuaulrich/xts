@@ -66,5 +66,10 @@ as.POSIXlt.yearmon <- function(x, ...)
 as.POSIXct.dates <- function(x, ...)
 {
   # need to implement our own method to correctly handle TZ
-  as.POSIXct(as.character(as.POSIXlt(x,tz="GMT")))
+  #as.POSIXct(as.character(as.POSIXlt(x,tz="GMT")))
+  structure(as.POSIXct(as.POSIXlt(x, tz="GMT"), tz=""),class=c("POSIXt","POSIXct"))
+}
+as.chron.POSIXct <- function(x, ...)
+{
+  structure(as.chron(as.POSIXlt(as.character(x))))
 }
