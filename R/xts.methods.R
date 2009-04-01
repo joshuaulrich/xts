@@ -119,7 +119,7 @@ function(x, i, j, drop = FALSE, ...)
         x.tmp <- .xts(rep(NA,length(i)), .index(x)[i])
         return((colnames(x.tmp) <- colnames(x)))
       } else 
-      return(.Call('do_subset_xts', x, as.integer(i), as.integer(1:original.cols), PACKAGE='xts'))
+      return(.Call('do_subset_xts', x, as.integer(i), as.integer(1:original.cols), drop, PACKAGE='xts'))
     }
     else {
         j <- sapply(j, function(xx) {
@@ -128,7 +128,7 @@ function(x, i, j, drop = FALSE, ...)
                          } else xx
                        })
         
-        return(.Call('do_subset_xts', x, as.integer(i), as.integer(j), PACKAGE='xts'))
+        return(.Call('do_subset_xts', x, as.integer(i), as.integer(j), drop, PACKAGE='xts'))
     }
 }
 

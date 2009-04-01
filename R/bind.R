@@ -50,12 +50,12 @@ cbind.xts <- function(..., all=TRUE, fill=NA, suffixes=NULL) {
 
 `c.xts` <-
 function(...) {
-  .External("rbindXts", env=new.env(), dup=FALSE, ..., PACKAGE="xts")
+  .External("rbindXts", dup=FALSE, ..., PACKAGE="xts")
 }
 
 rbind.xts <- function(..., deparse.level=1)
 {
-  .External("rbindXts", env=new.env(), dup=FALSE, ..., PACKAGE="xts")
+  .External("rbindXts", dup=FALSE, ..., PACKAGE="xts")
 }
 
 `.rbind.xts` <-
@@ -80,7 +80,7 @@ function(..., deparse.level=1) {
       dots <- dots[-1]
     if(!is.null(colnames(y)) && colnames(x) != colnames(y))
       warning('column names differ')
-    x <- .Call('do_rbind_xts',x,y,env, PACKAGE="xts")
+    x <- .Call('do_rbind_xts',x,y,PACKAGE="xts")
   }
   return(x)
 }

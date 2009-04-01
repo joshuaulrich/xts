@@ -60,7 +60,7 @@
 na.locf.xts <- function(object, na.rm=FALSE, ...) {
     stopifnot(is.xts(object))
     x <- if(dim(object)[2] > 1) {
-      .xts(apply(object, 2, function(x) .Call('na_locf', object, PACKAGE='xts')),
+      .xts(apply(object, 2, function(x) .Call('na_locf', x, PACKAGE='xts')),
            .index(object), .indexCLASS=indexClass(object))
     } else .Call("na_locf", object, PACKAGE="xts")
     if(na.rm) {
