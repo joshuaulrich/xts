@@ -27,7 +27,7 @@
 
 
 //SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env) {{{
-SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env, SEXP dup)
+SEXP do_rbind_xts (SEXP x, SEXP y, SEXP dup)
 {
   int nrx, ncx, nry, ncy, truelen, len;
   int no_duplicate = LOGICAL(dup)[0];
@@ -464,12 +464,10 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env, SEXP dup)
 SEXP rbindXts (SEXP args)
 {
   SEXP _x, _y;
-  SEXP env, dup;
+  SEXP dup;
   int P=0;
 
   args = CDR(args); // 'rbindXts' call name
-  PROTECT(env = CAR(args)); P++;  // env
-  args = CDR(args);  
   PROTECT(dup = CAR(args)); P++;
   args = CDR(args);
 
@@ -484,19 +482,12 @@ SEXP rbindXts (SEXP args)
   PROTECT(_y = CAR(args)); P++;
   args = CDR(args);
 
-  PROTECT(_x = do_rbind_xts(_x, _y, env, dup)); P++;
+  PROTECT(_x = do_rbind_xts(_x, _y, dup)); P++;
   while(args != R_NilValue) {
-    PROTECT(_x = do_rbind_xts(_x, CAR(args), env, dup)); P++;
+    PROTECT(_x = do_rbind_xts(_x, CAR(args), dup)); P++;
     args = CDR(args);
   }
 
-/*
-  if( args == R_NilValue ) {
-    PROTECT(result = do_rbind_xts(_x, _y, env)); P++;
-  } else {
-    result = R_NilValue;
-  }
-*/
   if(P > 0) UNPROTECT(P);
   return _x;
 } //}}}

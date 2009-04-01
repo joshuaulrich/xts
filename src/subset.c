@@ -117,7 +117,7 @@ static SEXP xtsExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
     return result;
 } //}}}
 
-SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
+SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop) //SEXP s, SEXP call, int drop)
 {
     SEXP attr, result, dim;
     int nr, nc, nrs, ncs;
@@ -169,8 +169,8 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
       int_sr = INTEGER(sr);
       for(indx = 0; indx < nrs; indx++) {
         int_newindex[indx] = int_index[ (int_sr[indx])-1];
-        //INTEGER(newindex)[indx] = INTEGER(index)[INTEGER(sr)[indx]-1];
       }
+      copyAttributes(index, newindex);
       setAttrib(result, install("index"), newindex);
       UNPROTECT(1);
     }
@@ -183,12 +183,11 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
       int_sr = INTEGER(sr);
       for(indx = 0; indx < nrs; indx++) {
         real_newindex[indx] = real_index[ (int_sr[indx])-1 ];
-        //REAL(newindex)[indx] = REAL(index)[INTEGER(sr)[indx]-1];
       }
+      copyAttributes(index, newindex);
       setAttrib(result, install("index"), newindex);
       UNPROTECT(1);
     }
-    // Begin row loop, as .Call proceeds in row-major order?
     for (i = 0; i < nrs; i++) {
       ii = INTEGER(sr)[i];
       if (ii != NA_INTEGER) {
@@ -196,18 +195,7 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
           error("i is out of range\n");
         ii--;
       }
-//      switch(TYPEOF(index)) {
-//        case INTSXP:
-//          INTEGER(newindex)[i] = INTEGER(index)[INTEGER(sr)[i]-1];
-//          break;
-//        case REALSXP:
-//          REAL(newindex)[i] = REAL(index)[INTEGER(sr)[i]-1];
-//          break;
-//        default:
-//          error("index must be either REAL or INTEGER\n");
-//          break;
-//      }
-      // Begin column loop
+      /* Begin column loop */
       for (j = 0; j < ncs; j++) {
         jj = INTEGER(sc)[j];
         if (jj != NA_INTEGER) {
@@ -220,11 +208,9 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
           switch ( mode ) {
             case LGLSXP:
             case INTSXP:
-                 //INTEGER(result)[ij] = NA_INTEGER;
                  int_result[ij] = NA_INTEGER;
                  break;
             case REALSXP:
-                 //REAL(result)[ij] = NA_REAL;
                  real_result[ij] = NA_REAL;
                  break;
             case CPLXSXP:
@@ -252,11 +238,9 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
                  LOGICAL(result)[ij] = LOGICAL(x)[iijj];
                  break;
             case INTSXP:
-                 //INTEGER(result)[ij] = INTEGER(x)[iijj];
                  int_result[ij] = int_x[iijj]; 
                  break;
             case REALSXP:
-                 //REAL(result)[ij] = REAL(x)[iijj];
                  real_result[ij] = real_x[iijj];
                  break;
             case CPLXSXP:
@@ -276,14 +260,14 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
                  break;
           }
         }
-      } // end of column loop
-    } // end of row loop
+      } /* end of column loop */
+    } /* end of row loop */
     if(nrs >= 0 && ncs >= 0) {
-    PROTECT(attr = allocVector(INTSXP, 2));
-    INTEGER(attr)[0] = nrs;
-    INTEGER(attr)[1] = ncs;
-    setAttrib(result, R_DimSymbol, attr);
-    UNPROTECT(1);
+      PROTECT(attr = allocVector(INTSXP, 2));
+      INTEGER(attr)[0] = nrs;
+      INTEGER(attr)[1] = ncs;
+      setAttrib(result, R_DimSymbol, attr);
+      UNPROTECT(1);
     }
 
     /* The matrix elements have been transferred.  Now we need to */
@@ -317,8 +301,11 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc) //SEXP s, SEXP call, int drop)
         UNPROTECT(1);
     }
     }
-    copy_xtsAttributes(x, result);
-    copy_xtsCoreAttributes(x, result);
+
+    copyAttributes(x, result);
+    if(ncs == 1 && LOGICAL(drop)[0])
+      setAttrib(result, R_DimSymbol, R_NilValue);
+
     UNPROTECT(2);
     return result;
 }

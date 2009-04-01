@@ -71,6 +71,7 @@ SEXP coredata (SEXP x)
   } else {
     setAttrib(result, R_NamesSymbol, getAttrib(x, R_NamesSymbol));
   }
+  /* add support for zoo factors */
   UNPROTECT(P);
   return result;
 }

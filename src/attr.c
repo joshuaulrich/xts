@@ -44,9 +44,6 @@ SEXP do_xtsAttributes(SEXP x)
   PROTECT(values = allocVector(VECSXP, length(a))); P++;
   PROTECT(names  = allocVector(STRSXP, length(a))); P++;
 
-  /*PROTECT(a = getAttrib(ATTRIB(x),R_NamesSymbol));  *//* this gets all names */
-  /*PROTECT(a = VECTOR_ELT(AS_LIST(ATTRIB(x)),1));    *//* this gets individual values */
-  
   /*
    CAR gets the first element of the dotted pair list
    CDR gets the rest of the dotted pair list
@@ -57,6 +54,7 @@ SEXP do_xtsAttributes(SEXP x)
        TAG(a) != xts_ClassSymbol &&
        TAG(a) != xts_IndexFormatSymbol &&
        TAG(a) != xts_IndexClassSymbol &&
+       TAG(a) != xts_IndexTZSymbol &&
        TAG(a) != R_ClassSymbol &&
        TAG(a) != R_DimSymbol &&
        TAG(a) != R_DimNamesSymbol &&
@@ -92,11 +90,6 @@ SEXP do_xtsCoreAttributes(SEXP x)
   PROTECT(names  = allocVector(STRSXP, length(a))); P++;
 
   /*
-  PROTECT(a = getAttrib(ATTRIB(x),R_NamesSymbol));
-  PROTECT(a = VECTOR_ELT(AS_LIST(ATTRIB(x)),1)); 
-  */
-
-  /*
    CAR gets the first element of the dotted pair list
    CDR gets the rest of the dotted pair list
    TAG gets the symbol/name of the first element of dotted pair list
@@ -105,6 +98,7 @@ SEXP do_xtsCoreAttributes(SEXP x)
     if(TAG(a) == xts_ClassSymbol ||
        TAG(a) == xts_IndexFormatSymbol ||
        TAG(a) == xts_IndexClassSymbol ||
+       TAG(a) == xts_IndexTZSymbol ||
        TAG(a) == R_ClassSymbol)
     {
       SET_VECTOR_ELT(values, i, CAR(a));
@@ -123,6 +117,27 @@ SEXP do_xtsCoreAttributes(SEXP x)
   UNPROTECT(P);
   return values;
 }
+
+void copyAttributes(SEXP x, SEXP y)
+{
+  SEXP attr;
+  int P=0;
+  attr = ATTRIB(x);
+
+  if(length(attr) > 0 || y != R_NilValue) {
+    PROTECT(attr); P++;
+    for( ; attr != R_NilValue; attr = CDR(attr) ) {
+      if( (TAG(attr) != install("index")) &&
+          (TAG(attr) != R_DimSymbol)      &&
+          (TAG(attr) != R_DimNamesSymbol) &&
+          (TAG(attr) != R_NamesSymbol) ) {
+      setAttrib(y, TAG(attr), CAR(attr));
+      }
+    }
+    UNPROTECT(P);
+  }
+}
+
 
 void copy_xtsAttributes(SEXP x, SEXP y)
 {

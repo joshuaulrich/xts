@@ -26,7 +26,7 @@ INTERNAL SYMBOLS
 #define  xts_ClassSymbol                install(".CLASS")
 #define  xts_IndexFormatSymbol          install(".indexFORMAT")
 #define  xts_IndexClassSymbol           install(".indexCLASS")
-
+#define  xts_IndexTZSymbol              install(".indexTZ")
 
 /*
 DATA TOOLS
@@ -46,6 +46,10 @@ DATA TOOLS
 #define  GET_xtsIndexFormat(x)          getAttrib(x, xts_IndexFormatSymbol)
 #define  SET_xtsIndexFormat(x,value)    setAttrib(x, xts_IndexFormatSymbol, value)
 
+// attr(x, '.indexTZ') or indexTZ(x)
+#define  GET_xtsIndexTZ(x)              getAttrib(x, xts_IndexTZSymbol)
+#define  SET_xtsIndexTZ(x,value)        setAttrib(x, xts_IndexTZSymbol, value)
+
 // attr(x, '.CLASS') or CLASS(x)
 #define  GET_xtsCLASS(x)                getAttrib(x, xts_ClassSymbol)
 #define  SET_xtsCLASS(x,value)          setAttrib(x, xts_ClassSymbol, value)
@@ -61,15 +65,16 @@ SEXP add_class(SEXP x, SEXP class);
 SEXP lagXts(SEXP x, SEXP k, SEXP pad);
 SEXP do_is_ordered(SEXP x, SEXP increasing, SEXP strictly);
 SEXP mergeXts(SEXP args);
-SEXP do_rbind_xts(SEXP x, SEXP y, SEXP env, SEXP dup);
+SEXP do_rbind_xts(SEXP x, SEXP y, SEXP dup);
 SEXP rbindXts(SEXP args);
-SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc);
+SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop);
 SEXP number_of_cols(SEXP args);
 SEXP col_names(SEXP args);
 
 SEXP tryXts(SEXP x);
 
 
+void copyAttributes(SEXP x, SEXP y);    // internal only
 void copy_xtsAttributes(SEXP x, SEXP y);    // internal only
 void copy_xtsCoreAttributes(SEXP x, SEXP y);// internal only    
 
