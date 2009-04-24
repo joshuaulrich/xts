@@ -275,7 +275,7 @@ SEXP na_omit_xts (SEXP x)
 
   SEXP drop;
   drop = allocVector(LGLSXP, 1);
-  LOGICAL(drop)[0] = 1;
+  LOGICAL(drop)[0] = 0;
 
   PROTECT(result = do_subset_xts(x, not_na_index, col_index, drop));
 
