@@ -1016,11 +1016,12 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
     PROTECT(_x = CAR(args)); P++;
     args = CDR(args);
   }
-
   /* test for NULLs that may be present from cbind dispatch */
-  if(n < 3 && (args == R_NilValue || (isNull(CAR(args)) && length(args) == 1))) {// no y arg or y==NULL
-    UNPROTECT(P);
-    return(_x);
+  if(!leading_non_xts) { /* leading non-xts in 2 case scenario was igoring non-xts value */
+    if(n < 3 && (args == R_NilValue || (isNull(CAR(args)) && length(args) == 1))) {/* no y arg or y==NULL */
+      UNPROTECT(P);
+      return(_x);
+    }
   }
 
   if( args != R_NilValue) {
@@ -1181,6 +1182,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
     copy_xtsAttributes(_INDEX, result);
 
   } else { /* 2-case optimization --- simply call main routine */
+    /* likely bug in handling of merge(1, xts) case */
     PROTECT(result = do_merge_xts(_x,
                                   _y, 
                                  all,
