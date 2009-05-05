@@ -29,21 +29,26 @@ function(x, i, j, drop = FALSE, ...)
     # test for negative subscripting in i
     if (!missing(i) && is.numeric(i) ) {
       if(any(i < 0)) {
-        if(!all(i < 0))
+        if(!all(i <= 0))
           stop('only zeros may be mixed with negative subscripts')
         i <- (1:NROW(x))[i]
       }
+      if(max(i) > NROW(x))
+        stop('subscript out of bounds')
     }
 
     # test for negative subscripting in j
-    if (!missing(j) && is.numeric(j) && any(j < 0)) {
-      if(!all(j < 0))
-        stop('only zeros may be mixed with negative subscripts')
-      j <- (1:NCOL(x))[j]
+    if (!missing(j) && is.numeric(j)) { # && any(j < 0)) {
+      if(any(j < 0)) {
+        if(!all(j < 0))
+          stop('only zeros may be mixed with negative subscripts')
+        j <- (1:NCOL(x))[j]
+      }
+      if(max(j) > NCOL(x))
+        stop('subscript out of bounds')
     }
 
     if (missing(i)) 
-      # this is horribly wasteful  FIXME
       i <- 1:NROW(x)
     
     if (timeBased(i)) 
