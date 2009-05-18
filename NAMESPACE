@@ -175,9 +175,9 @@ S3method(as.xts, ts)
 S3method(as.ts, xts)
 
 # zoo specific methods
-importFrom(zoo,as.zoo)
+#importFrom(zoo,as.zoo)  # now in zoo
 S3method(as.xts,zoo)
-S3method(as.zoo,xts)
+#S3method(as.zoo,xts) # now in zoo
 
 # data.frame specific methods
 S3method(as.xts,data.frame)
