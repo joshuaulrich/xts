@@ -50,8 +50,17 @@ function(e1, e2)
   else 
   if(is.null(attr(e,'index'))) {
     if(is.xts(e1)) {
-      .xts(e, .index(e1))
-    } else .xts(e, .index(e2))
+      .xts(e, .index(e1), 
+              .indexCLASS=indexClass(e1), 
+              .indexFORMAT=indexFormat(e1), 
+              .indexTZ=indexTZ(e1))
+    } else {
+      .xts(e, .index(e2),
+              .indexCLASS=indexClass(e2), 
+              .indexFORMAT=indexFormat(e2), 
+              .indexTZ=indexTZ(e2)
+          )
+    }
   } else {
   e
   }
