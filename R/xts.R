@@ -51,15 +51,11 @@ function(x=NULL,
 
   if(!is.null(x) && !isOrdered(order.by, strictly=!unique) ) {
     indx <- order(order.by)
-    if(is.matrix(x)) {
+    if(NCOL(x) > 1 || is.matrix(x)) {
       x <- x[indx,]
     } else x <- x[indx]
     order.by <- order.by[indx]
   }
-
-  #tz <- Sys.getenv('TZ')
-  #on.exit( Sys.setenv(TZ=tz) )
-  #Sys.setenv(TZ='GMT')
 
   if(!is.null(x) || length(x) != 0 ) {
     x <- as.matrix(x)
