@@ -24,13 +24,10 @@ function(x,on='months',k=1) {
   if(timeBased(x)) x <- xts(, order.by=x)
   if(!is.xts(x)) x <- try.xts(x, error='must be either xts-coercible or timeBased')
 
-  #sys.TZ <- Sys.getenv('TZ')
-  #on.exit(Sys.setenv(TZ=sys.TZ))
-  #Sys.setenv(TZ='GMT')
-  #indexClass(x) <- 'POSIXct'
-
+  posixltindex <- as.POSIXlt(structure( .index(x), class=c("POSIXt","POSIXct")))
   if(on == 'years') {
-    as.integer(c(0, which(diff(as.POSIXlt(index(x))$year %/% k + 1) != 0), NROW(x)) )
+    #as.integer(c(0, which(diff(as.POSIXlt(index(x))$year %/% k + 1) != 0), NROW(x)) )
+    as.integer(c(0, which(diff(posixltindex$year %/% k + 1) != 0), NROW(x)))
   } else
 
   if(on == 'quarters') {
@@ -47,15 +44,18 @@ function(x,on='months',k=1) {
   } else
   if(on == 'days') {
     #c(0, which(diff(as.POSIXlt(index(x))$yday %/% k + 1) != 0), NROW(x)) 
-    as.integer(c(0, which(diff(.index(x) %/% 86400L %/% k + 1) != 0), NROW(x)))
+    #as.integer(c(0, which(diff(.index(x) %/% 86400L %/% k + 1) != 0), NROW(x)))
+    as.integer(c(0, which(diff(posixltindex$yday %/% k + 1) != 0), NROW(x)))
   } else
   if(on == 'hours') {
     #c(0, which(diff(as.POSIXlt(index(x))$hour %/% k + 1) != 0), NROW(x)) 
-    as.integer(c(0, which(diff(.index(x) %/% 3600L %/% k + 1) != 0), NROW(x)))
+    #as.integer(c(0, which(diff(.index(x) %/% 3600L %/% k + 1) != 0), NROW(x)))
+    as.integer(c(0, which(diff(posixltindex$hour %/% k + 1) != 0), NROW(x)))
   } else
   if(on == 'minutes' || on == 'mins') {
     #c(0, which(diff(as.POSIXlt(index(x))$min %/% k + 1) != 0), NROW(x)) 
-    as.integer(c(0, which(diff(.index(x) %/% 60L %/% k + 1) != 0), NROW(x)))
+    #as.integer(c(0, which(diff(.index(x) %/% 60L %/% k + 1) != 0), NROW(x)))
+    as.integer(c(0, which(diff(posixltindex$min %/% k + 1) != 0), NROW(x)))
   } else
   if(on == 'seconds' || on == 'secs') {
     #c(0, which(diff(as.POSIXlt(index(x))$sec %/% k + 1) != 0), NROW(x)) 

@@ -56,12 +56,12 @@ function(x,order.by=index(x),frequency=NULL,...) {
   xx
 }
 
-#`as.zoo.xts` <-
-#function(x,...) {
-#  cd <- coredata(x);
-#  if( length(cd)==0 )
-#    cd <- NULL
-#  zoo(cd,
-#      order.by=index(x),
-#      ...)
-#}
+`as.zoo.xts` <-
+function(x,...) {
+  cd <- coredata(x);
+  if( length(cd)==0 )
+    cd <- NULL
+  zoo(cd,
+      order.by=index(x),
+      ...)
+}
