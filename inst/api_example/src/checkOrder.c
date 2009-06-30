@@ -9,15 +9,15 @@ packages Matrix and lme4.
 #include <Rinternals.h>
 #include <Rdefines.h>
 
-#include <R_ext/Rdynload.h>  // required by R
+#include <R_ext/Rdynload.h>  /* required by R */
 /*
   The following header and .c file are from
   the include directory that is included with xts
   Note that they are included here as they are
   simple source files in xts.
 */
-#include "xts.h"  // function declaration and macros
-#include "xts_stubs.c"  // function definitions
+#include "xts.h"  /* function declaration and macros */
+#include "xts_stubs.c"  /* function definitions */
 
 
 SEXP check_order (SEXP x, SEXP incr, SEXP strict)

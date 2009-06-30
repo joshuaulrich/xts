@@ -19,53 +19,58 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-`endpoints` <-
+endpoints <-
 function(x,on='months',k=1) {
-  if(timeBased(x)) x <- xts(, order.by=x)
-  if(!is.xts(x)) x <- try.xts(x, error='must be either xts-coercible or timeBased')
+  if(timeBased(x)) {
+    x <- xts(, order.by=x)
+    NR <- length(x)
+  } else NR <- NROW(x)
+
+  if(!is.xts(x)) 
+    x <- try.xts(x, error='must be either xts-coercible or timeBased')
 
   posixltindex <- as.POSIXlt(structure( .index(x), class=c("POSIXt","POSIXct")))
   if(on == 'years') {
-    #as.integer(c(0, which(diff(as.POSIXlt(index(x))$year %/% k + 1) != 0), NROW(x)) )
-    as.integer(c(0, which(diff(posixltindex$year %/% k + 1) != 0), NROW(x)))
+    #as.integer(c(0, which(diff(as.POSIXlt(index(x))$year %/% k + 1) != 0), NR) )
+    as.integer(c(0, which(diff(posixltindex$year %/% k + 1) != 0), NR))
   } else
 
   if(on == 'quarters') {
     xi <- (as.POSIXlt(index(x))$mon%/%3) + 1
-    as.integer(c(0,which(diff(xi) != 0),NROW(x)))
+    as.integer(c(0,which(diff(xi) != 0),NR))
   } else 
 
   if(on == 'months') {
-    as.integer(c(0, which(diff(as.POSIXlt(index(x))$mon %/% k + 1) != 0), NROW(x)) )
+    as.integer(c(0, which(diff(as.POSIXlt(index(x))$mon %/% k + 1) != 0), NR) )
   } else 
   if(on == 'weeks') {
-    as.integer(c(0, which(diff( (.index(x) + (3L * 86400L)) %/% 604800L %/% k + 1) != 0), NROW(x)) )
-    #c(0,which(diff(as.numeric(format(index(x),'%W')) %/% k + 1) != 0),NROW(x))
+    as.integer(c(0, which(diff( (.index(x) + (3L * 86400L)) %/% 604800L %/% k + 1) != 0), NR) )
+    #c(0,which(diff(as.numeric(format(index(x),'%W')) %/% k + 1) != 0),NR)
   } else
   if(on == 'days') {
-    #c(0, which(diff(as.POSIXlt(index(x))$yday %/% k + 1) != 0), NROW(x)) 
-    #as.integer(c(0, which(diff(.index(x) %/% 86400L %/% k + 1) != 0), NROW(x)))
-    as.integer(c(0, which(diff(posixltindex$yday %/% k + 1) != 0), NROW(x)))
+    #c(0, which(diff(as.POSIXlt(index(x))$yday %/% k + 1) != 0), NR) 
+    #as.integer(c(0, which(diff(.index(x) %/% 86400L %/% k + 1) != 0), NR))
+    as.integer(c(0, which(diff(posixltindex$yday %/% k + 1) != 0), NR))
   } else
   if(on == 'hours') {
-    #c(0, which(diff(as.POSIXlt(index(x))$hour %/% k + 1) != 0), NROW(x)) 
-    #as.integer(c(0, which(diff(.index(x) %/% 3600L %/% k + 1) != 0), NROW(x)))
-    as.integer(c(0, which(diff(posixltindex$hour %/% k + 1) != 0), NROW(x)))
+    #c(0, which(diff(as.POSIXlt(index(x))$hour %/% k + 1) != 0), NR) 
+    #as.integer(c(0, which(diff(.index(x) %/% 3600L %/% k + 1) != 0), NR))
+    as.integer(c(0, which(diff(posixltindex$hour %/% k + 1) != 0), NR))
   } else
   if(on == 'minutes' || on == 'mins') {
-    #c(0, which(diff(as.POSIXlt(index(x))$min %/% k + 1) != 0), NROW(x)) 
-    #as.integer(c(0, which(diff(.index(x) %/% 60L %/% k + 1) != 0), NROW(x)))
-    as.integer(c(0, which(diff(posixltindex$min %/% k + 1) != 0), NROW(x)))
+    #c(0, which(diff(as.POSIXlt(index(x))$min %/% k + 1) != 0), NR) 
+    #as.integer(c(0, which(diff(.index(x) %/% 60L %/% k + 1) != 0), NR))
+    as.integer(c(0, which(diff(posixltindex$min %/% k + 1) != 0), NR))
   } else
   if(on == 'seconds' || on == 'secs') {
-    #c(0, which(diff(as.POSIXlt(index(x))$sec %/% k + 1) != 0), NROW(x)) 
-    as.integer(c(0, which(diff(.index(x) %/%  k + 1) != 0), NROW(x)))
+    #c(0, which(diff(as.POSIXlt(index(x))$sec %/% k + 1) != 0), NR) 
+    as.integer(c(0, which(diff(.index(x) %/%  k + 1) != 0), NR))
   } else
   if(on == 'milliseconds' || on == 'ms') {
-    as.integer(c(0, which(diff(.index(x)%/%.001%/%k + 1) != 0), NROW(x)))
+    as.integer(c(0, which(diff(.index(x)%/%.001%/%k + 1) != 0), NR))
   } else
   if(on == 'microseconds' || on == 'us') {
-    as.integer(c(0, which(diff(.index(x)%/%.000001%/%k + 1) != 0), NROW(x)))
+    as.integer(c(0, which(diff(.index(x)%/%.000001%/%k + 1) != 0), NR))
   } else {
     stop('unsupported "on" argument')
   }
