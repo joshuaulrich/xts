@@ -206,6 +206,7 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
   }
   setAttrib(result, xts_ClassSymbol, getAttrib(x, xts_ClassSymbol));
   setAttrib(result, xts_IndexFormatSymbol, getAttrib(x, xts_IndexFormatSymbol));
+  setAttrib(result, xts_IndexTZSymbol, getAttrib(x, xts_IndexTZSymbol));
   setAttrib(result, xts_IndexClassSymbol, getAttrib(x, xts_IndexClassSymbol));
 
   UNPROTECT(P);
