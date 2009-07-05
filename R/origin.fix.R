@@ -42,9 +42,10 @@ as.POSIXct.Date <- function(x, ...)
 
 as.Date.POSIXct <- function(x, ...)
 {
-  z <- floor(unclass((x - unclass(as.POSIXct('1970-01-01'))))/86400)
-  attr(z, 'tzone') <- NULL
-  structure(z, class="Date")
+  as.Date(strftime(x))
+#  z <- floor(unclass((x - unclass(as.POSIXct('1970-01-01'))))/86400)
+#  attr(z, 'tzone') <- NULL
+#  structure(z, class="Date")
 }
 
 as.POSIXlt.Date <- function(x, ...)

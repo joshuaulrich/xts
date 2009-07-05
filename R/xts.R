@@ -44,8 +44,8 @@ function(x=NULL,
   if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
 
-  if(NROW(x) > length(order.by))
-    stop("index must be the same at least as long as data")
+  if(NROW(x) > 0 && NROW(x) != length(order.by))
+    stop("NROW(x) must match length(order.by)")
 
   orderBy <- class(order.by)
 

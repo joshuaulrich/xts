@@ -24,7 +24,7 @@ function(x, ...)
 {
   dates <- as.numeric(dates(x)) # fts uses POSIXct
   attr(x,'dates') <- NULL
-  .xts(unclass(x), dates, ...)
+  .xts(unclass(x), dates, .CLASS="fts", ...)
 }
 
 `as.fts.xts` <-

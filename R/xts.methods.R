@@ -48,16 +48,30 @@ function(x, i, j, drop = FALSE, ...)
         stop('subscript out of bounds')
     }
 
-    if (missing(i)) 
+    if (missing(i)) {
       i <- 1:NROW(x)
-    
-    if (timeBased(i)) 
-      # this shouldn't happen either, though less important I suspect  FIXME
-      i <- as.character(i) 
-
-    if(is.logical(i))
+    } else
+    if(inherits(i, "AsIs") && is.character(i)) {
+      i <- MATCH(i, format(index(x)))
+      #i <- which(format(index(x)) %in% i) 
+    } else
+    # this timeBased -> character shouldn't happen 
+    # a better approach would be to convert this into the appropriate POSIXct
+    # time as that is what the .index is, and subsequently could use binsearch
+    # to find what we need.  All of this should be part of our super-time thinking
+    if (timeBased(i)) {
+      if(class(i)[1] == "Date") {
+        if(indexClass(x)[1]=="Date") {
+          i <- MATCH(i, .index(x) %/% 86400)
+        } else i <- MATCH(as.POSIXct(strftime(i)), .index(x))
+      } else
+      i <- MATCH(unclass(as.POSIXct(i)), .index(x))
+      #i <- which(.index(x) %in% unclass(as.POSIXct(i)))
+      #i <- as.character(i) 
+    } else 
+    if(is.logical(i)) {
       i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]
-
+    } else
     if (is.character(i)) {
       # enables subsetting by date style strings
       # must be able to process - and then allow for operations???
@@ -99,13 +113,12 @@ function(x, i, j, drop = FALSE, ...)
         adjusted.times <- adjust.time(first.time, first.index,
                                       last.time, last.index)
         if(length(adjusted.times) > 1) {
-          i.tmp <- c(i.tmp,
-                     seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
-                             binsearch(adjusted.times$last.time,  .index(x), FALSE))
+          firstlast <- c(seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
+                                 binsearch(adjusted.times$last.time,  .index(x), FALSE))
                      )
-        } # else leave i.tmp == NULL
-        if(!isOrdered(i.tmp, strict=FALSE)) # fixed non-match within range bug
-          i.tmp <- NULL
+          if(isOrdered(firstlast, strict=FALSE)) # fixed non-match within range bug
+            i.tmp <- c(i.tmp, firstlast)
+        }
       }
       i <- i.tmp
     }
@@ -123,8 +136,12 @@ function(x, i, j, drop = FALSE, ...)
       if(length(x)==0) {
         x.tmp <- .xts(rep(NA,length(i)), .index(x)[i])
         return((colnames(x.tmp) <- colnames(x)))
-      } else 
-      return(.Call('do_subset_xts', x, as.integer(i), as.integer(1:original.cols), drop, PACKAGE='xts'))
+      } else {
+        return(.Call('do_subset_xts', 
+                     x, as.integer(i),
+                     as.integer(1:original.cols), 
+                     drop, PACKAGE='xts'))
+      }
     }
     else {
         j <- sapply(j, function(xx) {

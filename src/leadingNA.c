@@ -113,6 +113,9 @@ SEXP na_locf (SEXP x)
   int i, nr, _first, P=0;
   _first = firstNonNA(x);
 
+  if(_first == nrows(x))
+    return(x);
+
   int *int_x=NULL, *int_result=NULL;
   double *real_x=NULL, *real_result=NULL;
 
@@ -154,11 +157,13 @@ SEXP na_locf (SEXP x)
       error("unsupported type");
       break;
   }
-  setAttrib(result, R_DimSymbol, getAttrib(x, R_DimSymbol));
-  setAttrib(result, R_DimNamesSymbol, getAttrib(x, R_DimNamesSymbol));
-  setAttrib(result, xts_IndexSymbol, getAttrib(x, xts_IndexSymbol));
-  copy_xtsCoreAttributes(x, result);
-  copy_xtsAttributes(x, result);
+  if(isXts(x)) {
+    setAttrib(result, R_DimSymbol, getAttrib(x, R_DimSymbol));
+    setAttrib(result, R_DimNamesSymbol, getAttrib(x, R_DimNamesSymbol));
+    setAttrib(result, xts_IndexSymbol, getAttrib(x, xts_IndexSymbol));
+    copy_xtsCoreAttributes(x, result);
+    copy_xtsAttributes(x, result);
+  }
   UNPROTECT(P);
   return(result);
 }
