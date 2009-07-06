@@ -20,24 +20,28 @@
 
 
 cbind.xts <- function(..., all=TRUE, fill=NA, suffixes=NULL) {
-  #merge.xts(..., all=all, fill=fill, suffixes=suffixes)
-  
+  merge.xts(..., all=all, fill=fill, suffixes=suffixes)
+}  
   # convert the call to a list to better manipulate it
-  mc <- as.list(match.call())
-  
-  # check if any default args are missing from the call,
-  # and add them to the call with the cbind defaults
-  if(missing(all))      mc <- c(mc,all=all)
-  if(missing(fill))     mc <- c(mc,fill=fill)
-  if(missing(suffixes)) mc <- c(mc,suffixes=suffixes)
-  
-  # replace the call to cbind.xts with merge.xts
-  mc[[1]] <- as.name('merge.xts')
-
-  # convert the list into a call and evaluate it
-  mc <- as.call(mc)
-  eval(mc)
-} 
+#  mc <- as.list(match.call())
+#  
+#  # remove deparse.level arg if called via cbind 'generic'
+#  if(as.character(mc[[1]]) == "cbind")
+#    mc <- mc[-2]
+#
+#  # check if any default args are missing from the call,
+#  # and add them to the call with the cbind defaults
+#  if(missing(all))      mc <- c(mc,all=all)
+#  if(missing(fill))     mc <- c(mc,fill=fill)
+#  if(missing(suffixes)) mc <- c(mc,suffixes=suffixes)
+#  
+#  # replace the call to cbind.xts with merge.xts
+#  mc[[1]] <- as.name('merge.xts')
+#
+#  # convert the list into a call and evaluate it
+#  mc <- as.call(mc)
+#  eval(mc)
+#} 
 #   sc <- sys.call(sys.parent())
 #   mc <- gsub('cbind|cbind.xts','merge.xts',deparse(match.call(call=sc)))
 #   return(eval(parse(text=mc)))
