@@ -20,10 +20,13 @@
 
 
 cbind.xts <- function(..., all=TRUE, fill=NA, suffixes=NULL) {
-  merge.xts(..., all=all, fill=fill, suffixes=suffixes)
+  mc <- match.call(call=sys.call(sys.parent()))
+  mc[[1]] <- as.name("merge.xts")
+  eval(mc)
+  #merge.xts(..., all=all, fill=fill, suffixes=suffixes)
 }  
-  # convert the call to a list to better manipulate it
-#  mc <- as.list(match.call())
+#  # convert the call to a list to better manipulate it
+#  mc <- as.list(match.call(call=sys.call(-1)))
 #  
 #  # remove deparse.level arg if called via cbind 'generic'
 #  if(as.character(mc[[1]]) == "cbind")
