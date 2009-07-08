@@ -20,10 +20,10 @@
 
 
 cbind.xts <- function(..., all=TRUE, fill=NA, suffixes=NULL) {
-  mc <- match.call(call=sys.call(sys.parent()))
-  mc[[1]] <- as.name("merge.xts")
-  eval(mc)
-  #merge.xts(..., all=all, fill=fill, suffixes=suffixes)
+#  mc <- match.call(call=sys.call(sys.parent()))
+#  mc[[1]] <- as.name("merge.xts")
+#  eval(mc)
+  merge.xts(..., all=all, fill=fill, suffixes=suffixes)
 }  
 #  # convert the call to a list to better manipulate it
 #  mc <- as.list(match.call(call=sys.call(-1)))
