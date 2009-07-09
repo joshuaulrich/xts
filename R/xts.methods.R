@@ -60,18 +60,19 @@ function(x, i, j, drop = FALSE, ...)
     # time as that is what the .index is, and subsequently could use binsearch
     # to find what we need.  All of this should be part of our super-time thinking
     if (timeBased(i)) {
-      if(class(i)[1] == "Date") {
-        if(indexClass(x)[1]=="Date") {
-          i <- MATCH(i, .index(x) %/% 86400)
-        } else i <- MATCH(as.POSIXct(strftime(i)), .index(x))
-      } else
-      i <- MATCH(unclass(as.POSIXct(i)), .index(x))
+#      if(class(i)[1] == "Date") {
+#        if(indexClass(x)[1]=="Date") {
+#          i <- MATCH(i, .index(x) %/% 86400)
+#        } else i <- MATCH(as.POSIXct(strftime(i)), .index(x))
+#      } else
+#      i <- MATCH(unclass(as.POSIXct(i)), .index(x))
       #i <- which(.index(x) %in% unclass(as.POSIXct(i)))
-      #i <- as.character(i) 
+      i <- as.character(i) 
     } else 
     if(is.logical(i)) {
       i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]
-    } else
+    } 
+
     if (is.character(i)) {
       # enables subsetting by date style strings
       # must be able to process - and then allow for operations???
