@@ -50,7 +50,7 @@ coredata.xts <- function(x, fmt=FALSE, ...) {
   }
 
   if(length(x) == 0) {
-    return(x)
+    return(vector(storage.mode(x)))
   } else 
   return(.Call("coredata", x, PACKAGE="xts"))
 
