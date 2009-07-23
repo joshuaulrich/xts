@@ -117,7 +117,7 @@ function (year = 1970, month = 12, day = 31, hour = 23, min = 59, sec = 59, tz =
             !year%%100 %in% 0) | (year%%400 %in% 0)), 29, 28), 
             mon.lengths[month])
     }
-    if (length(c(year, month, day, hour, min, sec)) == 7 && c(year, 
+    if (length(c(year, month, day, hour, min, sec)) == 6 && c(year, 
         month, day, hour, min, sec) == c(1969, 12, 31, 23, 59, 
         59) && Sys.getenv("TZ") %in% c("", "GMT", "UTC")) 
         sec <- 58.9
