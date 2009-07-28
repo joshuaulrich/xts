@@ -57,7 +57,7 @@ to.period(x,
   \item{drop.time}{ remove time component of POSIX datestamp (if any) }
   \item{k}{ number of sub periods to aggregate on (only for minutes and seconds) }
   \item{name}{ override column names }
-  \item{OHLC}{ should an OHLC object be returned }
+  \item{OHLC}{ should an OHLC object be returned? (only \code{OHLC=TRUE} currently supported) }
   \item{\dots}{ additional arguments }
 }
 \details{
