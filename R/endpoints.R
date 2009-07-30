@@ -36,12 +36,12 @@ function(x,on='months',k=1) {
   } else
 
   if(on == 'quarters') {
-    xi <- (as.POSIXlt(index(x))$mon%/%3) + 1
+    xi <- (posixltindex$mon%/%3) + 1
     as.integer(c(0,which(diff(xi) != 0),NR))
   } else 
 
   if(on == 'months') {
-    as.integer(c(0, which(diff(as.POSIXlt(index(x))$mon %/% k + 1) != 0), NR) )
+    as.integer(c(0, which(diff(posixltindex$mon %/% k + 1) != 0), NR) )
   } else 
   if(on == 'weeks') {
     as.integer(c(0, which(diff( (.index(x) + (3L * 86400L)) %/% 604800L %/% k + 1) != 0), NR) )
