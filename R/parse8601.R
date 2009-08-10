@@ -18,7 +18,7 @@
 # Copyright 2009. Jeffrey A. Ryan. All rights reserved.
 # This is licensed under the GPL version 3
 
-parseISO8601 <- function(x, start, end) {
+.parseISO8601 <- function(x, start, end) {
  # x: character vector of length 1 in ISO8601:2004(e) format
  # start: optional earliest time
  # end:   optional latest time
@@ -106,12 +106,12 @@ parseISO8601 <- function(x, start, end) {
      e <- as.POSIXlt(do.call(lastof,  parse.side(intervals[2])))
  }
  if(!missing(start)) {
-   start <- as.numeric(as.POSIXct(start))
+   start <- as.numeric(start)
    s <- as.POSIXlt(structure(max(start, as.numeric(s), na.rm=TRUE),
            class=c("POSIXt","POSIXct")))
  }
  if(!missing(end)) {
-   start <- as.numeric(as.POSIXct(end))
+   start <- as.numeric(end)
    e <- as.POSIXlt(structure(min(end, as.numeric(e), na.rm=TRUE),
            class=c("POSIXt","POSIXct")))
  }
@@ -141,5 +141,5 @@ parseISO8601 <- function(x, start, end) {
    }
  }
 
- list(s,e)
+ list(first.time=as.POSIXct(s),last.time=as.POSIXct(e))
 }

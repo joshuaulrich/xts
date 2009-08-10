@@ -79,40 +79,41 @@ function(x, i, j, drop = FALSE, ...)
 
       i.tmp <- NULL
 
-      adjust.time <- function(Ftime,Findex,Ltime,Lindex) {
-        # used to adjust requested time to actual time in object
-        if( (Ltime < Findex) || (Ftime > Lindex) ) return(NA)
-        Ftime <- max(Findex, Ftime)
-        Ltime <- min(Lindex, Ltime)
-        return(list(first.time=Ftime,last.time=Ltime))
-      }
-
-      # main loop over elements of i, find range for each within data
+#      adjust.time <- function(Ftime,Findex,Ltime,Lindex) {
+#        # used to adjust requested time to actual time in object
+#        if( (Ltime < Findex) || (Ftime > Lindex) ) return(NA)
+#        Ftime <- max(Findex, Ftime)
+#        Ltime <- min(Lindex, Ltime)
+#        return(list(first.time=Ftime,last.time=Ltime))
+#      }
+#
+#      # main loop over elements of i, find range for each within data
       for(ii in i) {
-        if(!identical(grep("(::)|/",ii),integer(0))) {
-          tBR <- timeBasedRange(ii)
-          
-          # the first index value to be found
-          if(is.na(tBR[1])) {
-            first.time <- .index(x)[1]
-          } else first.time <- tBR[1]
-
-          # the last index value to be found
-          if(is.na(tBR[2])) {
-            last.time  <- .index(x)[NROW(x)]
-          } else last.time <- tBR[2]
-
-        } else {
-          # copy single date to date/date
-          dates <- paste(ii,ii,sep='/')
-          tBR <- timeBasedRange(dates)
-          first.time <- tBR[1]
-          last.time  <- tBR[2]
-        }
-        first.index <- first(.index(x))
-        last.index  <- last(.index(x))
-        adjusted.times <- adjust.time(first.time, first.index,
-                                      last.time, last.index)
+#        if(!identical(grep("(::)|/",ii),integer(0))) {
+#          tBR <- timeBasedRange(ii)
+#          
+#          # the first index value to be found
+#          if(is.na(tBR[1])) {
+#            first.time <- .index(x)[1]
+#          } else first.time <- tBR[1]
+#
+#          # the last index value to be found
+#          if(is.na(tBR[2])) {
+#            last.time  <- .index(x)[NROW(x)]
+#          } else last.time <- tBR[2]
+#
+#        } else {
+#          # copy single date to date/date
+#          dates <- paste(ii,ii,sep='/')
+#          tBR <- timeBasedRange(dates)
+#          first.time <- tBR[1]
+#          last.time  <- tBR[2]
+#        }
+#        first.index <- first(.index(x))
+#        last.index  <- last(.index(x))
+#        adjusted.times <- adjust.time(first.time, first.index,
+#                                      last.time, last.index)
+        adjusted.times <- .parseISO8601(i, first(.index(x)), last(.index(x)))
         if(length(adjusted.times) > 1) {
           firstlast <- c(seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
                                  binsearch(adjusted.times$last.time,  .index(x), FALSE))

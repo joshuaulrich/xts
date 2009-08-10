@@ -5,7 +5,8 @@ useDynLib(xts)
 importFrom(stats, lag)
 importFrom(stats, as.ts)
 
-# debugging
+export(.parseISO8601)
+
 export(firstof,
        lastof)
 
