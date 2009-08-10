@@ -2,12 +2,15 @@
 # for specifying dates and times as described in
 # the ISO 8601:2004e standard.
 #
-#
-#
+#  See:
+#    http://en.wikipedia.org/wiki/ISO_8601
+#    http://www.iso.org/iso/support/faqs/faqs_widely_used_standards/widely_used_standards_other/date_and_time_format.htm
 #
 # This implementation is currently restricted
 # to interval based parsing, with basic or
-# extended formats.
+# extended formats, and duration strings.
+# Currently the duration must be in basic format
+#  e.g. PnnYnnMnnDTnnHnnMnnS
 #
 # The return value is a list of start and
 # end times, in POSIXt space.
@@ -28,7 +31,10 @@ parseISO8601 <- function(x, start, end) {
  x <- gsub("NOW",format(Sys.time(),"%Y%m%dT%H%M%S"),x)
  x <- gsub("TODAY",format(Sys.Date(),"%Y%m%d"),x)
 
- intervals <- unlist(strsplit(x, "/|(--)|::"))
+ if(identical(grep("/|(--)|(::)", x), integer(0))) {
+   x <- paste(x,x,sep="/") 
+ }
+ intervals <- unlist(strsplit(x, "/|(--)|(::)"))
  # e.g. "/2009":  "" "xxx" end of defined, needs context
  # e.g. "2009/":  "xxx"    start of defined, needs context
 
