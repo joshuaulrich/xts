@@ -15,18 +15,38 @@
 # Copyright 2009. Jeffrey A. Ryan. All rights reserved.
 # This is licensed under the GPL version 3
 
-parseISO8601 <-
-function(x) {
- # possibly include a lower= and upper= bound
- # as prescribed by context.
+parseISO8601 <- function(x, start, end) {
+ # x: character vector of length 1 in ISO8601:2004(e) format
+ # start: optional earliest time
+ # end:   optional latest time
  as_numeric <- function(.x) {
+   # simple helper function
    if(gsub(" ","",.x)=="")
      NULL
    else as.numeric(.x)
  }
- intervals <- unlist(strsplit(x, "/|(--)"))
- # "" "xxx" end of defined, needs context
- # "xxx"    start of defined, needs context
+ x <- gsub("NOW",format(Sys.time(),"%Y%m%dT%H%M%S"),x)
+ x <- gsub("TODAY",format(Sys.Date(),"%Y%m%d"),x)
+
+ intervals <- unlist(strsplit(x, "/|(--)|::"))
+ # e.g. "/2009":  "" "xxx" end of defined, needs context
+ # e.g. "2009/":  "xxx"    start of defined, needs context
+
+ # check for duration specification
+ DURATION <- ""
+ if(length(intervals)==2L) {
+   if(substr(intervals[1],0,1)=="P") {
+     # duration on LHS
+     DURATION <- intervals[1]
+     intervals[1] <- ""
+   }
+   if(substr(intervals[2],0,1)=="P") {
+     # duration on RHS
+     DURATION <- intervals[2]
+     intervals <- intervals[1]
+   }
+   # leave alone if no duration
+ }
 
  parse.side <- function(x, startof) {
    if( is.na(x) || !nzchar(x))
@@ -72,12 +92,48 @@ function(x) {
  }
 
  s <- e <- NA
- if(nzchar(intervals[1]))
-   s <- do.call(firstof, parse.side(intervals[1]))
- if(length(intervals) == 2L) {
-   e <- do.call(lastof,  parse.side(intervals[2],intervals[1]))
+ if(nzchar(intervals[1]))  # LHS
+   s <- as.POSIXlt(do.call(firstof, parse.side(intervals[1])))
+ if(length(intervals) == 2L) { # RHS
+   e <- as.POSIXlt(do.call(lastof,  parse.side(intervals[2],intervals[1])))
    if(is.na(e))
-     e <- do.call(lastof,  parse.side(intervals[2]))
+     e <- as.POSIXlt(do.call(lastof,  parse.side(intervals[2])))
  }
+ if(!missing(start)) {
+   start <- as.numeric(as.POSIXct(start))
+   s <- as.POSIXlt(structure(max(start, as.numeric(s), na.rm=TRUE),
+           class=c("POSIXt","POSIXct")))
+ }
+ if(!missing(end)) {
+   start <- as.numeric(as.POSIXct(end))
+   e <- as.POSIXlt(structure(min(end, as.numeric(e), na.rm=TRUE),
+           class=c("POSIXt","POSIXct")))
+ }
+ if(nzchar(DURATION)) {
+    parse_duration <- function(P) {
+      # TODO:
+      #  strip leading P from string
+      #  convert second M (min) to 'm' IFF following a T
+      #  remove/ignore T
+      #  convert extended format (PYYYYMMDD) to basic format (PnnYnnMnnD)
+      P <- gsub("P","",P)
+      P <- gsub("T(.*)M","\\1m",P) 
+      n <- unlist(strsplit(P, "[[:alpha:]]"))
+      d <- unlist(strsplit(gsub("[[:digit:]]", "", P),""))
+      dur.vec <- list(as.numeric(n),unname(c(Y=6,M=5,D=4,H=3,m=2,S=1)[d]))
+      init.vec <- rep(0, 9)
+      init.vec[dur.vec[[2]]] <- dur.vec[[1]]
+      init.vec
+    }
+
+   if(is.na(s)) {
+     s <- as.POSIXct(structure(as.list(mapply(`-`,e,parse_duration(DURATION))),
+                    class=c("POSIXt","POSIXlt"), tzone=attr(e,"tzone")))
+   } else {
+     e <- as.POSIXct(structure(as.list(mapply(`+`,s,parse_duration(DURATION))),
+                    class=c("POSIXt","POSIXlt"), tzone=attr(e,"tzone")))
+   }
+ }
+
  list(s,e)
 }
