@@ -44,11 +44,13 @@
    if(substr(intervals[1],0,1)=="P") {
      # duration on LHS
      DURATION <- intervals[1]
+     DURATION_LHS <- TRUE
      intervals[1] <- ""
    }
    if(substr(intervals[2],0,1)=="P") {
      # duration on RHS
      DURATION <- intervals[2]
+     DURATION_LHS <- FALSE
      intervals <- intervals[1]
    }
    # leave alone if no duration
@@ -132,7 +134,7 @@
       init.vec
     }
 
-   if(is.na(s)) {
+   if(DURATION_LHS) {
      s <- as.POSIXct(structure(as.list(mapply(`-`,e,parse_duration(DURATION))),
                     class=c("POSIXt","POSIXlt"), tzone=attr(e,"tzone")))
    } else {
