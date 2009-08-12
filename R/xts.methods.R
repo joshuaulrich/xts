@@ -113,7 +113,7 @@ function(x, i, j, drop = FALSE, ...)
 #        last.index  <- last(.index(x))
 #        adjusted.times <- adjust.time(first.time, first.index,
 #                                      last.time, last.index)
-        adjusted.times <- .parseISO8601(i, first(.index(x)), last(.index(x)))
+        adjusted.times <- .parseISO8601(ii, first(.index(x)), last(.index(x)))
         if(length(adjusted.times) > 1) {
           firstlast <- c(seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
                                  binsearch(adjusted.times$last.time,  .index(x), FALSE))
