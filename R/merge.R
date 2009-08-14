@@ -29,6 +29,12 @@ merge.xts <- function(...,
   if(is.logical(retclass) && !retclass) {
     setclass=FALSE
   } else setclass <- TRUE
+
+  fill.fun <- NULL
+  if(is.function(fill)) {
+    fill.fun <- fill 
+    fill <- NA
+  } 
   
   mc <- match.call(expand=FALSE)
   dots <- mc$...
@@ -98,6 +104,9 @@ merge.xts <- function(...,
       return(xx)
     }
   }
+  if(!is.null(fill.fun)) {
+    fill.fun(x)
+  } else
   return(x)
 }
 .merge.xts <- function(x,y,...,
