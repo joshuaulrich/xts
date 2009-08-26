@@ -217,7 +217,8 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     PROTECT( result = allocVector(TYPEOF(x), 0) ); p++;
     PROTECT( index  = allocVector(TYPEOF(xindex), 0) ); p++;
     SET_xtsIndex(result, index);
-    setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
+    if(LOGICAL(retclass)[0])
+      setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
     UNPROTECT(2 + p);
     return result;
   }
