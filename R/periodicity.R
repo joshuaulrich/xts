@@ -31,7 +31,7 @@ time.frequency <- function(x) {
   return(res)
 }
 
-`periodicity` <- function(x, ...) {
+periodicity <- function(x, ...) {
   if( timeBased(x) || !is.xts(x) )
     x <- try.xts(x, error='\'x\' needs to be timeBased or xtsible')
 
@@ -42,24 +42,21 @@ time.frequency <- function(x) {
   units <- 'days' # the default if p > hourly
   scale <- 'years'# the default for p > quarterly
 
-  if( p <= 1 ) {
-    # 86400 / 24 / 60 / 60
+  if( p < 60 ) {
     units <- 'secs'
     scale <- 'seconds'
-  } else 
-  if( p <= 60 ) {
-    # 86400 / 24 / 60
-    units <- 'mins'
-    scale <- 'minute'
   } else
-  if( p <= 3600 ) {
-    # 86400 / 24
-    units <- 'hours'
-    scale <- 'hourly'
+  if(p < 3600) {
+    units <- "mins"
+    scale <- "minute"
+    p <- p/60L
   } else
-  if( p <= 86400 ) {
-    # 86400 * 1
-    scale <- 'daily'
+  if(p < 86400) {
+    units <- "hours"
+    scale <- "hourly"
+  } else
+  if(p == 86400) {
+    scale <- "daily"
   } else
   if( p <= 604800) {
     # 86400 * 7
