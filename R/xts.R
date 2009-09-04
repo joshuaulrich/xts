@@ -88,6 +88,9 @@ function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"),  check=TRUE, unique=F
   if(!is.null(x)) {
     if(!is.matrix(x))
       x <- as.matrix(x)
+  } else
+  if(length(x) == 0 && !is.null(x)) {
+    x <- vector(storage.mode(x))
   } else x <- numeric(0)
 
   structure(.Data=x,

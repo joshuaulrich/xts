@@ -33,7 +33,7 @@ function(x,fmt,...) {
       print(structure(structure(NULL,dim=c(0,NCOL(x))),dimnames=list(NULL,colnames(x))))
     } else {
       cat('Data:\n')
-      print(numeric(0))
+      print(vector(storage.mode(xx)))
       cat('\n')
       cat('Index:\n')
       index <- index(x)
