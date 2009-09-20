@@ -66,7 +66,7 @@ periodicity <- function(x, ...) {
     # 86400 * 31
     scale <- 'monthly'
   } else
-  if( p <= 7862400 ) {
+  if( p <=  7948800 ) {
     # 86400 * 91
     scale <- 'quarterly'
   }
