@@ -59,7 +59,7 @@ function(x, i, j, drop = FALSE, ...)
     # a better approach would be to convert this into the appropriate POSIXct
     # time as that is what the .index is, and subsequently could use binsearch
     # to find what we need.  All of this should be part of our super-time thinking
-    if (timeBased(i)) {
+    if (timeBased(i) || (inherits(i, "AsIs") && is.character(i))) {
 #      if(class(i)[1] == "Date") {
 #        if(indexClass(x)[1]=="Date") {
 #          i <- MATCH(i, .index(x) %/% 86400)

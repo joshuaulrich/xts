@@ -19,7 +19,7 @@ for maximum performance and compatibility.
     xts object
 }
   \item{i}{
-    the rows to extract, numeric, timeBased or ISO-8601 style (see details)
+    the rows to extract. Numeric, timeBased or ISO-8601 style (see details)
 }
   \item{j}{
     the columns to extract, numeric or by name
@@ -34,7 +34,7 @@ for maximum performance and compatibility.
 \details{
 One of the primary motivations, and key points of differentiation
 of the time series class xts, is the ability to subset rows
-by specifying ISO-8601 compatible character strings.  This allows
+by specifying ISO-8601 compatible range strings.  This allows
 for natural range-based time queries without requiring prior
 knowledge of the underlying time object used in construction.
 
@@ -54,17 +54,34 @@ by a forward slash:
 
 CCYYMMDD HH:MM:SS.ss+/CCYYMMDD HH:MM:SS.ss
 
-Native support for character string subsetting
-can be enabled by wrapping your character
-time vector with the \code{I} function call.
+The algorithm to parse the above is \code{.parseISO8601} from
+the \pkg{xts} package.
 
-It is also possible to subset by timeBased objects,
-using the same class as used during the object
-construction, or as shown by \code{indexClass}.  Mixing class
-types in this manner may work, but should not be
-relied upon as there will be a severe performance
-penalty as well as the increased likelihood
-of date or time errors.
+ISO-style subsetting, given a range type query, makes use
+of a custom binary search mechanism that allows for
+very fast subsetting as no linear search though the index
+is required.  ISO-style character vectors may be longer than
+length one, allowing for multiple non-contiguous ranges
+to be selected in one subsetting call.
+
+If a character \emph{vector} representing time is used in place of 
+numeric values, ISO-style queries, or timeBased
+objects, the above parsing will be carried out on
+each element of the i-vector.  This overhead can
+be very costly. If the character approach is used when
+no ISO range querying is needed, it is
+recommended to wrap the \sQuote{i} character vector with the \code{I()}
+function call, to allow for more efficient internal processing.
+Alternately converting character vectors to POSIXct objects will
+provide the most performance efficiency.
+
+As \code{xts} uses POSIXct time representations
+of all user-level index classes internally, the fastest
+timeBased subsetting will always be from POSIXct objects,
+regardless of the \code{indexClass} of the original
+object.  All non-POSIXct time classes
+are converted to character first to preserve
+consistent TZ behavior.
 }
 \value{
 An extraction of the original xts object.
@@ -77,18 +94,20 @@ Information interchange - Representation of dates and time
 \author{
 Jeffrey A. Ryan
 }
-
-
 \seealso{
 \code{\link{xts}},
+\code{\link{.parseISO8601}},
 }
 \examples{
 x <- xts(1:1000, as.Date("2000-01-01")+1:1000)
-y <- xts(1:1000, as.POSIXct(as.Date("2000-01-01")+1:1000))
+y <- xts(1:1000, as.POSIXct(format(as.Date("2000-01-01")+1:1000)))
 
 x.subset <- index(x)[1:20]
 x[x.subset] # by original index type
+system.time(x[x.subset]) 
 x[as.character(x.subset)] # by character string. Beware!
+system.time(x[as.character(x.subset)]) # slow!
+system.time(x[I(as.character(x.subset))]) # wrapped with I(), faster!
 
 x['200001'] # January 2000
 x['1999/2000'] # All of 2000 (note there is no need to use the exact start)
