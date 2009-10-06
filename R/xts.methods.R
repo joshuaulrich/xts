@@ -42,11 +42,11 @@ function(x, i, j, drop = FALSE, ...)
     if(inherits(i, "AsIs") && is.character(i)) {
       i <- MATCH(i, format(index(x)))
     } else
-    if (timeBased(i) || (inherits(i, "AsIs") && is.character(i))) {
+    if (timeBased(i)) { # || (inherits(i, "AsIs") && is.character(i))) {
       if(inherits(i, "POSIXct")) {
-        i <- match(as.numeric(i), .index(x))
+        i <- match(i, .index(x))
       } else {
-        i <- match(as.numeric(as.POSIXct(as.character(i))), .index(x))
+        i <- match(as.POSIXct(as.character(i)), .index(x))
       }
       i[is.na(i)] <- 0
     } else 
