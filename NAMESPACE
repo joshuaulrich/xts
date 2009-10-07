@@ -31,6 +31,7 @@ export(.indexsec,
 export(isOrdered)
 
 export(.subset.xts)
+export(.subset_xts)
 
 # user visible core xts functions
 export(xts, .xts)

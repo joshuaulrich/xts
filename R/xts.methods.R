@@ -18,20 +18,30 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+.subset_xts <- function(x, i, j, ...) {
+  if(missing(i)) {
+    i <- 1:NROW(x)
+  }
+  if(missing(j)) {
+    j <- 1:NCOL(x)
+  }
+  .Call('do_subset_xts', x, i, j, FALSE, PACKAGE='xts')
+}
 
 `.subset.xts` <- `[.xts` <-
 function(x, i, j, drop = FALSE, ...) 
 {
-    check.TZ(x)
-    original.cols <- NCOL(x)
+    #check.TZ(x)
+    #original.cols <- NCOL(x)
     #original.attr <- xtsAttributes(x)
     
     if(missing(i)) {
       i <- 1:NROW(x)
     } else
     # test for negative subscripting in i
-    if (!missing(i) && is.numeric(i) ) {
-      if(any(i < 0)) {
+    if (!missing(i) && is.numeric(i)) {
+      #if(any(i < 0)) {
+      if(.Call("any_negative", i, PACKAGE="xts")) {
         if(!all(i <= 0))
           stop('only zeros may be mixed with negative subscripts')
         i <- (1:NROW(x))[i]
@@ -72,6 +82,7 @@ function(x, i, j, drop = FALSE, ...)
         }
       }
       i <- i.tmp
+      if(is.null(i)) i <- NA
     }
 
     # test for negative subscripting in j
@@ -88,9 +99,8 @@ function(x, i, j, drop = FALSE, ...)
   
     if(!isOrdered(i,strictly=FALSE)) {
       i <- sort(i)
-      # possibly can test for dup=TRUE here, if we implement a global option
     }
-    # .subset is picky, 0's in the 'i' position cause failures -- is this still nec? -jar
+    # subset is picky, 0's in the 'i' position cause failures
     zero.index <- binsearch(0, i, NULL)
     if(!is.na(zero.index))
       i <- i[ -zero.index ]
@@ -102,7 +112,7 @@ function(x, i, j, drop = FALSE, ...)
       } else {
         return(.Call('do_subset_xts', 
                      x, as.integer(i),
-                     as.integer(1:original.cols), 
+                     as.integer(1:NCOL(x)), 
                      drop, PACKAGE='xts'))
       }
     }

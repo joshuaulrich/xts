@@ -64,14 +64,15 @@
 
    # dates
    date <- date.time[1]
-   if(!missing(startof) &&
-      (nchar(startof) - nchar(date)) >= 4) {
+   if(!missing(startof) && nchar(basic)==2L) {
+      startof <- gsub(":|-", "", startof, perl=TRUE, extended=TRUE)
+      if(nchar(startof) - nchar(date) >= 4) {
       # FIXME 200901/2009 needs to work, fix is ex-post now
       # pad to last place of startof
       # with startof values
-      startof <- gsub(":|-", "", startof, perl=TRUE, extended=TRUE)
       sstartof <- substr(startof,0,nchar(startof)-nchar(date))
       date <- paste(sstartof,date,sep="")
+   }
    }
    date <- sprintf("%-8s", date)
    YYYY <- substr(date,0,4)
