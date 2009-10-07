@@ -18,8 +18,10 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-`binsearch` <-
+binsearch <- function(key, vec, start=TRUE) {
+  .Call("binsearch", as.double(key),vec, start)
+}
+`.binsearch` <-
 function(key,  vec, start=TRUE) {
   # vec is a numeric vector to search
   # key is the numeric key we are looking for

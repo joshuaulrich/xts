@@ -52,7 +52,7 @@ coredata.xts <- function(x, fmt=FALSE, ...) {
   if(length(x) == 0) {
     return(vector(storage.mode(x)))
   } else 
-  return(.Call("coredata", x, PACKAGE="xts"))
+  return(.Call("coredata_xts", x, PACKAGE="xts"))
 
 }
 

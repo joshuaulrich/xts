@@ -60,7 +60,9 @@ function(x, i, j, drop = FALSE, ...)
       i.tmp <- NULL
 
       for(ii in i) {
-        adjusted.times <- .parseISO8601(ii, first(.index(x)), last(.index(x)))
+        #adjusted.times <- .parseISO8601(ii, first(.index(x)), last(.index(x)))
+        `[.POSIXct` <- function(x, ...) { .Class="Matrix"; NextMethod("[") }
+        adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[NROW(x)])
         if(length(adjusted.times) > 1) {
           firstlast <- c(seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
                                  binsearch(adjusted.times$last.time,  .index(x), FALSE))

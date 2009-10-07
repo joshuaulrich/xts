@@ -61,6 +61,7 @@ SEXP do_xtsAttributes(SEXP x);              // xtsAttributes i.e. user-added att
 SEXP do_xtsCoreAttributes(SEXP x);          /* xtsCoreAttributes xts-specific attributes
                                                CLASS, .indexFORMAT, .indexCLASS & class */
 SEXP coredata(SEXP x);
+SEXP coredata_xts(SEXP x);
 SEXP add_class(SEXP x, SEXP class);
 SEXP lagXts(SEXP x, SEXP k, SEXP pad);
 SEXP do_is_ordered(SEXP x, SEXP increasing, SEXP strictly);

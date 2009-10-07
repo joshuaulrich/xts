@@ -53,25 +53,34 @@ SEXP coredata (SEXP x)
       break;
   }
   if(!isNull(getAttrib(x, R_DimSymbol))) {
-    SEXP dim, dimnames, newdimnames, colnames;
-    PROTECT(dim = allocVector(INTSXP, 2)); P++;
-    INTEGER(dim)[0] = nrows(x);
-    INTEGER(dim)[1] = ncols(x);
-    setAttrib(result, R_DimSymbol, dim);
-  
-    PROTECT(dimnames = getAttrib(x, R_DimNamesSymbol)); P++;
-    if( !isNull(dimnames) ) {  /* only column-names exist for xts objects */
-      PROTECT(newdimnames = allocVector(VECSXP, 2)); P++;
-      PROTECT(colnames = allocVector(STRSXP, ncols(x))); P++;
-      colnames = VECTOR_ELT(dimnames, 1);
-      SET_VECTOR_ELT(dimnames, 0, R_NilValue);
-      SET_VECTOR_ELT(dimnames, 1, colnames); 
-      setAttrib(result, R_DimNamesSymbol, dimnames);
+    setAttrib(result, R_DimSymbol, getAttrib(x, R_DimSymbol));
+    if( !isNull(getAttrib(x, R_DimNamesSymbol)) ) {  
+      setAttrib(result, R_DimNamesSymbol, getAttrib(x,R_DimNamesSymbol));
     }
   } else {
     setAttrib(result, R_NamesSymbol, getAttrib(x, R_NamesSymbol));
   }
-  /* add support for zoo factors */
+  copyMostAttrib(x,result);
+  setAttrib(result, install("class"), getAttrib(x, install("oclass")));
+  setAttrib(result, install("index"),     R_NilValue);
+  setAttrib(result, install("oclass"),    R_NilValue);
+  setAttrib(result, install("frequency"), R_NilValue);
+
   UNPROTECT(P);
   return result;
 }
+
+SEXP coredata_xts(SEXP x) {
+  /* using coredata now in zoo */
+  SEXP result;
+
+  PROTECT(result = coredata(x));
+  setAttrib(result, install(".indexCLASS"), R_NilValue);
+  setAttrib(result, install(".indexFORMAT"), R_NilValue);
+  setAttrib(result, install(".indexTZ"), R_NilValue);
+  setAttrib(result, install(".CLASS"), R_NilValue);
+
+  UNPROTECT(1);
+  return result;
+}
+

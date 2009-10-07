@@ -113,7 +113,7 @@
            class=c("POSIXt","POSIXct")))
  }
  if(!missing(end)) {
-   start <- as.numeric(end)
+   end <- as.numeric(end)
    e <- as.POSIXlt(structure(min(end, as.numeric(e), na.rm=TRUE),
            class=c("POSIXt","POSIXct")))
  }
