@@ -31,7 +31,6 @@ All modification are by Jeffrey A. Ryan 2008
 #include <Rdefines.h>
 #include <Rinternals.h>
 #include "xts.h"
-
 // xtsExtractSubset {{{
 static SEXP xtsExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
 {
