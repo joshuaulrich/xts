@@ -1,6 +1,7 @@
 rollapply.xts <- function(data, width, FUN, ..., by=1, ascending=TRUE,
   by.column=TRUE, na.pad=FALSE, align=c("center","left","right")) {
 
+  data <- try.xts(data)
   if(!ascending) {
     warning("ignoring 'ascending=FALSE'")
     ascending <- TRUE
@@ -60,18 +61,18 @@ rollapply.xts <- function(data, width, FUN, ..., by=1, ascending=TRUE,
     #xx <- apply(e, 1, function(i) FUN(data[i,],...))
     #xx <- sapply(1:NROW(e), function(i) FUN(data[e[i,],],...))
     ##xx <- sapply(ind, function(i) FUN(data[(i-width+1):i,],...))
-    xx <- sapply(ind, function(i) FUN(.subset_xts(data,(i-width+1):i,,...)))
+    xx <- sapply(ind, function(i) FUN(.subset_xts(data,(i-width+1):i),...))
     res <- xts(xx, tt, if (by == 1) attr(data, "frequency"))
   } else if( by.column ) {
     res <- xts( sapply( 1:NCOL(data), function(j)
                 #apply(e, 1, function(i) FUN(data[i,j],...)) ),
                 #apply(ind, 1, function(i) FUN(data[(i-width+1):i,j],...)) ),
-                apply(ind, 1, function(i) FUN(.subset_xts(data,(i-width+1):i,j,...))) ),
+                apply(ind, 1, function(i) FUN(.subset_xts(data,(i-width+1):i,j),...)) ),
 		        tt, if (by == 1) attr(data, "frequency") )
   } else {
     #xx <- apply(e, 1, function(i) FUN(data[i,],...))
     ##xx <- apply(ind, 1, function(i) FUN(data[(i-width+1):i,],...))
-    xx <- apply(ind, 1, function(i) FUN(.subset_xts(data,(i-width+1):i,...)))
+    xx <- apply(ind, 1, function(i) FUN(.subset_xts(data,(i-width+1):i),...))
     if(!is.null(dim(xx))) xx <- t(xx)
     res <- xts(xx, tt, if (by == 1) attr(data, "frequency"))
   }
