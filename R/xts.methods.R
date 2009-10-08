@@ -71,7 +71,7 @@ function(x, i, j, drop = FALSE, ...)
 
       for(ii in i) {
         #adjusted.times <- .parseISO8601(ii, first(.index(x)), last(.index(x)))
-        `[.POSIXct` <- function(x, ...) { .Class="Matrix"; NextMethod("[") }
+        #`[.POSIXct` <- function(x, ...) { .Class="Matrix"; NextMethod("[") }
         adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[NROW(x)])
         if(length(adjusted.times) > 1) {
           firstlast <- c(seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
@@ -82,7 +82,7 @@ function(x, i, j, drop = FALSE, ...)
         }
       }
       i <- i.tmp
-      if(is.null(i)) i <- NA
+      #if(is.null(i)) i <- NA
     }
 
     # test for negative subscripting in j
