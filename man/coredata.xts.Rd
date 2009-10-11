@@ -47,7 +47,7 @@ a list of named attributes.
 The replacement functions are called for their side-effects.
 }
 \author{ Jeffrey A. Ryan }
-\seealso{ \code{\link[zoo:zoo-package]{coredata}}, \code{\link{xtsAttributes}} }
+\seealso{ \code{\link[zoo:zoo]{coredata}}, \code{\link{xtsAttributes}} }
 \examples{
 data(sample_matrix)
 x <- as.xts(sample_matrix, myattr=100)
