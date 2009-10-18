@@ -6,26 +6,26 @@ rollapply.xts <- function(data, width, FUN, ..., by=1, ascending=TRUE,
     warning("ignoring 'ascending=FALSE'")
     ascending <- TRUE
   }
-  if(by != 1) {
-    warning(paste("ignoring 'by=",by,"'",sep=""))
-    by <- 1
-  }
+  #if(by != 1) {
+    #warning(paste("ignoring 'by=",by,"'",sep=""))
+    #by <- 1
+  #}
   if(missing(align)) align <- "right"
   
   # Code taken/adapted from rollapply.zoo from the 'zoo' package
 
-  embedi <- function(n, k, by = 1, ascending = FALSE) {
+#  embedi <- function(n, k, by = 1, ascending = FALSE) {
   # n = no of time points, k = number of columns
   # by = increment. normally = 1 but if = b calc every b-th point 
   # ascending If TRUE, points passed in ascending order else descending.
   # Note that embed(1:n, k) corresponds to embedi(n, k, by = 1, rev = TRUE)
   # e.g. embedi(10, 3)
-    s <- seq(1, n-k+1, by)
-    lens <- length(s)
-    cols <- 1:k
-    if(!ascending) cols <- rev(cols)
-    matrix(s + rep(cols, rep(lens,k))-1, lens)
-  }
+#    s <- seq(1, n-k+1, by)
+#    lens <- length(s)
+#    cols <- 1:k
+#    if(!ascending) cols <- rev(cols)
+#    matrix(s + rep(cols, rep(lens,k))-1, lens)
+#  }
 
   # xts doesn't currently have these functions
   #  if(by.column && by == 1 && ascending && length(list(...)) < 1)
@@ -46,15 +46,15 @@ rollapply.xts <- function(data, width, FUN, ..., by=1, ascending=TRUE,
     "center" = { floor(width/2) },
     "right" = { 0 })
   idx <- index(data)
-  #tt <- index(data)[seq((width-n1), (nr-n1), by)]
-  tt <- idx[seq((width-n1), (nr-n1), 1)]
+  tt <- index(data)[seq((width-n1), (nr-n1), by)]
+  #tt <- idx[seq((width-n1), (nr-n1), 1)]
 
   ## evaluate FUN only on coredata(data)
   #data <- coredata(data)
 
   FUN <- match.fun(FUN)
 
-  ind <- as.matrix(width:nr)
+  ind <- as.matrix(seq.int(width,nr,by))
   #e <- embedi(nr, width, by, ascending)
 
   if( nc==1 ) {
