@@ -59,13 +59,13 @@
  parse.side <- function(x, startof) {
    if( is.na(x) || !nzchar(x))
      return(c(NULL))
-   basic <- gsub(":|-", "", x, perl=TRUE, extended=TRUE)
+   basic <- gsub(":|-", "", x, perl=TRUE) #, extended=TRUE)
    date.time <- unlist(strsplit(basic, " |T"))
 
    # dates
    date <- date.time[1]
    if(!missing(startof) && nchar(basic)==2L) {
-      startof <- gsub(":|-", "", startof, perl=TRUE, extended=TRUE)
+      startof <- gsub(":|-", "", startof, perl=TRUE) #, extended=TRUE)
       if(nchar(startof) - nchar(date) >= 4) {
       # FIXME 200901/2009 needs to work, fix is ex-post now
       # pad to last place of startof

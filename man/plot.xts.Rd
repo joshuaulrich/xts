@@ -1,6 +1,5 @@
 \name{plot.xts}
 \alias{plot.xts}
-\alias{lines.xts}
 \title{ Plotting xts Objects }
 \description{
 Plotting methods for xts objects.
@@ -15,8 +14,6 @@ Plotting methods for xts objects.
          bar.col = "grey",
          candle.col = "white",
          ann = TRUE, axes = TRUE, ...)
-
-\method{lines}{xts}(x, ...)
 }
 \arguments{
   \item{x}{ an \code{xts} object }
@@ -35,10 +32,6 @@ Plotting methods for xts objects.
 \details{
 Mainly used to draw time-series plots with sensible x-axis labels, it
 can also plot basic OHLC series using \code{type='candles'} or \code{type='bars'}.
-
-\code{lines.xts} keeps track of the x-values of the current plot, so it becomes
-possible to simply add xts objects to the plot without re-alligning the indexes.
-This is still experimental and should be expected to change.
 
 Better financial plots can be found in the \pkg{quantmod} package, though
 these are generally incompatible with standard R graphics tools.

@@ -73,7 +73,7 @@
   assign(".plot.xts",recordPlot(),.GlobalEnv)
 }
 
-lines.xts <- function(x, ...)
+.lines.xts <- function(x, ...)
 {
   getxvalues <- function(x) x[[1]][[3]][[2]][[1]]$x
   last.plot <- if(exists(".plot.xts",.GlobalEnv)) {

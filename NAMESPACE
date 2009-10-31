@@ -102,9 +102,9 @@ export(split.xts)
 export(axTicksByTime)
 
 export(plot.xts)
-export(lines.xts)
+#export(lines.xts)
 S3method(plot,xts)
-S3method(lines,xts)
+#S3method(lines,xts)
 
 #export(Lag.xts, Next.xts) #, Diff.xts)
 
