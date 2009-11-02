@@ -55,8 +55,8 @@ for xts objects.
 
 \seealso{
 \code{\link{endpoints}}, 
-\code{\link[package:zoo]{split.zoo}}, 
-\code{\link[package:zoo]{aggregate.zoo}} 
+\code{\link[zoo]{split.zoo}}, 
+\code{\link[zoo]{aggregate.zoo}} 
 }
 \examples{
 data(sample_matrix)
