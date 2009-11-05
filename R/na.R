@@ -19,7 +19,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-`na.omit.xts` <- function(object, ...) {
+na.omit.xts <- function(object, ...) {
   xx <- .Call('na_omit_xts', object, PACKAGE="xts")
   naa <- attr(xx,'na.action')
   if(length(naa) == 0)
@@ -38,7 +38,40 @@
   return(xx) 
 }
 
-`na.replace` <- function(x) {
+na.exclude.xts <- function(object, ...) {
+  xx <- .Call('na_omit_xts', object, PACKAGE="xts")
+  naa <- attr(xx,'na.action')
+  if(length(naa) == 0)
+    return(xx)
+
+  naa.index <- .index(object)[naa]
+
+  ROWNAMES <- attr(object,'.ROWNAMES')
+  if(!is.null(ROWNAMES)) {
+    naa.rownames <- ROWNAMES[naa]
+  } else naa.rownames <- NULL
+
+  attr(xx,'na.action') <- structure(naa,
+                                    class="exclude",
+                                    index=naa.index,
+                                    .ROWNAMES=naa.rownames)
+  return(xx) 
+}
+
+na.restore <- function(object, ...) {
+  UseMethod("na.restore")
+}
+
+na.restore.xts <- function(object, ...) {
+  if(is.null(na.action(object))) 
+    return(object)
+  structure(merge(structure(object,na.action=NULL),
+            .xts(,attr(na.action(object),"index"))),
+            .Dimnames=list(NULL, colnames(object)))
+}
+
+na.replace <- function(x) {
+  .Deprecated("na.restore")
   if(is.null(xtsAttributes(x)$na.action))
     return(x)
 

@@ -43,6 +43,6 @@ function(x,fmt,...) {
         str(index(x))
       }
     }
-  } else print(xx)
+  } else print(xx, ...)
 }
 
