@@ -23,6 +23,10 @@ indexTZ <- function(x, ...)
   UseMethod("indexTZ")
 }
 
+indexTZ.default <- function(x, ...) {
+  attr(x, ".indexTZ")
+}
+
 indexTZ.xts <- function(x, ...)
 {
   attr(x, ".indexTZ")
