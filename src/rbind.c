@@ -102,6 +102,30 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP dup)
         break;
   }
 
+/* 
+  if( TYPEOF(xindex) == REALSXP ) {
+    if(REAL(xindex)[nrx-1] < REAL(yindex)[0]) {
+      memcpy(REAL(newindex), REAL(xindex), sizeof(double) * nrx);
+      memcpy(REAL(newindex)+nrx, REAL(yindex), sizeof(double) * nry);
+      switch(TYPEOF(x)) {
+        case INTSXP:
+          memcpy(INTEGER(result), INTEGER(x), sizeof(int) * (nrx*ncx));
+          memcpy(INTEGER(result)+(nrx*ncx), INTEGER(y), sizeof(int) * (nry*ncy));
+          break;
+        case REALSXP:
+          memcpy(REAL(result), REAL(x), sizeof(double) * (nrx*ncx));
+          memcpy(REAL(result)+(nrx*ncx), REAL(y), sizeof(double) * (nry*ncy));
+          break;
+        default:
+          break;
+      }
+UNPROTECT(P);
+return(result);
+    }
+  } else {
+
+  }
+*/
   /*
   The main body of code to follow branches based on the type
   of index, removing the need to test at each position.

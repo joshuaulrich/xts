@@ -235,6 +235,23 @@ SEXP na_omit_xts (SEXP x)
 
   not_NA = NA = 0;
   switch(TYPEOF(x)) {
+    case LGLSXP:
+      for(i=0; i<nr; i++) {
+        for(j=0; j<nc; j++) {
+          ij = i + j*nr;
+          if(LOGICAL(x)[ij] == NA_LOGICAL) {
+            int_na_index[NA] = i+1;
+            NA++;
+            break;
+          }
+          if(j==(nc-1)) {
+            /* make it to end of column, OK*/
+            int_not_na_index[not_NA] = i+1;
+            not_NA++;
+          }   
+        }   
+      }
+      break;
     case INTSXP:
       for(i=0; i<nr; i++) {
         for(j=0; j<nc; j++) {
