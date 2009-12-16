@@ -37,6 +37,14 @@ int firstNonNA (SEXP x)
   nr = nrows(x);
 
   switch(TYPEOF(x)) {
+    case LGLSXP:
+      int_x = LOGICAL(x);
+      for(i=0; i<nr; i++) {
+        if(int_x[i]!=NA_LOGICAL) {
+          break;
+        }
+      }
+      break;
     case INTSXP:
       int_x = INTEGER(x);
       for(i=0; i<nr; i++) {
@@ -80,6 +88,14 @@ SEXP naCheck (SEXP x, SEXP check)
 
   nr = nrows(x);
   switch(TYPEOF(x)) {
+    case LGLSXP:
+      int_x = LOGICAL(x);
+      for(i=_first; i<nr; i++) {
+        if(int_x[i] == NA_LOGICAL) {
+          error("Series contains non-leading NAs");  
+        }
+      }
+      break;
     case INTSXP:
       int_x = INTEGER(x);
       for(i=_first; i<nr; i++) {
@@ -107,7 +123,8 @@ SEXP naCheck (SEXP x, SEXP check)
 
 SEXP na_locf (SEXP x, SEXP fromLast)
 {
-  /* only works on univariate data */
+  /* only works on univariate data         *
+   * of type LGLSXP, INTSXP and REALSXP.   */
   SEXP result;
 
   int i, nr, _first, P=0;
@@ -127,6 +144,30 @@ SEXP na_locf (SEXP x, SEXP fromLast)
   PROTECT(result = allocVector(TYPEOF(x), nrows(x))); P++;
 
   switch(TYPEOF(x)) {
+    case LGLSXP:
+      int_x = LOGICAL(x);
+      int_result = LOGICAL(result);
+      if(!LOGICAL(fromLast)[0]) {
+        /* copy leading NAs */
+        for(i=0; i < (_first+1); i++) {
+          int_result[i] = int_x[i];
+        }
+        /* result[_first] now has first value fromLast=FALSE */
+        for(i=_first+1; i<nr; i++) {
+          int_result[i] = int_x[i];
+          if(int_result[i] == NA_LOGICAL)
+            int_result[i] = int_result[i-1];
+        }
+      } else {
+        /* nr-2 is first position to fill fromLast=TRUE */
+        int_result[nr-1] = int_x[nr-1];
+        for(i=nr-2; i>=0; i--) {
+          int_result[i] = int_x[i];
+          if(int_result[i] == NA_LOGICAL)
+            int_result[i] = int_result[i+1];
+        }
+      }
+      break;
     case INTSXP:
       int_x = INTEGER(x);
       int_result = INTEGER(result);
