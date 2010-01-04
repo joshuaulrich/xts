@@ -117,6 +117,11 @@ function(x, i, j, drop = FALSE, ...)
       }
     }
     else {
+        if(is.logical(j)) {
+          if(length(j) == 1) {
+            j <- (1:NCOL(x))[rep(j, NCOL(x))]
+          } else j <- (1:NCOL(x))[j]
+        }
         j <- sapply(j, function(xx) {
                          if(is.character(xx)) {
                            which(xx==colnames(x))

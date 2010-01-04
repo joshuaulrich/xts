@@ -8,7 +8,7 @@ Last Observation Carried Forward
 \pkg{xts} method replace \sQuote{NA} with most recent non-\sQuote{NA}
 }
 \usage{
-na.locf.xts(object, na.rm = FALSE, fromLast = FALSE, ...)
+\method{na.locf}{xts}(object, na.rm = FALSE, fromLast = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
