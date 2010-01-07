@@ -52,7 +52,9 @@ function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,...) {
   if(missing(documentation)) 
     documentation <- x@documentation
 
-  order.by <- do.call(paste('as',dateFormat,sep='.'),list(x@positions))
+  indexBy <- structure(x@positions, class=c("POSIXt","POSIXct"), tzone=FinCenter)
+  order.by <- do.call(paste('as',dateFormat,sep='.'),list(as.character(indexBy)))
+
 
   xts(as.matrix(x@.Data),  
       order.by=order.by,
@@ -64,6 +66,10 @@ function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,...) {
       .CLASS='timeSeries',
       .CLASSnames=c('FinCenter','recordIDs','title','documentation','format'),
       ...)
+}
+
+as.timeSeries.xts <- function(x, ...) {
+  timeSeries(data=coredata(x), charvec=as.character(index(x)), ...)
 }
 
 `xts.as.timeSeries` <- function(x,...) {}

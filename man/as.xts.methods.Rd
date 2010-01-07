@@ -1,6 +1,7 @@
 \name{as.xts.methods}
 \alias{as.xts.methods}
 \alias{as.xts.timeSeries}
+\alias{as.timeSeries.xts}
 \alias{as.xts.its}
 \alias{as.xts.xts}
 \alias{as.xts.zoo}
