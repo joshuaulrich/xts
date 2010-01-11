@@ -893,11 +893,24 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       if(!right_join) i--;
     }
   }
-
-
   }
 
-  /* set Dim and DimNames */
+  /* following logic to allow for 
+     dimensionless xts objects (unsupported)
+     to be used in Ops.xts calls
+     This maps to how zoo behaves */
+  if(LOGICAL(retside)[0] &&
+     !LOGICAL(retside)[1] && 
+     isNull(getAttrib(x,R_DimSymbol))) {
+     /* retside=c(T,F) AND is.null(dim(x)) */ 
+     setAttrib(result, R_DimSymbol, R_NilValue);
+  } else 
+  if(LOGICAL(retside)[1] &&
+     !LOGICAL(retside)[0] && 
+     isNull(getAttrib(y,R_DimSymbol))) {
+     /* retside=c(F,T) AND is.null(dim(y)) */ 
+     setAttrib(result, R_DimSymbol, R_NilValue);
+  } else /* set Dim and DimNames */
   if(num_rows >= 0 && (ncx + ncy) >= 0) {
     /* DIM */
     PROTECT(attr = allocVector(INTSXP, 2));

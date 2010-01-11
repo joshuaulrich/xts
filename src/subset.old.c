@@ -261,7 +261,7 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop) //SEXP s, SEXP call, int
         }
       } /* end of column loop */
     } /* end of row loop */
-    if(nrs >= 0 && ncs >= 0) {
+    if(nrs >= 0 && ncs >= 0 && !isNull(dim)) {
       PROTECT(attr = allocVector(INTSXP, 2));
       INTEGER(attr)[0] = nrs;
       INTEGER(attr)[1] = ncs;
@@ -273,7 +273,7 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop) //SEXP s, SEXP call, int
     /* transfer the attributes.  Most importantly, we need to subset */
     /* the dimnames of the returned value. */
 
-    if (nrs >= 0 && ncs >= 0) {
+    if (nrs >= 0 && ncs >= 0 && !isNull(dim)) {
     SEXP dimnames, dimnamesnames, newdimnames;
     dimnames = getAttrib(x, R_DimNamesSymbol);
     dimnamesnames = getAttrib(dimnames, R_NamesSymbol);
