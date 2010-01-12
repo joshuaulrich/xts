@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \alias{[.xts}
 \alias{subset.xts}
+\alias{.subset.xts}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Extract Subsets of xts Objects
@@ -11,7 +12,7 @@ Details on efficient subsetting of \code{xts} objects
 for maximum performance and compatibility.
 }
 \usage{
-\method{[}{xts}(x, i, j, drop = FALSE, ...)
+\method{[}{xts}(x, i, j, drop = FALSE, which.i=FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +27,10 @@ for maximum performance and compatibility.
 }
   \item{drop}{
     should dimension be dropped, if possible
+}
+  \item{which.i}{
+    return the \sQuote{i} values used for subsetting. No
+subset will be performed.
 }
   \item{\dots}{
     additional arguments (unused)
@@ -84,7 +89,9 @@ are converted to character first to preserve
 consistent TZ behavior.
 }
 \value{
-An extraction of the original xts object.
+An extraction of the original xts object.  If \code{which.i}
+is TRUE, the corresponding integer \sQuote{i} values used to
+subset will be returned.
 }
 \references{
 ISO 8601: Date elements and interchange formats -

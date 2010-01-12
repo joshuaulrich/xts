@@ -29,7 +29,7 @@
 }
 
 `.subset.xts` <- `[.xts` <-
-function(x, i, j, drop = FALSE, ...) 
+function(x, i, j, drop = FALSE, which.i=FALSE,...) 
 {
     #check.TZ(x)
     #original.cols <- NCOL(x)
@@ -104,6 +104,9 @@ function(x, i, j, drop = FALSE, ...)
     zero.index <- binsearch(0, i, NULL)
     if(!is.na(zero.index))
       i <- i[ -zero.index ]
+
+    if(which.i)
+      return(i)
 
     if (missing(j)) {
       if(length(x)==0) {
