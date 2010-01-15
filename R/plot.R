@@ -98,3 +98,11 @@ function(x, width=0.2, order=1:4, bar.col='grey', candle.col='white',...) {
 `plot.ohlc.bars` <- function() {
 
 }
+
+lines.xts <- function(x, y=NULL, type="l", ...) {
+  lines(.index(x), coredata(x), type=type, ...)
+}
+
+points.xts <- function(x, y=NULL, type="p", ...) {
+  points(.index(x), coredata(x), type=type, ...)
+}
