@@ -82,8 +82,8 @@ function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"),  check=TRUE, unique=F
   }
   if(!is.numeric(index) && timeBased(index))
     index <- as.numeric(as.POSIXct(index))
-  if(!is.null(x) && NROW(x) > length(index))
-    stop("index must be set for each observation")
+  if(!is.null(x) && NROW(x) != length(index))
+    stop("index length must match number of observations")
 
   if(!is.null(x)) {
     if(!is.matrix(x))

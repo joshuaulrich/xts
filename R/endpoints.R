@@ -108,7 +108,7 @@ function(year=1970,month=1,day=1,hour=0,min=0,sec=0,tz="") {
 #}
 
 lastof <-
-function (year = 1970, month = 12, day = 31, hour = 23, min = 59, sec = 59.9999999, tz = "") 
+function (year = 1970, month = 12, day = 31, hour = 23, min = 59, sec = 59.99999, tz = "") 
 {
     mon.lengths <- c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 
         30, 31)
