@@ -52,6 +52,8 @@ merge.xts <- function(...,
   }
 
   .times <- .External('number_of_cols', ..., PACKAGE="xts")
+  if(all(.times==0))
+    return(xts())
   symnames <- rep(syms, .times)  # moved call to make.names inside of mergeXts/do_merge_xts
 
   if( !missing(join) ) { 
