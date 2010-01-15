@@ -108,8 +108,15 @@ function(year=1970,month=1,day=1,hour=0,min=0,sec=0,tz="") {
 #}
 
 lastof <-
-function (year = 1970, month = 12, day = 31, hour = 23, min = 59, sec = 59.99999, tz = "") 
+function (year = 1970,
+          month = 12,
+          day = 31,
+          hour = 23, 
+          min = 59,
+          sec = 59,
+          subsec=.99999, tz = "") 
 {
+    sec <- sec + subsec
     mon.lengths <- c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 
         30, 31)
     if (missing(day)) {
@@ -120,6 +127,6 @@ function (year = 1970, month = 12, day = 31, hour = 23, min = 59, sec = 59.99999
     if (length(c(year, month, day, hour, min, sec)) == 6 && c(year, 
         month, day, hour, min, sec) == c(1969, 12, 31, 23, 59, 
         59) && Sys.getenv("TZ") %in% c("", "GMT", "UTC")) 
-        sec <- 58.9
+        sec <- sec-1
     ISOdatetime(year, month, day, hour, min, sec, tz)
 }
