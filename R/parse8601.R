@@ -85,7 +85,7 @@
    time <- sprintf("%-6s", time)
    H <- substr(time,0,2)
    M <- substr(time,3,4)
-   S <- substr(time,5,6)
+   S <- substr(time,5,10000L)
    } else H<-M<-S<-""
 
    # return as list
