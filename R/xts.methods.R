@@ -87,12 +87,12 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
 
     # test for negative subscripting in j
     if (!missing(j) && is.numeric(j)) { # && any(j < 0)) {
-      if(any(j < 0)) {
-        if(!all(j < 0))
+      if(any(na.omit(j) < 0)) {
+        if(!all(na.omit(j) < 0))
           stop('only zeros may be mixed with negative subscripts')
         j <- (1:NCOL(x))[j]
       }
-      if(max(j) > NCOL(x))
+      if(max(j,na.rm=TRUE) > NCOL(x))
         stop('subscript out of bounds')
     }
 
