@@ -21,12 +21,12 @@
 
 * [20080224] dynamically determine .CLASSnames attribute for as.xts methods
 
-* 'use.xts' method for use inside functions - possibly with custom warnings, and
+* 'try.xts' [was use.xts] method for use inside functions - possibly with custom warnings, and
   reduced construction overhead [done -jar]
       
 * 'summary.xts'
 
-* 'adjIndex': adjust time stamps in-place.
+* 'adjIndex': adjust time stamps in-place. [align.time possibly accomplishes this]
 
 * 'xcoredata' [done -jar]
 
@@ -69,10 +69,10 @@
    [update 2/16/2008: most of the above have been implemented]
 
 
-* [.xts<- replacement method
+* [.xts<- replacement method [done]
 
 
-* cbind/rbind xts methods required to maintain xts object - [ 50% done - jar ]
+* cbind/rbind xts methods required to maintain xts object - [ done - jar ]
 
 
 * aggregate.xts (dispatch to NextMethod or call aggregate.zoo and
@@ -81,7 +81,7 @@
 * as.xts.numeric for named numerics if names are coercible to time-based??
 
 * new %::% binary operator to create sequence of timeBased dates - from strings and timeBased
-  implemented via timeBasedSeq()
+  [done implemented via timeBasedSeq()]
 
 * as.data.frame.xts, as.matrix.xts
   as.zoo.xts, as.its.xts,

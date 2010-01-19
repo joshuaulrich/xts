@@ -29,7 +29,11 @@ function(x,on='months',k=1) {
   if(!is.xts(x)) 
     x <- try.xts(x, error='must be either xts-coercible or timeBased')
 
-  posixltindex <- as.POSIXlt(structure( .index(x), class=c("POSIXt","POSIXct")))
+  # posixltindex is costly in memory (9x length of time)
+  # make sure we really need it
+  if(on %in% c('years','quarters','months','weeks','days'))
+    posixltindex <- as.POSIXlt(structure( .index(x), class=c("POSIXt","POSIXct")))
+
   if(on == 'years') {
     #as.integer(c(0, which(diff(as.POSIXlt(index(x))$year %/% k + 1) != 0), NR) )
     as.integer(c(0, which(diff(posixltindex$year %/% k + 1) != 0), NR))
@@ -52,15 +56,16 @@ function(x,on='months',k=1) {
     #as.integer(c(0, which(diff(.index(x) %/% 86400L %/% k + 1) != 0), NR))
     as.integer(c(0, which(diff(posixltindex$yday %/% k + 1) != 0), NR))
   } else
+  # non-date slicing should be indifferent to TZ and DST, so use math instead
   if(on == 'hours') {
     #c(0, which(diff(as.POSIXlt(index(x))$hour %/% k + 1) != 0), NR) 
-    #as.integer(c(0, which(diff(.index(x) %/% 3600L %/% k + 1) != 0), NR))
-    as.integer(c(0, which(diff(posixltindex$hour %/% k + 1) != 0), NR))
+    as.integer(c(0, which(diff(.index(x) %/% 3600L %/% k + 1) != 0), NR))
+    #as.integer(c(0, which(diff(posixltindex$hour %/% k + 1) != 0), NR))
   } else
   if(on == 'minutes' || on == 'mins') {
     #c(0, which(diff(as.POSIXlt(index(x))$min %/% k + 1) != 0), NR) 
-    #as.integer(c(0, which(diff(.index(x) %/% 60L %/% k + 1) != 0), NR))
-    as.integer(c(0, which(diff(posixltindex$min %/% k + 1) != 0), NR))
+    as.integer(c(0, which(diff(.index(x) %/% 60L %/% k + 1) != 0), NR))
+    #as.integer(c(0, which(diff(posixltindex$min %/% k + 1) != 0), NR))
   } else
   if(on == 'seconds' || on == 'secs') {
     #c(0, which(diff(as.POSIXlt(index(x))$sec %/% k + 1) != 0), NR) 

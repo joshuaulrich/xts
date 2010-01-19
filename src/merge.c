@@ -126,7 +126,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
 
   len = nrx + nry;
 
-
   /* at present we are failing the call if the indexing is of
      mixed type.  This should probably instead simply coerce
      to REAL so as not to lose any information (at the expense
@@ -136,7 +135,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     PROTECT(xindex = coerceVector(xindex, REALSXP)); p++;
     PROTECT(yindex = coerceVector(yindex, REALSXP)); p++;
   }
-
 
   if( TYPEOF(all) != LGLSXP )
     error("all must be a logical value of TRUE or FALSE");
@@ -181,6 +179,10 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       /* RIGHT JOIN */
       yp++;
       if(right_join) i++;
+    } else
+    if(ISNA(real_xindex[ xp-1 ]) || ISNA(real_yindex[ yp-1 ])) {
+Rprintf("%f, %f\n",real_xindex[xp-1],real_yindex[yp-1]);
+      error("'NA' not allowed in 'index'");
     }
   } 
   } else
@@ -208,6 +210,10 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     if( int_xindex[ xp-1 ] > int_yindex[ yp-1 ] ) {
       yp++;
       if(right_join) i++;
+    } else
+    if(real_xindex[ xp-1 ]==NA_INTEGER ||
+       real_yindex[ yp-1 ]==NA_INTEGER) {
+       error("'NA' not allowed in 'index'");
     }
   } 
   }
