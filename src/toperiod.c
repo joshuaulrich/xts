@@ -19,6 +19,30 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+    Possible solution to allow for a generalized single function
+    might be to pass in a vector of available 'actions':
+    
+    {0=first, 1=max, 2=min, 3=last, 4=sum}
+
+    This would lead to OHLC to have:
+     0,1,2,3 [,4[,3]]
+
+    The current algorithm is in 3 stages per endpoint interation:
+
+    Stage 1:
+      Calculate first (0) of each column, this is the Op and
+      set Hi and Lo to this value
+
+    Stage 2:
+      Cycle through all x[j] where j is ep[i]:ep[i+1] and i is 1:NROW(ep)
+      Keep running min, max, and summation (Lo, Hi, "Volume")
+
+    Stage 3:
+      Get last value for close.
+  
+    Repeat for next endpoint
+*/
 
 #include <R.h>
 #include <Rinternals.h>
@@ -43,6 +67,15 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
   n = nrows(endpoints) - 1;
   ncr = 4; /* OHLC */
   int mode = TYPEOF(x);
+
+  int Op, Hi, Lo, Cl;
+  if(ncx==4) {
+    /* needs OHLC or bust, clearly not the best solution
+       since we can't just skip over columns */
+    Op=0; Hi=1; Lo=2; Cl=3;
+  } else {
+    Op=Hi=Lo=Cl=0;
+  }
 
   if(INTEGER(hasVolume)[0]) ncr++; /* Volume */
   if(INTEGER(hasAdjusted)[0]) ncr++; /* Adjusted (Yahoo) */
@@ -95,15 +128,15 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
     switch(mode) {
       case INTSXP:
         ohlc_int[0] = x_int[j];                     //OP
-        ohlc_int[1] = x_int[j + 1*nrx];             //HI
-        ohlc_int[2] = x_int[j + 2*nrx];             //LO
+        ohlc_int[1] = x_int[j + Hi*nrx];             //HI
+        ohlc_int[2] = x_int[j + Lo*nrx];             //LO
         if(_hasVolume)
           ohlc_int[4] = (int)0;                     //VO
         break;
       case REALSXP:
         ohlc_real[0] = x_real[j];                 //OP
-        ohlc_real[1] = x_real[j + 1*nrx];         //HI
-        ohlc_real[2] = x_real[j + 2*nrx];         //LO
+        ohlc_real[1] = x_real[j + Hi*nrx];         //HI
+        ohlc_real[2] = x_real[j + Lo*nrx];         //LO
         if(_hasVolume)
           ohlc_real[4] = (double)0;                //VO
         break;
@@ -113,16 +146,16 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
     switch(mode) {
       case INTSXP:
         for( ; j < _endpoints[i+1]; j++) {
-          ohlc_int[1] = MAX(ohlc_int[1], x_int[j + 1*nrx]);     /* HI */
-          ohlc_int[2] = MIN(ohlc_int[2], x_int[j + 2*nrx]);     /* LO */
+          ohlc_int[1] = MAX(ohlc_int[1], x_int[j + Hi*nrx]);     /* HI */
+          ohlc_int[2] = MIN(ohlc_int[2], x_int[j + Lo*nrx]);     /* LO */
           if(_hasVolume)
             ohlc_int[4] = ohlc_int[4] + x_int[j + 4*nrx];       /* VO */
         }
         break;
       case REALSXP:
         for( ; j < _endpoints[i+1]; j++) {
-          ohlc_real[1] = MAX(ohlc_real[1], x_real[j + 1*nrx]);  /* HI */
-          ohlc_real[2] = MIN(ohlc_real[2], x_real[j + 2*nrx]);  /* LO */
+          ohlc_real[1] = MAX(ohlc_real[1], x_real[j + Hi*nrx]);  /* HI */
+          ohlc_real[2] = MIN(ohlc_real[2], x_real[j + Lo*nrx]);  /* LO */
           if(_hasVolume)
             ohlc_real[4] = ohlc_real[4] + x_real[j + 4*nrx];    /* VO */
         }
@@ -134,12 +167,12 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
     j--;
     switch(mode) {
       case INTSXP:
-        ohlc_int[3] = x_int[j + 3*nrx];
+        ohlc_int[3] = x_int[j + Cl*nrx];
         if(_hasAdjusted)
           ohlc_int[5] = x_int[j + 5*nrx];
         break;
       case REALSXP:
-        ohlc_real[3] = x_real[j + 3*nrx];
+        ohlc_real[3] = x_real[j + Cl*nrx];
         if(_hasAdjusted)
           ohlc_real[5] = x_real[j + 5*nrx];
         break;

@@ -72,7 +72,12 @@
     k <- -k
     if(missing(na.pad)) na.pad <- FALSE
   }
-  .Call('lagXts', x, as.integer(k), as.logical(na.pad))
+  if(length(k) > 1) {
+    if(is.null(names(k)))
+      names(k) <- paste("lag",k,sep="")
+    return(do.call("merge.xts", lapply(k, lag.xts, x=x, na.pad=na.pad,...)))
+  }
+  .Call('lag_xts', x, as.integer(k), as.logical(na.pad))
 }
 
 `diff.xts` <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad=TRUE, ...)
