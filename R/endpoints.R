@@ -55,7 +55,7 @@ function(x,on='months',k=1) {
   if(on == 'days') {
     #as.integer(c(0, which(diff(.index(x) %/% 86400L %/% k + 1) != 0), NR))
     #as.integer(c(0, which(diff(posixltindex$yday %/% k + 1) != 0), NR))
-    .Call("endpoints", posixltindex$day, 1L, k)
+    .Call("endpoints", posixltindex$yday, 1L, k)
   } else
   # non-date slicing should be indifferent to TZ and DST, so use math instead
   if(on == 'hours') {
