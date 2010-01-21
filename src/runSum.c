@@ -111,7 +111,7 @@ SEXP runSum (SEXP x, SEXP n)
       real_result[ (*int_n) + _firstNonNA - 1 ] = real_sum;
       nrs = nrows(x);
       for(i = (*int_n)+_firstNonNA; i < nrs; i++) {
-        if(ISNA(real_x[i])) error("Series contains non-leading NAs");
+        if(ISNA(real_x[i]) || ISNAN(real_x[i])) error("Series contains non-leading NAs");
         real_result[i] = real_result[i-1] + real_x[i] - real_x[i-(*int_n)];
       }
       break;

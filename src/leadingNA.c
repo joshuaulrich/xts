@@ -56,7 +56,7 @@ int firstNonNA (SEXP x)
     case REALSXP:
       real_x = REAL(x);
       for(i=0; i<nr; i++) {
-        if(!ISNA(real_x[i])) {
+        if(!ISNA(real_x[i]) && !ISNAN(real_x[i])) {
           break;
         }
       }
@@ -107,7 +107,7 @@ SEXP naCheck (SEXP x, SEXP check)
     case REALSXP:
       real_x = REAL(x);
       for(i=_first; i<nr; i++) {
-        if(ISNA(real_x[i])) {
+        if(ISNA(real_x[i]) || ISNAN(real_x[i])) {
           error("Series contains non-leading NAs");  
         }
       }
@@ -201,14 +201,14 @@ SEXP na_locf (SEXP x, SEXP fromLast)
         }
         for(i=_first+1; i<nr; i++) {
           real_result[i] = real_x[i];
-          if(ISNA(real_result[i]))
+          if(ISNA(real_result[i]) || ISNAN(real_result[i]))
             real_result[i] = real_result[i-1];
         }
       } else {                      /* fromLast=TRUE */
         real_result[nr-1] = real_x[nr-1];
         for(i=nr-2; i>=0; i--) {
           real_result[i] = real_x[i];
-          if(ISNA(real_result[i]))
+          if(ISNA(real_result[i]) || ISNAN(real_result[i]))
             real_result[i] = real_result[i+1];
         }
 
@@ -272,7 +272,7 @@ SEXP na_omit_xts (SEXP x)
       for(i=0; i<nr; i++) {
         for(j=0; j<nc; j++) {
           ij = i + j*nr;
-          if(ISNA(real_x[ij])) {
+          if(ISNA(real_x[ij]) || ISNAN(real_x[ij])) {
             not_NA--;
             break;
           }   
@@ -334,7 +334,7 @@ SEXP na_omit_xts (SEXP x)
       for(i=0; i<nr; i++) {
         for(j=0; j<nc; j++) {
           ij = i + j*nr;
-          if(ISNA(real_x[ij])) {
+          if(ISNA(real_x[ij]) || ISNAN(real_x[ij])) {
             int_na_index[NA] = i+1;
             NA++;
             break;
