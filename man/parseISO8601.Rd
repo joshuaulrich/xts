@@ -2,7 +2,9 @@
 \alias{ISO8601}
 \Rdversion{1.1}
 \alias{parseISO8601}
+\alias{makeISO8601}
 \alias{.parseISO8601}
+\alias{.makeISO8601}
 \title{
 Internal ISO 8601:2004(e) Time Parser
 }
@@ -13,10 +15,15 @@ documented for use with xts subsetting.
 }
 \usage{
 .parseISO8601(x, start, end)
+
+.makeISO8601(x)
 }
 \arguments{
   \item{x}{
 a character string conforming to ISO 8601:2004(e) rules
+for .parseISO8601, or an time-like object with
+\code{start} and \code{end} methods to create an ISO 8601
+character string from.
 }
   \item{start}{
 lower constraint on range
