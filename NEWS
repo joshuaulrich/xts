@@ -1,0 +1,44 @@
+Changes in xts 0.7-0:
+
+o  A new NEWS file.  
+
+o  print.xts now passes ...
+
+o  endpoints speedup and bug fix (thanks Ismail Onur Filiz)  
+
+o  na.omit bug on logical and NaN fixes (thanks Fabrizio Pollastri
+   and Koert Kuipers)
+
+o  fromLast=FALSE for na.locf.xts.  Matching to zoo. (thanks
+   to Sandor Benczik)
+
+o  LGLSXP support in leadingNA (R fun naCheck)
+
+o  fixed logical and NA 'j' subsetting. Thanks Koert Kuipers.
+
+o  as.xts and as.timeSeries fixes for timeSeries changes
+
+o  merge and subset now support dimensionless xts (non-standard).
+   merge segfault fixed when merging all 3 or more zero-width xts objects
+   and only zero-width objects.  Thanks to Koert Kuipers for the report.
+
+o  added which.i to [.xts to return i values found via
+   ISO8601 subset string
+
+o  new lines.xts and plot.xts, similar to methods in zoo
+
+o  lastof now has sec to 10 microsecond precision, and subsec
+   arg to append to secs.
+
+o  xts() further consistency in NROW/index check
+
+o  align.time error checks for positive n= values (thanks Brian Peterson)
+
+o  toPeriod updates in C, almost exported. ~600-1200x faster
+
+o  new lag_xts in C.  Increased speed and index flexibility.
+
+o  endpoints 'days' bug fix 
+
+o  .makeISO8601 function to create ISO8601 compliant string
+   from xts objects

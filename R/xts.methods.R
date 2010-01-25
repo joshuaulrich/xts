@@ -64,6 +64,12 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]
     } else
     if (is.character(i)) {
+      # is i of the format T/T?
+      if(length(i) == 1 && !identical(integer(),grep("^T.*?/T",i[1]))) {
+        i <- gsub("T|:","",i)
+        i <- strsplit(i, "/")[[1]]
+        i <- .makeISO8601TT(x, i[1],i[2])
+      }
       # enables subsetting by date style strings
       # must be able to process - and then allow for operations???
 
