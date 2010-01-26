@@ -23,8 +23,14 @@
 #include <R.h>
 #include <Rinternals.h>
 
-SEXP coredata (SEXP x)
+SEXP coredata (SEXP x, SEXP copyAttr)
 {
+  /* copyAttr is a LGLSXP flag to indicate whether all
+     attributes are to be left intact.  This provides
+     compatability with xts, by stripping all attributes
+     if desired, without the overhead or adding then
+     removing
+  */
   SEXP result;
   int i, j, ncs, nrs;
   int P=0;
@@ -60,8 +66,10 @@ SEXP coredata (SEXP x)
   } else {
     setAttrib(result, R_NamesSymbol, getAttrib(x, R_NamesSymbol));
   }
-  copyMostAttrib(x,result);
-  setAttrib(result, install("class"), getAttrib(x, install("oclass")));
+  if(LOGICAL(copyAttr)[0]) {
+    copyMostAttrib(x,result);
+    setAttrib(result, install("class"), getAttrib(x, install("oclass")));
+  }
   setAttrib(result, install("index"),     R_NilValue);
   setAttrib(result, install("oclass"),    R_NilValue);
   setAttrib(result, install("frequency"), R_NilValue);
@@ -74,17 +82,19 @@ SEXP coredata_xts(SEXP x) {
   /* using coredata now in zoo */
   SEXP result;
 
-  PROTECT(result = coredata(x));
+  PROTECT(result = coredata(x, ScalarLogical(0)));
   SEXP dimnames;
   PROTECT(dimnames = getAttrib(x, R_DimNamesSymbol));
   if(!isNull(dimnames)) {
     SET_VECTOR_ELT(dimnames, 0, R_NilValue);  /* strip rownames */
     setAttrib(result, R_DimNamesSymbol, dimnames);
   }
+  /*
   setAttrib(result, install(".indexCLASS"), R_NilValue);
   setAttrib(result, install(".indexFORMAT"), R_NilValue);
   setAttrib(result, install(".indexTZ"), R_NilValue);
   setAttrib(result, install(".CLASS"), R_NilValue);
+  */
 
   UNPROTECT(2);
   return result;
