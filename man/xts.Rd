@@ -12,6 +12,7 @@ xts(x = NULL,
     order.by = index(x),
     frequency = NULL,
     unique = TRUE,
+    tzone = Sys.timezone(),
     ...)
 
 is.xts(x)
@@ -23,6 +24,7 @@ is.xts(x)
 of a known time-based class. See details. }
   \item{frequency}{ numeric indicating frequency of \code{order.by}. See details. }
   \item{unique}{ should index be checked for unique time-stamps? }
+  \item{tzone}{ time zone of series }
   \item{\dots}{ additional attributes to be added. See details. }
 }
 \details{

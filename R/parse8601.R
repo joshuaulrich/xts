@@ -21,10 +21,11 @@
   paste(start(x),end(x),sep="/")
 }
 
-.parseISO8601 <- function(x, start, end) {
+.parseISO8601 <- function(x, start, end, tz="") {
  # x: character vector of length 1 in ISO8601:2004(e) format
  # start: optional earliest time
  # end:   optional latest time
+ # tz:    optional tzone to create with
  as_numeric <- function(.x) {
    # simple helper function
    if(gsub(" ","",.x)=="")
@@ -92,7 +93,7 @@
    } else H<-M<-S<-""
 
    # return as list
-   as.list(c(
+   c(as.list(c(
      year=as_numeric(YYYY),
      mon=as_numeric(MM),
      day=as_numeric(DD),
@@ -100,7 +101,7 @@
      min=as_numeric(M),
      sec=as_numeric(S)
      )
-   )
+   ),tz=tz)
  }
 
  s <- e <- NA
@@ -114,12 +115,12 @@
  if(!missing(start)) {
    start <- as.numeric(start)
    s <- as.POSIXlt(structure(max(start, as.numeric(s), na.rm=TRUE),
-           class=c("POSIXt","POSIXct")))
+           class=c("POSIXt","POSIXct"),tz=tz))
  }
  if(!missing(end)) {
    end <- as.numeric(end)
    e <- as.POSIXlt(structure(min(end, as.numeric(e), na.rm=TRUE),
-           class=c("POSIXt","POSIXct")))
+           class=c("POSIXt","POSIXct"),tz=tz))
  }
  if(nzchar(DURATION)) {
     parse_duration <- function(P) {
@@ -159,6 +160,15 @@
   ep <- endpoints(x, on='days')
   start_of <- (ep+1)[-length(ep)]
   end_of   <- ep[-1]
-  paste(format(index(x[start_of]),paste("%Y%m%d",from,sep="T")),
-        format(index(x[end_of  ]),paste("%Y%m%d",to  ,sep="T")),sep="/")
+  if(as.numeric(from) < as.numeric(to)) {
+    paste(format(index(x[start_of]),paste("%Y%m%d",from,sep="T")),
+          format(index(x[end_of  ]),paste("%Y%m%d",to  ,sep="T")),sep="/")
+  } else {
+    c(
+    paste(format(index(x[start_of]),"%Y%m%d"),
+          format(index(x[end_of  ]),paste("%Y%m%d",to  ,sep="T")),sep="/"),
+    paste(format(index(x[start_of]),paste("%Y%m%d",from,sep="T")),
+          format(index(x[end_of  ]),"%Y%m%d"),sep="/")
+    )
+  }
 }

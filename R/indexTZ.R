@@ -34,8 +34,8 @@ indexTZ.xts <- function(x, ...)
 
 check.TZ <- function(x, ...)
 {
-  STZ <- Sys.getenv("TZ")
-  if(!is.null(indexTZ(x)) && !identical(STZ, indexTZ(x)))
+  STZ <- as.character(Sys.getenv("TZ"))
+  if(!is.null(indexTZ(x)) && !identical(STZ, as.character(indexTZ(x))))
     warning(paste("timezone of object (",indexTZ(x),
                   ") is different than current timezone (",STZ,").",sep=""))
 }

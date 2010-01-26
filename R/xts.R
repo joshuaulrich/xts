@@ -36,6 +36,7 @@ function(x=NULL,
          order.by=index(x),
          frequency=NULL,
          unique=TRUE,
+         tzone=Sys.timezone(),
          ...)
 {
   if(is.null(x) && missing(order.by))
@@ -63,10 +64,10 @@ function(x=NULL,
 
   index <- as.numeric(as.POSIXct(order.by))
   x <- structure(.Data=x,
-            index=index,
+            index=structure(index,tzone=tzone),
             class=c('xts','zoo'),
             .indexCLASS=orderBy,
-            .indexTZ=Sys.getenv("TZ"),  # TZ in force on creation
+            .indexTZ=tzone,
             ...)
   if(!is.null(attributes(x)$dimnames[[1]]))
     # this is very slow if user adds rownames, but maybe that is deserved :)
@@ -75,7 +76,8 @@ function(x=NULL,
 }
 
 `.xts` <-
-function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"),  check=TRUE, unique=FALSE, ...) {
+function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"), tzone=Sys.timezone(),
+        check=TRUE, unique=FALSE, ...) {
   if(check) {
     if( !isOrdered(index, increasing=TRUE, strictly=unique) )
       stop('index is not in',ifelse(unique, 'strictly', ''),'increasing order')
@@ -94,8 +96,8 @@ function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"),  check=TRUE, unique=F
   } else x <- numeric(0)
 
   structure(.Data=x,
-            index=index,
-            .indexCLASS=.indexCLASS,.indexTZ=Sys.getenv("TZ"),
+            index=structure(index,tzone=tzone),
+            .indexCLASS=.indexCLASS,.indexTZ=tzone,
             class=c('xts','zoo'), ...)
 }
 
