@@ -71,6 +71,7 @@ SEXP rbindXts(SEXP args);
 SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop);
 SEXP number_of_cols(SEXP args);
 SEXP col_names(SEXP args);
+SEXP naCheck(SEXP x, SEXP check);
 
 SEXP tryXts(SEXP x);
 

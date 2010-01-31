@@ -36,6 +36,7 @@ R_CallMethodDef callMethods[] = {
   {"tryXts",                (DL_FUNC) &tryXts,                  1},
   {"do_rbind_xts",          (DL_FUNC) &do_rbind_xts,            3},
   {"do_subset_xts",         (DL_FUNC) &do_subset_xts,           4},
+  {"naCheck",               (DL_FUNC) &naCheck,                 2},
   {NULL,                    NULL,                               0}
 };
 
@@ -64,4 +65,5 @@ void R_init_xts(DllInfo *info)
   R_RegisterCCallable("xts","isXts",        (DL_FUNC) &isXts);
   R_RegisterCCallable("xts","tryXts",       (DL_FUNC) &tryXts);
   RegisterXTS(rbindXts);
+  RegisterXTS(naCheck);
 }

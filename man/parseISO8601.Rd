@@ -14,7 +14,7 @@ mechanism of xts.  The function is unexported, though
 documented for use with xts subsetting.
 }
 \usage{
-.parseISO8601(x, start, end)
+.parseISO8601(x, start, end, tz="")
 
 .makeISO8601(x)
 }
@@ -30,6 +30,9 @@ lower constraint on range
 }
   \item{end}{
 upper constraint of range
+}
+  \item{tz}{
+timezone (tzone) to use internally
 }
 }
 \details{

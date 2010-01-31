@@ -33,3 +33,11 @@ SEXP attribute_hidden do_is_ordered(SEXP x, SEXP increasing, SEXP strictly)
     fun = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("xts","do_is_ordered");
   return fun(x, increasing, strictly);
 }
+
+SEXP attribute_hidden naCheck(SEXP x, SEXP check)
+{
+  static SEXP(*fun)(SEXP,SEXP) = NULL;
+  if(fun == NULL)
+    fun = (SEXP(*)(SEXP,SEXP)) R_GetCCallable("xts","naCheck");
+  return fun(x, check);
+}
