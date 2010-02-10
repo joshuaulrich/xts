@@ -114,7 +114,8 @@ function (year = 1970,
 {
     if(!missing(sec) && sec %% 1 != 0)
       subsec <- 0
-    sec <- sec + subsec
+    sec <- ifelse(year < 1970, sec, sec+subsec) # <1970 asPOSIXct bug workaround
+    #sec <- sec + subsec
     mon.lengths <- c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 
         30, 31)
     if (missing(day)) {

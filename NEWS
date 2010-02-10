@@ -1,3 +1,22 @@
+Changes in xts 0.7-1:
+
+o  subsecond ISO8601 subsetting on dates
+   before 1970 (epoch) is disabled. This is due to a bug
+   in the R implementation of POSIX handling of fractional
+   seconds pre-1970.  10 microsecond granularity is still
+   functional for all other times. Thanks to Andreas Noack Jensen
+   for the early bug report.
+
+o  new 'tzone' arg in xts constructor and 'tz' in .parseISO8601
+   allows for future support of non-system TZ dependent indexing
+
+o  internal index attribute (numeric) now can have attributes
+   set (tzone is currently the only one used in xts). These should
+   remain during all xts operations. Still experimental.
+
+o  naCheck has been exposed at the C level for use in packages
+   "LinkingTo: xts".  See ?xtsAPI for more details.
+
 Changes in xts 0.7-0:
 
 o  A new NEWS file.  
