@@ -12,7 +12,7 @@ xts(x = NULL,
     order.by = index(x),
     frequency = NULL,
     unique = TRUE,
-    tzone = Sys.timezone(),
+    tzone = Sys.getenv("TZ"),
     ...)
 
 is.xts(x)

@@ -36,7 +36,7 @@ function(x=NULL,
          order.by=index(x),
          frequency=NULL,
          unique=TRUE,
-         tzone=Sys.timezone(),
+         tzone=Sys.getenv("TZ"),
          ...)
 {
   if(is.null(x) && missing(order.by))
@@ -76,7 +76,7 @@ function(x=NULL,
 }
 
 `.xts` <-
-function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"), tzone=Sys.timezone(),
+function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"), tzone=Sys.getenv("TZ"),
         check=TRUE, unique=FALSE, ...) {
   if(check) {
     if( !isOrdered(index, increasing=TRUE, strictly=unique) )
