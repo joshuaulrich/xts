@@ -22,7 +22,7 @@
 as.list.xts <- function(x, ...)
 {
   if( NCOL(x) == 1 )
-    return(list(x))
+    return(structure(list(x),.Names=colnames(x)))
 
   cindex <- cnames <- colnames(x)
   if(is.null(cnames)) {
