@@ -146,12 +146,13 @@ function(x,period='months',k=1,indexAt=NULL,name=NULL,OHLC=TRUE,...)
         if(period=='months') {
           indexClass(tz) <- 'yearmon'
         } else indexClass(tz) <- 'yearqtr'
+        index(tz) <- as.POSIXct(format(as.Date(index(tz),1)))
       # add one period and subtract a day
-      padv <- ifelse(period=='months',1,3)
-      index(tz) <- (index(tz)+padv/12)
-      # convert year* to POSIXct
-      indexClass(tz) <- 'POSIXct'
-      index(tz) <- index(tz)-86400
+#      padv <- ifelse(period=='months',1,3)
+#      index(tz) <- (index(tz)+padv/12)
+#      # convert year* to POSIXct
+#      indexClass(tz) <- 'POSIXct'
+#      index(tz) <- index(tz)-86400
       }
     }
   }

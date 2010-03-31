@@ -7,6 +7,6 @@ Depends: xts
 LinkingTo: xts
 Author: Jeffrey A. Ryan
 Maintainer: Jeffrey A. Ryan <jeff.a.ryan@gmail.com>
-Description: More about what it does (maybe more than one line)
-License: GPL3
+Description: Demonstrates LinkingTo C code in packages
+License: GPL-3
 LazyLoad: yes
