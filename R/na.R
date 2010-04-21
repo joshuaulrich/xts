@@ -21,6 +21,8 @@
 
 na.omit.xts <- function(object, ...) {
   xx <- .Call('na_omit_xts', object, PACKAGE="xts")
+  if(length(xx)==0)
+    return(xts(,))
   naa <- attr(xx,'na.action')
   if(length(naa) == 0)
     return(xx)

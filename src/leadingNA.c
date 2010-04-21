@@ -283,6 +283,10 @@ SEXP na_omit_xts (SEXP x)
       error("unsupported type");
       break;
   }
+  
+  if(not_NA==0) { /* all NAs */
+    return(allocVector(TYPEOF(x),0));    
+  }
 
   if(not_NA==0 || not_NA==nr)
     return(x);

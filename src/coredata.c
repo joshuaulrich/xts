@@ -79,24 +79,6 @@ SEXP coredata (SEXP x, SEXP copyAttr)
 }
 
 SEXP coredata_xts(SEXP x) {
-  /* using coredata now in zoo */
-  SEXP result;
-
-  PROTECT(result = coredata(x, ScalarLogical(0)));
-  SEXP dimnames;
-  PROTECT(dimnames = getAttrib(x, R_DimNamesSymbol));
-  if(!isNull(dimnames)) {
-    SET_VECTOR_ELT(dimnames, 0, R_NilValue);  /* strip rownames */
-    setAttrib(result, R_DimNamesSymbol, dimnames);
-  }
-  /*
-  setAttrib(result, install(".indexCLASS"), R_NilValue);
-  setAttrib(result, install(".indexFORMAT"), R_NilValue);
-  setAttrib(result, install(".indexTZ"), R_NilValue);
-  setAttrib(result, install(".CLASS"), R_NilValue);
-  */
-
-  UNPROTECT(2);
-  return result;
+  coredata(x, ScalarLogical(0));
 }
 
