@@ -110,10 +110,13 @@ function(x,n=1,keep=FALSE,...)
   }
   if(length(n) != 1) stop("n must be of length 1")
   if(n > 0) {
+    n <- min(n, NROW(x))
     xx <- x[1:n]
     if(keep) xx <- structure(xx,keep=x[(-(-n)+1):NROW(x)])
     xx
   } else {
+    if(abs(n) >= NROW(x))
+      return(x[0])
     xx <- x[(-n+1):NROW(x)]
     if(keep) xx <- structure(xx,keep=x[1:(-n)])
     xx
