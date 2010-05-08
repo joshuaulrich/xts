@@ -54,9 +54,11 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     } else
     if (timeBased(i)) { # || (inherits(i, "AsIs") && is.character(i))) {
       if(inherits(i, "POSIXct")) {
-        i <- match(i, .index(x))
+        #i <- match(i, .index(x))
+        i <- which(!is.na(match(.index(x), i)))
       } else {
-        i <- match(as.POSIXct(as.character(i)), .index(x))
+        #i <- match(as.POSIXct(as.character(i)), .index(x))
+        i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i)))))
       }
       i[is.na(i)] <- 0
     } else 
@@ -152,18 +154,21 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
 #`xtsreplacement` <-
 function(x, i, j, value) 
 {
-    #sys.TZ <- Sys.getenv('TZ') 
-    #Sys.setenv(TZ='GMT')
-    #on.exit(Sys.setenv(TZ=sys.TZ))
     if (!missing(i)) {
 
-    if (timeBased(i)) 
-      # this shouldn't happen either, though less important I suspect  FIXME
-      i <- as.character(i) 
-
-    if(is.logical(i))
+    if (timeBased(i)) { # || (inherits(i, "AsIs") && is.character(i))) {
+      if(inherits(i, "POSIXct")) {
+        #i <- match(i, .index(x))
+        i <- which(!is.na(match(.index(x), i)))
+      } else {
+        #i <- match(as.POSIXct(as.character(i)), .index(x))
+        i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i)))))
+      }
+      i[is.na(i)] <- 0
+    } else 
+    if(is.logical(i)) {
       i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]
-
+    } else
     if (is.character(i)) {
       # enables subsetting by date style strings
       # must be able to process - and then allow for operations???
@@ -198,14 +203,12 @@ function(x, i, j, value)
                   )
       }
       i <- i.tmp
+      # .subset is picky, 0's in the 'i' position cause failures -- is this still nec? -jar
+      zero.index <- binsearch(0, i, NULL)
+      if(!is.na(zero.index))
+        i <- i[ -zero.index ]
     }
-  
-    # .subset is picky, 0's in the 'i' position cause failures -- is this still nec? -jar
-    zero.index <- binsearch(0, i, NULL)
-    if(!is.na(zero.index))
-      i <- i[ -zero.index ]
     }
-
     .Class <- "matrix"
     NextMethod(.Generic)
 }
