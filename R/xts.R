@@ -45,6 +45,7 @@ function(x=NULL,
   if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
 
+  #if(NROW(x) != length(order.by))
   if(NROW(x) > 0 && NROW(x) != length(order.by))
     stop("NROW(x) must match length(order.by)")
 
@@ -190,7 +191,8 @@ function(x,...) {
   #yy <- coredata(x)
   #attr(yy, ".CLASS") <- NULL
   # using new coredata.xts method - jar
-  
+  if(length(x) == 0 && (!is.null(index(x)) && length(index(x))==0))
+    return(x)
   xx <- xts(coredata(x),
             order.by=index(x),
             .CLASS='xts',
