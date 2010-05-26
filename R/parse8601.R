@@ -114,13 +114,15 @@
  }
  if(!missing(start)) {
    start <- as.numeric(start)
-   s <- as.POSIXlt(structure(max(start, as.numeric(s), na.rm=TRUE),
-           class=c("POSIXt","POSIXct"),tz=tz))
+   #s <- as.POSIXlt(structure(max(start, as.numeric(s), na.rm=TRUE),
+   #        class=c("POSIXt","POSIXct"),tz=tz))
+   s <- as.POSIXlt(.POSIXct(max(start, as.numeric(s), na.rm=TRUE),tz=tz))
  }
  if(!missing(end)) {
    end <- as.numeric(end)
-   e <- as.POSIXlt(structure(min(end, as.numeric(e), na.rm=TRUE),
-           class=c("POSIXt","POSIXct"),tz=tz))
+   #e <- as.POSIXlt(structure(min(end, as.numeric(e), na.rm=TRUE),
+   #        class=c("POSIXt","POSIXct"),tz=tz))
+   e <- as.POSIXlt(.POSIXct(min(end, as.numeric(e), na.rm=TRUE),tz=tz))
  }
  if(nzchar(DURATION)) {
     parse_duration <- function(P) {

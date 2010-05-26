@@ -5,7 +5,6 @@ SEXP any_negative (SEXP i_)
 {
   int i;
   int len = length(i_);
-  SEXP any;
 
   int *int_i=NULL;
   double *real_i=NULL;

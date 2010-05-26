@@ -32,7 +32,8 @@ function(x,on='months',k=1) {
   # posixltindex is costly in memory (9x length of time)
   # make sure we really need it
   if(on %in% c('years','quarters','months','weeks','days'))
-    posixltindex <- as.POSIXlt(structure( .index(x), class=c("POSIXt","POSIXct")))
+    #posixltindex <- as.POSIXlt(structure( .index(x), class=c("POSIXt","POSIXct")))
+    posixltindex <- as.POSIXlt(.POSIXct(.index(x)))
 
   if(on == 'years') {
     #as.integer(c(0, which(diff(as.POSIXlt(index(x))$year %/% k + 1) != 0), NR) )
