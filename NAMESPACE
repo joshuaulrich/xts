@@ -66,6 +66,7 @@ export(nseconds,
        nmonths,
        nquarters,
        nyears)
+export(to_period) # testing
 export(to.period,
        to.minutes,
        to.minutes3,

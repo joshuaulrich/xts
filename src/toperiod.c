@@ -69,7 +69,7 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
   int mode = TYPEOF(x);
 
   int Op, Hi, Lo, Cl;
-  if(ncx==4) {
+  if(ncx >= 4) {
     /* needs OHLC or bust, clearly not the best solution
        since we can't just skip over columns */
     Op=0; Hi=1; Lo=2; Cl=3;
@@ -89,18 +89,22 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
   PROTECT(ohlc = allocVector(mode, 6)); P++;
 
   int _FIRST = (INTEGER(first)[0]);
-  int *ohlc_int = NULL,
-      *x_int    = NULL;
-  double *ohlc_real = NULL,
-         *x_real    = NULL;
+  int *ohlc_int   = NULL,
+      *result_int = NULL,
+      *x_int      = NULL;
+  double *ohlc_real   = NULL,
+         *result_real = NULL,
+         *x_real      = NULL;
 
   switch(mode) {
     case INTSXP:
       ohlc_int = INTEGER(ohlc);
+      result_int = INTEGER(result);
       x_int    = INTEGER(x);
       break;
     case REALSXP:
       ohlc_real = REAL(ohlc);
+      result_real = REAL(result);
       x_real    = REAL(x);
       break;
     default:
@@ -124,7 +128,7 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
           break;
       }
     }
-    // set the Open, and initialize High, Low and Volume
+    /* set the Open, and initialize High, Low and Volume */
     switch(mode) {
       case INTSXP:
         ohlc_int[0] = x_int[j];                     //OP
@@ -188,6 +192,7 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
           break;
       }
     }
+    /*
     switch(mode) {
       case INTSXP:
         INTEGER(result)[i]     = ohlc_int[0];
@@ -208,6 +213,29 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
           REAL(result)[i+4*n] = REAL(ohlc)[4];
         if(_hasAdjusted)
           REAL(result)[i+5*n] = REAL(ohlc)[5];
+        break;
+    }
+    */
+    switch(mode) {
+      case INTSXP:
+        result_int[i]     = ohlc_int[0];
+        result_int[i+1*n] = ohlc_int[1];
+        result_int[i+2*n] = ohlc_int[2];
+        result_int[i+3*n] = ohlc_int[3];
+        if(_hasVolume)
+          result_int[i+4*n] = ohlc_int[4];
+        if(_hasAdjusted)
+          result_int[i+5*n] = ohlc_int[5];
+        break;
+      case REALSXP:
+        result_real[i]     = ohlc_real[0];
+        result_real[i+1*n] = ohlc_real[1];
+        result_real[i+2*n] = ohlc_real[2];
+        result_real[i+3*n] = ohlc_real[3];
+        if(_hasVolume)
+          result_real[i+4*n] = ohlc_real[4];
+        if(_hasAdjusted)
+          result_real[i+5*n] = ohlc_real[5];
         break;
     }
     /* Rprintf("i,j: %i,%i\n",i,j); */

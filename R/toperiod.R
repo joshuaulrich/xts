@@ -30,7 +30,32 @@
 # to.quarterly
 # to.yearly
 
-# endpoints needs to be able to handle 'k' arguments to minutes...
+to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRUE, ...) {
+  if(!is.null(indexAt)) {
+    index_at <- switch(indexAt,
+                       "startof" = TRUE,  # start time of period
+                       "endof"   = FALSE, # end time of period
+                       FALSE
+                      )
+  } else index_at <- FALSE
+
+  # make suitable name vector
+  if(is.null(name)) name <- deparse(substitute(x))
+  cnames <- c("Open", "High", "Low", "Close")
+  if (has.Vo(x)) 
+    cnames <- c(cnames, "Volume")
+  if (has.Ad(x))
+    cnames <- c(cnames, "Adjusted")
+  cnames <- paste(name,cnames,sep=".") 
+  
+  xx <- .Call("toPeriod", x, endpoints(x, period, k), has.Vo(x), has.Ad(x), index_at, cnames)
+
+  if(!is.null(indexAt) && (indexAt=="yearmon" || indexAt=="yearqtr"))
+    indexClass(xx) <- indexAt
+  # still need firstof, lastof handling
+
+  xx
+}
 
 `to.period` <-
 function(x,period='months',k=1,indexAt=NULL,name=NULL,OHLC=TRUE,...)
