@@ -1,5 +1,6 @@
 \name{to.period}
 \alias{to.period}
+\alias{to_period}
 \alias{to.minutes}
 \alias{to.minutes3}
 \alias{to.minutes5}

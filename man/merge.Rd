@@ -15,7 +15,8 @@ merge.xts(...,
           suffixes = NULL,
           join = "outer",
           retside = TRUE,
-          retclass = "xts")
+          retclass = "xts",
+          tzone = NULL)
 }
 \arguments{
   \item{\dots}{ one or more xts objects, or objects coercible to class xts }
@@ -25,6 +26,7 @@ merge.xts(...,
   \item{join}{ type of database join }
   \item{retside}{ which side of the merged object should be returned (2-case only) }
   \item{retclass}{ object to return }
+  \item{tzone}{ time zone of merged object }
 }
 \details{
 Implemented almost entirely in custom C-level code,
@@ -46,8 +48,10 @@ depending on the first position of all, as
 left and right can be ambiguous with respect to sides.
 
 To do something along the lines of merge.zoo's method of joining based on
-an all argument of the same length of the arguments to join, see the example.  A solution
-to provide this automatically is in development.
+an all argument of the same length of the arguments to join, see the example.  
+
+The resultant object will have the timezone of the leftmost
+argument if available. Use \code{tzone} to override. 
 
 If \code{retclass} is \code{NULL}, the joined objects will be split
 and reassigned silently back to the original environment they are called

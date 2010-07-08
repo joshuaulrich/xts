@@ -1,7 +1,7 @@
 TOP=../..
 PKG=${shell cd ${TOP};pwd}
 SUITE=doRUnit.R
-R=/Users/jryan/Desktop/R-2.8.0/bin/R
+R=/Users/jryan/Downloads/R-2.10.1/bin/R
 
 all: inst test
 
