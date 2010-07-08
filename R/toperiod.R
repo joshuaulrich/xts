@@ -31,6 +31,9 @@
 # to.yearly
 
 to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRUE, ...) {
+  if(!OHLC) {
+    xx <- x[endpoints(x, period, k),]
+  } else {
   if(!is.null(indexAt)) {
     index_at <- switch(indexAt,
                        "startof" = TRUE,  # start time of period
@@ -40,19 +43,42 @@ to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRU
   } else index_at <- FALSE
 
   # make suitable name vector
-  if(is.null(name)) name <- deparse(substitute(x))
+  if(missing(name)) name <- deparse(substitute(x))
+
   cnames <- c("Open", "High", "Low", "Close")
   if (has.Vo(x)) 
     cnames <- c(cnames, "Volume")
   if (has.Ad(x))
     cnames <- c(cnames, "Adjusted")
   cnames <- paste(name,cnames,sep=".") 
-  
-  xx <- .Call("toPeriod", x, endpoints(x, period, k), has.Vo(x), has.Ad(x), index_at, cnames)
 
-  if(!is.null(indexAt) && (indexAt=="yearmon" || indexAt=="yearqtr"))
-    indexClass(xx) <- indexAt
+  if(is.null(name))
+    cnames <- NULL
+
+  xx <- .Call("toPeriod", x, endpoints(x, period, k), has.Vo(x), has.Ad(x), index_at, cnames)
+  }
+
+  if(!is.null(indexAt)) {
+    if(indexAt=="yearmon" || indexAt=="yearqtr")
+      indexClass(xx) <- indexAt
+    if(indexAt=="firstof") {
+      ix <- as.POSIXlt(c(.index(xx)))
+      if(period %in% c("years","months","quarters","days"))
+        index(xx) <- firstof(ix$year + 1900, ix$mon + 1)
+      else
+        index(xx) <- firstof(ix$year + 1900, ix$mon + 1, ix$mday,
+                             ix$hour, ix$min, ix$sec)
+    }
+    if(indexAt=="lastof") {
+      ix <- as.POSIXlt(c(.index(xx)))
+      if(period %in% c("years","months","quarters","days"))
+        index(xx) <- as.Date(lastof(ix$year + 1900, ix$mon + 1))
+      else
+        index(xx) <- lastof(ix$year + 1900, ix$mon + 1, ix$mday,
+                             ix$hour, ix$min, ix$sec)
+    }
   # still need firstof, lastof handling
+  }
 
   xx
 }

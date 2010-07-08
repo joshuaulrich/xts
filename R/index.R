@@ -26,7 +26,7 @@ function(x, ...) {
     return(.index(x))
 
   #x.index  <- structure(.index(x), class=c("POSIXct","POSIXt"))
-  x.index  <- .POSIXct(.index(x))
+  x.index  <- .POSIXct(.index(x), tz=attr(.index(x), "tzone"))
   if(length(x.index) == 0)
     return(integer())
 

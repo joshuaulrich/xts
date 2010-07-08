@@ -25,7 +25,8 @@ merge.xts <- function(...,
                      suffixes=NULL,
                      join="outer",
                      retside=TRUE,
-                     retclass="xts") {
+                     retclass="xts",
+                     tzone=NULL) {
   if(is.logical(retclass) && !retclass) {
     setclass=FALSE
   } else setclass <- TRUE
@@ -94,6 +95,7 @@ merge.xts <- function(...,
             suffixes=suffixes,
             retside=retside,
             env=new.env(),
+            tzone=tzone,
             ..., PACKAGE="xts")
   if(!is.logical(retclass) && retclass != 'xts') {
     asFun <- paste("as", retclass, sep=".")

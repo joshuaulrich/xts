@@ -63,6 +63,8 @@ function(x=NULL,
     x <- as.matrix(x)
   } else x <- numeric(0)
 
+  if(!is.null(attr(order.by,"tzone")) && missing(tzone))
+    tzone <- attr(order.by, "tzone")
   index <- as.numeric(as.POSIXct(order.by))
   x <- structure(.Data=x,
             index=structure(index,tzone=tzone),
