@@ -266,6 +266,7 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
     SET_VECTOR_ELT(dimnames, 1, newcolnames);
   }
   setAttrib(result, R_DimNamesSymbol, dimnames);
+  copyMostAttrib(xindex, newindex);
   setAttrib(result, xts_IndexSymbol, newindex);
 
   copy_xtsAttributes(x, result);

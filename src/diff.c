@@ -453,8 +453,6 @@ SEXP lag_zoo (SEXP x, SEXP _k, SEXP _pad)
   //  setAttrib(result, install("index"), getAttrib(x, install("index")));
   //} else {
     SEXP index, newindex;
-    double *newindex_real;
-    int *newindex_int;
     PROTECT(index = getAttrib(x, install("index"))); P++;
     if(IS_S4_OBJECT(index)) {
       /* should make this

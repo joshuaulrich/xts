@@ -984,7 +984,8 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
 {
   SEXP _x, _y, xtmp, result, _INDEX;
   /* colnames should be renamed as suffixes, as colnames need to be added at the C level */
-  SEXP all, fill, retc, retclass, symnames, suffixes, rets, retside, env;
+  SEXP all, fill, retc, retclass, symnames,
+       suffixes, rets, retside, env, tzone;
   int nr, nc, ncs=0;
   int index_len;
   int i, n=0, P=0;
@@ -1005,6 +1006,8 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   PROTECT(retside = CAR(args)); P++;
   args = CDR(args);
   PROTECT(env = CAR(args)); P++;
+  args = CDR(args);
+  PROTECT(tzone = CAR(args)); P++;
   args = CDR(args);
   // args should now correspond to the ... objects we are looking to merge 
   argstart = args; // use this to rewind list...
@@ -1216,6 +1219,18 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                                  env,
                     coerce_to_double)); P++;
   }
+
+  SEXP index_tmp = getAttrib(result, install("index"));
+  PROTECT(index_tmp);
+  if(isNull(tzone)) {
+    setAttrib(index_tmp, install("tzone"), 
+              getAttrib(getAttrib(_x,install("index")), install("tzone")));
+  } else {
+    setAttrib(index_tmp, install("tzone"), tzone);
+  }
+  setAttrib(result, install("index"), index_tmp);
+  setAttrib(result, install(".indexTZ"), getAttrib(index_tmp, install("tzone")));
+  UNPROTECT(1);
 
   if(P > 0) UNPROTECT(P); 
   return(result);

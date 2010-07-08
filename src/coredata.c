@@ -79,6 +79,6 @@ SEXP coredata (SEXP x, SEXP copyAttr)
 }
 
 SEXP coredata_xts(SEXP x) {
-  coredata(x, ScalarLogical(0));
+  return coredata(x, ScalarLogical(0));
 }
 
