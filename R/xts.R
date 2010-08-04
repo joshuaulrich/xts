@@ -67,7 +67,7 @@ function(x=NULL,
     tzone <- attr(order.by, "tzone")
   index <- as.numeric(as.POSIXct(order.by))
   x <- structure(.Data=x,
-            index=structure(index,tzone=tzone),
+            index=structure(index,tzone=tzone,tclass=orderBy),
             class=c('xts','zoo'),
             .indexCLASS=orderBy,
             .indexTZ=tzone,
@@ -99,7 +99,7 @@ function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"), tzone=Sys.getenv("TZ"
   } else x <- numeric(0)
 
   structure(.Data=x,
-            index=structure(index,tzone=tzone),
+            index=structure(index,tzone=tzone,tclass=.indexCLASS),
             .indexCLASS=.indexCLASS,.indexTZ=tzone,
             class=c('xts','zoo'), ...)
 }
@@ -125,15 +125,16 @@ function(x, match.to, error=FALSE, ...) {
       } #else rownames(x) <- NULL
     }
     attr(x,'.ROWNAMES') <- NULL
-    if(is.null(attr(x,'.RECLASS')) || attr(x,'.RECLASS')) {#should it be reclassed?
-      attr(x,'.RECLASS') <- NULL
+    #if(is.null(attr(x,'.RECLASS')) || attr(x,'.RECLASS')) {#should it be reclassed?
+    if(!is.null(attr(x,'.RECLASS')) && attr(x,'.RECLASS')) {#should it be reclassed?
+      #attr(x,'.RECLASS') <- NULL
       do.call(paste('re',oldCLASS,sep='.'),list(x))
     } else {
-      attr(x,'.RECLASS') <- NULL
+      #attr(x,'.RECLASS') <- NULL
       x
     }
   } else {
-    attr(x,'.RECLASS') <- NULL
+    #attr(x,'.RECLASS') <- NULL
     x
   }
 }

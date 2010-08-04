@@ -1,21 +1,33 @@
 \name{indexTZ}
 \alias{TimeZone}
 \alias{indexTZ}
+\alias{indexTZ<-}
 \title{ Query the TimeZone of an xts object }
 \description{
 Get the TimeZone of an \code{xts} object.
 }
 \usage{
 indexTZ(x, ...)
+
+indexTZ(x) <- value
 }
 \arguments{
   \item{x}{ an \code{xts} object }
+  \item{value}{ a valid TZ object }
   \item{\dots}{ unused }
 }
 \details{
 As of version 0.6-4 all objects carry the time zone
 under which they were created in a hidden
-attribute names \code{.indexTZ}..
+attribute names \code{.indexTZ}.
+
+Going forward from 0.7-4, the TZ variable is now
+also stored in the index itself, in the \code{tzone}
+attribute. This is to facilitate the transition to
+removing the xts-specific attributes referenced by
+\code{indexTZ}, \code{indexFormat}, and \code{indexClass}.
+These accessor functions will continue to behave the
+same under the new internals.
 
 Internally, all time indexing is converted to
 POSIXct, seconds since the epoch as defined

@@ -87,6 +87,8 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP dup)
   PROTECT(newindex = allocVector(TYPEOF(xindex), len)); P++;
   PROTECT(result   = allocVector(TYPEOF(x), len * ncx)); P++;
 
+  copyMostAttrib(xindex, newindex);
+
   switch( TYPEOF(x) ) {
     case INTSXP:
         int_x = INTEGER(x);

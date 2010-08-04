@@ -25,7 +25,7 @@
   if(missing(j)) {
     j <- 1:NCOL(x)
   }
-  .Call('do_subset_xts', x, i, j, FALSE, PACKAGE='xts')
+  .Call('_do_subset_xts', x, i, j, FALSE, PACKAGE='xts')
 }
 
 `.subset.xts` <- `[.xts` <-
@@ -122,7 +122,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
         x.tmp <- .xts(rep(NA,length(i)), .index(x)[i])
         return((colnames(x.tmp) <- colnames(x)))
       } else {
-        return(.Call('do_subset_xts', 
+        return(.Call('_do_subset_xts', 
                      x, as.integer(i),
                      as.integer(1:NCOL(x)), 
                      drop, PACKAGE='xts'))
@@ -140,7 +140,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
                          } else xx
                        })
         
-        return(.Call('do_subset_xts', x, as.integer(i), as.integer(j), drop, PACKAGE='xts'))
+        return(.Call('_do_subset_xts', x, as.integer(i), as.integer(j), drop, PACKAGE='xts'))
    } 
 }
 

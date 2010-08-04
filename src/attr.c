@@ -120,9 +120,11 @@ SEXP do_xtsCoreAttributes(SEXP x)
 
 void copyAttributes(SEXP x, SEXP y)
 {
+  /* similar to copyMostAttr except that we add index
+     to the list of attributes to exclude */
   SEXP attr;
   int P=0;
-  attr = ATTRIB(x);
+  attr = ATTRIB(x);  /* this returns a LISTSXP */
 
   if(length(attr) > 0 || y != R_NilValue) {
     PROTECT(attr); P++;

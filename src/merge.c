@@ -1228,6 +1228,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   } else {
     setAttrib(index_tmp, install("tzone"), tzone);
   }
+  copyMostAttrib(getAttrib(_x,install("index")), index_tmp);
   setAttrib(result, install("index"), index_tmp);
   setAttrib(result, install(".indexTZ"), getAttrib(index_tmp, install("tzone")));
   UNPROTECT(1);

@@ -27,7 +27,11 @@ function(x,value) {
 
 `indexClass` <-
 function(x) {
-  attr(x, '.indexCLASS')
+  class <- attr(attr(x, "index"), "tclass")
+  if(is.null(class))
+    attr(x, '.indexCLASS')
+  else
+    class
 }
 
 `indexClass<-` <-
@@ -40,10 +44,13 @@ function(x, value) {
   if(!is.character(value) && length(value) != 1)
     stop('improperly specified value for indexClass')
 
-  if(!value[1] %in% c('dates','chron','POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr') )
+  if(!value[1] %in% c('dates','chron','POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr','xtime') )
        stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
 
   attr(x, '.indexCLASS') <- value
+  # all index related meta-data will be stored in the index
+  # as attributes
+  attr(attr(x,'index'), 'tclass') <- value
   x
 }
 

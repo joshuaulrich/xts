@@ -31,6 +31,11 @@
 # to.yearly
 
 to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRUE, ...) {
+  if(missing(name)) name <- deparse(substitute(x))
+
+  xo <- x
+  x <- try.xts(x)
+
   if(!OHLC) {
     xx <- x[endpoints(x, period, k),]
   } else {
@@ -43,7 +48,6 @@ to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRU
   } else index_at <- FALSE
 
   # make suitable name vector
-  if(missing(name)) name <- deparse(substitute(x))
 
   cnames <- c("Open", "High", "Low", "Close")
   if (has.Vo(x)) 
@@ -77,10 +81,8 @@ to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRU
         index(xx) <- lastof(ix$year + 1900, ix$mon + 1, ix$mday,
                              ix$hour, ix$min, ix$sec)
     }
-  # still need firstof, lastof handling
   }
-
-  xx
+  reclass(xx,xo)
 }
 
 `to.period` <-

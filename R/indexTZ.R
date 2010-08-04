@@ -30,6 +30,7 @@ indexTZ <- function(x, ...)
 `indexTZ<-.xts` <- function(x, value) {
   attr(x, ".indexTZ") <- value
   attr(attr(x,"index"),"tzone") <- value
+  x
 }
 
 indexTZ.default <- function(x, ...) {
@@ -38,7 +39,10 @@ indexTZ.default <- function(x, ...) {
 
 indexTZ.xts <- function(x, ...)
 {
-  attr(x, ".indexTZ")
+  tzone <- attr(attr(x, "index"), "tzone")
+  if(is.null(tzone))
+    attr(x, ".indexTZ")
+  else tzone
 }
 
 check.TZ <- function(x, ...)

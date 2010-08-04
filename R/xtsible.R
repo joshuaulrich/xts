@@ -29,7 +29,7 @@ xtsible <- function(x)
 use.xts <- try.xts <- function(x, ..., error=TRUE)
 {
   if(is.xts(x)) {
-    attr(x,'.RECLASS') <- FALSE
+    #attr(x,'.RECLASS') <- FALSE
     return(x)
   }
 
@@ -48,7 +48,7 @@ use.xts <- try.xts <- function(x, ..., error=TRUE)
     }
   } else {
     # made positive: now test if needs to be reclassed
-    xx
+    structure(xx, .RECLASS=TRUE)
   }
 }
 

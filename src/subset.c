@@ -242,7 +242,7 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
 
   }
   setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
-  if(ncs == 1 && LOGICAL(drop)[0])
+  if(nc == 1 && LOGICAL(drop)[0])
     setAttrib(result, R_DimSymbol, R_NilValue);
 
 

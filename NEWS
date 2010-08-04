@@ -1,3 +1,29 @@
+Changes in xts 0.7-5:
+
+o  try.xts and reclass now are more efficient on xts objects,
+   no longer appending a .RECLASS attribute. This penalty 
+   (copying) is shifted to classes that are internally converted
+   to xts.
+
+Changes in xts 0.7-4:
+
+o  internal attributes of index are now maintaining
+   timezone (tzone), time class (tclass) information.
+
+o  `[.xts` method is now using new C code. This may revert
+   back as character-based objects are not supported. Changed
+   for future code refactoring into zoo, as well as performance
+   gains on integer, double and logical values. Also added in
+   checks for NAs.  drop=TRUE now works correctly in all known
+   applications.
+
+o  (cbind)merge.xts and rbind.xts now copy index attributes
+   to handle internal changes to index characteristics (in C code)
+
+o  indexTZ.Rd updated to provide information regarding internal
+   changes.  Also indexTZ<- is now exported to facilitate 
+   timezone changing of xts objects.
+
 Changes in xts 0.7-1:
 
 o  subsecond ISO8601 subsetting on dates
