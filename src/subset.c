@@ -140,7 +140,8 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
     }
   } else
   /* branch into INTSXP and REALSXP, as these are most
-     common/important types for time series data */
+     common/important types for time series data 
+  */
   if(TYPEOF(x)==INTSXP) {
     int_x = INTEGER(x); 
     int_result = INTEGER(result); 
@@ -160,12 +161,18 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
       real_nindex = REAL(nindex);
       real_oindex = REAL(oindex);
       for(i=0; i<nr; i++) {
+        if(int_sr[i] == NA_INTEGER)
+          error("'i' contains NA");
+        if(int_sr[i] > nrs || int_sc[j] > ncs)
+          error("'i' or 'j' out of range");
         real_nindex[i] = real_oindex[int_sr[i]-1];
         int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
     copyAttributes(oindex, nindex);
     setAttrib(result, install("index"), nindex);
+
+    /* loop through remaining columns */
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
         int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
@@ -191,15 +198,92 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
       real_nindex = REAL(nindex);
       real_oindex = REAL(oindex);
       for(i=0; i<nr; i++) {
+        if(int_sr[i] == NA_INTEGER)
+          error("'i' contains NA");
+        if(int_sr[i] > nrs || int_sc[j] > ncs)
+          error("'i' or 'j' out of range");
         real_nindex[i] = real_oindex[int_sr[i]-1];
         real_result[i+j*nr] = real_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
     copyAttributes(oindex, nindex);
     setAttrib(result, install("index"), nindex);
+
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
         real_result[i+j*nr] = real_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+      }
+    }
+  } else
+  if(TYPEOF(x)==CPLXSXP) {
+    /*
+    real_x = REAL(x);
+    real_result = REAL(result);
+    */
+    if(TYPEOF(nindex)==INTSXP) {
+      int_nindex = INTEGER(nindex);
+      int_oindex = INTEGER(oindex);
+      for(i=0; i<nr; i++) {
+        if(int_sr[i] == NA_INTEGER)
+          error("'i' contains NA");
+        if(int_sr[i] > nrs || int_sc[j] > ncs)
+          error("'i' or 'j' out of range");
+        int_nindex[i] = int_oindex[int_sr[i]-1];
+        COMPLEX(result)[i+j*nr] = COMPLEX(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+      }
+    } else
+    if(TYPEOF(nindex)==REALSXP) {
+      real_nindex = REAL(nindex);
+      real_oindex = REAL(oindex);
+      for(i=0; i<nr; i++) {
+        if(int_sr[i] == NA_INTEGER)
+          error("'i' contains NA");
+        if(int_sr[i] > nrs || int_sc[j] > ncs)
+          error("'i' or 'j' out of range");
+        real_nindex[i] = real_oindex[int_sr[i]-1];
+        COMPLEX(result)[i+j*nr] = COMPLEX(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+      }
+    }
+    copyAttributes(oindex, nindex);
+    setAttrib(result, install("index"), nindex);
+
+    for(j=1; j<nc; j++) {
+      for(i=0; i<nr; i++) {
+        COMPLEX(result)[i+j*nr] = COMPLEX(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+      }
+    }
+  } else
+  if(TYPEOF(x)==STRSXP) {
+    if(TYPEOF(nindex)==INTSXP) {
+      int_nindex = INTEGER(nindex);
+      int_oindex = INTEGER(oindex);
+      for(i=0; i<nr; i++) {
+        if(int_sr[i] == NA_INTEGER)
+          error("'i' contains NA");
+        if(int_sr[i] > nrs || int_sc[j] > ncs)
+          error("'i' or 'j' out of range");
+        int_nindex[i] = int_oindex[int_sr[i]-1];
+        SET_STRING_ELT(result, i+j*nr, STRING_ELT(x, int_sr[i]-1 + ((int_sc[j]-1) * nrs)));
+      }
+    } else
+    if(TYPEOF(nindex)==REALSXP) {
+      real_nindex = REAL(nindex);
+      real_oindex = REAL(oindex);
+      for(i=0; i<nr; i++) {
+        if(int_sr[i] == NA_INTEGER)
+          error("'i' contains NA");
+        if(int_sr[i] > nrs || int_sc[j] > ncs)
+          error("'i' or 'j' out of range");
+        real_nindex[i] = real_oindex[int_sr[i]-1];
+        SET_STRING_ELT(result, i+j*nr, STRING_ELT(x, int_sr[i]-1 + ((int_sc[j]-1) * nrs)));
+      }
+    }
+    copyAttributes(oindex, nindex);
+    setAttrib(result, install("index"), nindex);
+
+    for(j=1; j<nc; j++) {
+      for(i=0; i<nr; i++) {
+        SET_STRING_ELT(result, i+j*nr, STRING_ELT(x, int_sr[i]-1 + ((int_sc[j]-1) * nrs)));
       }
     }
   }
