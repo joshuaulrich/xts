@@ -54,6 +54,9 @@ SEXP coredata (SEXP x, SEXP copyAttr)
       for(i=0; i< nrs; i++)
         SET_STRING_ELT(result, i+j*nrs, STRING_ELT(x, i+j*nrs));
       break;
+    case RAWSXP:
+      memcpy(RAW(result), RAW(x), length(result) * sizeof(unsigned char));
+      break;
     default:
       error("currently unsupported data type");
       break;
