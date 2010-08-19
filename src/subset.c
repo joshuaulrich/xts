@@ -2,8 +2,13 @@
 #include <Rinternals.h>
 #include "xts.h"
 
+
 static SEXP ExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
 {
+    /* ExtractSubset is currently copied/inspired by subset.c from GNU-R
+       This is slated to be reimplemented using the previous method
+       in xts to get the correct dimnames
+    */
     int i, ii, n, nx, mode;
     SEXP tmp, tmp2;
     mode = TYPEOF(x);
