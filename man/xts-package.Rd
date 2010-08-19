@@ -12,9 +12,9 @@ like zoo.
 \tabular{ll}{
 Package: \tab xts\cr
 Type: \tab Package\cr
-Version: \tab 0.7-0\cr
-Date: \tab 2010-01-04\cr
-License: \tab GPL-3\cr
+Version: \tab 0.7-5\cr
+Date: \tab 2010-08-19\cr
+License: \tab GPL-2\cr
 }
 Easily convert one of \R's many time-series (and non-time-series)
 classes to a true time-based object which inherits all of zoo's
