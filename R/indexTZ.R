@@ -24,12 +24,12 @@ indexTZ <- function(x, ...)
 }
 
 `indexTZ<-` <- function(x, value) {
-  UseMethod("indexTZ")
+  UseMethod("indexTZ<-")
 }
 
 `indexTZ<-.xts` <- function(x, value) {
-  attr(x, ".indexTZ") <- value
-  attr(attr(x,"index"),"tzone") <- value
+  attr(x, ".indexTZ") <- structure(value,.Names="TZ")
+  attr(attr(x,"index"),"tzone") <- structure(value,.Names="TZ")
   x
 }
 
@@ -48,6 +48,8 @@ indexTZ.xts <- function(x, ...)
 check.TZ <- function(x, ...)
 {
   STZ <- as.character(Sys.getenv("TZ"))
+  if(any(indexClass(x) %in% c("chron","dates","times")))
+    return()
   if(!is.null(indexTZ(x)) && indexTZ(x) != "" &&
      !identical(STZ, as.character(indexTZ(x))))
     warning(paste("timezone of object (",indexTZ(x),

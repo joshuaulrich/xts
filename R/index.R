@@ -46,6 +46,7 @@ function(x, ...) {
     if('POSIXt' %in% value[[1]]) value[[1]] <- value[[2]] # get specific ct/lt value
     if(value[[1]] %in% c('dates','chron')) {
       stopifnot('package:chron' %in% search() | require('chron',quietly=TRUE))
+      x.index <- format(x.index)
       value[[1]] <- 'chron'
     } 
     x.index <- do.call(paste('as',value[[1]],sep='.'),list(x.index))
