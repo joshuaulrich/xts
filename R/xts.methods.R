@@ -136,10 +136,12 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
         }
         j <- sapply(j, function(xx) {
                          if(is.character(xx)) {
-                           which(xx==colnames(x))
+                           jtmp <- which(xx==colnames(x))
+                           if(length(jtmp))
+                             jtmp
                          } else xx
                        })
-        
+        j <- unlist(j) 
         return(.Call('_do_subset_xts', x, as.integer(i), as.integer(j), drop, PACKAGE='xts'))
    } 
 }

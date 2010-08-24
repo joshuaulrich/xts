@@ -28,6 +28,8 @@ indexTZ <- function(x, ...)
 }
 
 `indexTZ<-.xts` <- function(x, value) {
+  if( is.null(value) ) value <- ""
+
   attr(x, ".indexTZ") <- structure(value,.Names="TZ")
   attr(attr(x,"index"),"tzone") <- structure(value,.Names="TZ")
   x
@@ -41,8 +43,11 @@ indexTZ.xts <- function(x, ...)
 {
   tzone <- attr(attr(x, "index"), "tzone")
   if(is.null(tzone))
-    attr(x, ".indexTZ")
-  else tzone
+    tzone <- attr(x, ".indexTZ")
+  if(is.null(tzone))
+    return("")
+  else
+    return(tzone)
 }
 
 check.TZ <- function(x, ...)
