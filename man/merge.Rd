@@ -3,7 +3,8 @@
 \alias{cbind.xts}
 \title{ Merge xts Objects }
 \description{
-Used to perform fast merging operation on \code{xts} objects.  Given the
+Used to perform merge operation on \code{xts} objects
+by \emph{time} (index).  Given the
 inherent ordered nature of \code{xts} time-series, a
 merge-join style merge allows for optimally efficient
 joins.
@@ -29,10 +30,15 @@ merge.xts(...,
   \item{tzone}{ time zone of merged object }
 }
 \details{
+This is an xts method compatible with merge.zoo, as xts extends zoo.
+That documentation should also be referenced.
+Difference are noted where applicable.
+
 Implemented almost entirely in custom C-level code,
 it is possible using either the \code{all} argument or
 the \code{join} argument to implement all common
-database join operations: \sQuote{outer} (full outer - all rows), 
+database join operations along the to-be-merged objects 
+time-index: \sQuote{outer} (full outer - all rows), 
 \sQuote{inner} (only rows with common indexes),
 \sQuote{left} (all rows in the left object, and those that match in the right),
 and \sQuote{right} (all rows in the right object, and those that match in the left).
@@ -68,8 +74,8 @@ elements of the objects passed in to be merged.
 \references{ Merge Join Discussion: \url{http://blogs.msdn.com/craigfr/archive/2006/08/03/687584.aspx} }
 \author{ Jeffrey A. Ryan }
 \note{
-This is a highly optimized merge, specifically designed for ordered data.
-
+This is a highly optimized merge, specifically designed for ordered data. The
+only supported merging is based on the underlying time index.
 }
 \examples{
 (x <- xts(4:10, Sys.Date()+4:10))
