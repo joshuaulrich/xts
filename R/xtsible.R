@@ -33,7 +33,7 @@ use.xts <- try.xts <- function(x, ..., error=TRUE)
     return(x)
   }
 
-  xx <- try(as.xts(x,...),silent=TRUE)
+  xx <- try(as.xts(x,..., .RECLASS=TRUE),silent=TRUE)
   if(inherits(xx,'try-error')) {
     if(is.character(error)) {
       stop(error)

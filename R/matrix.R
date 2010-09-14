@@ -34,7 +34,7 @@ function(x,...) {
 }
 
 `as.xts.matrix` <-
-function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
+function(x,order.by,dateFormat="POSIXct",frequency=NULL,...,.RECLASS=FALSE) {
   # Should allow 'order.by' to be a vector of dates or a scaler
   # representing the column number to use.
   if(missing(order.by)) {
@@ -47,10 +47,17 @@ function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
       order.by <- do.call(paste('as',dateFormat,sep='.'),list(rownames(x)))
   }
   
+  if(.RECLASS) {
   xx <- xts(x,
             order.by=order.by,
             frequency=frequency,
             .CLASS='matrix',
             ...)
+  } else {
+  xx <- xts(x,
+            order.by=order.by,
+            frequency=frequency,
+            ...)
+  }
   xx
 }

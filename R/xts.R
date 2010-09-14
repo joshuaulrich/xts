@@ -194,7 +194,7 @@ function(x,...) {
 }
 
 `as.xts.xts` <-
-function(x,...) {
+function(x,...,.RECLASS=FALSE) {
   # Cannot use 'zoo()' on objects of class 'zoo' or '.CLASS' (etc.?)
   # Is the equivalent of a 'coredata.xts' needed? - jmu
   #yy <- coredata(x)
@@ -202,10 +202,16 @@ function(x,...) {
   # using new coredata.xts method - jar
   if(length(x) == 0 && (!is.null(index(x)) && length(index(x))==0))
     return(x)
+  if(.RECLASS) {
   xx <- xts(coredata(x),
             order.by=index(x),
             .CLASS='xts',
             ...)
+  } else {
+  xx <- xts(coredata(x),
+            order.by=index(x),
+            ...)
+  }
   xx
 }
 

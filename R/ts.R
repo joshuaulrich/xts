@@ -58,7 +58,7 @@ function(x,...) {
 }
 
 `as.xts.ts` <-
-function(x,dateFormat,...) {
+function(x,dateFormat,...,.RECLASS=FALSE) {
   x.mat <- structure(as.matrix(x),dimnames=dimnames(x))
   colnames(x.mat) <- colnames(x)
 
@@ -101,6 +101,7 @@ function(x,dateFormat,...) {
   }
 
 
+  if(.RECLASS) {
   xx <- xts(x.mat,
             order.by=order.by,
             frequency=frequency(x),
@@ -109,6 +110,12 @@ function(x,dateFormat,...) {
             .tsp=tsp(x),
 #            .frequency=frequency(x),
             ...)
+  } else {
+  xx <- xts(x.mat,
+            order.by=order.by,
+            frequency=frequency(x),
+            ...)
+  }
   attr(xx, 'tsp') <- NULL
   xx
 }

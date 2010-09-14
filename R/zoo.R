@@ -38,12 +38,19 @@ function(x,...) {
 }
 
 `as.xts.zoo` <-
-function(x,order.by=index(x),frequency=NULL,...) {
+function(x,order.by=index(x),frequency=NULL,...,.RECLASS=FALSE) {
+  if(.RECLASS) {
   xx <- xts(coredata(x),          # Cannot use 'zoo()' on objects of class 'zoo' - jmu
             order.by=order.by,
             frequency=frequency,
             .CLASS='zoo',
             ...)
+  } else {
+  xx <- xts(coredata(x),          # Cannot use 'zoo()' on objects of class 'zoo' - jmu
+            order.by=order.by,
+            frequency=frequency,
+            ...)
+  }
 
 #
 #  if(!is.null(attr(x,'names'))) {

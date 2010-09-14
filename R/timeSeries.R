@@ -34,14 +34,14 @@ function(x,...) {
     attr(xx,i) <- NULL
   }
 
-  timeSeries(coredata(xx),charvec=format(index(x)),format=x.attr$format,
+  timeSeries(coredata(xx),charvec=as.POSIXct(format(index(x)),tz="GMT"),format=x.attr$format,
              zone=x.attr$FinCenter,FinCenter=x.attr$FinCenter,
              recordIDs=x.attr$recordIDs,title=x.attr$title,
              documentation=x.attr$documentation,...)
 }
 
 `as.xts.timeSeries` <-
-function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,...) {
+function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,..., .RECLASS=FALSE) {
 
   if(missing(FinCenter))
     FinCenter <- x@FinCenter
@@ -56,6 +56,7 @@ function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,...) {
   order.by <- do.call(paste('as',dateFormat,sep='.'),list(as.character(indexBy)))
 
 
+  if(.RECLASS) {
   xts(as.matrix(x@.Data),  
       order.by=order.by,
       format=x@format,
@@ -65,7 +66,13 @@ function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,...) {
       documentation=documentation,
       .CLASS='timeSeries',
       .CLASSnames=c('FinCenter','recordIDs','title','documentation','format'),
+      .RECLASS=TRUE,
       ...)
+  } else {
+  xts(as.matrix(x@.Data),  
+      order.by=order.by,
+      ...)
+  }
 }
 
 as.timeSeries.xts <- function(x, ...) {

@@ -31,13 +31,20 @@ function(x,...) {
 }
 
 `as.xts.irts` <-
-function(x,order.by,frequency=NULL,...) {
+function(x,order.by,frequency=NULL,...,.RECLASS=FALSE) {
+  if(.RECLASS) {
   xx <- xts(x=x$value,
             order.by=x$time,
             frequency=frequency,
             .CLASS='irts',
 #            irts.rownames=rownames(x$value),
             ...)
+  } else {
+  xx <- xts(x=x$value,
+            order.by=x$time,
+            frequency=frequency,
+            ...)
+  }
   xx
 }
 

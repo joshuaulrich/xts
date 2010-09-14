@@ -30,11 +30,17 @@ function(x, ...) {
 }
 
 `as.xts.its` <-
-function(x,...) {
+function(x,..., .RECLASS=FALSE) {
+  if(.RECLASS) {
   xx <- xts(x@.Data,
             order.by=x@dates,
             .CLASS='its',
             ...)
+  } else {
+  xx <- xts(x@.Data,
+            order.by=x@dates,
+            ...)
+  }
   xx
 }
 

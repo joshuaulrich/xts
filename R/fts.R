@@ -20,11 +20,15 @@
 
 
 `as.xts.fts` <-
-function(x, ...)
+function(x, ..., .RECLASS=FALSE)
 {
   dates <- as.numeric(dates(x)) # fts uses POSIXct
   attr(x,'dates') <- NULL
+  if(.RECLASS) {
   .xts(unclass(x), dates, .CLASS="fts", ...)
+  } else {
+  .xts(unclass(x), dates, ...)
+  }
 }
 
 `as.fts.xts` <-
