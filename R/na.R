@@ -22,7 +22,7 @@
 na.omit.xts <- function(object, ...) {
   xx <- .Call('na_omit_xts', object, PACKAGE="xts")
   if(length(xx)==0)
-    return(xts(,))
+    return(structure(xts(,),.Dim=c(0,NCOL(object))))
   naa <- attr(xx,'na.action')
   if(length(naa) == 0)
     return(xx)
