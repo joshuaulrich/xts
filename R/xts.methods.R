@@ -97,7 +97,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     # test for negative subscripting in j
     if (!missing(j) && is.numeric(j)) { # && any(j < 0)) {
       if(any(na.omit(j) < 0)) {
-        if(!all(na.omit(j) < 0))
+        if(!all(na.omit(j) <= 0))
           stop('only zeros may be mixed with negative subscripts')
         j <- (1:NCOL(x))[j]
       }
@@ -142,6 +142,9 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
                          } else xx
                        })
         j <- unlist(j) 
+        if(length(j) == 0 || (length(j)==1 && j==0))
+          return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i],
+                      .indexCLASS=indexClass(x), .indexTZ=indexTZ(x)))
         return(.Call('_do_subset_xts', x, as.integer(i), as.integer(j), drop, PACKAGE='xts'))
    } 
 }
