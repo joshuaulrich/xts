@@ -94,6 +94,8 @@ na.replace <- function(x) {
 
 na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE,...) {
     stopifnot(is.xts(object))
+    if(length(object) == 0)
+      return(object)
     x <- if(dim(object)[2] > 1) {
       .xts(apply(object, 2, function(x) .Call('na_locf', x, fromLast, PACKAGE='xts')),
            .index(object), .indexCLASS=indexClass(object))
