@@ -142,6 +142,9 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
                          } else xx
                        })
         j <- unlist(j) 
+        j0 <- which(j==0)
+        if(length(j0)) 
+          j <- j[-j0]
         if(length(j) == 0 || (length(j)==1 && j==0))
           return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i],
                       .indexCLASS=indexClass(x), .indexTZ=indexTZ(x)))
