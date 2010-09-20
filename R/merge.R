@@ -57,6 +57,16 @@ merge.xts <- function(...,
     return(xts())
   symnames <- rep(syms, .times)  # moved call to make.names inside of mergeXts/do_merge_xts
 
+  if(length(dots) == 1) {
+    # this is for compat with zoo; one object AND a name
+    if(!is.null(names(dots))) {
+      x <- list(...)[[1]]
+      if(is.null(colnames(x))) 
+        colnames(x) <- symnames
+    }
+    return(x)
+  }
+
   if( !missing(join) ) { 
     # join logic applied to index:
     # inspired by: http://blogs.msdn.com/craigfr/archive/2006/08/03/687584.aspx

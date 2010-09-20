@@ -29,8 +29,10 @@ function(x,fmt,...) {
   
   xx <- coredata(x, fmt)
   if(length(xx) == 0) {
-    if(!is.null(colnames(x))) {
-      print(structure(structure(NULL,dim=c(0,NCOL(x))),dimnames=list(NULL,colnames(x))))
+    #if(!is.null(colnames(x))) {
+    if(!is.null(dim(x))) {
+      #print(structure(structure(NULL,dim=c(0,NCOL(x))),dimnames=list(NULL,colnames(x))))
+      print(structure(structure(NULL,dim=dim(x)),dimnames=list(format(index(x)),colnames(x))))
     } else {
       cat('Data:\n')
       print(vector(storage.mode(xx)))
