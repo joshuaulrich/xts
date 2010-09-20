@@ -63,8 +63,8 @@ merge.xts <- function(...,
       x <- list(...)[[1]]
       if(is.null(colnames(x))) 
         colnames(x) <- symnames
+      return(x)
     }
-    return(x)
   }
 
   if( !missing(join) ) { 
