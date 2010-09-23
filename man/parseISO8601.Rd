@@ -20,10 +20,10 @@ documented for use with xts subsetting.
 }
 \arguments{
   \item{x}{
-a character string conforming to ISO 8601:2004(e) rules
-for .parseISO8601, or an time-like object with
-\code{start} and \code{end} methods to create an ISO 8601
-character string from.
+For .parseISO8601(x), a character string conforming 
+to the ISO 8601:2004(e) rules. For .makeISO8601(x), \code{x}
+should be a time-like object with
+\code{start} and \code{end} methods.
 }
   \item{start}{
 lower constraint on range
@@ -53,15 +53,22 @@ minute of the 23rd hour of the final day.
 
 For dates prior to the epoch (1970-01-01) the
 ending time is aligned to the 59.0000 second. This
-is due to a bug in the \R implementation of
-asPOSIXct and mktime0 at the source level. This limits
+is due to a bug/feature in the \R implementation of
+asPOSIXct and mktime0 at the C-source level. This limits
 the precision of ranges prior to 1970 to 1 minute
 granularity with the current \pkg{xts} workaround.
+
+Recurring times over multiple days may be specified
+using the T notation. See the examples for details.
 }
 \value{
 A list of length two, with an entry
 named \sQuote{first.time} and one
 names \sQuote{last.time}.
+
+For .makeISO8601, a character vector of length
+one describing the ISO-style format for a given
+time-based object.
 }
 \references{
 \url{http://en.wikipedia.org/wiki/ISO_8601}\cr
@@ -96,6 +103,9 @@ rather it is a standards and implementation gotcha.
 
 # Jan 1, 2000 to Feb 29, 2000; note the truncated time on the LHS
 .parseISO8601('2000-01/02')
+
+# 8:30 to 15:00 (used in xts subsetting to extract recurring times)
+.parseISO8601('T08:30/T15:00')
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
