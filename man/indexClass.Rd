@@ -6,6 +6,18 @@
 \alias{indexFormat<-}
 \alias{index.xts}
 \alias{index<-.xts}
+\alias{.indexhour}
+\alias{.indexsec}
+\alias{.indexmin}
+\alias{.indexyear}
+\alias{.indexymon}
+\alias{.indexyday}
+\alias{.indexday}
+\alias{.indexDate}
+\alias{.indexmday}
+\alias{.indexwday}
+\alias{.indexweek}
+\alias{.indexmon}
 \alias{.index}
 \alias{.index<-}
 \title{ Extracting/Replacing the Class of an xts Index }
@@ -27,6 +39,22 @@ indexFormat(x)
 indexFormat(x) <- value
 
 convertIndex(x,value)
+
+# time component extraction/conversion
+
+.indexDate(x)
+
+.indexday(x)
+.indexmday(x)
+.indexwday(x)
+.indexweek(x)
+.indexmon(x)
+.indexyday(x)
+.indexyear(x)
+
+.indexhour(x)
+.indexmin(x)
+.indexsec(x)
 }
 \arguments{
   \item{x}{ xts object }
@@ -53,7 +81,14 @@ To retrieve the raw numeric data a new accessor function (and replacement) has b
 added \code{.index}. This is primarily for internal use, but may be useful for
 end-users.
 
-The specified format must be a character string containing
+\code{.indexXXX} functions are useful to extract time
+components of the underlying time index.  The \sQuote{indexClass}
+is virtual, and as such suitable conversions are made depending
+on the component requested.
+
+
+The specified value for 
+\code{indexClass<-} must be a character string containing
 one of the following: \code{Date}, \code{POSIXct},
 \code{chron}, \code{yearmon}, \code{yearqtr} or \code{timeDate}.
 
@@ -72,4 +107,13 @@ functions expecting a different index, as well as the functionality
 of additional methods.  Use with caution.
 }
 \author{ Jeffrey A. Ryan }
+\examples{
+x <- timeBasedSeq('2010-01-01/2010-01-02 12:00')
+x <- xts(1:length(x), x)
+
+# all obs. in the first 6 and last 3 minutes of the
+# 8th and 15th hours on each day
+x[.indexhour(x) \%in\% c(8,15) & .indexmin(x) \%in\% c(0:5,57:59)]
+
+}
 \keyword{ utilities }
