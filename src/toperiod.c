@@ -57,7 +57,7 @@
 #define MIN(a,b) (a < b ? a : b)
 #endif
 
-SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP first, SEXP colnames)
+SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP whichVolume, SEXP hasAdjusted, SEXP first, SEXP colnames)
 {
   SEXP result, ohlc, xindex, newindex, dimnames;
 
@@ -68,7 +68,7 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
   ncr = 4; /* OHLC */
   int mode = TYPEOF(x);
 
-  int Op, Hi, Lo, Cl;
+  int Op, Hi, Lo, Cl, Vo;
   if(ncx >= 4) {
     /* needs OHLC or bust, clearly not the best solution
        since we can't just skip over columns */
@@ -76,6 +76,7 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
   } else {
     Op=Hi=Lo=Cl=0;
   }
+  Vo = INTEGER(whichVolume)[0]-1;
 
   if(INTEGER(hasVolume)[0]) ncr++; /* Volume */
   if(INTEGER(hasAdjusted)[0]) ncr++; /* Adjusted (Yahoo) */
@@ -153,15 +154,16 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP hasAdjusted, SEXP fir
           ohlc_int[1] = MAX(ohlc_int[1], x_int[j + Hi*nrx]);     /* HI */
           ohlc_int[2] = MIN(ohlc_int[2], x_int[j + Lo*nrx]);     /* LO */
           if(_hasVolume)
-            ohlc_int[4] = ohlc_int[4] + x_int[j + 4*nrx];       /* VO */
+            ohlc_int[4] = ohlc_int[4] + x_int[j + Vo*nrx];       /* VO */
         }
         break;
       case REALSXP:
         for( ; j < _endpoints[i+1]; j++) {
           ohlc_real[1] = MAX(ohlc_real[1], x_real[j + Hi*nrx]);  /* HI */
           ohlc_real[2] = MIN(ohlc_real[2], x_real[j + Lo*nrx]);  /* LO */
-          if(_hasVolume)
-            ohlc_real[4] = ohlc_real[4] + x_real[j + 4*nrx];    /* VO */
+          if(_hasVolume) {
+            ohlc_real[4] = ohlc_real[4] + x_real[j + Vo*nrx];    /* VO */
+          }
         }
         break;
     }

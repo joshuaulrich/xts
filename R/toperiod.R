@@ -59,7 +59,13 @@ to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRU
   if(is.null(name))
     cnames <- NULL
 
-  xx <- .Call("toPeriod", x, endpoints(x, period, k), has.Vo(x), has.Ad(x), index_at, cnames)
+  xx <- .Call("toPeriod", 
+              x, 
+              endpoints(x, period, k), 
+              has.Vo(x), has.Vo(x,which=TRUE),
+              has.Ad(x), 
+              index_at, 
+              cnames)
   }
 
   if(!is.null(indexAt)) {
