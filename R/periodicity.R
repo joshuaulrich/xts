@@ -161,6 +161,11 @@ function(x, INDEX, FUN, ...)
     xx <- sapply(1:(length(INDEX) - 1), function(y) {
                    FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
                 })  
+    if(is.vector(xx))
+      xx <- t(xx)
+    xx <- t(xx)
+    if(is.null(colnames(xx)))
+      colnames(xx) <- colnames(x)
     reclass(xx, x[INDEX])  
 }
 

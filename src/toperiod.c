@@ -132,18 +132,18 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP whichVolume, SEXP has
     /* set the Open, and initialize High, Low and Volume */
     switch(mode) {
       case INTSXP:
-        ohlc_int[0] = x_int[j];                     //OP
-        ohlc_int[1] = x_int[j + Hi*nrx];             //HI
-        ohlc_int[2] = x_int[j + Lo*nrx];             //LO
+        ohlc_int[0] = x_int[j];                                 /* Op */
+        ohlc_int[1] = x_int[j + Hi*nrx];                        /* Hi */
+        ohlc_int[2] = x_int[j + Lo*nrx];                        /* Lo */
         if(_hasVolume)
-          ohlc_int[4] = (int)0;                     //VO
+          ohlc_int[4] = (int)0;                                 /* Vo */
         break;
       case REALSXP:
-        ohlc_real[0] = x_real[j];                 //OP
-        ohlc_real[1] = x_real[j + Hi*nrx];         //HI
-        ohlc_real[2] = x_real[j + Lo*nrx];         //LO
+        ohlc_real[0] = x_real[j];                               /* Op */
+        ohlc_real[1] = x_real[j + Hi*nrx];                      /* Hi */
+        ohlc_real[2] = x_real[j + Lo*nrx];                      /* Lo */
         if(_hasVolume)
-          ohlc_real[4] = (double)0;                //VO
+          ohlc_real[4] = (double)0;                             /* Vo */
         break;
     }
 
@@ -151,18 +151,18 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP whichVolume, SEXP has
     switch(mode) {
       case INTSXP:
         for( ; j < _endpoints[i+1]; j++) {
-          ohlc_int[1] = MAX(ohlc_int[1], x_int[j + Hi*nrx]);     /* HI */
-          ohlc_int[2] = MIN(ohlc_int[2], x_int[j + Lo*nrx]);     /* LO */
+          ohlc_int[1] = MAX(ohlc_int[1], x_int[j + Hi*nrx]);    /* HI */
+          ohlc_int[2] = MIN(ohlc_int[2], x_int[j + Lo*nrx]);    /* LO */
           if(_hasVolume)
-            ohlc_int[4] = ohlc_int[4] + x_int[j + Vo*nrx];       /* VO */
+            ohlc_int[4] = ohlc_int[4] + x_int[j + Vo*nrx];      /* VO */
         }
         break;
       case REALSXP:
         for( ; j < _endpoints[i+1]; j++) {
-          ohlc_real[1] = MAX(ohlc_real[1], x_real[j + Hi*nrx]);  /* HI */
-          ohlc_real[2] = MIN(ohlc_real[2], x_real[j + Lo*nrx]);  /* LO */
+          ohlc_real[1] = MAX(ohlc_real[1], x_real[j + Hi*nrx]); /* HI */
+          ohlc_real[2] = MIN(ohlc_real[2], x_real[j + Lo*nrx]); /* LO */
           if(_hasVolume) {
-            ohlc_real[4] = ohlc_real[4] + x_real[j + Vo*nrx];    /* VO */
+            ohlc_real[4] = ohlc_real[4] + x_real[j + Vo*nrx];   /* VO */
           }
         }
         break;
