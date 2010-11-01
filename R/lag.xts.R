@@ -77,7 +77,7 @@
       names(k) <- paste("lag",k,sep="")
     return(do.call("merge.xts", lapply(k, lag.xts, x=x, na.pad=na.pad,...)))
   }
-  .Call('lag_xts', x, as.integer(k), as.logical(na.pad))
+  .Call('lag_xts', x, as.integer(k), as.logical(na.pad), PACKAGE='xts')
 }
 
 `diff.xts` <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad=TRUE, ...)

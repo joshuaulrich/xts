@@ -19,7 +19,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 binsearch <- function(key, vec, start=TRUE) {
-  .Call("binsearch", as.double(key),vec, start)
+  .Call("binsearch", as.double(key),vec, start, PACKAGE='xts')
 }
 `.binsearch` <-
 function(key,  vec, start=TRUE) {
@@ -80,8 +80,8 @@ function(key,  vec, start=TRUE) {
 
 naCheck <- function(x, n=0) {
   if(is.null(dim(x)[2])) {
-    NAs <- .Call("naCheck", x, TRUE)
-  } else NAs <- .Call("naCheck", rowSums(x), TRUE)
+    NAs <- .Call("naCheck", x, TRUE, PACKAGE='xts')
+  } else NAs <- .Call("naCheck", rowSums(x), TRUE, PACKAGE='xts')
   ret <- list()
   ret$NAs <- NAs
   ret$nonNA <- (1+NAs):NROW(x)

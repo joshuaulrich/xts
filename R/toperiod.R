@@ -65,7 +65,7 @@ to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRU
               has.Vo(x), has.Vo(x,which=TRUE),
               has.Ad(x), 
               index_at, 
-              cnames)
+              cnames, PACKAGE='xts')
   }
 
   if(!is.null(indexAt)) {
