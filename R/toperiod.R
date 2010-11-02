@@ -52,7 +52,7 @@ to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRU
   cnames <- c("Open", "High", "Low", "Close")
   if (has.Vo(x)) 
     cnames <- c(cnames, "Volume")
-  if (has.Ad(x))
+  if (has.Ad(x) && is.OHLC(x))
     cnames <- c(cnames, "Adjusted")
   cnames <- paste(name,cnames,sep=".") 
 
@@ -63,7 +63,7 @@ to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRU
               x, 
               endpoints(x, period, k), 
               has.Vo(x), has.Vo(x,which=TRUE),
-              has.Ad(x), 
+              has.Ad(x) && is.OHLC(x),
               index_at, 
               cnames, PACKAGE='xts')
   }
