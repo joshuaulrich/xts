@@ -36,17 +36,17 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     #original.attr <- xtsAttributes(x)
     
     if(missing(i)) {
-      i <- 1:NROW(x)
+      i <- 1:nrow(x)
     } else
     # test for negative subscripting in i
-    if (!missing(i) && is.numeric(i)) {
+    if (is.numeric(i)) {
       #if(any(i < 0)) {
       if(.Call("any_negative", i, PACKAGE="xts")) {
         if(!all(i <= 0))
           stop('only zeros may be mixed with negative subscripts')
-        i <- (1:NROW(x))[i]
+        i <- (1:nrow(x))[i]
       }
-      if(max(i) > NROW(x))
+      if(max(i) > nrow(x))
         stop('subscript out of bounds')
     } else
     if(inherits(i, "AsIs") && is.character(i)) {
@@ -81,7 +81,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       for(ii in i) {
         #adjusted.times <- .parseISO8601(ii, first(.index(x)), last(.index(x)))
         #`[.POSIXct` <- function(x, ...) { .Class="Matrix"; NextMethod("[") }
-        adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[NROW(x)], tz=tz)
+        adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[nrow(x)], tz=tz)
         if(length(adjusted.times) > 1) {
           firstlast <- c(seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
                                  binsearch(adjusted.times$last.time,  .index(x), FALSE))
@@ -94,16 +94,6 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       #if(is.null(i)) i <- NA
     }
 
-    # test for negative subscripting in j
-    if (!missing(j) && is.numeric(j)) { # && any(j < 0)) {
-      if(any(na.omit(j) < 0)) {
-        if(!all(na.omit(j) <= 0))
-          stop('only zeros may be mixed with negative subscripts')
-        j <- (1:NCOL(x))[j]
-      }
-      if(max(j,na.rm=TRUE) > NCOL(x))
-        stop('subscript out of bounds')
-    }
 
   
     if(!isOrdered(i,strictly=FALSE)) {
@@ -124,32 +114,38 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       } else {
         return(.Call('_do_subset_xts', 
                      x, as.integer(i),
-                     as.integer(1:NCOL(x)), 
+                     as.integer(1:ncol(x)), 
                      drop, PACKAGE='xts'))
       }
+    } else
+    # test for negative subscripting in j
+    if (is.numeric(j)) {
+      if(min(j,na.rm=TRUE) < 0) {
+        if(max(j,na.rm=TRUE) > 0)
+          stop('only zeros may be mixed with negative subscripts')
+        j <- (1:ncol(x))[j]
+      }
+      if(max(j,na.rm=TRUE) > ncol(x))
+        stop('subscript out of bounds')
+    } else
+    if(is.logical(j)) {
+      if(length(j) == 1) {
+        j <- (1:ncol(x))[rep(j, ncol(x))]
+      } else j <- (1:ncol(x))[j]
+    } else
+    if(is.character(j)) {
+      j <- which(match(colnames(x), j, nomatch=0L) > 0L)
     }
-    else {
-        if(is.logical(j)) {
-          if(length(j) == 1) {
-            j <- (1:NCOL(x))[rep(j, NCOL(x))]
-          } else j <- (1:NCOL(x))[j]
-        }
-        j <- sapply(j, function(xx) {
-                         if(is.character(xx)) {
-                           jtmp <- which(xx==colnames(x))
-                           if(length(jtmp))
-                             jtmp
-                         } else xx
-                       })
-        j <- unlist(j) 
-        j0 <- which(j==0)
-        if(length(j0)) 
-          j <- j[-j0]
-        if(length(j) == 0 || (length(j)==1 && j==0))
-          return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i],
-                      .indexCLASS=indexClass(x), .indexTZ=indexTZ(x)))
-        return(.Call('_do_subset_xts', x, as.integer(i), as.integer(j), drop, PACKAGE='xts'))
-   } 
+
+    #j0 <- which(j==0)
+    j0 <- which(!as.logical(j))
+    if(length(j0)) 
+      j <- j[-j0]
+    if(length(j) == 0 || (length(j)==1 && j==0))
+      return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i],
+                  .indexCLASS=indexClass(x), .indexTZ=indexTZ(x)))
+    return(.Call('_do_subset_xts', x, as.integer(i), as.integer(j), drop, PACKAGE='xts'))
+
 }
 
 # Replacement method for xts objects
@@ -193,7 +189,7 @@ function(x, i, j, value)
 
           # the last index value ot be found
           if(is.na(tBR[2])) {
-            last.time  <- .index(x)[NROW(x)]
+            last.time  <- .index(x)[nrow(x)]
           } else last.time <- tBR[2]
 
         } else {
