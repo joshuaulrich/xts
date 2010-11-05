@@ -34,9 +34,16 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     #check.TZ(x)
     #original.cols <- NCOL(x)
     #original.attr <- xtsAttributes(x)
+    if(is.null(dim(x))) {
+      nr <- length(x)
+      nc <- 1L
+    } else {
+      nr <- nrow(x)
+      nc <- ncol(x)
+    }
     
     if(missing(i)) {
-      i <- 1:nrow(x)
+      i <- 1:nr
     } else
     # test for negative subscripting in i
     if (is.numeric(i)) {
@@ -44,9 +51,9 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       if(.Call("any_negative", i, PACKAGE="xts")) {
         if(!all(i <= 0))
           stop('only zeros may be mixed with negative subscripts')
-        i <- (1:nrow(x))[i]
+        i <- (1:nr)[i]
       }
-      if(max(i) > nrow(x))
+      if(max(i) > nr)
         stop('subscript out of bounds')
     } else
     if(inherits(i, "AsIs") && is.character(i)) {
@@ -81,7 +88,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       for(ii in i) {
         #adjusted.times <- .parseISO8601(ii, first(.index(x)), last(.index(x)))
         #`[.POSIXct` <- function(x, ...) { .Class="Matrix"; NextMethod("[") }
-        adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[nrow(x)], tz=tz)
+        adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[nr], tz=tz)
         if(length(adjusted.times) > 1) {
           firstlast <- c(seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
                                  binsearch(adjusted.times$last.time,  .index(x), FALSE))
@@ -114,7 +121,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       } else {
         return(.Call('_do_subset_xts', 
                      x, as.integer(i),
-                     as.integer(1:ncol(x)), 
+                     as.integer(1:nc), 
                      drop, PACKAGE='xts'))
       }
     } else
@@ -123,15 +130,15 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       if(min(j,na.rm=TRUE) < 0) {
         if(max(j,na.rm=TRUE) > 0)
           stop('only zeros may be mixed with negative subscripts')
-        j <- (1:ncol(x))[j]
+        j <- (1:nc)[j]
       }
-      if(max(j,na.rm=TRUE) > ncol(x))
+      if(max(j,na.rm=TRUE) > nc)
         stop('subscript out of bounds')
     } else
     if(is.logical(j)) {
       if(length(j) == 1) {
-        j <- (1:ncol(x))[rep(j, ncol(x))]
-      } else j <- (1:ncol(x))[j]
+        j <- (1:nc)[rep(j, nc)]
+      } else j <- (1:nc)[j]
     } else
     if(is.character(j)) {
       j <- which(match(colnames(x), j, nomatch=0L) > 0L)
@@ -189,7 +196,7 @@ function(x, i, j, value)
 
           # the last index value ot be found
           if(is.na(tBR[2])) {
-            last.time  <- .index(x)[nrow(x)]
+            last.time  <- .index(x)[nr]
           } else last.time <- tBR[2]
 
         } else {
