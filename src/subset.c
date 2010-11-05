@@ -96,6 +96,7 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
   int i, j, nr, nc, nrs, ncs;
   int P=0;
 
+  SEXP Dim = getAttrib(x, R_DimSymbol);
   nrs = nrows(x);ncs = ncols(x);
   nr = length(sr); nc = length(sc);
 
@@ -332,7 +333,7 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
   }
 
 
-  if(nr >= 0 && nc >= 0) {
+  if(!isNull(Dim) && nr >= 0 && nc >= 0) {
   SEXP dim;
   PROTECT(dim = allocVector(INTSXP,2));P++;
   INTEGER(dim)[0] = nr;
