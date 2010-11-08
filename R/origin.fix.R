@@ -53,17 +53,17 @@ as.POSIXlt.Date <- function(x, ...)
   as.POSIXlt(xts:::as.POSIXct.Date(x))
 }
 
-as.POSIXct.yearmon <- function(x, ...)
-{
-  structure(as.POSIXct("1970-01-01") + unclass(as.Date(x))*86400,
-            class=c("POSIXt","POSIXct"))
-}
-
-as.POSIXlt.yearmon <- function(x, ...)
-{
-  as.POSIXlt(xts:::as.POSIXct.yearmon(x))
-}
-
+#as.POSIXct.yearmon <- function(x, ...)
+#{
+#  structure(as.POSIXct("1970-01-01") + unclass(as.Date(x))*86400,
+#            class=c("POSIXt","POSIXct"))
+#}
+#
+#as.POSIXlt.yearmon <- function(x, ...)
+#{
+#  as.POSIXlt(xts:::as.POSIXct.yearmon(x))
+#}
+#
 as.POSIXct.dates <- function(x, ...)
 {
   # need to implement our own method to correctly handle TZ
