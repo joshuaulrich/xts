@@ -31,9 +31,6 @@
 `.subset.xts` <- `[.xts` <-
 function(x, i, j, drop = FALSE, which.i=FALSE,...) 
 {
-    #check.TZ(x)
-    #original.cols <- NCOL(x)
-    #original.attr <- xtsAttributes(x)
     if(is.null(dim(x))) {
       nr <- length(x)
       nc <- 1L
@@ -42,9 +39,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       nc <- ncol(x)
     }
     
-    if(missing(i)) {
-      i <- 1:nr
-    } else
+    if(!missing(i)) {
     # test for negative subscripting in i
     if (is.numeric(i)) {
       #if(any(i < 0)) {
@@ -61,10 +56,8 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     } else
     if (timeBased(i)) { # || (inherits(i, "AsIs") && is.character(i))) {
       if(inherits(i, "POSIXct")) {
-        #i <- match(i, .index(x))
         i <- which(!is.na(match(.index(x), i)))
       } else {
-        #i <- match(as.POSIXct(as.character(i)), .index(x))
         i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i)))))
       }
       i[is.na(i)] <- 0
@@ -86,8 +79,6 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       tz <- as.character(indexTZ(x)) # ideally this moves to attr(index,"tzone")
 
       for(ii in i) {
-        #adjusted.times <- .parseISO8601(ii, first(.index(x)), last(.index(x)))
-        #`[.POSIXct` <- function(x, ...) { .Class="Matrix"; NextMethod("[") }
         adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[nr], tz=tz)
         if(length(adjusted.times) > 1) {
           firstlast <- c(seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
@@ -98,7 +89,6 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
         }
       }
       i <- i.tmp
-      #if(is.null(i)) i <- NA
     }
 
 
@@ -114,7 +104,12 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     if(which.i)
       return(i)
 
+    } # if(!missing(i)) { end
+
     if (missing(j)) {
+      if(missing(i))
+        i <- seq_len(nr)
+
       if(length(x)==0) {
         x.tmp <- .xts(rep(NA,length(i)), .index(x)[i])
         return((colnames(x.tmp) <- colnames(x)))
@@ -144,13 +139,17 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       j <- which(match(colnames(x), j, nomatch=0L) > 0L)
     }
 
-    #j0 <- which(j==0)
     j0 <- which(!as.logical(j))
     if(length(j0)) 
       j <- j[-j0]
-    if(length(j) == 0 || (length(j)==1 && j==0))
+    if(length(j) == 0 || (length(j)==1 && j==0)) {
+      if(missing(i))
+        i <- seq_len(nr)
       return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i],
                   .indexCLASS=indexClass(x), .indexTZ=indexTZ(x)))
+    } 
+    if(missing(i))
+      return(.Call("extract_col", x, as.integer(j), drop, PACKAGE='xts'))
     return(.Call('_do_subset_xts', x, as.integer(i), as.integer(j), drop, PACKAGE='xts'))
 
 }
