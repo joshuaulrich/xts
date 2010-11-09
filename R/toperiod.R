@@ -30,7 +30,7 @@
 # to.quarterly
 # to.yearly
 
-to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRUE, ...) {
+to.period <- to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRUE, ...) {
   if(missing(name)) name <- deparse(substitute(x))
 
   xo <- x
@@ -91,7 +91,7 @@ to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRU
   reclass(xx,xo)
 }
 
-`to.period` <-
+`.to.period` <-
 function(x,period='months',k=1,indexAt=NULL,name=NULL,OHLC=TRUE,...)
 {
   original.class <- class(x) # used for classes derived from 'xts'
