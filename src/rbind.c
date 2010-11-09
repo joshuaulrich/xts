@@ -518,3 +518,138 @@ SEXP rbindXts (SEXP args)
   if(P > 0) UNPROTECT(P);
   return _x;
 } //}}}
+
+
+SEXP rbind_append (SEXP x, SEXP y) {
+/*
+
+  Provide fast row binding of xts objects if the
+  left-hand object (binding target) has a last
+  index value less than the right-hand object
+  (object to bind).  This is an optimization to allow
+  for real-time updating of objects without having to
+  do much more than a memcpy of the two in coordinated
+  fashion
+
+*/
+  SEXP result;
+  int nrs_x, nrs_y, ncs_x, ncs_y, nr;
+  int i;
+
+  ncs_x = ncols(x); ncs_y = ncols(y); nrs_x = nrows(x); nrs_y = nrows(y);
+
+  if(ncs_x != ncs_y)
+    error("objects must have the same number of columns"); /* FIXME */
+
+  PROTECT(result = allocVector(TYPEOF(x), (nrs_x + nrs_y) * ncs_x));
+  nr = nrs_x + nrs_y;
+
+  switch(TYPEOF(x)) {
+    case REALSXP:
+      for(i=0; i< ncs_x; i++) {
+        memcpy(&(REAL(result)[i*nr]), 
+               &(REAL(x)[i*nrs_x]), 
+               nrs_x*sizeof(double));
+        memcpy(&(REAL(result)[i*nr + nrs_x]), 
+               &(REAL(y)[i*nrs_y]), 
+               nrs_y*sizeof(double));
+      }
+      break;
+    case INTSXP:
+      for(i=0; i< ncs_x; i++) {
+        memcpy(&(INTEGER(result)[i*nr]), 
+               &(INTEGER(x)[i*nrs_x]), 
+               nrs_x*sizeof(int));
+        memcpy(&(INTEGER(result)[i*nr + nrs_x]), 
+               &(INTEGER(y)[i*nrs_y]), 
+               nrs_y*sizeof(int));
+      }
+      break;
+    case LGLSXP:
+      for(i=0; i< ncs_x; i++) {
+        memcpy(&(LOGICAL(result)[i*nr]), 
+               &(LOGICAL(x)[i*nrs_x]), 
+               nrs_x*sizeof(int));
+        memcpy(&(LOGICAL(result)[i*nr + nrs_x]), 
+               &(LOGICAL(y)[i*nrs_y]), 
+               nrs_y*sizeof(int));
+      }
+      break;
+    case CPLXSXP:
+      for(i=0; i< ncs_x; i++) {
+        memcpy(&(COMPLEX(result)[i*nr]), 
+               &(COMPLEX(x)[i*nrs_x]), 
+               nrs_x*sizeof(Rcomplex));
+        memcpy(&(COMPLEX(result)[i*nr + nrs_x]), 
+               &(COMPLEX(y)[i*nrs_y]), 
+               nrs_y*sizeof(Rcomplex));
+      }
+      break;
+    case RAWSXP:
+      for(i=0; i< ncs_x; i++) {
+        memcpy(&(RAW(result)[i*nr]), 
+               &(RAW(x)[i*nrs_x]), 
+               nrs_x*sizeof(Rbyte));
+        memcpy(&(RAW(result)[i*nr + nrs_x]), 
+               &(RAW(y)[i*nrs_y]), 
+               nrs_y*sizeof(Rbyte));
+      }
+      break;
+    case STRSXP:
+      /* this requires an explicit loop like rbind.c and
+         needs to be left with rbind.c
+      */
+      break;
+    default:
+      error("unsupported type");
+  }
+
+  copyAttributes(x, result); 
+
+  SEXP index, xindex, yindex;
+  xindex = getAttrib(x,install("index"));
+  yindex = getAttrib(y,install("index"));
+  int INDEXTYPE = TYPEOF(xindex);
+  if(INDEXTYPE != NILSXP) {
+    PROTECT(index = allocVector(INDEXTYPE, nr));
+    if(INDEXTYPE==REALSXP) {
+      memcpy(REAL(index), REAL(xindex), nrs_x * sizeof(double));
+      memcpy(&(REAL(index)[nrs_x]), REAL(yindex), nrs_y * sizeof(double));
+    } else
+    if(INDEXTYPE==INTSXP) {
+      memcpy(INTEGER(index), INTEGER(xindex), nrs_x * sizeof(int));
+      memcpy(&(INTEGER(index)[nrs_x]), INTEGER(yindex), nrs_y * sizeof(int));
+    }
+    copyMostAttrib(xindex, index);
+    setAttrib(result, install("index"), index);
+    UNPROTECT(1);
+  }
+
+    SEXP dim;
+    PROTECT(dim = allocVector(INTSXP, 2));
+    INTEGER(dim)[0] = nr;
+    INTEGER(dim)[1] = ncs_x; /* should be the same */
+    setAttrib(result, R_DimSymbol, dim);
+    UNPROTECT(1);
+
+    setAttrib(result, R_DimNamesSymbol, getAttrib(x, R_DimNamesSymbol));
+/*
+    SEXP dimnames, currentnames, newnames;
+    PROTECT(dimnames = allocVector(VECSXP, 2));
+    PROTECT(newnames = allocVector(STRSXP, length(j)));
+    currentnames = getAttrib(x, R_DimNamesSymbol);
+
+    if(!isNull(currentnames)) {
+      SET_VECTOR_ELT(dimnames, 0, R_NilValue);
+      for(i=0; i<ncs_x; i++) {
+        SET_STRING_ELT(newnames, i, STRING_ELT(VECTOR_ELT(currentnames,1), i));
+      }
+      SET_VECTOR_ELT(dimnames, 1, newnames);
+      setAttrib(result, R_DimNamesSymbol, dimnames);
+    }
+    UNPROTECT(2);
+*/
+
+  UNPROTECT(1);
+  return result;
+}
