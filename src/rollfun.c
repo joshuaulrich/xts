@@ -26,37 +26,65 @@
 SEXP roll_sum (SEXP x, SEXP n)
 {
   /* Author: Joshua Ulrich */
-  int i, P=0;
+  int i, P=0, nrs;
+  nrs = nrows(x);
 
   /* Get values from pointers */
-  double *real_x = REAL(coerceVector(x, REALSXP));
   int int_n = INTEGER(coerceVector(n, INTSXP))[0];
 
   /* Initalize result R object */
   SEXP result;
-  PROTECT(result = allocVector(REALSXP, length(x))); P++;
-  double *real_result = REAL(result);
+  PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
+  int *int_result=NULL, *int_x=NULL;
+  int int_sum = 0;
+  double *real_result=NULL, *real_x=NULL;
+  double real_sum = 0.0;
 
   /* check for non-leading NAs and get first non-NA location */
   SEXP first;
   PROTECT(first = naCheck(x, ScalarLogical(TRUE))); P++;
   int int_first = INTEGER(first)[0];
 
-  /* set leading NAs, find initial sum value */
-  double real_sum = 0.0;
-  for(i=0; i<int_n+int_first; i++) {
-    real_result[i] = NA_REAL;
-    if(i >= int_first) {
-      real_sum += real_x[i];
-    }
-  }
-  /* set initial sum */
-  real_result[int_n+int_first-1] = real_sum;
-
-  /* loop over all other values */
-  int nrs = nrows(x);
-  for(i=int_n+int_first; i<nrs; i++) {
-    real_result[i] = real_result[i-1] + real_x[i] - real_x[i-int_n];
+  switch(TYPEOF(x)) {
+    case REALSXP:
+      real_result = REAL(result);
+      real_x = REAL(x);
+      //int_result = int_x = NULL;
+      /* set leading NAs, find initial sum value */
+      for(i=0; i<int_n+int_first; i++) {
+        real_result[i] = NA_REAL;
+        if(i >= int_first)
+          real_sum += real_x[i];
+      }
+      /* loop over all other values */
+      real_result[ int_n + int_first - 1 ] = real_sum;
+      for(i=int_n+int_first; i<nrs; i++) {
+        real_result[i] = real_result[i-1] + real_x[i] - real_x[i-int_n];
+      }
+      break;
+    case INTSXP: /* how can we check for overflow? */
+      int_result = INTEGER(result);
+      int_x = INTEGER(x);
+      //real_result = real_x = NULL;
+      /* set leading NAs, find initial sum value */
+      for(i=0; i<int_n+int_first; i++) {
+        int_result[i] = NA_INTEGER;
+        if(i >= int_first)
+          int_sum += int_x[i];
+      }
+      int_result[ int_n + int_first -1 ] = int_sum;
+      /* loop over all other values */
+      for(i=int_n+int_first; i<nrs; i++) {
+        int_result[i] = int_result[i-1] + int_x[i] - int_x[i-int_n];
+      }
+      break;
+    /*
+    case STRSXP:  fail!
+    case LGLSXP:  convert to int??
+    case CPLXSXP:
+    */
+    default:
+      error("unsupported data type");
   }
 
   copyMostAttrib(x, result);
@@ -405,39 +433,4 @@ SEXP do_runsum (SEXP x, SEXP n, SEXP result)
 {
 
 }
-
-SEXP do_run (SEXP x, SEXP n, (*void)FUN)
-{
-  SEXP result;
-  int P=0;
-  int i, nrs;
-  int *int_n=NULL;
-  if(TYPEOF(n) != INTSXP) {
-    // assure that 'n' is an integer
-    PROTECT(n = coerceVector(n, INTSXP)); P++;
-  }
-  int_n = INTEGER(n); // get the first element (everything from R is a vector)
-
-  int *int_result=NULL, *int_x=NULL;
-  int int_sum = 0;
-  double *real_result=NULL, *real_x=NULL;
-  double real_sum = 0.0;
-
-  PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
-
-  int _firstNonNA = firstNonNA(x);
-*/  /* The branch by type allows for fewer type checks/branching
-   * within the algorithm, providing a _much_ faster mechanism
-   */
-/*  switch(TYPEOF(x)) { */
-    /* need to implement other types?, and checking
-     *
-     * This part of the code could be a call to a function pointer passed
-     * in to the top-level call... maybe???  This would make it easier to
-     * extend the framework and, _more_ importantly, allow for user-level
-     * C functions (via R) to be used ad hoc
-     */
-/*
-}
 */
-
