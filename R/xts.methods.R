@@ -57,6 +57,8 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     if (timeBased(i)) { # || (inherits(i, "AsIs") && is.character(i))) {
       if(inherits(i, "POSIXct")) {
         i <- which(!is.na(match(.index(x), i)))
+      } else if(inherits(i, "POSIXlt") || inherits(i, "yearmon") || inherits(i, "yearqtr")) {
+        i <- which(!is.na(match(.index(x), as.POSIXct(i))))
       } else {
         i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i)))))
       }
