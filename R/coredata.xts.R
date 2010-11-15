@@ -39,9 +39,9 @@ coredata.xts <- function(x, fmt=FALSE, ...) {
     original.attr <- x.attr[!names(x.attr) %in%
                           c('dim','dimnames')]
     if(is.null(dim(x))) {
-      xx <- structure(unclass(x), names=x.attr$dimnames[[1]])
+      xx <- structure(coredata(x), names=x.attr$dimnames[[1]])
     } else {
-      xx <- structure(unclass(x), dim=dim(x), dimnames=x.attr$dimnames) 
+      xx <- structure(coredata(x), dim=dim(x), dimnames=x.attr$dimnames) 
     }
     for(i in names(original.attr)) {
       attr(xx,i) <- NULL
