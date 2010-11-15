@@ -138,7 +138,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       } else j <- (1:nc)[j]
     } else
     if(is.character(j)) {
-      j <- which(match(colnames(x), j, nomatch=0L) > 0L)
+      j <- match(j, colnames(x), nomatch=0L)
     }
 
     j0 <- which(!as.logical(j))
