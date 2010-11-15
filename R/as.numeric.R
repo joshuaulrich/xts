@@ -22,8 +22,8 @@
 as.numeric.xts <- function(x, drop=TRUE, ...)
 {
   if(drop)
-    return(as.numeric(unclass(x)))
-  .xts(matrix(as.numeric(unclass(x)),nc=NCOL(x)), .index(x))
+    return(as.numeric(coredata(x)))
+  .xts(matrix(as.numeric(coredata(x)),nc=NCOL(x)), .index(x))
 }
 
 as.xts.numeric <-
@@ -52,8 +52,8 @@ function(x,...) {
 as.integer.xts <- function(x, drop=TRUE, ...)
 {
   if(drop)
-    return(as.integer(unclass(x)))
-  .xts(matrix(as.integer(unclass(x)),nc=NCOL(x)), .index(x))
+    return(as.integer(coredata(x)))
+  .xts(matrix(as.integer(coredata(x)),nc=NCOL(x)), .index(x))
 }
 
 as.xts.integer <-
@@ -82,8 +82,8 @@ function(x,...) {
 as.double.xts <- function(x, drop=TRUE, ...)
 {
   if(drop)
-    return(as.double(unclass(x)))
-  .xts(matrix(as.double(unclass(x)),nc=NCOL(x)), .index(x))
+    return(as.double(coredata(x)))
+  .xts(matrix(as.double(coredata(x)),nc=NCOL(x)), .index(x))
 }
 
 as.xts.double <-
@@ -112,8 +112,8 @@ function(x,...) {
 as.complex.xts <- function(x, drop=TRUE, ...)
 {
   if(drop)
-    return(as.complex(unclass(x)))
-  .xts(matrix(as.complex(unclass(x)),nc=NCOL(x)), .index(x))
+    return(as.complex(coredata(x)))
+  .xts(matrix(as.complex(coredata(x)),nc=NCOL(x)), .index(x))
 }
 
 as.xts.complex <-
@@ -142,8 +142,8 @@ function(x,...) {
 as.logical.xts <- function(x, drop=TRUE, ...)
 {
   if(drop)
-    return(as.logical(unclass(x)))
-  .xts(matrix(as.logical(unclass(x)),nc=NCOL(x)), .index(x))
+    return(as.logical(coredata(x)))
+  .xts(matrix(as.logical(coredata(x)),nc=NCOL(x)), .index(x))
 }
 
 as.xts.logical <-
