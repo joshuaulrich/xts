@@ -36,6 +36,11 @@ to.period <- to_period <- function(x, period='months', k=1, indexAt=NULL, name=N
   xo <- x
   x <- try.xts(x)
 
+  if(any(is.na(x))) {
+    x <- na.omit(x)
+    warning("missing values removed from data")
+  }
+
   if(!OHLC) {
     xx <- x[endpoints(x, period, k),]
   } else {
