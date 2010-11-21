@@ -94,7 +94,7 @@ na.replace <- function(x) {
 
 na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE, maxgap=Inf, ...) {
     stopifnot(is.xts(object))
-    maxgap <- min(maxgap, NROW(x))
+    maxgap <- min(maxgap, NROW(object))
     if(length(object) == 0)
       return(object)
     x <- if(dim(object)[2] > 1) {
