@@ -8,7 +8,7 @@ Last Observation Carried Forward
 \pkg{xts} method replace \sQuote{NA} with most recent non-\sQuote{NA}
 }
 \usage{
-\method{na.locf}{xts}(object, na.rm = FALSE, fromLast = FALSE, ...)
+\method{na.locf}{xts}(object, na.rm = FALSE, fromLast = FALSE, maxgap=Inf, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,6 +23,10 @@ default S3 method in the \pkg{zoo} package.
   \item{fromLast}{
 logical. Cause observations to be carried backward rather
 than forward. Default is \code{FALSE}.
+}
+  \item{maxgap}{
+runs of more than \sQuote{maxgap} will retain \sQuote{NA}s after the
+maximum gap specified. See \code{na.locf} in the zoo package.
 }
   \item{\dots}{
 unused

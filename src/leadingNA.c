@@ -93,6 +93,12 @@ SEXP naCheck (SEXP x, SEXP check)
       for(i=_first; i<nr; i++) {
         if(int_x[i] == NA_LOGICAL) {
           error("Series contains non-leading NAs");  
+          /* possibly return LOGICAL with error handled in
+             R code with flag.  This would let checking for
+             NAs break faster on larger data if NAs are found
+             early.
+             Best case: O(1); Worst case O(N) vs. O(N) + alloc
+             for is.na() call from R */
         }
       }
       break;
@@ -121,13 +127,14 @@ SEXP naCheck (SEXP x, SEXP check)
   return(first);
 }
 
-SEXP na_locf (SEXP x, SEXP fromLast)
+SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
 {
   /* only works on univariate data         *
    * of type LGLSXP, INTSXP and REALSXP.   */
   SEXP result;
 
-  int i, nr, _first, P=0;
+  int i, ii, nr, _first, P=0;
+  double gap, maxgap;
   _first = firstNonNA(x);
 
   if(_first == nrows(x))
@@ -140,6 +147,8 @@ SEXP na_locf (SEXP x, SEXP fromLast)
     error("na.locf.xts only handles univariate, dimensioned data");
 
   nr = nrows(x);
+  maxgap = asReal(coerceVector(_maxgap,REALSXP));
+  gap = 0;
 
   PROTECT(result = allocVector(TYPEOF(x), nrows(x))); P++;
 
@@ -155,16 +164,20 @@ SEXP na_locf (SEXP x, SEXP fromLast)
         /* result[_first] now has first value fromLast=FALSE */
         for(i=_first+1; i<nr; i++) {
           int_result[i] = int_x[i];
-          if(int_result[i] == NA_LOGICAL)
+          if(int_result[i] == NA_LOGICAL && gap < maxgap) {
             int_result[i] = int_result[i-1];
+            gap++;
+          }
         }
       } else {
         /* nr-2 is first position to fill fromLast=TRUE */
         int_result[nr-1] = int_x[nr-1];
         for(i=nr-2; i>=0; i--) {
           int_result[i] = int_x[i];
-          if(int_result[i] == NA_LOGICAL)
+          if(int_result[i] == NA_LOGICAL && gap < maxgap) {
             int_result[i] = int_result[i+1];
+            gap++;
+          }
         }
       }
       break;
@@ -179,16 +192,34 @@ SEXP na_locf (SEXP x, SEXP fromLast)
         /* result[_first] now has first value fromLast=FALSE */
         for(i=_first+1; i<nr; i++) {
           int_result[i] = int_x[i];
-          if(int_result[i] == NA_INTEGER)
+          if(int_result[i] == NA_INTEGER) {
             int_result[i] = int_result[i-1];
+            gap++;
+          } else {
+            if((int)gap > (int)maxgap) {
+              for(ii = i-1; ii > i-gap-1; ii--) {
+                int_result[ii] = NA_INTEGER; 
+              }
+            }
+            gap=0;
+          }
         }
       } else {
         /* nr-2 is first position to fill fromLast=TRUE */
         int_result[nr-1] = int_x[nr-1];
         for(i=nr-2; i>=0; i--) {
           int_result[i] = int_x[i];
-          if(int_result[i] == NA_INTEGER)
+          if(int_result[i] == NA_INTEGER) {
             int_result[i] = int_result[i+1];
+            gap++;
+          } else {
+            if((int)gap > (int)maxgap) {
+              for(ii = i+1; ii < i+gap+1; ii++) {
+                int_result[ii] = NA_INTEGER; 
+              }
+            }
+            gap=0;
+          }
         }
       }
       break;
@@ -201,17 +232,34 @@ SEXP na_locf (SEXP x, SEXP fromLast)
         }
         for(i=_first+1; i<nr; i++) {
           real_result[i] = real_x[i];
-          if(ISNA(real_result[i]) || ISNAN(real_result[i]))
+          if(ISNA(real_result[i]) || ISNAN(real_result[i])) {
             real_result[i] = real_result[i-1];
+            gap++;
+          } else {
+            if((int)gap > (int)maxgap) {
+              for(ii = i-1; ii > i-gap-1; ii--) {
+                real_result[ii] = NA_REAL; 
+              }
+            }
+            gap=0;
+          }
         }
       } else {                      /* fromLast=TRUE */
         real_result[nr-1] = real_x[nr-1];
         for(i=nr-2; i>=0; i--) {
           real_result[i] = real_x[i];
-          if(ISNA(real_result[i]) || ISNAN(real_result[i]))
+          if(ISNA(real_result[i]) || ISNAN(real_result[i])) {
             real_result[i] = real_result[i+1];
+            gap++;
+          } else {
+            if((int)gap > (int)maxgap) {
+              for(ii = i+1; ii < i+gap+1; ii++) {
+                real_result[ii] = NA_REAL; 
+              }
+            }
+            gap=0;
+          }
         }
-
       }
       break;
     default:
