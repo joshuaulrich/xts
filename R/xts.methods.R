@@ -168,59 +168,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
 function(x, i, j, value) 
 {
     if (!missing(i)) {
-
-    if (timeBased(i)) { # || (inherits(i, "AsIs") && is.character(i))) {
-      if(inherits(i, "POSIXct")) {
-        #i <- match(i, .index(x))
-        i <- which(!is.na(match(.index(x), i)))
-      } else {
-        #i <- match(as.POSIXct(as.character(i)), .index(x))
-        i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i)))))
-      }
-      i[is.na(i)] <- 0
-    } else 
-    if(is.logical(i)) {
-      i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]
-    } else
-    if (is.character(i)) {
-      # enables subsetting by date style strings
-      # must be able to process - and then allow for operations???
-
-      i.tmp <- NULL
-      for(ii in i) {
-        if(!identical(grep("(::)|/",ii),integer(0))) {
-          tBR <- timeBasedRange(ii)
-          
-          # the first index value to be found
-          if(is.na(tBR[1])) {
-            first.time <- .index(x)[1]
-          } else first.time <- tBR[1]
-
-          # the last index value ot be found
-          if(is.na(tBR[2])) {
-            last.time  <- .index(x)[nr]
-          } else last.time <- tBR[2]
-
-        } else {
-          # if single date is given - get start and end points if resolution of
-          # series is greater than the time specified
-          dates <- paste(ii,ii,sep='/')
-          tBR <- timeBasedRange(dates)
-          first.time <- tBR[1]
-          last.time  <- tBR[2]
-        }      
-        
-        i.tmp <- c(i.tmp,
-                   seq.int(binsearch(first.time, .index(x),  TRUE),
-                           binsearch(last.time,  .index(x), FALSE))
-                  )
-      }
-      i <- i.tmp
-      # .subset is picky, 0's in the 'i' position cause failures -- is this still nec? -jar
-      zero.index <- binsearch(0, i, NULL)
-      if(!is.na(zero.index))
-        i <- i[ -zero.index ]
-    }
+      i <- x[i, which.i=TRUE]
     }
     .Class <- "matrix"
     NextMethod(.Generic)
