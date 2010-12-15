@@ -4,7 +4,7 @@ align.time <- function(x, ...) {
 
 align.time.xts <- function(x, n=60, ...) {
   if(n <= 0) stop("'n' must be positive")
-  .xts(x, .index(x) + (n-.index(x) %% n))
+  .xts(x, .index(x) + (n-.index(x) %% n), tzone=indexTZ(x), tclass=indexClass(x))
 }
 
 align.time.POSIXct <- function(x, n=60, ...) {
