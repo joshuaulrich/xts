@@ -98,8 +98,12 @@ na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE, maxgap=Inf, ...) {
     if(length(object) == 0)
       return(object)
     x <- if(dim(object)[2] > 1) {
-      .xts(apply(object, 2, function(x) .Call('na_locf', x, fromLast, maxgap, PACKAGE='xts')),
-           .index(object), tzone=indexTZ(object), .indexCLASS=indexClass(object))
+      do.call(cbind.xts, lapply(1:NCOL(object), 
+                            function(n) {
+                              .Call('na_locf', object[,n], fromLast, maxgap, PACKAGE='xts')
+                            } ))
+      #.xts(apply(object, 2, function(x) .Call('na_locf', x, fromLast, maxgap, PACKAGE='xts')),
+      #     .index(object), tzone=indexTZ(object), .indexCLASS=indexClass(object))
     } else .Call("na_locf", object, fromLast, maxgap, PACKAGE="xts")
     if(na.rm) {
       return(structure(na.omit(x),na.action=NULL))
