@@ -99,7 +99,7 @@ na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE, maxgap=Inf, ...) {
       return(object)
     x <- if(dim(object)[2] > 1) {
       .xts(apply(object, 2, function(x) .Call('na_locf', x, fromLast, maxgap, PACKAGE='xts')),
-           .index(object), .indexCLASS=indexClass(object))
+           .index(object), tzone=indexTZ(object), .indexCLASS=indexClass(object))
     } else .Call("na_locf", object, fromLast, maxgap, PACKAGE="xts")
     if(na.rm) {
       return(structure(na.omit(x),na.action=NULL))
