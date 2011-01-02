@@ -30,7 +30,7 @@ SEXP roll_sum (SEXP x, SEXP n)
   nrs = nrows(x);
 
   /* Get values from pointers */
-  int int_n = INTEGER(coerceVector(n, INTSXP))[0];
+  int int_n = asInteger(n);
 
   /* Initalize result R object */
   SEXP result;
@@ -43,7 +43,7 @@ SEXP roll_sum (SEXP x, SEXP n)
   /* check for non-leading NAs and get first non-NA location */
   SEXP first;
   PROTECT(first = naCheck(x, ScalarLogical(TRUE))); P++;
-  int int_first = INTEGER(first)[0];
+  int int_first = asInteger(first);
 
   switch(TYPEOF(x)) {
     case REALSXP:
@@ -56,8 +56,8 @@ SEXP roll_sum (SEXP x, SEXP n)
         if(i >= int_first)
           real_sum += real_x[i];
       }
-      /* loop over all other values */
       real_result[ int_n + int_first - 1 ] = real_sum;
+      /* loop over all other values */
       for(i=int_n+int_first; i<nrs; i++) {
         real_result[i] = real_result[i-1] + real_x[i] - real_x[i-int_n];
       }
@@ -102,7 +102,7 @@ SEXP roll_min (SEXP x, SEXP n)
   int i, j, P=0;
 
   /* Get values from pointers */
-  int int_n = INTEGER(coerceVector(n, INTSXP))[0];
+  int int_n = asInteger(n);
 
   /* initialize pointers and values */
   int *int_result=NULL, *int_x=NULL;
@@ -230,7 +230,7 @@ SEXP roll_max (SEXP x, SEXP n)
   int i, j, P=0;
 
   /* Get values from pointers */
-  int int_n = INTEGER(coerceVector(n, INTSXP))[0];
+  int int_n = asInteger(n);
 
   /* initialize pointers and values */
   int *int_result=NULL, *int_x=NULL;
@@ -247,7 +247,7 @@ SEXP roll_max (SEXP x, SEXP n)
   /* check for non-leading NAs and get first non-NA location */
   SEXP first;
   PROTECT(first = naCheck(x, ScalarLogical(TRUE))); P++;
-  int int_first = INTEGER(first)[0];
+  int int_first = asInteger(first);
 
   /* The branch by type allows for fewer type checks/branching
    * within the algorithm, providing a _much_ faster mechanism
@@ -364,10 +364,10 @@ SEXP roll_cov (SEXP x, SEXP y, SEXP n, SEXP samp)
   if(nrx != nry) error("nrx != nry, blame the R function writer");
 
   /* Get values from function arguments */
-  double *real_x = REAL(coerceVector(x, REALSXP));
-  double *real_y = REAL(coerceVector(y, REALSXP));
-  int int_n = INTEGER(coerceVector(n, INTSXP))[0];
-  int int_samp = LOGICAL(coerceVector(samp, LGLSXP))[0];
+  double *real_x = REAL(PROTECT(coerceVector(x, REALSXP))); P++;
+  double *real_y = REAL(PROTECT(coerceVector(y, REALSXP))); P++;
+  int int_n = asInteger(n);
+  int int_samp = asLogical(samp);
   
   /* Initalize result R object */
   SEXP result;
@@ -384,7 +384,7 @@ SEXP roll_cov (SEXP x, SEXP y, SEXP n, SEXP samp)
   /* rolling sum of x * y */
   PROTECT(xy = allocVector(REALSXP, nrx)); P++;
   double *real_xy = REAL(xy);
-  for(i=0; i<nrx; ++i) {
+  for(i=nrx; i--;) {
     real_xy[i] = real_x[i] * real_y[i];
   }
   PROTECT(sum_xy = roll_sum(xy, n)); P++;
@@ -393,14 +393,14 @@ SEXP roll_cov (SEXP x, SEXP y, SEXP n, SEXP samp)
   /* check for non-leading NAs and get first non-NA location */
   SEXP first;
   PROTECT(first = naCheck(sum_xy, ScalarLogical(TRUE))); P++;
-  int int_first = INTEGER(first)[0];
+  int int_first = asInteger(first);
 
   /* set leading NAs */
   for(i=0; i<int_first; i++) {
     real_result[i] = NA_REAL;
   }
   /* calculate cov */
-  double mult = int_samp ? int_n/(int_n-1) : 1;
+  double mult = int_samp ? (double)int_n/(int_n-1) : 1;
   double int_n2 = int_n*int_n;
   for(i=int_first; i<nrx; i++) {
     real_result[i] = ( real_sum_xy[i] / int_n -
