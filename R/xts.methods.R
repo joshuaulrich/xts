@@ -31,6 +31,7 @@
 `.subset.xts` <- `[.xts` <-
 function(x, i, j, drop = FALSE, which.i=FALSE,...) 
 {
+    USE_EXTRACT <- FALSE
     if(is.null(dim(x))) {
       nr <- length(x)
       nc <- 1L
@@ -71,6 +72,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     if (is.character(i)) {
       # is i of the format T/T?
       if(length(i) == 1 && !identical(integer(),grep("^T.*?/T",i[1]))) {
+      #if(grepl("^T.*?/T",i[1]) && length(i) == 1) {
         i <- gsub("T|:","",i)
         i <- strsplit(i, "/")[[1]]
         i <- .makeISO8601TT(x, i[1],i[2])
@@ -80,6 +82,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
 
       i.tmp <- NULL
       tz <- as.character(indexTZ(x)) # ideally this moves to attr(index,"tzone")
+      i_len <- length(i)
 
       for(ii in i) {
         adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[nr], tz=tz)
@@ -92,9 +95,10 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
         }
       }
       i <- i.tmp
+
+      if(i_len == 1L)
+        USE_EXTRACT <- TRUE
     }
-
-
   
     if(!isOrdered(i,strictly=FALSE)) {
       i <- sort(i)
@@ -103,6 +107,9 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     zero.index <- binsearch(0, i, NULL)
     if(!is.na(zero.index))
       i <- i[ -zero.index ]
+
+    if(length(i) <= 0 && USE_EXTRACT) 
+      USE_EXTRACT <- FALSE
 
     if(which.i)
       return(i)
@@ -117,10 +124,17 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
         x.tmp <- .xts(rep(NA,length(i)), .index(x)[i])
         return((colnames(x.tmp) <- colnames(x)))
       } else {
-        return(.Call('_do_subset_xts', 
-                     x, as.integer(i),
-                     as.integer(1:nc), 
-                     drop, PACKAGE='xts'))
+        if(USE_EXTRACT) {
+          return(.Call('extract_col', 
+                       x, as.integer(1:nc),
+                       drop,
+                       as.integer(i[1]), as.integer(i[length(i)]), PACKAGE="xts"))
+        } else {
+          return(.Call('_do_subset_xts', 
+                       x, as.integer(i),
+                       as.integer(1:nc), 
+                       drop, PACKAGE='xts'))
+        }
       }
     } else
     # test for negative subscripting in j
@@ -152,9 +166,14 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
                   .indexCLASS=indexClass(x), .indexTZ=indexTZ(x)))
     } 
     if(missing(i))
-      return(.Call("extract_col", x, as.integer(j), drop, PACKAGE='xts'))
+      return(.Call("extract_col", x, as.integer(j), drop, 1, nr, PACKAGE='xts'))
+    if(USE_EXTRACT) {
+          return(.Call('extract_col', 
+                       x, as.integer(j),
+                       drop,
+                       as.integer(i[1]), as.integer(i[length(i)]), PACKAGE='xts'))
+    } else
     return(.Call('_do_subset_xts', x, as.integer(i), as.integer(j), drop, PACKAGE='xts'))
-
 }
 
 # Replacement method for xts objects

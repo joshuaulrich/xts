@@ -1,12 +1,13 @@
 #include <R.h>
 #include <Rinternals.h>
+#include "xts.h"
 
 /*
 
   provide fast memcpy extraction by column
   major orientation for matrix objects. Should
   be as fast as extracting list elements or
-  data.frame columns in R.
+  data.frame columns in R. ( update: it is much faster actually -jar )
 
   One key difference is that we are also reattaching
   the index attribute to allow for the object to
@@ -14,65 +15,88 @@
 
 */
 
-SEXP extract_col (SEXP x, SEXP j, SEXP drop) {
-  SEXP result;
-  int nrs, ncs, i, jj;
+SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_) {
+  SEXP result, index, new_index;
+  int nrs, ncs, i, jj, first, last;
 
   ncs = ncols(x);
-  PROTECT(result = allocVector(TYPEOF(x), nrows(x) * length(j)));
+  nrs = nrows(x);
+
+  first = asInteger(first_)-1;
+  last = asInteger(last_)-1;
+
+  /* nrs = offset_end - offset_start - 1; */
+  nrs = last - first + 1;
+  
+
+  PROTECT(result = allocVector(TYPEOF(x), nrs * length(j)));
 
   switch(TYPEOF(x)) {
     case REALSXP:
       for(i=0; i<length(j); i++) {
-        memcpy(&(REAL(result)[i*nrows(x)]), 
-               &(REAL(x)[(INTEGER(j)[i]-1)*nrows(x)]), 
-               nrows(x)*sizeof(double));
+        memcpy(&(REAL(result)[i*nrs]), 
+               &(REAL(x)[(INTEGER(j)[i]-1)*nrs + first]), 
+               nrs*sizeof(double));
       }
       break;
     case INTSXP:
       for(i=0; i<length(j); i++) {
-        memcpy(&(INTEGER(result)[i*nrows(x)]), 
-               &(INTEGER(x)[(INTEGER(j)[i]-1)*nrows(x)]), 
-               nrows(x)*sizeof(int));
+        memcpy(&(INTEGER(result)[i*nrs]), 
+               &(INTEGER(x)[(INTEGER(j)[i]-1)*nrs + first]), 
+               nrs*sizeof(int));
       }
       break;
     case LGLSXP:
       for(i=0; i<length(j); i++) {
-        memcpy(&(LOGICAL(result)[i*nrows(x)]), 
-               &(LOGICAL(x)[(INTEGER(j)[i]-1)*nrows(x)]), 
-               nrows(x)*sizeof(int));
+        memcpy(&(LOGICAL(result)[i*nrs]), 
+               &(LOGICAL(x)[(INTEGER(j)[i]-1)*nrs + first]), 
+               nrs*sizeof(int));
       }
       break;
     case CPLXSXP:
       for(i=0; i<length(j); i++) {
-        memcpy(&(COMPLEX(result)[i*nrows(x)]), 
-               &(COMPLEX(x)[(INTEGER(j)[i]-1)*nrows(x)]), 
-               nrows(x)*sizeof(Rcomplex));
+        memcpy(&(COMPLEX(result)[i*nrs]), 
+               &(COMPLEX(x)[(INTEGER(j)[i]-1)*nrs + first]), 
+               nrs*sizeof(Rcomplex));
       }
       break;
     case RAWSXP:
       for(i=0; i<length(j); i++) {
-        memcpy(&(RAW(result)[i*nrows(x)]), 
-               &(RAW(x)[(INTEGER(j)[i]-1)*nrows(x)]), 
-               nrows(x)*sizeof(Rbyte));
+        memcpy(&(RAW(result)[i*nrs]), 
+               &(RAW(x)[(INTEGER(j)[i]-1)*nrs + first]), 
+               nrs*sizeof(Rbyte));
       }
       break;
     case STRSXP:
-      nrs = nrows(x);
       for(jj=0; jj<length(j); jj++)
       for(i=0; i< nrs; i++)
-        SET_STRING_ELT(result, i+jj*nrs, STRING_ELT(x, i+(INTEGER(j)[jj]-1)*nrs));
+        SET_STRING_ELT(result, i+jj*nrs, STRING_ELT(x, i+(INTEGER(j)[jj]-1)*nrs+first));
       break;
     default:
       error("unsupported type");
   }
 
-  copyMostAttrib(x, result);
+  if(nrs != nrows(x)) {
+    copyAttributes(x, result);
+    /* subset index */
+    index = getAttrib(x, install("index"));
+    PROTECT(new_index = allocVector(TYPEOF(index), nrs)); 
+    if(TYPEOF(index) == REALSXP) {
+      memcpy(REAL(new_index), &(REAL(index)[first]), nrs*sizeof(double)); 
+    } else { /* INTSXP */
+      memcpy(INTEGER(new_index), &(INTEGER(index)[first]), nrs*sizeof(int)); 
+    }
+    copyMostAttrib(new_index, index);
+    setAttrib(result, install("index"), new_index);
+    UNPROTECT(1);
+  } else {
+    copyMostAttrib(x, result); /* need an xts/zoo equal that skips 'index' */
+  }
 
   if(!asLogical(drop)) { /* keep dimension and dimnames */
     SEXP dim;
     PROTECT(dim = allocVector(INTSXP, 2));
-    INTEGER(dim)[0] = nrows(x);
+    INTEGER(dim)[0] = nrs;
     INTEGER(dim)[1] = length(j);
     setAttrib(result, R_DimSymbol, dim);
     UNPROTECT(1);

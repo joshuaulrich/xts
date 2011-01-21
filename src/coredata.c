@@ -35,7 +35,7 @@ SEXP coredata (SEXP x, SEXP copyAttr)
   int i, j, ncs, nrs;
   int P=0;
   PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
-  switch(TYPEOF(x)) {
+  switch( TYPEOF(x)) {
     case REALSXP:
       memcpy(REAL(result), REAL(x), length(result) * sizeof(double));
       break;
@@ -61,7 +61,7 @@ SEXP coredata (SEXP x, SEXP copyAttr)
       error("currently unsupported data type");
       break;
   }
-  if(!isNull(getAttrib(x, R_DimSymbol))) {
+  if( !isNull(getAttrib(x, R_DimSymbol))) {
     setAttrib(result, R_DimSymbol, getAttrib(x, R_DimSymbol));
     if( !isNull(getAttrib(x, R_DimNamesSymbol)) ) {  
       setAttrib(result, R_DimNamesSymbol, getAttrib(x,R_DimNamesSymbol));
@@ -69,7 +69,7 @@ SEXP coredata (SEXP x, SEXP copyAttr)
   } else {
     setAttrib(result, R_NamesSymbol, getAttrib(x, R_NamesSymbol));
   }
-  if(LOGICAL(copyAttr)[0]) {
+  if( asLogical(copyAttr)) {
     copyMostAttrib(x,result);
     setAttrib(result, install("class"), getAttrib(x, install("oclass")));
   }
