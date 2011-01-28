@@ -17,10 +17,10 @@
 
 SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_) {
   SEXP result, index, new_index;
-  int nrs, ncs, i, jj, first, last;
+  int nrs, nrsx, ncs, i, jj, first, last;
 
   ncs = ncols(x);
-  nrs = nrows(x);
+  nrsx = nrows(x);
 
   first = asInteger(first_)-1;
   last = asInteger(last_)-1;
@@ -34,43 +34,47 @@ SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_) {
   switch(TYPEOF(x)) {
     case REALSXP:
       for(i=0; i<length(j); i++) {
+/*
+Rprintf("j + i*nrs + first=%i\n", (int)(INTEGER(j)[i]-1 + i*nrs + first));
+Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
+*/
         memcpy(&(REAL(result)[i*nrs]), 
-               &(REAL(x)[(INTEGER(j)[i]-1)*nrs + first]), 
+               &(REAL(x)[(INTEGER(j)[i]-1)*nrsx + first]), 
                nrs*sizeof(double));
       }
       break;
     case INTSXP:
       for(i=0; i<length(j); i++) {
         memcpy(&(INTEGER(result)[i*nrs]), 
-               &(INTEGER(x)[(INTEGER(j)[i]-1)*nrs + first]), 
+               &(INTEGER(x)[(INTEGER(j)[i]-1)*nrsx + first]), 
                nrs*sizeof(int));
       }
       break;
     case LGLSXP:
       for(i=0; i<length(j); i++) {
         memcpy(&(LOGICAL(result)[i*nrs]), 
-               &(LOGICAL(x)[(INTEGER(j)[i]-1)*nrs + first]), 
+               &(LOGICAL(x)[(INTEGER(j)[i]-1)*nrsx + first]), 
                nrs*sizeof(int));
       }
       break;
     case CPLXSXP:
       for(i=0; i<length(j); i++) {
         memcpy(&(COMPLEX(result)[i*nrs]), 
-               &(COMPLEX(x)[(INTEGER(j)[i]-1)*nrs + first]), 
+               &(COMPLEX(x)[(INTEGER(j)[i]-1)*nrsx + first]), 
                nrs*sizeof(Rcomplex));
       }
       break;
     case RAWSXP:
       for(i=0; i<length(j); i++) {
         memcpy(&(RAW(result)[i*nrs]), 
-               &(RAW(x)[(INTEGER(j)[i]-1)*nrs + first]), 
+               &(RAW(x)[(INTEGER(j)[i]-1)*nrsx + first]), 
                nrs*sizeof(Rbyte));
       }
       break;
     case STRSXP:
       for(jj=0; jj<length(j); jj++)
       for(i=0; i< nrs; i++)
-        SET_STRING_ELT(result, i+jj*nrs, STRING_ELT(x, i+(INTEGER(j)[jj]-1)*nrs+first));
+        SET_STRING_ELT(result, i+jj*nrs, STRING_ELT(x, i+(INTEGER(j)[jj]-1)*nrsx+first));
       break;
     default:
       error("unsupported type");
