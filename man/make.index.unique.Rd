@@ -9,7 +9,7 @@ Force Time Values To Be Unique
 A generic function to force sorted time vectors to be
 unique. Useful for high-frequency time-series where original
 time-stamps may have identical values. For the case
-of xts objects, the default \code{eps} is set to one-hundred
+of xts objects, the default \code{eps} is set to ten
 microseconds. In practice this advances each subsequent
 identical time by \code{eps} over the previous (possibly also
 advanced) value.
