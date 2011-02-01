@@ -150,6 +150,9 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     if(is.logical(j)) {
       if(length(j) == 1) {
         j <- (1:nc)[rep(j, nc)]
+      }
+      else if (length(j) > nc) {
+          stop("(subscript) logical subscript too long")
       } else j <- (1:nc)[j]
     } else
     if(is.character(j)) {
