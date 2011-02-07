@@ -40,3 +40,69 @@ SEXP make_index_unique (SEXP x_, SEXP eps_) {
   UNPROTECT(1);
   return(result);
 }
+
+SEXP non_duplicates (SEXP x_, SEXP fromLast_) {
+  int fromLast = asLogical(fromLast_),
+      i, d=0,
+      len   = length(x_);
+  
+  int *x_int;
+  double *x_real;
+
+  SEXP duplicates;
+  int *duplicates_int;
+  PROTECT(duplicates = allocVector(INTSXP, len)); /* possibly resize this */
+  duplicates_int = INTEGER(duplicates);
+
+  if(!fromLast) { /* keep first observation */
+    duplicates_int[0] = ++d;
+    switch(TYPEOF(x_)) {
+      case INTSXP:
+        x_int = INTEGER(x_);
+        for(i=1; i < len-1; i++) {
+          if( x_int[i-1] != x_int[i]) {
+Rprintf("i=%i:  x[i-1]=%i, x[i]=%i\n",i,x_int[i-1],x_int[i]);
+            duplicates_int[d++] = i+1;
+          }
+        }      
+        break;
+      case REALSXP:
+        x_real = REAL(x_);
+        for(i=1; i < len; i++) {
+          /*
+          if( x_real[i-1] == x_real[i])
+            duplicates_int[d++] = (int)(-1*(i+1));
+          */
+          if( x_real[i-1] != x_real[i])
+            duplicates_int[d++] = i+1;
+        }      
+        break;
+      default:
+        error("only numeric types supported");
+        break;
+    }
+  } else {    /* keep last observation  */
+    switch(TYPEOF(x_)) {
+      case INTSXP:
+        x_int = INTEGER(x_);
+        for(i=1; i < len; i++) {
+          if( x_int[i-1] != x_int[i])
+            duplicates_int[d++] = i;
+        }      
+        break;
+      case REALSXP:
+        x_real = REAL(x_);
+        for(i=1; i < len; i++) {
+          if( x_real[i-1] != x_real[i])
+            duplicates_int[d++] = i;
+        }      
+        break;
+      default:
+        error("only numeric types supported");
+        break;
+    }
+    duplicates_int[d++] = len;
+  }
+  UNPROTECT(1);
+  return(lengthgets(duplicates, d));
+}
