@@ -51,6 +51,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       }
       if(max(i) > nr)
         stop('subscript out of bounds')
+      #i <- i[-which(i == 0)]
     } else
     if(inherits(i, "AsIs") && is.character(i)) {
       i <- MATCH(i, format(index(x)))

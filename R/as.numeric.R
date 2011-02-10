@@ -43,6 +43,8 @@ function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
 
 re.numeric <-
 function(x,...) {
+  if( !is.null(dim(x)))
+    return(as.matrix(x))
   # jmu
   y <- as.numeric(x,...)
   names(y) <- index(x)
@@ -73,6 +75,8 @@ function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
 
 re.integer <-
 function(x,...) {
+  if( !is.null(dim(x)))
+    return(as.matrix(x))
   # jmu
   y <- as.integer(x,...)
   names(y) <- index(x)
@@ -103,6 +107,8 @@ function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
 
 re.double <-
 function(x,...) {
+  if( !is.null(dim(x)))
+    return(as.matrix(x))
   # jmu
   y <- as.double(x,...)
   names(y) <- index(x)
@@ -133,6 +139,8 @@ function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
 
 re.complex <-
 function(x,...) {
+  if( !is.null(dim(x)))
+    return(as.matrix(x))
   # jmu
   y <- as.complex(x,...)
   names(y) <- index(x)
@@ -163,6 +171,8 @@ function(x,order.by,dateFormat="POSIXct",frequency=NULL,...) {
 
 re.logical <-
 function(x,...) {
+  if( !is.null(dim(x)))
+    return(as.matrix(x))
   # jmu
   y <- as.logical(x,...)
   names(y) <- index(x)
