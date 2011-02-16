@@ -90,7 +90,7 @@ Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
     } else { /* INTSXP */
       memcpy(INTEGER(new_index), &(INTEGER(index)[first]), nrs*sizeof(int)); 
     }
-    copyMostAttrib(new_index, index);
+    copyMostAttrib(index, new_index);
     setAttrib(result, install("index"), new_index);
     UNPROTECT(1);
   } else {
