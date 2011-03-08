@@ -169,6 +169,11 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
             gap++;
           }
         }
+        if((int)gap > (int)maxgap) {  /* check that we don't have excessive trailing gap */
+          for(ii = i-1; ii > i-gap-1; ii--) {
+            int_result[ii] = NA_LOGICAL; 
+          }
+        }
       } else {
         /* nr-2 is first position to fill fromLast=TRUE */
         int_result[nr-1] = int_x[nr-1];
@@ -204,6 +209,11 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
             gap=0;
           }
         }
+        if((int)gap > (int)maxgap) {  /* check that we don't have excessive trailing gap */
+          for(ii = i-1; ii > i-gap-1; ii--) {
+            int_result[ii] = NA_INTEGER; 
+          }
+        }
       } else {
         /* nr-2 is first position to fill fromLast=TRUE */
         int_result[nr-1] = int_x[nr-1];
@@ -219,6 +229,11 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
               }
             }
             gap=0;
+          }
+        }
+        if((int)gap > (int)maxgap) {  /* check that we don't have leading trailing gap */
+          for(ii = i+1; ii < i+gap+1; ii++) {
+            int_result[ii] = NA_INTEGER; 
           }
         }
       }
@@ -244,6 +259,11 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
             gap=0;
           }
         }
+        if((int)gap > (int)maxgap) {  /* check that we don't have excessive trailing gap */
+          for(ii = i-1; ii > i-gap-1; ii--) {
+            real_result[ii] = NA_REAL; 
+          }
+        }
       } else {                      /* fromLast=TRUE */
         real_result[nr-1] = real_x[nr-1];
         for(i=nr-2; i>=0; i--) {
@@ -258,6 +278,11 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
               }
             }
             gap=0;
+          }
+        }
+        if((int)gap > (int)maxgap) {  /* check that we don't have leading trailing gap */
+          for(ii = i+1; ii < i+gap+1; ii++) {
+            real_result[ii] = NA_REAL; 
           }
         }
       }
