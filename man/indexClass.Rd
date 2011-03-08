@@ -96,7 +96,7 @@ one of the following: \code{Date}, \code{POSIXct},
 is displayed via \code{print} (also called automatically
 when the object is returned) and in conversion to other
 classes such as \code{matrix}.  The valid values
-for indexFormat are the same for \code{format},
+for indexFormat are the same for \code{format.POSIXct},
 as this is the function that does the conversion internally.
 
 \code{convertIndex} returns a modified \code{xts} object, and
@@ -114,6 +114,10 @@ x <- xts(1:length(x), x)
 # all obs. in the first 6 and last 3 minutes of the
 # 8th and 15th hours on each day
 x[.indexhour(x) \%in\% c(8,15) & .indexmin(x) \%in\% c(0:5,57:59)]
+
+# change the index format
+indexFormat(x) <- "%Y-%b-%d %H:%M:%OS3"
+head(x)
 
 }
 \keyword{ utilities }
