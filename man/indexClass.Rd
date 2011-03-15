@@ -116,7 +116,7 @@ x <- xts(1:length(x), x)
 x[.indexhour(x) \%in\% c(8,15) & .indexmin(x) \%in\% c(0:5,57:59)]
 
 # change the index format
-indexFormat(x) <- "%Y-%b-%d %H:%M:%OS3"
+indexFormat(x) <- "\%Y-\%b-\%d \%H:\%M:\%OS3"
 head(x)
 
 }
