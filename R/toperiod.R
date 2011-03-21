@@ -192,3 +192,74 @@ function(x) {
     x
   } else x
 }
+`by.period` <-
+function(x, FUN, on=Cl, period="days", k=1, fill=na.locf, ...) {
+  # aggregate 'x' to a higher periodicity, apply 'FUN' to the 'on' columns
+  # of the aggregate, then merge the aggregate results with 'x' and fill NAs
+  # with na.locf.  E.g. you can apply a 5-day SMA of volume to tick data.
+  x <- try.xts(x, error = FALSE)
+  FUN <- match.fun(FUN)
+  on <- match.fun(on)  # Allow function or name
+  agg <- to.period(x, period, k, ...)
+  res <- FUN(on(agg), ...)
+  full <- merge(.xts(NULL,index(x)),res)
+  full <- fill(full)  # Allow function or value
+  return(full)
+}
+`to.frequency` <-
+function(x, by, k=1, name=NULL, OHLC=TRUE, ...) {
+  # similar to to.period, but aggregates on something other than time.
+  # E.g. aggregate by volume, where a "period" is 10% of the 5-day volume SMA.
+
+  # Most code pulled from to.period
+  if(missing(name)) name <- deparse(substitute(x))
+
+  xo <- x
+  x <- try.xts(x)
+
+  if(any(is.na(x))) {
+    x <- na.omit(x)
+    warning("missing values removed from data")
+  }
+
+#  if(!OHLC) {
+#    xx <- x[endpoints(x, period, k),]
+#  } else {
+#  if(!is.null(indexAt)) {
+#    index_at <- switch(indexAt,
+#                       "startof" = TRUE,  # start time of period
+#                       "endof"   = FALSE, # end time of period
+#                       FALSE
+#                      )
+#  } else index_at <- FALSE
+
+  # make suitable name vector
+
+  cnames <- c("Open", "High", "Low", "Close")
+  if (has.Vo(x)) 
+    cnames <- c(cnames, "Volume")
+  if (has.Ad(x) && is.OHLC(x))
+    cnames <- c(cnames, "Adjusted")
+  cnames <- paste(name,cnames,sep=".") 
+
+  if(is.null(name))
+    cnames <- NULL
+
+  # start to.frequency-specific code
+  if (missing(by)) by <- 1:NROW(x)
+  byVec <- cumsum(by)
+  bins <- byVec %/% k
+  bins[1] <- 0
+  ep <- which(diff(bins)!=0)
+  # end to.frequency-specific code
+
+  xx <- .Call("toPeriod", 
+              x, 
+              ep,
+              has.Vo(x), has.Vo(x,which=TRUE),
+              has.Ad(x) && is.OHLC(x),
+              FALSE,
+              cnames, PACKAGE='xts')
+
+  reclass(xx,xo)
+}
