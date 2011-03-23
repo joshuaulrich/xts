@@ -25,6 +25,7 @@
 #include <Rdefines.h>
 #include "xts.h"
 
+SEXP rbind_append(SEXP, SEXP);
 
 //SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env) {{{
 SEXP do_rbind_xts (SEXP x, SEXP y, SEXP dup)
@@ -78,11 +79,27 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP dup)
   PROTECT(xindex = getAttrib(x, xts_IndexSymbol)); P++;
   PROTECT(yindex = getAttrib(y, xts_IndexSymbol)); P++;
 
+
   if( TYPEOF(xindex) != TYPEOF(yindex) ) 
   {
     PROTECT(xindex = coerceVector(xindex, REALSXP)); P++;
     PROTECT(yindex = coerceVector(yindex, REALSXP)); P++;
   }
+
+#ifdef RBIND_APPEND
+if(TYPEOF(xindex)==REALSXP) {
+  if(REAL(xindex)[length(xindex)-1] < REAL(yindex)[0]) {
+    UNPROTECT(P);
+    return rbind_append(x,y);
+    }
+} else
+if(TYPEOF(xindex)==INTSXP) {
+  if(INTEGER(xindex)[length(xindex)-1] < INTEGER(yindex)[0]) {
+    UNPROTECT(P);
+    return rbind_append(x,y);
+    }
+}
+#endif
 
   PROTECT(newindex = allocVector(TYPEOF(xindex), len)); P++;
   PROTECT(result   = allocVector(TYPEOF(x), len * ncx)); P++;
@@ -532,6 +549,7 @@ SEXP rbind_append (SEXP x, SEXP y) {
   fashion
 
 */
+  /*Rprintf("rbind_append called\n");*/
   SEXP result;
   int nrs_x, nrs_y, ncs_x, ncs_y, nr;
   int i;
