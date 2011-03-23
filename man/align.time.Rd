@@ -14,6 +14,10 @@ in multiples of seconds.
 align.time(x, ...)
 
 \method{align.time}{xts}(x, n=60, \dots)
+
+shift.time(x, n=60, ...)
+
+adj.time(x, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,10 +25,10 @@ align.time(x, ...)
   object to align
 }
   \item{n}{
-  number of seconds to align at
+  number of seconds to adjust by
 }
   \item{\dots}{
-  additional arguments
+  additional arguments. See details.
 }
 }
 \details{
@@ -38,8 +42,6 @@ A new object of class(x)
 \author{
 Jeffrey A. Ryan with input from Brian Peterson
 }
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{to.period}}
