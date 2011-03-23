@@ -11,7 +11,7 @@ SEXP endpoints (SEXP _x, SEXP _on, SEXP _k)
   */
   int *int_index = NULL;
   double *real_index = NULL;
-  int i,j, nr, P=0;
+  int i=1,j=1, nr, P=0;
   int int_tmp[2];
   double real_tmp[2];
 

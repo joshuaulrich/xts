@@ -61,7 +61,9 @@ SEXP non_duplicates (SEXP x_, SEXP fromLast_) {
         x_int = INTEGER(x_);
         for(i=1; i < len-1; i++) {
           if( x_int[i-1] != x_int[i]) {
-Rprintf("i=%i:  x[i-1]=%i, x[i]=%i\n",i,x_int[i-1],x_int[i]);
+#ifdef DEBUG
+            Rprintf("i=%i:  x[i-1]=%i, x[i]=%i\n",i,x_int[i-1],x_int[i]);
+#endif
             duplicates_int[d++] = i+1;
           }
         }      
