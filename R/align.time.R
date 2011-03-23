@@ -25,18 +25,42 @@ shift.time.xts <- function(x, n=60, ...) {
   .xts(x, .index(x) + n, tzone=indexTZ(x), tclass=indexClass(x))
 }
 
-make.index.unique <- make.time.unique <- function(x, eps=0.00001, ...) {
+is.index.unique <- is.time.unique <- function(x) {
+  UseMethod("is.time.unique")
+}
+
+is.time.unique.xts <- function(x) {
+  isOrdered(.index(x), strictly=TRUE)
+}
+
+is.time.unique.zoo <- function(x) {
+  isOrdered(index(x), strictly=TRUE)
+}
+
+make.index.unique <- make.time.unique <- function(x, eps=0.000001, drop=FALSE, fromLast=FALSE, ...) {
   UseMethod("make.index.unique")
 }
 
-make.index.unique.xts <- function(x, eps=0.00001, ...) {
-  .Call('make_index_unique', x, eps, PACKAGE="xts")
+make.index.unique.xts <- function(x, eps=0.000001, drop=FALSE, fromLast=FALSE, ...) {
+  if( !drop) {
+    .Call('make_index_unique', x, eps, PACKAGE="xts")
+  } else {
+    x[.Call('non_duplicates', .index(x), fromLast, PACKAGE="xts")]
+  }
 }
 
-make.index.unique.numeric <- function(x, eps=0.00001, ...) {
-  .Call('make_unique', x, eps, PACKAGE="xts")
+make.index.unique.numeric <- function(x, eps=0.000001, drop=FALSE, fromLast=FALSE, ...) {
+  if( !drop) {
+    .Call('make_unique', x, eps, PACKAGE="xts")
+  } else {
+    x[.Call('non_duplicates', x, fromLast, PACKAGE="xts")]
+  }
 }
 
-make.index.unique.POSIXct <- function(x, eps=0.00001, ...) {
-  .Call('make_unique', x, eps, PACKAGE="xts")
+make.index.unique.POSIXct <- function(x, eps=0.000001, drop=FALSE, fromLast=FALSE, ...) {
+  if( !drop) {
+    .Call('make_unique', x, eps, PACKAGE="xts")
+  } else {
+    x[.Call('non_duplicates', x, fromLast, PACKAGE="xts")]
+  }
 }
