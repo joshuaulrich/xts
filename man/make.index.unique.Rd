@@ -1,6 +1,8 @@
 \name{make.index.unique}
 \alias{make.index.unique}
 \alias{make.time.unique}
+\alias{is.index.unique}
+\alias{is.time.unique}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Force Time Values To Be Unique

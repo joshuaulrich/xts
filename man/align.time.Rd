@@ -2,6 +2,8 @@
 \Rdversion{1.1}
 \alias{align.time}
 \alias{align.time.xts}
+\alias{adj.time}
+\alias{shift.time}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Align seconds, minutes, and hours to beginning of next period.

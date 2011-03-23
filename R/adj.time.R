@@ -1,19 +1,19 @@
 adj.time <-
-function(tm, ...) {
+function(x, ...) {
   tr <- match.call(expand=FALSE)$...
-  if(length(tr) < 1) return(tm)
+  if(length(tr) < 1) return(x)
 
-  oClass <- class(tm)
-  tm <- as.POSIXlt(tm)
-  ntime <- as.environment(unclass(tm))
+  oClass <- class(x)
+  x <- as.POSIXlt(x)
+  ntime <- as.environment(unclass(x))
   lapply(tr, function(T) {
-    assign(all.vars(T), with(tm, eval(T)), envir=ntime)
+    assign(all.vars(T), with(x, eval(T)), envir=ntime)
   })
-  tm <- structure(list(
+  x <- structure(list(
     sec=ntime$sec, min=ntime$min, hour=ntime$hour, 
     mday=ntime$mday, mon=ntime$mon, year=ntime$year,
-    wday=ntime$wday, yday=ntime$yday,isdst=ntime$isdst), tzone=attr(tm,"tzone"),
+    wday=ntime$wday, yday=ntime$yday,isdst=ntime$isdst), tzone=attr(x,"tzone"),
     class=c("POSIXt","POSIXlt"))
-  do.call(paste('as',oClass[1],sep='.'), list(tm))
+  do.call(paste('as',oClass[1],sep='.'), list(x))
 }
 
