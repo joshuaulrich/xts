@@ -518,5 +518,10 @@ SEXP lag_zoo (SEXP x, SEXP _k, SEXP _pad)
 
 SEXP lag_xts (SEXP x, SEXP _k, SEXP _pad) {
   int k = INTEGER(_k)[0]*-1; /* change zoo default negative handling */
-  return lag_zoo (x, ScalarInteger(k), _pad);
+  return zoo_lag (x, ScalarInteger(k), _pad);
+}
+
+SEXP lagts_xts (SEXP x, SEXP _k, SEXP _pad) {
+  int k = INTEGER(_k)[0]*-1; /* change zoo default negative handling */
+  return zoo_lag (x, ScalarInteger(k), _pad);
 }

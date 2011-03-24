@@ -18,7 +18,8 @@ as the full xts software, GPL3.
 #ifndef _XTS
 #define _XTS
 
-
+/* zoo_lag from zoo */
+SEXP(*zoo_lag)(SEXP,SEXP,SEXP);
 /*
 INTERNAL SYMBOLS
 */

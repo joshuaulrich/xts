@@ -1,3 +1,9 @@
+Changed in xts 0.8-1:
+
+o  Dependency now on 1.7-0 or better of zoo (R-forge at present)
+   This build now links to C code moved from xts to zoo. At present
+   this is only for zoo_lag (used in lag and lagts)
+
 Changes in xts 0.7-5:
 
 o  try.xts and reclass now are more efficient on xts objects,

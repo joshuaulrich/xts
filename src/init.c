@@ -21,6 +21,8 @@
 
 
 #include "xts.h"
+#include <Rconfig.h>
+#include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
 static const
@@ -66,4 +68,5 @@ void R_init_xts(DllInfo *info)
   R_RegisterCCallable("xts","tryXts",       (DL_FUNC) &tryXts);
   RegisterXTS(rbindXts);
   RegisterXTS(naCheck);
+  zoo_lag = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("zoo","zoo_lag");
 }
