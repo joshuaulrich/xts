@@ -66,7 +66,7 @@
 }
 
 
-`lag.xts` <- function(x, k=1, na.pad=TRUE, ...) {
+lag.xts <- function(x, k=1, na.pad=TRUE, ...) {
   zooCompat <- getOption('xts.compat.zoo.lag')
   if(is.logical(zooCompat) && zooCompat) {
     k <- -k
@@ -80,7 +80,16 @@
   .Call('lag_xts', x, as.integer(k), as.logical(na.pad), PACKAGE='xts')
 }
 
-`diff.xts` <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad=TRUE, ...)
+lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
+  if(length(k) > 1) {
+    if(is.null(names(k)))
+      names(k) <- paste("lag",k,sep="")
+    return(do.call("merge.xts", lapply(k, lag.xts, x=x, na.pad=na.pad,...)))
+  }
+  .Call('lag_xts', x, as.integer(k), as.logical(na.pad), PACKAGE='xts')
+}
+
+diff.xts <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad=TRUE, ...)
 {
   if(is.logical(x))
     x <- .xts(matrix(as.integer(x),nc=NCOL(x)), .index(x))

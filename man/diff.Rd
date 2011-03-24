@@ -1,6 +1,7 @@
 \name{diff.xts}
 \alias{diff.xts}
 \alias{lag.xts}
+\alias{lagts.xts}
 \title{ Lags and Differences of xts Objects }
 \description{
 Methods for computing lags and differences on \code{xts} objects.  This
@@ -9,6 +10,8 @@ argument changes.
 }
 \usage{
 \method{lag}{xts}(x, k = 1, na.pad = TRUE, ...)
+
+\method{lagts}{xts}(x, k = 1, na.pad = TRUE, ...)
 
 \method{diff}{xts}(x, lag = 1, differences = 1, arithmetic = TRUE, log = FALSE, na.pad = TRUE, ...)
 }
@@ -38,6 +41,14 @@ and within functions requiring positional matching of data.
 Backwards compatability with zoo can be achieved by setting
 \code{options(xts.compat.zoo.lag=TRUE)}. This will change the
 defaults of lag.xts to k=-1 and na.pad=FALSE.
+
+With the introduction of the new \code{lagts} generic in zoo, lag.xts
+will begin the process of reverting to zoo-behavior, i.e. negative
+k values will indicate positive lags.  The current xts behavior will
+then move to lagts.  The process by which this will happen will be
+a warning displayed in any lag.xts call at first, calling attention
+to the upcoming change.  The new xts method for lagts will be be made available
+as of 0.8-1.  Warning messages of the change will follow in subsequent releases.
 }
 \value{
 An \code{xts} object reflected the desired lag and/or differencing.
@@ -46,8 +57,11 @@ An \code{xts} object reflected the desired lag and/or differencing.
 \author{ Jeffrey A. Ryan }
 \examples{
 x <- xts(1:10, Sys.Date()+1:10)
-lag(x)
+lag(x)    # currently using xts-style positive k 
+lagts(x)  # same as original lag.xts, to allow for lag.xts to revert to R lag consistency
+
 lag(x, k=2)
+lagts(x, k=2)
 
 lag(x, k=-1, na.pad=FALSE) # matches lag.zoo(x, k=1)
 
