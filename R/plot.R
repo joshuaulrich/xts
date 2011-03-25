@@ -55,9 +55,9 @@
 
   dots <- list(...)
 
-  if('axes' %in% names(dots)) {
-    if(!dots$axes) axes <- FALSE
-  } else axes <- TRUE
+#  if('axes' %in% names(dots)) {
+#    if(!dots$axes) axes <- FALSE
+#  } else axes <- TRUE
 
   if(axes) {
     if(minor.ticks)
