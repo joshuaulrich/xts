@@ -20,6 +20,7 @@ as the full xts software, GPL3.
 
 /* zoo_lag from zoo */
 SEXP(*zoo_lag)(SEXP,SEXP,SEXP);
+SEXP(*zoo_coredata)(SEXP,SEXP);
 /*
 INTERNAL SYMBOLS
 */
@@ -61,8 +62,8 @@ FUNCTIONS
 SEXP do_xtsAttributes(SEXP x);              // xtsAttributes i.e. user-added attributes
 SEXP do_xtsCoreAttributes(SEXP x);          /* xtsCoreAttributes xts-specific attributes
                                                CLASS, .indexFORMAT, .indexCLASS & class */
-SEXP coredata(SEXP x);
-SEXP coredata_xts(SEXP x);
+SEXP coredata(SEXP, SEXP);
+SEXP coredata_xts(SEXP);
 SEXP add_class(SEXP x, SEXP class);
 SEXP lagXts(SEXP x, SEXP k, SEXP pad);
 SEXP do_is_ordered(SEXP x, SEXP increasing, SEXP strictly);

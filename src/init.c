@@ -69,4 +69,5 @@ void R_init_xts(DllInfo *info)
   RegisterXTS(rbindXts);
   RegisterXTS(naCheck);
   zoo_lag = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("zoo","zoo_lag");
+  zoo_coredata = (SEXP(*)(SEXP,SEXP)) R_GetCCallable("zoo","zoo_coredata");
 }

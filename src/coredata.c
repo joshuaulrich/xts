@@ -22,6 +22,7 @@
 
 #include <R.h>
 #include <Rinternals.h>
+#include "xts.h"
 
 SEXP coredata (SEXP x, SEXP copyAttr)
 {
@@ -82,6 +83,6 @@ SEXP coredata (SEXP x, SEXP copyAttr)
 }
 
 SEXP coredata_xts(SEXP x) {
-  return coredata(x, ScalarLogical(0));
+  return zoo_coredata(x, ScalarLogical(0));
 }
 
