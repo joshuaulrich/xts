@@ -58,8 +58,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     } else
     if (timeBased(i)) { # || (inherits(i, "AsIs") && is.character(i))) {
       if(inherits(i, "POSIXct")) {
-        #i <- which(!is.na(match(.index(x), i)))
-        i <- which(.index(x) == unclass(i)) # seems to be about 6x faster
+        i <- which(!is.na(match(.index(x), i)))
       } else if(inherits(i, "Date")) {
         i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i)))))
       } else {
