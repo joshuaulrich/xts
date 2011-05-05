@@ -135,6 +135,8 @@ S3method(align.time, xts)
 S3method(align.time, POSIXct)
 S3method(align.time, POSIXlt)
 S3method(make.index.unique, xts)
+S3method(make.index.unique, numeric)
+S3method(make.index.unique, POSIXct)
 S3method(is.time.unique, xts)
 S3method(is.time.unique, zoo)
 
