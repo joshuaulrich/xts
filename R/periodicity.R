@@ -22,7 +22,7 @@ time.frequency <- function(x) {
   x <- gsub(":|/|-| ", "", x)
   nc <- nchar(x)
   if(nc < 4) stop("unrecognizable time.scale")
-  if(nc ==  4) res <- 2678400 * 12 #"years"
+  if(nc ==  4) res <- 2678400 * 12 #"yearly"
   if(nc  >  4) res <- 2678400      #"monthly"
   if(nc  >  6) res <- 86400        #"daily"
   if(nc  >  8) res <- 3600         #"hourly"
@@ -40,7 +40,7 @@ periodicity <- function(x, ...) {
   if( is.na(p) ) stop("can not calculate periodicity of 1 observation")
 
   units <- 'days' # the default if p > hourly
-  scale <- 'years'# the default for p > quarterly
+  scale <- 'yearly'# the default for p > quarterly
   label <- 'year'
 
   if( p < 60 ) {
