@@ -164,7 +164,7 @@ function(x, INDEX, FUN, ...)
     if(is.vector(xx))
       xx <- t(xx)
     xx <- t(xx)
-    if(is.null(colnames(xx)))
+    if(is.null(colnames(xx)) && NCOL(x)==NCOL(xx))
       colnames(xx) <- colnames(x)
     reclass(xx, x[INDEX])  
 }
