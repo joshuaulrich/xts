@@ -37,6 +37,7 @@ merge.xts <- function(...,
     fill <- NA
   } 
   
+  # as.list(substitute(list(...)))  # this is how zoo handles colnames - jar
   mc <- match.call(expand=FALSE)
   dots <- mc$...
   if(is.null(suffixes)) {
