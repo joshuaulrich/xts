@@ -31,7 +31,7 @@
 `.subset.xts` <- `[.xts` <-
 function(x, i, j, drop = FALSE, which.i=FALSE,...) 
 {
-    USE_EXTRACT <- FALSE
+    USE_EXTRACT <- TRUE
     if(is.null(dim(x))) {
       nr <- length(x)
       nc <- 1L
