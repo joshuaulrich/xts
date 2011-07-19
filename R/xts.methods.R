@@ -31,7 +31,7 @@
 `.subset.xts` <- `[.xts` <-
 function(x, i, j, drop = FALSE, which.i=FALSE,...) 
 {
-    USE_EXTRACT <- TRUE
+    USE_EXTRACT <- FALSE # initialize to FALSE
     if(is.null(dim(x))) {
       nr <- length(x)
       nc <- 1L
@@ -97,7 +97,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       }
       i <- i.tmp
 
-      if(i_len == 1L)
+      if(i_len == 1L)  # IFF we are using ISO8601 subsetting
         USE_EXTRACT <- TRUE
     }
   

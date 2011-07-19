@@ -1,11 +1,11 @@
 Package: xts
 Type: Package
 Title: eXtensible Time Series
-Version: 0.8-1.3
-Date: 2011-07-11
+Version: 0.8-1.4
+Date: 2011-07-19
 Author: Jeffrey A. Ryan, Josh M. Ulrich
-Depends: zoo (>= 1.7-0)
-LinkingTo: zoo (>= 1.7.0)
+Depends: zoo (>= 1.7-1)
+LinkingTo: zoo (>= 1.7.1)
 Suggests: timeSeries,timeDate,tseries,its,chron,fts,tis
 LazyLoad: yes
 Maintainer: Jeffrey A. Ryan <jeff.a.ryan@gmail.com>
