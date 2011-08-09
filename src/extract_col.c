@@ -17,9 +17,8 @@
 
 SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_) {
   SEXP result, index, new_index;
-  int nrs, nrsx, ncs, i, jj, first, last;
+  int nrs, nrsx, i, jj, first, last;
 
-  ncs = ncols(x);
   nrsx = nrows(x);
 
   first = asInteger(first_)-1;

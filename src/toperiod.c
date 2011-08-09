@@ -61,20 +61,20 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP whichVolume, SEXP has
 {
   SEXP result, ohlc, xindex, newindex, dimnames;
 
-  int i, j=0, jstart, nrx, ncx, ncr, n, P=0;
+  int i, j=0, nrx, ncx, ncr, n, P=0;
   nrx = nrows(x);
   ncx = ncols(x);
   n = nrows(endpoints) - 1;
   ncr = 4; /* OHLC */
   int mode = TYPEOF(x);
 
-  int Op, Hi, Lo, Cl, Vo;
+  int Hi, Lo, Cl, Vo;
   if(ncx >= 4) {
     /* needs OHLC or bust, clearly not the best solution
        since we can't just skip over columns */
-    Op=0; Hi=1; Lo=2; Cl=3;
+    Hi=1; Lo=2; Cl=3;
   } else {
-    Op=Hi=Lo=Cl=0;
+    Hi=Lo=Cl=0;
   }
   Vo = INTEGER(whichVolume)[0]-1;
 
@@ -117,7 +117,7 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP whichVolume, SEXP has
   int _hasVolume   = INTEGER(hasVolume)[0]; 
 
   for(i = 0; i < n; i++) {
-    jstart = j = _endpoints[i];
+    j = _endpoints[i];
 
     if(_FIRST) {
       switch(index_mode) {

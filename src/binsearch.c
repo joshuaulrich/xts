@@ -10,7 +10,6 @@ SEXP binsearch (SEXP key, SEXP vec, SEXP start)
   double *real_key;
 
   int len_vec = length(vec);
-  int found = 0;
   int rec = -1;
   int mid;
   int lo=1, hi=length(vec);
@@ -41,7 +40,6 @@ SEXP binsearch (SEXP key, SEXP vec, SEXP start)
       lo = mid+1;
     }
     else {
-      found = 1;
       if(!isNull(start)) {
         if(!LOGICAL(start)[0]) {
           while(1) {
