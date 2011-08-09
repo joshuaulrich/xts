@@ -10,14 +10,14 @@ merge-join style merge allows for optimally efficient
 joins.
 }
 \usage{
-merge.xts(...,
-          all = TRUE,
-          fill = NA,
-          suffixes = NULL,
-          join = "outer",
-          retside = TRUE,
-          retclass = "xts",
-          tzone = NULL)
+\method{merge}{xts}(...,
+      all = TRUE,
+      fill = NA,
+      suffixes = NULL,
+      join = "outer",
+      retside = TRUE,
+      retclass = "xts",
+      tzone = NULL)
 }
 \arguments{
   \item{\dots}{ one or more xts objects, or objects coercible to class xts }

@@ -97,7 +97,6 @@ SEXP binsearch (SEXP key, SEXP vec, SEXP start)
       lo = mid+1;
     }
     else {
-      found = 1;
       if(!isNull(start)) {
         if(!LOGICAL(start)[0]) {
           while(1) {

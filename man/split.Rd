@@ -10,7 +10,7 @@ Creates a list of xts objects split along
 time periods.
 }
 \usage{
-split.xts(x, f = "months", drop=FALSE, k = 1, ...)
+\method{split}{xts}(x, f = "months", drop=FALSE, k = 1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
