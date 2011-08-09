@@ -335,7 +335,7 @@ SEXP lag_zoo (SEXP x, SEXP _k, SEXP _pad)
         if(PAD) {
           for(i = 0; i < k; i++)
             SET_STRING_ELT(result, i+(j*nrr), NA_STRING);
-          for(i = 0; i < nrr; i++) 
+          for(; i < nrr; i++) 
             SET_STRING_ELT(result, k+i+j*nrr, STRING_ELT(x, i+j*nrr));
         } else {
           for(i = 0; i < nrr; i++) 
