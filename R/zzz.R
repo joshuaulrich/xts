@@ -1,4 +1,4 @@
-.onLoad <- function(lib, pkg)
+.onLoad <- function(libname, pkgname)
 {
 #  if(Sys.getenv("TZ") == "") {
 #    packageStartupMessage("xts now requires a valid TZ environment variable to be set")
