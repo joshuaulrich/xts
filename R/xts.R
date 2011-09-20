@@ -92,7 +92,7 @@ function(x=NULL, index, .indexCLASS=c("POSIXt","POSIXct"), tzone=Sys.getenv("TZ"
         check=TRUE, unique=FALSE, ...) {
   if(check) {
     if( !isOrdered(index, increasing=TRUE, strictly=unique) )
-      stop('index is not in',ifelse(unique, 'strictly', ''),'increasing order')
+      stop('index is not in ',ifelse(unique, 'strictly', ''),' increasing order')
   }
   if(!is.numeric(index) && timeBased(index))
     index <- as.numeric(as.POSIXct(index))
@@ -135,7 +135,7 @@ function(x, match.to, error=FALSE, ...) {
     }
     attr(x,'.ROWNAMES') <- NULL
     #if(is.null(attr(x,'.RECLASS')) || attr(x,'.RECLASS')) {#should it be reclassed?
-    if(!is.null(attr(x,'.RECLASS')) && attr(x,'.RECLASS')) {#should it be reclassed?
+    if(isTRUE(attr(x,'.RECLASS'))) {#should it be reclassed?
       #attr(x,'.RECLASS') <- NULL
       do.call(paste('re',oldCLASS,sep='.'),list(x))
     } else {
