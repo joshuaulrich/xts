@@ -36,8 +36,8 @@ A vector with length of INDEX minus 1
 \examples{
 zoo.data <- zoo(rnorm(31)+10,as.Date(13514:13744,origin="1970-01-01"))
 ep <- endpoints(zoo.data,'weeks')
-period.apply(zoo.data, INDEX=ep, FUN=function(x) sd(x))
-period.apply(zoo.data, INDEX=ep, FUN=sd)                  #same
+period.apply(zoo.data, INDEX=ep, FUN=function(x) mean(x))
+period.apply(zoo.data, INDEX=ep, FUN=mean)                  #same
 
 glue <- function(x) { paste(x,collapse='') }
 period.apply(letters,c(0,5,7,26),glue)

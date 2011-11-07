@@ -47,7 +47,7 @@ xts.ts <- xts(rnorm(231),as.Date(13514:13744,origin="1970-01-01"))
 start(xts.ts)
 end(xts.ts)
 
-apply.monthly(xts.ts,sd)
+apply.monthly(xts.ts,mean)
 apply.monthly(xts.ts,function(x) var(x))
 }
 \keyword{ utilities }
