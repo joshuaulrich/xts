@@ -47,8 +47,8 @@ SEXP endpoints (SEXP _x, SEXP _on, SEXP _k)
       real_index = REAL(_x);
       ep[0] = 0;
       for(i=1,j=1; i<nr; i++) {
-        real_tmp[0] = (int)real_index[i] / on / k +1;
-        real_tmp[1] = (int)real_index[i-1] / on / k +1;
+        real_tmp[0] = (long)real_index[i] / on / k +1;
+        real_tmp[1] = (long)real_index[i-1] / on / k +1;
         if( (real_tmp[0] - real_tmp[1]) != 0 ) {
           ep[j] = i;
           j++;

@@ -259,9 +259,9 @@ in the eighth hour on January 1, 2007, one would likewise need
 to include the full year, month and day - e.g. ``2007-01-01 08''. 
 
 It is also possible to explicitly request a range of times via
-this index-based subsetting, using a double colon ``::''
-or the ISO-recommended ``/'' as the range seperater.
-The basic form is {\em ``from::to''} or {\em ``from/to''},
+this index-based subsetting, using
+the ISO-recommended ``/'' as the range seperater.
+The basic form is {\em ``from/to''},
 where both {\em from} and {\em to}
 are optional.  If either side is missing, it is interpretted as
 a request to retrieve data from the beginning, or through the end of the
@@ -287,10 +287,10 @@ cat('...\n')
 Now extract all the data from the beginning through
 January 7, 2007.
 <<xtsmethods2, keep.source=TRUE, eval=FALSE>>=
-matrix_xts['::2007-01-07'] # or matrix_xts['/2007-01-07']
+matrix_xts['/2007-01-07'] 
 @
 <<xtsmethods2-hidden, echo=FALSE>>=
-matrix_xts['::2007-01-07']
+matrix_xts['/2007-01-07']
 @
 Additional xts tools providing subsetting are the
 {\tt first} and {\tt last} functions.
