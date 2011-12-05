@@ -26,6 +26,9 @@ Valid values for the argument \code{on} include: \dQuote{us} (microseconds),
 \dQuote{hours}, \dQuote{days}, \dQuote{weeks}, \dQuote{months}, \dQuote{quarters},
 and \dQuote{years}.
 }
+\note{
+Windows support for subsecond periods is not supported. 
+}
 \value{
 A numeric vector of endpoints beginning with 0
 and ending with the a value equal to the length of
