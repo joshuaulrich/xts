@@ -24,6 +24,11 @@ function(x, ...) {
   value <- indexClass(x)
   if(is.null(value))
     return(.index(x))
+  #  if indexClass is Date, POSIXct time is set to 00:00:00 GMT. Convert here
+  #  to avoid ugly and hard to debug TZ conversion.  What will this break? 
+  if(value[[1]] == "Date")
+    return( structure(.index(x)/86400, class="Date")) 
+    
 
   #x.index  <- structure(.index(x), class=c("POSIXct","POSIXt"))
   x.index  <- .POSIXct(.index(x), tz=attr(.index(x), "tzone"))

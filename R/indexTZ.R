@@ -52,8 +52,11 @@ indexTZ.xts <- function(x, ...)
 
 check.TZ <- function(x, ...)
 {
+  check <- getOption("xts_check_TZ")
+  if( !is.null(check) && !check)
+    return()
   STZ <- as.character(Sys.getenv("TZ"))
-  if(any(indexClass(x) %in% c("chron","dates","times")))
+  if(any(indexClass(x) %in% c("chron","dates","times","Date")))
     return()
   if(!is.null(indexTZ(x)) && indexTZ(x) != "" &&
      !identical(STZ, as.character(indexTZ(x))))
