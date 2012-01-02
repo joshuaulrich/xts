@@ -95,10 +95,10 @@ rather it is a standards and implementation gotcha.
 # the start of 2000 and end of 2001
 .parseISO8601('2000/2001')
 
-# May 5, 200 to Dec 31, 2001
+# May 1, 2000 to Dec 31, 2001
 .parseISO8601('2000-05/2001')
 
-# May 5, 2000 to end of Feb 2001
+# May 1, 2000 to end of Feb 2001
 .parseISO8601('2000-05/2001-02')
 
 # Jan 1, 2000 to Feb 29, 2000; note the truncated time on the LHS
