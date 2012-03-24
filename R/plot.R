@@ -29,7 +29,7 @@
   series.title <- deparse(substitute(x))
 
   #time.scale <- periodicity(x)$scale
-  ep <- axTicksByTime(x,major.ticks, format=major.format)
+  ep <- axTicksByTime(x,major.ticks, format.labels=major.format)
 
   otype <- type
 

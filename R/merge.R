@@ -38,7 +38,7 @@ merge.xts <- function(...,
   } 
   
   # as.list(substitute(list(...)))  # this is how zoo handles colnames - jar
-  mc <- match.call(expand=FALSE)
+  mc <- match.call(expand.dots=FALSE)
   dots <- mc$...
   if(is.null(suffixes)) {
     syms <- names(dots)
@@ -138,7 +138,7 @@ merge.xts <- function(...,
     setclass <- FALSE
   } else setclass <- TRUE
 
-  mc <- match.call(expand=FALSE)
+  mc <- match.call(expand.dots=FALSE)
   xName <- deparse(mc$x)
   yName <- deparse(mc$y)
   dots <- mc$...
@@ -257,7 +257,7 @@ rmerge0 <- function(x,y,...,
     setclass <- FALSE
   } else setclass <- TRUE
 
-  mc <- match.call(expand=FALSE)
+  mc <- match.call(expand.dots=FALSE)
   xName <- deparse(mc$x)
   yName <- deparse(mc$y)
   dots <- mc$...

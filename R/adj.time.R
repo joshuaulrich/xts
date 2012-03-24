@@ -1,6 +1,6 @@
 adj.time <-
 function(x, ...) {
-  tr <- match.call(expand=FALSE)$...
+  tr <- match.call(expand.dots=FALSE)$...
   if(length(tr) < 1) return(x)
 
   oClass <- class(x)

@@ -93,7 +93,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
           firstlast <- c(seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
                                  binsearch(adjusted.times$last.time,  .index(x), FALSE))
                      )
-          if(isOrdered(firstlast, strict=FALSE)) # fixed non-match within range bug
+          if(isOrdered(firstlast, strictly=FALSE)) # fixed non-match within range bug
             i.tmp <- c(i.tmp, firstlast)
         }
       }

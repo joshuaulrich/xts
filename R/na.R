@@ -78,7 +78,7 @@ na.replace <- function(x) {
     return(x)
 
   # Create 'NA' xts object
-  tmp <- xts(matrix(rep(NA,NCOL(x)*NROW(x)), nc=NCOL(x)),
+  tmp <- xts(matrix(rep(NA,NCOL(x)*NROW(x)), ncol=NCOL(x)),
              attr(xtsAttributes(x)$na.action, 'index'))
 
   # Ensure xts 'NA' object has *all* the same attributes

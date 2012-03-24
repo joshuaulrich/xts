@@ -23,7 +23,7 @@ as.numeric.xts <- function(x, drop=TRUE, ...)
 {
   if(drop)
     return(as.numeric(coredata(x)))
-  .xts(matrix(as.numeric(coredata(x)),nc=NCOL(x)), .index(x))
+  .xts(matrix(as.numeric(coredata(x)),ncol=NCOL(x)), .index(x))
 }
 
 as.xts.numeric <-
@@ -55,7 +55,7 @@ as.integer.xts <- function(x, drop=TRUE, ...)
 {
   if(drop)
     return(as.integer(coredata(x)))
-  .xts(matrix(as.integer(coredata(x)),nc=NCOL(x)), .index(x))
+  .xts(matrix(as.integer(coredata(x)),ncol=NCOL(x)), .index(x))
 }
 
 as.xts.integer <-
@@ -87,7 +87,7 @@ as.double.xts <- function(x, drop=TRUE, ...)
 {
   if(drop)
     return(as.double(coredata(x)))
-  .xts(matrix(as.double(coredata(x)),nc=NCOL(x)), .index(x))
+  .xts(matrix(as.double(coredata(x)),ncol=NCOL(x)), .index(x))
 }
 
 as.xts.double <-
@@ -119,7 +119,7 @@ as.complex.xts <- function(x, drop=TRUE, ...)
 {
   if(drop)
     return(as.complex(coredata(x)))
-  .xts(matrix(as.complex(coredata(x)),nc=NCOL(x)), .index(x))
+  .xts(matrix(as.complex(coredata(x)),ncol=NCOL(x)), .index(x))
 }
 
 as.xts.complex <-
@@ -151,7 +151,7 @@ as.logical.xts <- function(x, drop=TRUE, ...)
 {
   if(drop)
     return(as.logical(coredata(x)))
-  .xts(matrix(as.logical(coredata(x)),nc=NCOL(x)), .index(x))
+  .xts(matrix(as.logical(coredata(x)),ncol=NCOL(x)), .index(x))
 }
 
 as.xts.logical <-

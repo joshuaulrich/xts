@@ -39,6 +39,6 @@ function(x) {
   NC <- x[1]
   NR <- x[2]
   x <- x[-c(1:2)]
-  .xts(apply(matrix(x[-(1:NR)], nc=NC),2,cumsum), cumsum(x[1:NR]))
+  .xts(apply(matrix(x[-(1:NR)], ncol=NC),2,cumsum), cumsum(x[1:NR]))
 }
 

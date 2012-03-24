@@ -33,7 +33,7 @@
              }
            )}
        )
-  xx <- matrix(as.numeric(xx),nr=NROW(x))
+  xx <- matrix(as.numeric(xx),nrow=NROW(x))
   colnames(xx) <- c(paste(colnames(x)[(rep(1:NCOL(x),length(k)))],
                           'lag',
                           rep(k, each=NCOL(x)),
@@ -56,7 +56,7 @@
              }
            )}
        )
-  xx <- matrix(as.numeric(xx),nr=NROW(x))
+  xx <- matrix(as.numeric(xx),nrow=NROW(x))
   colnames(xx) <- c(paste(colnames(x)[(rep(1:NCOL(x),length(k)))],
                           'next',
                           rep(k, each=NCOL(x)),
@@ -92,7 +92,7 @@ lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
 diff.xts <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad=TRUE, ...)
 {
   if(is.logical(x))
-    x <- .xts(matrix(as.integer(x),nc=NCOL(x)), .index(x))
+    x <- .xts(matrix(as.integer(x),ncol=NCOL(x)), .index(x))
 
   if(lag < 1 || differences < 1)
     stop("'diff.xts' defined only for positive lag and differences arguments")
