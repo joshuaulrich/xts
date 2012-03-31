@@ -44,8 +44,13 @@ function(x, value) {
   if(!is.character(value) && length(value) != 1)
     stop('improperly specified value for indexClass')
 
+  # should users really be allowed to set value to 'POSIXt'?
   if(!value[1] %in% c('dates','chron','POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr','xtime') )
        stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
+
+  # Add 'POSIXt' virtual class
+  if(value %in% c('POSIXlt','POSIXct'))
+    value <- c(value,'POSIXt')
 
   attr(x, '.indexCLASS') <- value
   # all index related meta-data will be stored in the index
