@@ -186,9 +186,11 @@ function(x) {
   if(!inherits(x,"its")) {
     x <- as.xts(x)
     current.indexClass <- indexClass(x)
-    if(any(current.indexClass=='POSIXt'))
+    if(any(current.indexClass=='POSIXt')) {
       indexClass(x) <- "Date"
+      index(x) <- index(x)  # convert index to Date
       #reclass(x)
+    }
     x
   } else x
 }
