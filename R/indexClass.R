@@ -44,8 +44,12 @@ function(x, value) {
   if(!is.character(value) && length(value) != 1)
     stop('improperly specified value for indexClass')
 
-  # should users really be allowed to set value to 'POSIXt'?
-  if(!value[1] %in% c('dates','chron','POSIXt','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr','xtime') )
+  # remove 'POSIXt' from value, to prevent indexClass(x) <- 'POSIXt'
+  value <- value[!value %in% "POSIXt"]
+  if(length(value)==0L)
+    stop(paste('unsupported',sQuote('indexClass'),'indexing type: POSIXt'))
+
+  if(!value[1] %in% c('dates','chron','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr','xtime') )
        stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
 
   # Add 'POSIXt' virtual class
