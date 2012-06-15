@@ -59,7 +59,7 @@ void R_init_xts(DllInfo *info)
                      externalMethods);
 
   R_useDynamicSymbols(info, TRUE);
-#define RegisterXTS(routine) R_RegisterCCallable("xts","routine",(DL_FUNC) &routine)
+#define RegisterXTS(routine) R_RegisterCCallable("xts",#routine,(DL_FUNC) &routine)
 
   /* used by external packages linking to internal xts code from C */
   R_RegisterCCallable("xts","do_is_ordered",(DL_FUNC) &do_is_ordered);
