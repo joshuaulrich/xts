@@ -157,7 +157,7 @@ function(x,drop.time=TRUE,name,...)
   return(x)
 }
 `to.monthly` <-
-function(x,indexAt='yearmon',drop.time=FALSE,name,...)
+function(x,indexAt='yearmon',drop.time=TRUE,name,...)
 {
   if(missing(name)) name <- deparse(substitute(x))
   x <- to.period(x,'months',indexAt=indexAt,name=name,...)
@@ -165,7 +165,7 @@ function(x,indexAt='yearmon',drop.time=FALSE,name,...)
   return(x)
 }
 `to.quarterly` <-
-function(x,indexAt='yearqtr',drop.time=FALSE,name,...)
+function(x,indexAt='yearqtr',drop.time=TRUE,name,...)
 {
   if(missing(name)) name <- deparse(substitute(x))
   x <- to.period(x,'quarters',indexAt=indexAt,name=name,...)

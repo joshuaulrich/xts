@@ -39,8 +39,8 @@ to.hourly(x,name,...)
 to.daily(x,drop.time=TRUE,name,...)
 
 to.weekly(x,drop.time=TRUE,name,...)
-to.monthly(x,indexAt='yearmon',drop.time=FALSE,name,...)
-to.quarterly(x,indexAt='yearqtr',drop.time=FALSE,name,...)
+to.monthly(x,indexAt='yearmon',drop.time=TRUE,name,...)
+to.quarterly(x,indexAt='yearqtr',drop.time=TRUE,name,...)
 to.yearly(x,drop.time=TRUE,name,...)
 
 to.period(x,
