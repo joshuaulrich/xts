@@ -3,7 +3,7 @@ Type: Package
 Title: eXtensible Time Series
 Version: 0.8-7
 Date: 2012-03-23
-Author: Jeffrey A. Ryan, Josh M. Ulrich
+Author: Jeffrey A. Ryan, Joshua M. Ulrich
 Depends: zoo (>= 1.7-2)
 LinkingTo: zoo (>= 1.7.2)
 Suggests: timeSeries,timeDate,tseries,its,chron,fts,tis
