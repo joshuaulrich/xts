@@ -109,3 +109,97 @@ rollapply.xts <- function(data, width, FUN, ..., by=1, ascending=TRUE,
   return(res)
 } 
 
+rollsum.xts <- function (x, k, fill=if(na.pad) NA, na.pad=TRUE,
+  align=c("right", "center", "left"), ...) {
+  ## FIXME: align and fill are not respected!
+
+  # from rollapply.xts; is this necessary?
+  x <- try.xts(x)
+
+  # from rollmean.zoo
+  if (!missing(na.pad))
+    warning("na.pad is deprecated. Use fill.")
+
+  # process alignment
+  align <- match.arg(align)
+  n1 <- switch(align,    
+    "left" = { k - 1 },
+    "center" = { floor(k/2) },
+    "right" = { 0 })
+  #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
+  res <- .Call("roll_sum", x, k, PACKAGE="xts")
+  res
+}
+
+rollmean.xts <- function (x, k, fill=if(na.pad) NA, na.pad=TRUE,
+  align=c("right", "center", "left"), ...) {
+  rollsum.xts(x=x, k=k, fill=fill, align=align, ...) / k
+}
+
+rollmax.xts <- function (x, k, fill=if(na.pad) NA, na.pad=TRUE,
+  align=c("right", "center", "left"), ...) {
+  ## FIXME: align and fill are not respected!
+
+  # from rollapply.xts; is this necessary?
+  x <- try.xts(x)
+
+  # from rollmean.zoo
+  if (!missing(na.pad))
+    warning("na.pad is deprecated. Use fill.")
+
+  # process alignment
+  align <- match.arg(align)
+  n1 <- switch(align,    
+    "left" = { k - 1 },
+    "center" = { floor(k/2) },
+    "right" = { 0 })
+  #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
+  res <- .Call("roll_max", x, k, PACKAGE="xts")
+  res
+}
+
+rollmin.xts <- function (x, k, fill=if(na.pad) NA, na.pad=TRUE,
+  align=c("right", "center", "left"), ...) {
+  ## FIXME: align and fill are not respected!
+
+  # from rollapply.xts; is this necessary?
+  x <- try.xts(x)
+
+  # from rollmean.zoo
+  if (!missing(na.pad))
+    warning("na.pad is deprecated. Use fill.")
+
+  # process alignment
+  align <- match.arg(align)
+  n1 <- switch(align,    
+    "left" = { k - 1 },
+    "center" = { floor(k/2) },
+    "right" = { 0 })
+  #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
+  res <- .Call("roll_min", x, k, PACKAGE="xts")
+  res
+}
+
+rollcov.xts <- function (x, y, k, fill=if(na.pad) NA, na.pad=TRUE,
+  align=c("right", "center", "left"), sample=TRUE, ...) {
+  ## FIXME: align and fill are not respected!
+
+  # from rollapply.xts; is this necessary?
+  x <- try.xts(x)
+  y <- try.xts(y)
+
+  # from rollmean.zoo
+  if (!missing(na.pad))
+    warning("na.pad is deprecated. Use fill.")
+
+  # process alignment
+  align <- match.arg(align)
+  n1 <- switch(align,    
+    "left" = { k - 1 },
+    "center" = { floor(k/2) },
+    "right" = { 0 })
+  #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
+  res <- .Call("roll_cov", x, y, k, sample, PACKAGE="xts")
+  res
+}
+

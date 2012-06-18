@@ -44,6 +44,8 @@ SEXP roll_sum (SEXP x, SEXP n)
   SEXP first;
   PROTECT(first = naCheck(x, ScalarLogical(TRUE))); P++;
   int int_first = asInteger(first);
+  if(int_n + int_first > nrs)
+    error("not enough non-NA values");
 
   switch(TYPEOF(x)) {
     case REALSXP:
@@ -80,7 +82,7 @@ SEXP roll_sum (SEXP x, SEXP n)
       break;
     /*
     case STRSXP:  fail!
-    case LGLSXP:  convert to int??
+    case LGLSXP:  convert to int, like sum, cumsum, etc?
     case CPLXSXP:
     */
     default:
@@ -119,7 +121,9 @@ SEXP roll_min (SEXP x, SEXP n)
   /* check for non-leading NAs and get first non-NA location */
   SEXP first;
   PROTECT(first = naCheck(x, ScalarLogical(TRUE))); P++;
-  int int_first = INTEGER(first)[0];
+  int int_first = asInteger(first);
+  if(int_n + int_first > nrs)
+    error("not enough non-NA values");
 
   /* The branch by type allows for fewer type checks/branching
    * within the algorithm, providing a _much_ faster mechanism
@@ -248,6 +252,8 @@ SEXP roll_max (SEXP x, SEXP n)
   SEXP first;
   PROTECT(first = naCheck(x, ScalarLogical(TRUE))); P++;
   int int_first = asInteger(first);
+  if(int_n + int_first > nrs)
+    error("not enough non-NA values");
 
   /* The branch by type allows for fewer type checks/branching
    * within the algorithm, providing a _much_ faster mechanism
@@ -363,6 +369,10 @@ SEXP roll_cov (SEXP x, SEXP y, SEXP n, SEXP samp)
   int nry = nrows(y);
   if(nrx != nry) error("nrx != nry, blame the R function writer");
 
+  /* Coerce to REALSXP to ensure roll_sum returns REALSXP */
+  PROTECT(x = coerceVector(x, REALSXP)); P++;
+  PROTECT(y = coerceVector(y, REALSXP)); P++;
+
   /* Get values from function arguments */
   double *real_x = REAL(PROTECT(coerceVector(x, REALSXP))); P++;
   double *real_y = REAL(PROTECT(coerceVector(y, REALSXP))); P++;
@@ -394,6 +404,8 @@ SEXP roll_cov (SEXP x, SEXP y, SEXP n, SEXP samp)
   SEXP first;
   PROTECT(first = naCheck(sum_xy, ScalarLogical(TRUE))); P++;
   int int_first = asInteger(first);
+  if(int_n + int_first > nrx)
+    error("not enough non-NA values");
 
   /* set leading NAs */
   for(i=0; i<int_first; i++) {
@@ -428,9 +440,3 @@ SEXP roll_mad (SEXP x, SEXP n, SEXP center)
 }
 */
 
-/*
-SEXP do_runsum (SEXP x, SEXP n, SEXP result)
-{
-
-}
-*/
