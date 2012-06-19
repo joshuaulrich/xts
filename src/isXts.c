@@ -27,8 +27,9 @@
 int isXts(SEXP x) 
 {
   int i;
-  SEXP attr;
+  SEXP attr, index;
 
+  index = getAttrib(x, install("index"));
   PROTECT( attr = coerceVector(getAttrib(x, R_ClassSymbol),STRSXP) );
   if(length(attr) <= 1) {
     UNPROTECT(1);
@@ -37,8 +38,14 @@ int isXts(SEXP x)
 
   for(i = 0; i < length(attr); i++) {
     if(STRING_ELT(attr, i) == mkChar("xts")) {
-      UNPROTECT(1);
-      return 1;
+      /* check for index attribute */
+      if(TYPEOF(index)==REALSXP || TYPEOF(index)==INTSXP) {
+        UNPROTECT(1);
+        return 1;
+      } else {
+        UNPROTECT(1);
+        return 0;
+      }
     }
   }
   UNPROTECT(1);
