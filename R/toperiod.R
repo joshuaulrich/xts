@@ -36,6 +36,9 @@ to.period <- to_period <- function(x, period='months', k=1, indexAt=NULL, name=N
   xo <- x
   x <- try.xts(x)
 
+  if(NROW(x)==0 || NCOL(x)==0)
+    stop(sQuote("x")," contains no data")
+
   if(any(is.na(x))) {
     x <- na.omit(x)
     warning("missing values removed from data")
