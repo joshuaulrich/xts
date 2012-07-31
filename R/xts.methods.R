@@ -51,7 +51,9 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
           stop('only zeros may be mixed with negative subscripts')
         i <- (1:nr)[i]
       }
-      if(max(i) > nr)
+      # check boundary; length check avoids Warning from max(), and
+      # any_negative ensures no NA (as of r608)
+      if(length(i) > 0 && max(i) > nr)
         stop('subscript out of bounds')
       #i <- i[-which(i == 0)]
     } else
