@@ -1,0 +1,273 @@
+%\documentclass[article,nojss]{jss}
+%\DeclareGraphicsExtensions{.pdf,.eps}
+%%\newcommand{\mysection}[2]{\subsubsection[#2]{\textbf{#1}}}
+%\let\mysection=\subsubsection
+%\renewcommand{\jsssubsubsec}[2][default]{\vskip \preSskip%
+%  \pdfbookmark[3]{#1}{Subsubsection.\thesubsubsection.#1}%
+%  \refstepcounter{subsubsection}%
+%  {\large \textbf{\textit{#2}}} \nopagebreak
+%  \vskip \postSskip \nopagebreak}
+
+%% -*- encoding: utf-8 -*-
+\documentclass{article}
+%
+\usepackage{Rd}
+\usepackage{Sweave}
+%%\encoding{UTF-8}
+%%\usepackage[UTF-8]{inputenc}
+%
+\newcommand{\q}[1]{\section*{#1}\addcontentsline{toc}{subsection}{#1}}
+
+\author{\pkg{xts} Development Team}
+%\Plainauthor{xts Development Team}
+%-%-%-%-% Need to add footnote thanking Alberto Giannetti for his
+%-%-%-%-% contribution of many useful questions.
+
+%\Address{
+%  \pkg{xts} Development Team\\
+%  \proglang{R}-Forge: \url{http://r-forge.r-project.org/projects/xts/}\\
+%  Comprehensive \proglang{R} Archive Network: \url{http://cran.r-project.org/package=xts}
+%}
+
+\title{\pkg{xts} FAQ}
+%\Plaintitle{xts FAQ}
+
+%\Keywords{irregular time series, time index, daily data, weekly data, returns}
+
+%\Abstract{
+%  This is a collection of frequently asked questions (FAQ) about the
+%  \pkg{xts} package together with their answers.
+%}
+
+
+\begin{document}
+
+\SweaveOpts{concordance=TRUE, engine=R, eps=FALSE}
+%\SweaveOpts{engine=R, eps=FALSE}
+
+<<preliminaries, echo=FALSE, results=hide>>=
+library("xts")
+Sys.setenv(TZ = "GMT")
+@
+
+\makeatletter
+\makeatother
+\maketitle
+
+\tableofcontents                                                                     
+                                                                     
+\q{What is \pkg{xts}?}
+%
+\pkg{xts} is an \pkg{R} package offering a number of functionalities to work on
+time-indexed data. \pkg{xts} extends \pkg{\pkg{zoo}}, another popular package
+for time-series analysis.
+% should point to the zoo FAQ here (or at some early point)
+
+\q{Why should I use \pkg{xts} rather than \pkg{zoo} or another time-series
+package?}
+%
+The main benefit of \pkg{xts} is its seamless compatibility with other packages
+using different time-series classes (\pkg{timeSeries}, \pkg{zoo}, ...). In
+addition \pkg{xts} allows the user to add custom attributes to any object. For
+more information check the \pkg{xts} Vignette Introduction.
+
+\q{How do I install \pkg{xts}?}
+%
+\pkg{xts} depends on \pkg{zoo} and some other packages. You should be able to
+install \pkg{xts} and all the other required components by simply calling
+\code{install.packages('pkg')} from your \pkg{R} prompt.
+
+\q{I have multiple .csv time-series files that I need to load in a single
+\pkg{xts} matrix. What is the most efficient way to import the files?}
+%
+If the files series have the same format, load them with \code{read.csv()} and
+then call \code{rbind()} to join the series together:
+<<eval=FALSE>>=
+filenames <- c("a.csv", "b.csv", "c.csv")
+l <- lapply(filenames, read.csv)
+do.call("rbind", l)
+@
+
+\q{Why is \pkg{xts} implemented as a matrix rather than a data frame?}
+%
+\pkg{xts} uses a matrix rather than data.frame because:
+\begin{enumerate}
+  \item It is a subclass of \pkg{zoo}, and that's how \pkg{zoo} objects are
+    structured; and
+  \item matrix objects have much better performance than data.frames.
+\end{enumerate}
+
+\q{How can I simplify the syntax of my \pkg{xts} matrix column names?}
+%
+\code{with()} allows to enter the matrix name avoiding the full square brackets
+syntax. For example:
+<<eval=FALSE>>=
+lm(myxts[, "Res"] ~ myxts[, "ThisVar"] + myxts[, "ThatVar"])
+@
+can be converted to
+<<eval=FALSE>>=
+with(myxts, lm(Res ~ ThisVar + ThatVar))
+@
+
+\q{How can I replace the 0s in an \pkg{xts} object with the last non-zero value
+in the series?}
+%
+Use \code{na.locf}:
+<<>>=
+x <- .xts(c(1, 2, 3, 0, 0, 0), 1:6)
+x[x==0] <- NA
+na.locf(x)
+x
+@
+
+\q{How do I create an \pkg{xts} index with millisecond precision?}
+%
+Milliseconds in \pkg{xts} are stored as decimal values. This example builds a
+series spaced by 100 milliseconds, starting at the current system time:
+<<>>=
+data(sample_matrix)
+sample.xts = xts(sample_matrix, Sys.time() + seq(0, by = 0.1, length = 180))
+@
+
+\q{OK, so now I have my millisecond series but I still can't see the
+milliseconds displayed. What went wrong?}
+%
+Set the \code{digits.secs} option to some sub-second precision. Continuing from
+the previous example, if you are interested in milliseconds:
+<<>>=
+options(digits.secs = 3)
+head(sample.xts)
+@
+
+\q{I set \code{digits.sec = 3}, but \pkg{R} doesn't show the values correctly.}
+%
+Sub-second values are stored in floating point format with microseconds
+precision. Setting the precision to only 3 decimal hides the full index value
+in microseconds and might be tricky to interpret depending how the machine
+rounds the millisecond (3rd) digit. Set the digits.secs options to a value
+higher than 3 or use the \code{as.numeric()} 'digits' parameter to display the
+full value. For example:
+<<>>=
+print(as.numeric(as.POSIXlt("2012-03-20 09:02:50.001")), digits = 20)
+@
+
+\q{I am using \code{apply()} to run a custom function on my \pkg{xts} series.
+Why the returned matrix has different dimensions than the original one?}
+%
+When working on rows, \code{apply()} returns a transposed version of the
+original matrix. Simply call \code{t()} on the returned matrix to restore the
+original dimensions:
+<<eval=FALSE>>=
+myxts.2 <- xts(t(apply(myxts, 1 , myfun)), index(myxts))
+@
+
+\q{I have an \pkg{xts} matrix with multiple days of data at various
+frequencies. For example, day 1 might contain 10 different rows of 1 minute
+observations, while day 2 contains 20 observations. How can I process all
+observations for each day and return the summary daily statistics in a new
+matrix?}
+%
+First split the source matrix in day subsets, then call \code{rbind()} to join
+the processed day statistics together:
+<<eval=FALSE>>=
+do.call(rbind, lapply(split(myxts,"days"), myfun))
+@
+
+\q{How can I process daily data for a specific time subset?}
+%
+First extract the time range you want to work on, then apply the daily function:
+<<eval=FALSE>>=
+rt <- r['T16:00/T17:00','Value']
+rd <- apply.daily(rt, function(x) xts(t(quantile(x,0.9)), end(x)))
+@
+
+\q{How can I process my data in 3-hour blocks, regardless of the begin/end time?
+ I also want to add observations at the beginning and end of each discrete
+ period if missing from the original time-series object.}
+%
+Use \code{align.time()} to set indexes in the periods you are interested in,
+then call \code{period.apply} to run your processing function:
+<<eval=FALSE>>=
+# align index into 3-hour blocks
+a <- align.time(s, n=60*60*3)
+# find the number of obs in each block
+count <- period.apply(a, endpoints(a, "hours", 3), length)
+# create an empty \pkg{xts} object with the desired index
+e <- xts(,seq(start(a),end(a),by="3 hours"))
+# merge the counts with the empty object and fill with zeros
+out <- merge(e,count,fill=0)
+@
+
+\q{Why do I get a \pkg{zoo} object when I call transform() on my \pkg{xts}
+matrix?}
+%
+There's no \pkg{xts} method for transform, so the \pkg{zoo} method is
+dispatched. The \pkg{zoo} method explicitly creates a new \pkg{zoo} object. To
+convert the transformed matrix back to an \pkg{xts} object wrap the transform
+call in \code{as.xts}:
+<<eval=FALSE>>=
+myxts = as.xts(transform(myxts, ABC = 1))
+@
+
+You might also have to reset the index timezone:
+<<eval=FALSE>>=
+indexTZ(myxts) = Sys.getenv("TZ")
+@
+
+\q{Why can't I use the \code{\&} operator in \pkg{xts} objects when querying
+dates?}
+%
+\code{"2011-09-21"} is not a logical vector and cannot be coerced to a logical
+vector. See \code{?"\&"} for details.
+
+\pkg{xts}' ISO-8601 style subsetting is nice, but there's nothing we can do to
+change the behavior of \code{.Primitive("\&")}. You can do something like this
+though:
+<<eval=FALSE>>=
+myts[myts$Symbol == "AAPL" & index(myts) == as.POSIXct("2011-09-21"),]
+@
+or:
+<<eval=FALSE>>=
+myts[myts$Symbol == "AAPL"]['2011-09-21']
+@
+
+\q{How do I subset an \pkg{xts} object to only include weekdays (excluding
+Saturday and Sundays)?}
+%
+Use \code{.indexwday()} to only include Mon-Fri days:
+<<>>=
+data(sample_matrix)
+sample.xts <- as.xts(sample_matrix, descr='my new xts object')
+x <- sample.xts['2007']  
+x[.indexwday(x) %in% 1:5]
+@
+
+\q{I need to quickly convert a data-frame that contains the time-stamps in one
+of the columns. Using \code{as.xts(q)} returns an error. How do I build my
+\pkg{xts} object?}
+%
+The \pkg{xts}() constructor requires two arguments: a vector or a matrix
+carrying data and a vector of type \code{Date}, \code{POSIcXt}, \code{chron},
+\ldots supplying the time index information. If the time is set in one of the
+matrix columns, use this line:
+<<eval=FALSE>>=
+qxts = xts(q[,-1], order.by=q[,1])
+@
+
+\q{I have two time-series with different frequency. I want to combine the data
+into a single data frame, but the times are not exactly aligned. I want to have
+one row in the data frame for each ten minute period, with the time index
+showing the beginning of the time period.}
+%
+\code{align.time()} creates evenly spaced time-series from a set of indexes,
+\code{merge()} insure two time-series are combined in a single \pkg{xts} object
+with all original columns and indexes preserved. The new object has one entry
+for each timestamp from both series and values missing are replaced with
+\code{NA}s.
+<<eval=FALSE>>=
+xTemps <- align.time(xts(temps[,2],as.POSIXct(temps[,1])), n=600)
+xGas <- align.time(xts(gas[,2],as.POSIXct(gas[,1])), n=600)
+merge(xTemps,xGas)
+@
+
+\end{document}
