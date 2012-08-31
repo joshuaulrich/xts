@@ -27,7 +27,7 @@ Valid values for the argument \code{on} include: \dQuote{us} (microseconds),
 and \dQuote{years}.
 }
 \note{
-Windows support for subsecond periods is not supported. 
+Subsecond \code{on} periods are not supported on Windows.
 }
 \value{
 A numeric vector of endpoints beginning with 0
