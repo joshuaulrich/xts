@@ -186,16 +186,20 @@ function(x,drop.time=TRUE,name,...)
 `.drop.time` <-
 function(x) {
   # function to remove HHMMSS portion of time index
-  if(!inherits(x,"its")) {
-    x <- as.xts(x)
-    current.indexClass <- indexClass(x)
-    if(any(current.indexClass=='POSIXt')) {
-      indexClass(x) <- "Date"
-      index(x) <- index(x)  # convert index to Date
-      #reclass(x)
+  xts.in <- is.xts(x)  # is the input xts?
+  if(!xts.in)          # if not, try to convert to xts
+    x <- try.xts(x, error=FALSE)
+  if(is.xts(x)) {
+    # if x is xts, drop HHMMSS from index
+    if(any(indexClass(x)=='POSIXt')) {
+      indexClass(x) <- "Date"  # set indexClass to Date
     }
-    x
-  } else x
+    # force conversion, even if we didn't set indexClass to Date
+    # because indexAt yearmon/yearqtr won't drop time from index
+    index(x) <- index(x)
+    if(xts.in)  x    # if input already was xts
+    else reclass(x)  # if input wasn't xts, but could be converted
+  } else  x          # if input wasn't xts, and couldn't be converted
 }
 `by.period` <-
 function(x, FUN, on=Cl, period="days", k=1, fill=na.locf, ...) {

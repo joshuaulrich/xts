@@ -9,6 +9,7 @@
 %  \vskip \postSskip \nopagebreak}
 
 %% -*- encoding: utf-8 -*-
+%\VignetteIndexEntry{xts FAQ}
 \documentclass{article}
 %
 \usepackage{Rd}
