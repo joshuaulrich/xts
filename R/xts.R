@@ -60,8 +60,8 @@ function(x=NULL,
 
   if(!is.null(x) && !isOrdered(order.by, strictly=!unique) ) {
     indx <- order(order.by)
-    if(NCOL(x) > 1 || is.matrix(x)) {
-      x <- x[indx,]
+    if(NCOL(x) > 1 || is.matrix(x) || is.data.frame(x)) {
+      x <- x[indx,,drop=FALSE]
     } else x <- x[indx]
     order.by <- order.by[indx]
   }
