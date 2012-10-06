@@ -4,6 +4,7 @@ useDynLib(xts)
 # imports
 importFrom(stats, lag)
 importFrom(stats, as.ts)
+importFrom(stats, sd)
 
 export(.parseISO8601)
 
