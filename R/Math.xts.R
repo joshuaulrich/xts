@@ -51,3 +51,17 @@ cummax.xts <- function(x)
   } else x[] <- apply(coredata(x), 2, function(y) cummax(y))
   x
 }
+
+mean.xts <- function(x,...) {
+    if(is.vector(x) ||is.null(ncol(x))  || ncol(x)==1){
+        x<-as.numeric(x)
+        mean(x,...)
+    } else apply(x,2,mean.xts,...)
+} 
+
+sd.xts <- function(x,na.rm=FALSE) {
+    if(is.vector(x) || is.null(ncol(x)) || ncol(x)==1){
+        x<-as.numeric(x)
+        sd(x,na.rm=na.rm)
+    } else apply(x,2,sd,na.rm=na.rm)
+}
