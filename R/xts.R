@@ -129,7 +129,7 @@ function(x, match.to, error=FALSE, ...) {
         stop('incompatible match.to attibutes')
       } else return(x)
 
-    if(!is.xts(x)) x <- .xts(coredata(x),.index(match.to), .indexCLASS=indexClass(match.to))
+    if(!is.xts(x)) x <- .xts(coredata(x),.index(match.to), .indexCLASS=indexClass(match.to), tzone=indexTZ(match.to))
     CLASS(x) <- CLASS(match.to)
     xtsAttributes(x) <- xtsAttributes(match.to)
   }
