@@ -24,8 +24,9 @@ function(object,...) {
   if(length(object) == 0) {
     cat("An 'xts' object of zero-width\n")
   } else {
-  cat(paste("An",sQuote('xts'),"object from",
-      index(first(object)),"to",index(last(object)),
+  cat(paste("An",sQuote('xts'),"object on",
+      #index(first(object)),"to",index(last(object)),
+      .makeISO8601(object),
       "containing:\n"))
   cat(paste("  Data:"))
   str(coredata(object))
