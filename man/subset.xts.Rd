@@ -26,7 +26,7 @@ for maximum performance and compatibility.
     the columns to extract, numeric or by name
 }
   \item{drop}{
-    should dimension be dropped, if possible
+    should dimension be dropped, if possible. See NOTE.
 }
   \item{which.i}{
     return the \sQuote{i} values used for subsetting. No
@@ -93,6 +93,13 @@ An extraction of the original xts object.  If \code{which.i}
 is TRUE, the corresponding integer \sQuote{i} values used to
 subset will be returned.
 }
+\note{
+By design, drop=FALSE in the default case.  This preserves the basic
+underlying type of \code{matrix} and the \code{dim()} to be non-NULL.
+This is different from both matrix and \code{zoo} behavior as \R
+uses \code{drop=TRUE}.  Explicitly passing \code{drop=TRUE} may
+be required when performing certain matrix operations.
+}
 \references{
 ISO 8601: Date elements and interchange formats -
 Information interchange - Representation of dates and time
@@ -106,6 +113,31 @@ Jeffrey A. Ryan
 \code{\link{.parseISO8601}},
 }
 \examples{
+x <- xts(1:3, Sys.Date()+1:3)
+xx <- cbind(x,x)
+
+# drop=FALSE for xts, differs from zoo and matrix
+z <- as.zoo(xx)
+z/z[,1]
+
+m <- as.matrix(xx)
+m/m[,1]
+
+# this will fail with non-conformable arrays (both retain dim)
+tryCatch(
+  xx/x[,1], 
+  error=function(e) print("need to set drop=TRUE")
+)
+
+# correct way
+xx/xx[,1,drop=TRUE]
+
+# or less efficiently
+xx/drop(xx[,1])
+# likewise
+xx/coredata(xx)[,1]
+
+
 x <- xts(1:1000, as.Date("2000-01-01")+1:1000)
 y <- xts(1:1000, as.POSIXct(format(as.Date("2000-01-01")+1:1000)))
 
