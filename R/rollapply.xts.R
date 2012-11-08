@@ -18,19 +18,18 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-rollapply.xts <- function(data, width, FUN, ..., by=1, ascending=TRUE,
-  by.column=TRUE, na.pad=FALSE, align=c("center","left","right")) {
+rollapply.xts <- function(data, width, FUN, ..., by=1, by.column=TRUE,
+  fill=if(na.pad) NA, na.pad=TRUE, partial=TRUE,
+  align=c("right","center","left")) {
 
-  data <- try.xts(data)
-  if(!ascending) {
-    warning("ignoring 'ascending=FALSE'")
-    ascending <- TRUE
+  if (!missing(na.pad)) {
+    warning("na.pad argument is deprecated")
   }
-  #if(by != 1) {
-    #warning(paste("ignoring 'by=",by,"'",sep=""))
-    #by <- 1
-  #}
-  if(missing(align)) align <- "right"
+  if (!missing(partial)) {
+    warning("partial argument is not currently supported")
+  }
+
+  data <- try.xts(data)  # jmu: is this necessary?
   
   # Code taken/adapted from rollapply.zoo from the 'zoo' package
 
