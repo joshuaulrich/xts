@@ -47,7 +47,11 @@ function(x,on='months',k=1) {
 
   if(on == 'months') {
     #as.integer(c(0, which(diff(posixltindex$mon %/% k + 1) != 0), NR) )
-    .Call("endpoints", posixltindex$mon, 1L, k, PACKAGE='xts')
+    # x[which(diff(as.POSIXlt(index(x))$mon) != 0)[seq(0,328,12)]]
+    ep <- .Call("endpoints", posixltindex$mon, 1L, 1L, PACKAGE='xts')
+    if(k > 1)
+      ep[seq(0,length(ep),k)]
+    else ep
   } else 
   if(on == 'weeks') {
     #as.integer(c(0, which(diff( (.index(x) + (3L * 86400L)) %/% 604800L %/% k + 1) != 0), NR) )
