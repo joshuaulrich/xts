@@ -5,6 +5,8 @@ useDynLib(xts)
 importFrom(stats, lag)
 importFrom(stats, as.ts)
 #importFrom(stats, sd)
+importFrom(zoo,zoo)
+importFrom(zoo,MATCH)
 
 export(.parseISO8601)
 
