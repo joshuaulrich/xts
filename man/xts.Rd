@@ -24,7 +24,7 @@ is.xts(x)
 of a known time-based class. See details. }
   \item{frequency}{ numeric indicating frequency of \code{order.by}. See details. }
   \item{unique}{ should index be checked for unique time-stamps? }
-  \item{tzone}{ time zone of series }
+  \item{tzone}{ time zone of series.  This is ignored for Date indices }
   \item{\dots}{ additional attributes to be added. See details. }
 }
 \details{
