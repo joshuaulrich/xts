@@ -4,7 +4,6 @@ useDynLib(xts)
 # imports
 importFrom(stats, lag)
 importFrom(stats, as.ts)
-#importFrom(stats, sd)
 importFrom(zoo,zoo)
 importFrom(zoo,MATCH)
 
@@ -143,7 +142,6 @@ S3method(make.index.unique, numeric)
 S3method(make.index.unique, POSIXct)
 S3method(is.time.unique, xts)
 S3method(is.time.unique, zoo)
-S3method(mean,xts)
 
 # xts methods
 importFrom(zoo,coredata)
