@@ -56,9 +56,10 @@ function(x=NULL,
     stop("NROW(x) must match length(order.by)")
 
   orderBy <- class(order.by)
-  if(inherits(order.by, 'Date'))
+  if(inherits(order.by, 'Date')) { 
     # convert to GMT POSIXct if specified
     order.by <- .POSIXct(unclass(order.by)*86400, tz=tzone)
+  }
 
 
   if(!is.null(x) && !isOrdered(order.by, strictly=!unique) ) {
