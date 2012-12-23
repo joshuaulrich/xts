@@ -48,8 +48,11 @@ function(x=NULL,
   if(inherits(order.by, 'dates'))
     tzone <- ""
 
-  if(inherits(order.by, 'Date') && missing(tzone))
+  if(inherits(order.by, 'Date')) {
+    if(!missing(tzone))
+      warning(paste(sQuote('tzone'),"setting ignored for Date indexes"))
     tzone <- "UTC"
+  }
   
   #if(NROW(x) != length(order.by))
   if(NROW(x) > 0 && NROW(x) != length(order.by))
