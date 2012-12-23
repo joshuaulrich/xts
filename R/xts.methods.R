@@ -53,6 +53,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       }
       # check boundary; length check avoids Warning from max(), and
       # any_negative ensures no NA (as of r608)
+      #if(max(i) > nr)
       if(length(i) > 0 && max(i) > nr)
         stop('subscript out of bounds')
       #i <- i[-which(i == 0)]
@@ -64,10 +65,10 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       if(inherits(i, "POSIXct")) {
         i <- which(!is.na(match(.index(x), i)))
       } else if(inherits(i, "Date")) {
-        i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i)))))
+        i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i),tz=indexTZ(x)))))
       } else {
         # force all other time classes to be POSIXct
-        i <- which(!is.na(match(.index(x), as.POSIXct(i))))
+        i <- which(!is.na(match(.index(x), as.POSIXct(i,tz=indexTZ(x)))))
       }
       i[is.na(i)] <- 0
     } else 
