@@ -2,7 +2,7 @@
 #include <Rinternals.h>
 #include <Rdefines.h>
 
-SEXP endpoints (SEXP _x, SEXP _on, SEXP _k)
+SEXP endpoints (SEXP _x, SEXP _on, SEXP _k, SEXP _addlast /* TRUE */)
 {
   /*
       efficient implementation of:
@@ -59,7 +59,8 @@ SEXP endpoints (SEXP _x, SEXP _on, SEXP _k)
       error("unsupported 'x' type");
       break;
   }
-  if(ep[j-1] != nr) { /* protect against endpoint at NR */
+  if(ep[j-1] != nr & asLogical(_addlast)) { /* protect against endpoint at NR */
+/* Rprintf("ep[%i-1] != %i\n", j, nr);  */
     ep[j] = nr;
     j++;
   }
