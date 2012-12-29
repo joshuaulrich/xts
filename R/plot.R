@@ -70,19 +70,19 @@
 
   if(!'main' %in% names(dots)) title(main=series.title)
   do.call('title',list(...))
-  assign(".plot.xts",recordPlot(),.GlobalEnv)
+  assign(".plot.xts",recordPlot(),.xtsEnv)
 }
 
 .lines.xts <- function(x, ...)
 {
   getxvalues <- function(x) x[[1]][[3]][[2]][[1]]$x
-  last.plot <- if(exists(".plot.xts",.GlobalEnv)) {
-                 get(".plot.xts", .GlobalEnv) } else NULL
+  last.plot <- if(exists(".plot.xts",.xtsEnv)) {
+                 get(".plot.xts", .xtsEnv) } else NULL
   if( identical(getxvalues(last.plot), getxvalues(recordPlot())) ) {
     lines.default(getxvalues(recordPlot()),
                   x, ...)
   } else zoo:::lines.zoo(x, ...)
-  assign(".plot.xts",recordPlot(),.GlobalEnv)
+  assign(".plot.xts",recordPlot(),.xtsEnv)
 }
 
 

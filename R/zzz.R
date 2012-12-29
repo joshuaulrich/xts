@@ -1,3 +1,6 @@
+# internal package environment for use with lines.xts
+.xtsEnv <- new.env()
+
 .onLoad <- function(libname, pkgname)
 {
 #  if(Sys.getenv("TZ") == "") {
