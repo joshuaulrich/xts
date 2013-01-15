@@ -1,8 +1,10 @@
 \name{indexClass}
 \alias{indexClass}
+\alias{tclass}
 \alias{indexFormat}
 \alias{convertIndex}
 \alias{indexClass<-}
+\alias{tclass<-}
 \alias{indexFormat<-}
 \alias{index.xts}
 \alias{index<-.xts}
@@ -34,6 +36,9 @@ of an xts object.
 
 indexClass(x)
 indexClass(x) <- value
+
+tclass(x)
+tclass(x) <- value
 
 indexFormat(x)
 indexFormat(x) <- value

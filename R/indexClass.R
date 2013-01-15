@@ -25,7 +25,7 @@ function(x,value) {
   x
 }
 
-`indexClass` <-
+tclass <- indexClass <-
 function(x) {
   class <- attr(attr(x, "index"), "tclass")
   if(is.null(class))
@@ -34,12 +34,17 @@ function(x) {
     class
 }
 
+`tclass<-` <-
+function(x,value) {
+  UseMethod('tclass<-')
+}
+
 `indexClass<-` <-
 function(x,value) {
   UseMethod('indexClass<-')
 }
 
-`indexClass<-.xts` <-
+`tclass<-.xts` <- `indexClass<-.xts` <-
 function(x, value) {
   if(!is.character(value) && length(value) != 1)
     stop('improperly specified value for indexClass')

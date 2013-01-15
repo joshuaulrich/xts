@@ -23,23 +23,32 @@ indexTZ <- function(x, ...)
   UseMethod("indexTZ")
 }
 
+tzone <- function(x, ...) {
+  UseMethod("tzone")
+}
+
 `indexTZ<-` <- function(x, value) {
   UseMethod("indexTZ<-")
 }
 
-`indexTZ<-.xts` <- function(x, value) {
+`tzone<-` <- function(x, value) {
+  UseMethod("tzone<-")
+}
+
+`tzone<-.xts` <- `indexTZ<-.xts` <- function(x, value) {
   if( is.null(value) ) value <- ""
 
-  attr(x, ".indexTZ") <- structure(value,.Names="TZ")
+  attr(x, ".indexTZ") <- attr(x, "tzone") <- structure(value,.Names="TZ")
   attr(attr(x,"index"),"tzone") <- structure(value,.Names="TZ")
   x
 }
 
-indexTZ.default <- function(x, ...) {
+
+tzone.default <- indexTZ.default <- function(x, ...) {
   attr(x, ".indexTZ")
 }
 
-indexTZ.xts <- function(x, ...)
+tzone.xts <- indexTZ.xts <- function(x, ...)
 {
   tzone <- attr(attr(x, "index"), "tzone")
   if(is.null(tzone))
@@ -52,6 +61,8 @@ indexTZ.xts <- function(x, ...)
 
 check.TZ <- function(x, ...)
 {
+  #if( !getOption("xts_check_TZ", FALSE))
+  #  return()
   check <- getOption("xts_check_TZ")
   if( !is.null(check) && !check)
     return()
