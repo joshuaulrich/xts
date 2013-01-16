@@ -59,20 +59,19 @@ void R_init_xts(DllInfo *info)
                      externalMethods);
 
   R_useDynamicSymbols(info, TRUE);
-#define RegisterXTS(routine) R_RegisterCCallable("xts",#routine,(DL_FUNC) &routine)
 
   /* used by external packages linking to internal xts code from C */
   R_RegisterCCallable("xts","do_is_ordered",(DL_FUNC) &do_is_ordered);
-  R_RegisterCCallable("xts","coredata",     (DL_FUNC) &coredata);
+  /*R_RegisterCCallable("xts","coredata",     (DL_FUNC) &coredata);*/
+  R_RegisterCCallable("xts","coredata_xts", (DL_FUNC) &coredata_xts);
   R_RegisterCCallable("xts","isXts",        (DL_FUNC) &isXts);
   R_RegisterCCallable("xts","tryXts",       (DL_FUNC) &tryXts);
   /* RegisterXTS(rbindXts); */
-  RegisterXTS(do_rbind_xts);
-  RegisterXTS(naCheck);
-  RegisterXTS(coredata_xts);
-  RegisterXTS(lagXts);
+  R_RegisterCCallable("xts","do_rbind_xts", (DL_FUNC) &do_rbind_xts);
+  R_RegisterCCallable("xts","naCheck",      (DL_FUNC) &naCheck);
+  R_RegisterCCallable("xts","lagXts",       (DL_FUNC) &lagXts);
 
   /* used by xts (functions moved from xts to zoo) */
-  zoo_lag = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("zoo","zoo_lag");
-  zoo_coredata = (SEXP(*)(SEXP,SEXP)) R_GetCCallable("zoo","zoo_coredata");
+  zoo_lag      = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("zoo","zoo_lag");
+  zoo_coredata = (SEXP(*)(SEXP,SEXP))      R_GetCCallable("zoo","zoo_coredata");
 }
