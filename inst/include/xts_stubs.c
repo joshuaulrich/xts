@@ -41,3 +41,31 @@ SEXP attribute_hidden naCheck(SEXP x, SEXP check)
     fun = (SEXP(*)(SEXP,SEXP)) R_GetCCallable("xts","naCheck");
   return fun(x, check);
 }
+
+SEXP attribute_hidden tryXts(SEXP x) {
+    static SEXP(*fun)(SEXP) = NULL;
+    if (fun == NULL) 
+	fun = (SEXP(*)(SEXP)) R_GetCCallable("xts","tryXts");
+    return fun(x);
+}
+    
+SEXP attribute_hidden do_rbind_xts(SEXP x, SEXP y, SEXP dup) {
+    static SEXP(*fun)(SEXP, SEXP, SEXP) = NULL;
+    if (fun == NULL) 
+	fun = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("xts","do_rbind_xts");
+    return fun(x, y, dup);
+}
+
+SEXP attribute_hidden coredata_xts(SEXP x) {
+    static SEXP(*fun)(SEXP) = NULL;
+    if (fun == NULL) 
+	fun = (SEXP(*)(SEXP)) R_GetCCallable("xts","coredata_xts");
+    return fun(x);
+}
+
+SEXP attribute_hidden lagXts(SEXP x, SEXP k, SEXP pad) {
+    static SEXP(*fun)(SEXP,SEXP,SEXP) = NULL;
+    if (fun == NULL) 
+	fun = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("xts","lagXts");
+    return fun(x, k, pad);
+}
