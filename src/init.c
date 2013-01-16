@@ -70,7 +70,7 @@ void R_init_xts(DllInfo *info)
   RegisterXTS(do_rbind_xts);
   RegisterXTS(naCheck);
   RegisterXTS(coredata_xts);
-  RegisterXTS(lagXts)
+  RegisterXTS(lagXts);
 
   /* used by xts (functions moved from xts to zoo) */
   zoo_lag = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("zoo","zoo_lag");
