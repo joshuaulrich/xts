@@ -66,7 +66,8 @@ void R_init_xts(DllInfo *info)
   R_RegisterCCallable("xts","coredata",     (DL_FUNC) &coredata);
   R_RegisterCCallable("xts","isXts",        (DL_FUNC) &isXts);
   R_RegisterCCallable("xts","tryXts",       (DL_FUNC) &tryXts);
-  RegisterXTS(rbindXts);
+  /* RegisterXTS(rbindXts); */
+  RegisterXTS(do_rbind_xts);
   RegisterXTS(naCheck);
   RegisterXTS(coredata_xts);
   RegisterXTS(lagXts)
