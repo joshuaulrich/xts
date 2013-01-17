@@ -11,10 +11,9 @@ C code is:
 
 (2) In your .c files:
 
-  #include "xts.h"
-  #include "xts_stubs.c"
+  #include "xtsAPI.h"
 
-The _stubs_ file exports the functions that are
+This header file exports the functions that are
 public in xts.
 
 (3) Compile as you would with any other package:

@@ -26,7 +26,7 @@ checkOrder(x)
 \author{ ~~who you are~~ }
 \note{ ~~further notes~~ 
 
- ~Make other sections like Warning with \section{Warning }{....} ~
+ ~Make other sections ~
 }
 \seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \examples{
@@ -35,7 +35,7 @@ checkOrder(x)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function(x) { .Call('check_if_xts', x) }
+function(x) { .Call('xtsIs', x) }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

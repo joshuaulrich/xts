@@ -11,13 +11,10 @@ packages Matrix and lme4.
 
 #include <R_ext/Rdynload.h>  /* required by R */
 /*
-  The following header and .c file are from
-  the include directory that is included with xts
-  Note that they are included here as they are
-  simple source files in xts.
+  The following header file is from the include directory that is
+  included with xts
 */
-#include "xts.h"  /* function declaration and macros */
-#include "xts_stubs.c"  /* function definitions */
+#include "xtsAPI.h"  /* function declaration and macros */
 
 
 SEXP check_order (SEXP x, SEXP incr, SEXP strict)
@@ -28,7 +25,7 @@ SEXP check_order (SEXP x, SEXP incr, SEXP strict)
      do_is_ordered is imported from the xts package.
      All that is needed here is to call it.
   */
-  ret = do_is_ordered(x, incr, strict);
+  ret = xtsIsOrdered(x, incr, strict);
   UNPROTECT(1);
   return ret;
 }
