@@ -62,7 +62,7 @@ SEXP do_xtsCoreAttributes(SEXP x);          /* xtsCoreAttributes xts-specific at
                                                CLASS, .indexFORMAT, .indexCLASS & class */
 SEXP coredata(SEXP x);
 SEXP coredata_xts(SEXP x);
-SEXP add_class(SEXP x, SEXP class);
+SEXP add_class(SEXP x, SEXP klass);
 SEXP lagXts(SEXP x, SEXP k, SEXP pad);
 SEXP do_is_ordered(SEXP x, SEXP increasing, SEXP strictly);
 SEXP mergeXts(SEXP args);
