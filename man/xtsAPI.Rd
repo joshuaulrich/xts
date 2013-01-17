@@ -5,15 +5,21 @@
 This help file is to help in development of xts, as well
 as provide some clarity and insight into its purpose and implementation.
 
-Last modified: 2008-10-22 by Jeffrey A. Ryan
-Version: 0.5-0 and above
+Last modified: 2013-01-16 by Jeffrey A. Ryan and Dirk Eddelbuettel
+Version: 0.9-2 and above
 
 At present the \pkg{xts} API has publically available
-interfaces to the following:
-
-See xts.h and the code in /src for details.
+interfaces to the following functions (as defined in \code{xtsAPI.h}:
 
 \preformatted{
+Callable from other R packages:
+  SEXP xtsIsOrdered(SEXP x, SEXP increasing, SEXP strictly)
+  SEXP xtsNaCheck(SEXP x, SEXP check)
+  SEXP xtsTry(SEXP x)
+  SEXP xtsRbind(SEXP x, SEXP y, SEXP dup)
+  SEXP xtsCoredata(SEXP x)
+  SEXP xtsLag(SEXP x, SEXP k, SEXP pad)
+
 Internal use functions:
   int isXts(SEXP x)
   void copy_xtsAttributes(SEXP x, SEXP y)
