@@ -13,16 +13,22 @@ This source is distributed with the same license
 as the full xts software, GPL (>= 2).
 */
 
+#ifndef _XTS_API_H
+#define _XTS_API_H
+
 #include <xts.h>		// also includes R.h, Rinternals.h, Rdefines.h
 
 #include <Rconfig.h>
 #include <R_ext/Rdynload.h>
 
-
 #ifdef HAVE_VISIBILITY_ATTRIBUTE
   # define attribute_hidden __attribute__ ((visibility ("hidden")))
 #else
   # define attribute_hidden
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 /*
@@ -86,3 +92,9 @@ SEXP attribute_hidden xtsLag(SEXP x, SEXP k, SEXP pad) {
 	fun = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("xts","lagXts");
     return fun(x, k, pad);
 }
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* !_XTS_API_H */

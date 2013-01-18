@@ -18,6 +18,9 @@ as the full xts software, GPL3.
 #ifndef _XTS
 #define _XTS
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
 INTERNAL SYMBOLS
@@ -83,3 +86,7 @@ void copy_xtsCoreAttributes(SEXP x, SEXP y);// internal only
 int isXts(SEXP x);                          // is.xts analogue
 int firstNonNA(SEXP x);
 #endif /* _XTS */
+
+#ifdef __cplusplus
+}
+#endif
