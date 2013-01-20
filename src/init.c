@@ -44,9 +44,9 @@ R_CallMethodDef callMethods[] = {
 
 static const
 R_ExternalMethodDef externalMethods[] = {
-  {"number_of_cols",        (DL_FUNC) &number_of_cols,          1},
-  {"mergeXts",              (DL_FUNC) &mergeXts,                1},
-  {"rbindXts",              (DL_FUNC) &rbindXts,                1},
+  {"number_of_cols",        (DL_FUNC) &number_of_cols,          -1},
+  {"mergeXts",              (DL_FUNC) &mergeXts,                -1},
+  {"rbindXts",              (DL_FUNC) &rbindXts,                -1},
   {NULL,                    NULL,                               0}
 };
 
