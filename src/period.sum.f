@@ -2,7 +2,7 @@ c
 c     Copyright Jeffrey A. Ryan 2007
 c     jeff _dot_ ryan _at_ quantmod _dot_ com
 c
-c     Distributed under GPL-3
+c     Distributed under GPL-2 or later
 c
       subroutine psumz(bp,lbp,ia,lia,ret)
 c     Usage:

@@ -16,7 +16,7 @@
 # end times, in POSIXt space.
 #
 # Copyright 2009. Jeffrey A. Ryan. All rights reserved.
-# This is licensed under the GPL version 3
+# This is licensed under the GPL version 2 or later
 .makeISO8601 <- function(x) {
   paste(start(x),end(x),sep="/")
 }
@@ -36,7 +36,7 @@
  x <- gsub("TODAY",format(Sys.Date(),"%Y%m%d"),x)
 
  if(identical(grep("/|(--)|(::)", x), integer(0))) {
-   x <- paste(x,x,sep="/") 
+   x <- paste(x,x,sep="/")
  }
  intervals <- unlist(strsplit(x, "/|(--)|(::)"))
  # e.g. "/2009":  "" "xxx" end of defined, needs context
@@ -132,7 +132,7 @@
       #  remove/ignore T
       #  convert extended format (PYYYYMMDD) to basic format (PnnYnnMnnD)
       P <- gsub("P","",P)
-      P <- gsub("T(.*)M","\\1m",P) 
+      P <- gsub("T(.*)M","\\1m",P)
       n <- unlist(strsplit(P, "[[:alpha:]]"))
       d <- unlist(strsplit(gsub("[[:digit:]]", "", P),""))
       dur.vec <- list(as.numeric(n),unname(c(Y=6,M=5,D=4,H=3,m=2,S=1)[d]))

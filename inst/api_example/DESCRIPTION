@@ -8,5 +8,5 @@ LinkingTo: xts
 Author: Jeffrey A. Ryan
 Maintainer: Jeffrey A. Ryan <jeff.a.ryan@gmail.com>
 Description: Demonstrates LinkingTo C code in packages
-License: GPL-3
+License: GPL (>= 2)
 LazyLoad: yes

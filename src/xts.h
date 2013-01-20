@@ -9,7 +9,7 @@ welcomed.
 Copyright Jeffrey A. Ryan 2008
 
 This source is distributed with the same license
-as the full xts software, GPL2
+as the full xts software, GPL 2 or later
 */
 #include <R.h>
 #include <Rinternals.h>

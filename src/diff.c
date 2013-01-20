@@ -221,7 +221,7 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
    works for any S3 index and one S4 (timeDate).
 
    Copyright Jeffrey A. Ryan 2010
-   Licensed under GPL-3 or later
+   Licensed under GPL-2 or later
 */
 
 SEXP lag_zoo (SEXP x, SEXP _k, SEXP _pad)
