@@ -93,6 +93,49 @@ SEXP attribute_hidden xtsLag(SEXP x, SEXP k, SEXP pad) {
     return fun(x, k, pad);
 }
 
+SEXP attribute_hidden xtsMakeIndexUnique(SEXP x, SEXP eps) {
+    static SEXP(*fun)(SEXP,SEXP) = NULL;
+    if (fun == NULL) 
+	fun = (SEXP(*)(SEXP,SEXP)) R_GetCCallable("xts","make_index_unique");
+    return fun(x, eps);
+}
+
+SEXP attribute_hidden xtsMakeUnique(SEXP x, SEXP eps) {
+    static SEXP(*fun)(SEXP,SEXP) = NULL;
+    if (fun == NULL) 
+	fun = (SEXP(*)(SEXP,SEXP)) R_GetCCallable("xts","make_unique");
+    return fun(x, eps);
+}
+
+SEXP attribute_hidden xtsEndpoints(SEXP x, SEXP on, SEXP k, SEXP addlast) {
+    static SEXP(*fun)(SEXP,SEXP,SEXP,SEXP) = NULL;
+    if (fun == NULL) 
+        fun = (SEXP(*)(SEXP,SEXP,SEXP,SEXP)) R_GetCCallable("xts","endpoints");
+    return fun(x, on, k, addlast);
+}
+
+SEXP attribute_hidden xtsMerge(SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, 
+                               SEXP colnames, SEXP suffixes, SEXP retside, SEXP env, int coerce) {
+    static SEXP(*fun)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,int) = NULL;
+    if (fun == NULL) 
+	fun = (SEXP(*)(SEXP,SEXP)) R_GetCCallable("xts","do_merge_xts");
+    return fun(x, y, all, fill, retclass, colnames, suffixes, retside, env, coerce);
+}
+
+SEXP attribute_hidden xtsNaOmit(SEXP x) {
+    static SEXP(*fun)(SEXP) = NULL;
+    if (fun == NULL) 
+        fun = (SEXP(*)(SEXP)) R_GetCCallable("xts","na_omit_xts");
+    return fun(x);
+}
+
+SEXP attribute_hidden xtsNaLocf(SEXP x, SEXP fromLast, SEXP maxgap) {
+  static SEXP(*fun)(SEXP,SEXP,SEXP) = NULL;
+    if (fun == NULL) 
+      fun = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("xts","na_locf");
+    return fun(x, fromLast, maxgap);
+}
+
 #ifdef __cplusplus
 }
 #endif

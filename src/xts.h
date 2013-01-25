@@ -75,6 +75,14 @@ SEXP number_of_cols(SEXP args);
 SEXP col_names(SEXP args);
 SEXP naCheck(SEXP x, SEXP check);
 
+SEXP make_index_unique(SEXP x, SEXP eps);
+SEXP make_unique(SEXP X, SEXP eps);
+SEXP endpoints(SEXP x, SEXP on, SEXP addlast);
+SEXP do_merge_xts(SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP colnames, 
+                  SEXP suffixes, SEXP retside, SEXP env, int coerce);
+SEXP na_omit_xts(SEXP x);
+SEXP na_locf(SEXP x, SEXP fromlast, SEXP maxgap);
+
 SEXP tryXts(SEXP x);
 
 
