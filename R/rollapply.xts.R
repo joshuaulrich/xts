@@ -81,6 +81,7 @@ rollapply.xts <- function(data, width, FUN, ..., by=1, by.column=TRUE,
     #xx <- sapply(1:NROW(e), function(i) FUN(data[e[i,],],...))
     ##xx <- sapply(ind, function(i) FUN(data[(i-width+1):i,],...))
     xx <- sapply(ind, function(i) FUN(.subset_xts(data,(i-width+1):i),...))
+    if(!is.null(dim(xx))) xx <- t(xx)
     res <- xts(xx, tt, if (by == 1) attr(data, "frequency"))
   } else if( by.column ) {
     res <- xts( sapply( 1:NCOL(data), function(j)
