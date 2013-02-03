@@ -70,10 +70,13 @@ function(x, ...) {
                'index type of class',sQuote(class(value))))
 
   # set index to the numeric value of the desired index class
-  attr(x, 'index') <- as.numeric(as.POSIXct(value))
+  if(inherits(value,"Date"))
+    attr(x, 'index') <- structure(unclass(value)*86400, tclass="Date", tzone="UTC")
+  else attr(x, 'index') <- as.numeric(as.POSIXct(value))
 
-  # set the .indexCLASS attribute to the end-user specified class
+  # set the .indexCLASS/tclass attribute to the end-user specified class
   attr(x, '.indexCLASS') <- class(value)
+  attr(.index(x), '.tclass') <- class(value)
   return(x)
 }
 

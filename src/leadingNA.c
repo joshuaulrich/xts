@@ -127,14 +127,14 @@ SEXP naCheck (SEXP x, SEXP check)
   return(first);
 }
 
-SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
+SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
 {
   /* only works on univariate data         *
    * of type LGLSXP, INTSXP and REALSXP.   */
   SEXP result;
 
   int i, ii, nr, _first, P=0;
-  double gap, maxgap;
+  double gap, maxgap, limit;
   _first = firstNonNA(x);
 
   if(_first == nrows(x))
@@ -148,6 +148,7 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
 
   nr = nrows(x);
   maxgap = asReal(coerceVector(_maxgap,REALSXP));
+  limit  = asReal(coerceVector(_limit ,REALSXP));
   gap = 0;
 
   PROTECT(result = allocVector(TYPEOF(x), nrows(x))); P++;
@@ -198,7 +199,8 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
         for(i=_first+1; i<nr; i++) {
           int_result[i] = int_x[i];
           if(int_result[i] == NA_INTEGER) {
-            int_result[i] = int_result[i-1];
+            if(limit > gap)
+              int_result[i] = int_result[i-1];
             gap++;
           } else {
             if((int)gap > (int)maxgap) {
@@ -220,7 +222,8 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
         for(i=nr-2; i>=0; i--) {
           int_result[i] = int_x[i];
           if(int_result[i] == NA_INTEGER) {
-            int_result[i] = int_result[i+1];
+            if(limit > gap)
+              int_result[i] = int_result[i+1];
             gap++;
           } else {
             if((int)gap > (int)maxgap) {
@@ -247,8 +250,9 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
         }
         for(i=_first+1; i<nr; i++) {
           real_result[i] = real_x[i];
-          if(ISNA(real_result[i]) || ISNAN(real_result[i])) {
-            real_result[i] = real_result[i-1];
+          if( ISNA(real_result[i]) || ISNAN(real_result[i])) {
+            if(limit > gap)
+              real_result[i] = real_result[i-1];
             gap++;
           } else {
             if((int)gap > (int)maxgap) {
@@ -269,7 +273,8 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap)
         for(i=nr-2; i>=0; i--) {
           real_result[i] = real_x[i];
           if(ISNA(real_result[i]) || ISNAN(real_result[i])) {
-            real_result[i] = real_result[i+1];
+            if(limit > gap)
+              real_result[i] = real_result[i+1];
             gap++;
           } else {
             if((int)gap > (int)maxgap) {

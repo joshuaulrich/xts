@@ -81,7 +81,7 @@ SEXP endpoints(SEXP x, SEXP on, SEXP addlast);
 SEXP do_merge_xts(SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP colnames, 
                   SEXP suffixes, SEXP retside, SEXP env, int coerce);
 SEXP na_omit_xts(SEXP x);
-SEXP na_locf(SEXP x, SEXP fromlast, SEXP maxgap);
+SEXP na_locf(SEXP x, SEXP fromlast, SEXP _maxgap, SEXP _limit);
 
 SEXP tryXts(SEXP x);
 

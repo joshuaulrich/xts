@@ -7,7 +7,7 @@
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
+#   the Free Software Foundation, either version 2 of the License, or
 #   (at your option) any later version.
 #
 #   This program is distributed in the hope that it will be useful,
@@ -517,11 +517,19 @@ SEXP lag_zoo (SEXP x, SEXP _k, SEXP _pad)
 }
 
 SEXP lag_xts (SEXP x, SEXP _k, SEXP _pad) {
+  /* this will eventually revert to NOT changing R default behaviors 
+     for now it uses the 'standard' convention adopted by xts        */
+
   int k = INTEGER(_k)[0]*-1; /* change zoo default negative handling */
   return zoo_lag (x, ScalarInteger(k), _pad);
 }
 
 SEXP lagts_xts (SEXP x, SEXP _k, SEXP _pad) {
+  /* this will use positive values of lag for carrying forward observations
+ 
+     i.e. y = lagts(x, 1) is y(t) = x(t-1)
+  */
+
   int k = INTEGER(_k)[0]*-1; /* change zoo default negative handling */
   return zoo_lag (x, ScalarInteger(k), _pad);
 }
