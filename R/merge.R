@@ -26,7 +26,9 @@ merge.xts <- function(...,
                      join="outer",
                      retside=TRUE,
                      retclass="xts",
-                     tzone=NULL) {
+                     tzone=NULL,
+                     drop=NULL,
+                     check.names=NULL) {
   if(is.logical(retclass) && !retclass) {
     setclass=FALSE
   } else setclass <- TRUE

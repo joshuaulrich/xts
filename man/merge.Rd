@@ -17,7 +17,9 @@ joins.
       join = "outer",
       retside = TRUE,
       retclass = "xts",
-      tzone = NULL)
+      tzone = NULL,
+      drop=NULL,
+      check.names=NULL)
 }
 \arguments{
   \item{\dots}{ one or more xts objects, or objects coercible to class xts }
@@ -28,6 +30,8 @@ joins.
   \item{retside}{ which side of the merged object should be returned (2-case only) }
   \item{retclass}{ object to return }
   \item{tzone}{ time zone of merged object }
+  \item{drop}{ not currently used }
+  \item{check.names}{ not currently used }
 }
 \details{
 This is an xts method compatible with merge.zoo, as xts extends zoo.
