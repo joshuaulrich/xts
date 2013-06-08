@@ -37,6 +37,7 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP dup)
   int mode;
   SEXP result, xindex, yindex, newindex;
 
+
   int *int_result=NULL, *int_x=NULL, *int_y=NULL;
   int *int_newindex=NULL, *int_xindex=NULL, *int_yindex=NULL;
   double *real_result=NULL, *real_x=NULL, *real_y=NULL;

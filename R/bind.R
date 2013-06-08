@@ -103,7 +103,7 @@ function(..., deparse.level=1) {
       dots <- dots[-1]
     if(!is.null(colnames(y)) && colnames(x) != colnames(y))
       warning('column names differ')
-    x <- .Call('do_rbind_xts',x,y,PACKAGE="xts")
+    x <- .Call('do_rbind_xts',x,y,FALSE,PACKAGE="xts")
   }
   return(x)
 }
