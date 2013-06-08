@@ -61,6 +61,10 @@ function(x, value) {
   if(value %in% c('POSIXlt','POSIXct'))
     value <- c(value,'POSIXt')
 
+  if(value %in% 'Date') {
+    
+  }
+
   attr(x, '.indexCLASS') <- value
   # all index related meta-data will be stored in the index
   # as attributes

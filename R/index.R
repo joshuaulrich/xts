@@ -76,7 +76,8 @@ function(x, ...) {
 
   # set the .indexCLASS/tclass attribute to the end-user specified class
   attr(x, '.indexCLASS') <- class(value)
-  attr(.index(x), '.tclass') <- class(value)
+  attr(.index(x), 'tclass') <- class(value)
+  attr(.index(x), 'tzone') <- attr(value,"tzone")
   return(x)
 }
 
