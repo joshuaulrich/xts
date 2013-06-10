@@ -63,7 +63,7 @@ FUNCTIONS
 SEXP do_xtsAttributes(SEXP x);              // xtsAttributes i.e. user-added attributes
 SEXP do_xtsCoreAttributes(SEXP x);          /* xtsCoreAttributes xts-specific attributes
                                                CLASS, .indexFORMAT, .indexCLASS & class */
-SEXP coredata(SEXP x);
+SEXP coredata(SEXP x, SEXP copyAttr);
 SEXP coredata_xts(SEXP x);
 SEXP add_class(SEXP x, SEXP klass);
 SEXP lagXts(SEXP x, SEXP k, SEXP pad);
