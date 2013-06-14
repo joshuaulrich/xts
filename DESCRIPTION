@@ -4,8 +4,8 @@ Title: eXtensible Time Series
 Version: 0.9-4
 Date: 2013-01-14
 Author: Jeffrey A. Ryan, Joshua M. Ulrich
-Depends: zoo (>= 1.7-2)
-LinkingTo: zoo (>= 1.7.2)
+Depends: zoo (>= 1.7-10)
+LinkingTo: zoo (>= 1.7-10)
 Suggests: timeSeries,timeDate,tseries,its,chron,fts,tis
 LazyLoad: yes
 Maintainer: Jeffrey A. Ryan <jeff.a.ryan@gmail.com>
