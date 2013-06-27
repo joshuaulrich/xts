@@ -129,11 +129,11 @@ SEXP attribute_hidden xtsNaOmit(SEXP x) {
     return fun(x);
 }
 
-SEXP attribute_hidden xtsNaLocf(SEXP x, SEXP fromLast, SEXP maxgap) {
-  static SEXP(*fun)(SEXP,SEXP,SEXP) = NULL;
+SEXP attribute_hidden xtsNaLocf(SEXP x, SEXP fromLast, SEXP maxgap, SEXP limit) {
+    static SEXP(*fun)(SEXP,SEXP,SEXP,SEXP) = NULL;
     if (fun == NULL) 
-      fun = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("xts","na_locf");
-    return fun(x, fromLast, maxgap);
+        fun = (SEXP(*)(SEXP,SEXP,SEXP,SEXP)) R_GetCCallable("xts","na_locf");
+    return fun(x, fromLast, maxgap, limit);
 }
 
 #ifdef __cplusplus
