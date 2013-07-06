@@ -38,7 +38,7 @@ make.timeBased <- function(x, class='POSIXct', ...)
 `period.sum` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
-
+  if(min(INDEX) < 0 || max(INDEX) > NROW(x)) stop("INDEX must be >= 0 and <= nrow(x)")
   ep <- INDEX
   if(ep[1] != 0) ep <- c(0,ep)
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
@@ -58,6 +58,7 @@ function(x,INDEX) {
 `period.prod` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
+  if(min(INDEX) < 0 || max(INDEX) > NROW(x)) stop("INDEX must be >= 0 and <= nrow(x)")
   ep <- INDEX
   if(ep[1] != 0) ep <- c(0,ep)
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
@@ -77,6 +78,7 @@ function(x,INDEX) {
 `period.max` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
+  if(min(INDEX) < 0 || max(INDEX) > NROW(x)) stop("INDEX must be >= 0 and <= nrow(x)")
   ep <- INDEX
   if(ep[1] != 0) ep <- c(0,ep)
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
@@ -96,6 +98,7 @@ function(x,INDEX) {
 `period.min` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
+  if(min(INDEX) < 0 || max(INDEX) > NROW(x)) stop("INDEX must be >= 0 and <= nrow(x)")
   ep <- INDEX
   if(ep[1] != 0) ep <- c(0,ep)
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
