@@ -33,9 +33,10 @@ function(x) {
 function(x, value) {
   oclass <- class(x)
   x <- unclass(x)
-  d <- dim(x)
+
   if(is.null(value)) {
     dimnames(x) <- NULL
+    class(x) <- oclass
   }
   else {
     if(!is.list(value) || length(value) != 2L)
