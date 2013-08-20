@@ -34,10 +34,16 @@ function(x, ..., .RECLASS=FALSE)
 `as.fts.xts` <-
 function(x)
 {
+  if(!require('fts', quietly=TRUE))
+    fts <- function(...) message("package 'fts' is required")
+
   fts(coredata(x), structure(.index(x), class=c("POSIXt","POSIXct")))
 }
 
 re.fts <- function(x, ...) 
 {
+  if(!require('fts', quietly=TRUE))
+    fts <- function(...) message("package 'fts' is required")
+
   fts(coredata(x), structure(.index(x), class=c("POSIXt","POSIXct")))
 }

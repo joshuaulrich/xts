@@ -23,7 +23,9 @@
 
 `re.irts` <-
 function(x,...) {
-  stopifnot("package:tseries" %in% search() || require("tseries",quietly=TRUE))
+  if(!require('tseries', quietly=TRUE))
+    irts <- function(...) message("package 'tseries' is required for re.irts")
+
   indexClass(x) <- "POSIXct"
   xx <- coredata(x)
 #  rownames(xx) <- attr(x,'irts.rownames')

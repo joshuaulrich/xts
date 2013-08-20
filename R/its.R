@@ -23,7 +23,9 @@
 
 `re.its` <-
 function(x, ...) {
-  stopifnot("package:its" %in% search() || require("its",quietly=TRUE))
+  if(!require('its', quietly=TRUE))
+    its <- function(...) message("package 'fts' is required")
+
   xx <- coredata(x)
   dates <- index(x)
   its(xx,dates=dates,...)

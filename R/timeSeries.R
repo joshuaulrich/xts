@@ -23,7 +23,8 @@
 
 `re.timeSeries` <-
 function(x,...) {
-  stopifnot("package:timeSeries" %in% search() || require("timeSeries", quietly=TRUE))
+  if(!require('timeSeries', quietly=TRUE))
+    timeSeries <- function(...) message("package 'timeSeries' is required")
 
   # strip all non-'core' attributes so they're not attached to the Data slot
   x.attr <- attributes(x)
@@ -76,6 +77,9 @@ function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,..., .RE
 }
 
 as.timeSeries.xts <- function(x, ...) {
+  if(!require('timeSeries', quietly=TRUE))
+    timeSeries <- function(...) message("package 'timeSeries' is required")
+
   timeSeries(data=coredata(x), charvec=as.character(index(x)), ...)
 }
 
