@@ -81,7 +81,7 @@
   if( identical(getxvalues(last.plot), getxvalues(recordPlot())) ) {
     lines.default(getxvalues(recordPlot()),
                   x, ...)
-  } else zoo:::lines.zoo(x, ...)
+  } else lines(as.zoo(x), ...)
   assign(".plot.xts",recordPlot(),.xtsEnv)
 }
 

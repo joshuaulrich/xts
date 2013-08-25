@@ -50,7 +50,7 @@ as.Date.POSIXct <- function(x, ...)
 
 as.POSIXlt.Date <- function(x, ...)
 {
-  as.POSIXlt(xts:::as.POSIXct.Date(x))
+  as.POSIXlt(as.POSIXct.Date(x))
 }
 
 #as.POSIXct.yearmon <- function(x, ...)
