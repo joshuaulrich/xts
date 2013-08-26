@@ -123,6 +123,12 @@ function(x=NULL, index, tclass=c("POSIXt","POSIXct"),
     x <- vector(storage.mode(x))
   } else x <- numeric(0)
 
+  # don't overwrite index tzone if tzone arg is missing
+  if(missing(tzone)) {
+    if(!is.null(index.tz <- attr(index,'tzone')))
+      tzone <- index.tz
+  }
+
   structure(.Data=x,
             index=structure(index,tzone=tzone,tclass=.indexCLASS),
             .indexCLASS=.indexCLASS,.indexTZ=tzone,
