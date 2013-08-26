@@ -65,11 +65,13 @@ function(x=NULL,
   }
 
 
-  if(!is.null(x) && !isOrdered(order.by, strictly=!unique) ) {
+  if(!isOrdered(order.by, strictly=!unique)) {
     indx <- order(order.by)
-    if(NCOL(x) > 1 || is.matrix(x) || is.data.frame(x)) {
-      x <- x[indx,,drop=FALSE]
-    } else x <- x[indx]
+    if(!is.null(x)) {
+      if(NCOL(x) > 1 || is.matrix(x) || is.data.frame(x)) {
+        x <- x[indx,,drop=FALSE]
+      } else x <- x[indx]
+    }
     order.by <- order.by[indx]
   }
 
