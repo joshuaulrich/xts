@@ -21,6 +21,9 @@ SEXP endpoints (SEXP _x, SEXP _on, SEXP _k, SEXP _addlast /* TRUE */)
   int k  = INTEGER(coerceVector(_k,INTSXP))[0];
   nr = nrows(_x);
 
+  /* ensure k > 0 (bug #4920) */
+  if(k <= 0) error("'k' must be > 0");
+
   /* endpoints objects. max nr+2 ( c(0,ep,nr) ) */
   SEXP _ep = PROTECT(allocVector(INTSXP,nr+2)); P++;
   int *ep = INTEGER(_ep);
