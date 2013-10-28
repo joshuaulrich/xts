@@ -110,3 +110,14 @@ na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE, maxgap=Inf, ...) {
       return(structure(na.omit(x),na.action=NULL))
     } else x
 }
+
+.na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE, maxgap=Inf, ...) {
+    stopifnot(is.xts(object))
+    maxgap <- min(maxgap, NROW(object))
+    if(length(object) == 0)
+      return(object)
+    x <- .Call("na_locf_col", object, fromLast, maxgap, Inf, PACKAGE="xts")
+    if(na.rm) {
+      return(structure(na.omit(x),na.action=NULL))
+    } else x
+}
