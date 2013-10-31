@@ -25,7 +25,7 @@
 `dimnames.xts` <-
 function(x) {
   #list(NULL, colnames(unclass(x)))
-  .Call("dimnames_zoo",x);
+  .Call("dimnames_zoo",x,PACKAGE="xts");
   #list(as.character(index(x)), colnames(unclass(x)))
 }
 
