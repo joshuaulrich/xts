@@ -511,7 +511,7 @@ SEXP na_locf_col (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
         }
       } else {                      /* fromLast=TRUE */
         for(j=0; j < nc; j++) {
-          real_result[nr-1+j*nr] = int_x[nr-1+j*nr];
+          real_result[nr-1+j*nr] = real_x[nr-1+j*nr];
           for(i=nr-2 + j*nr; i>=0+j*nr; i--) {
             real_result[i] = real_x[i];
             if(ISNA(real_result[i]) || ISNAN(real_result[i])) {
