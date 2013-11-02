@@ -182,3 +182,35 @@ SEXP ca (SEXP x, SEXP y)
   copy_xtsAttributes(x,y);
   return R_NilValue;
 }
+
+SEXP add_xtsCoreAttributes(SEXP _x, SEXP _index, SEXP _indexClass, SEXP _tzone,
+        SEXP _tclass, SEXP _class, SEXP _indexFormat)
+{
+  int P=0;
+  if(NAMED(_index) == 2) {
+    PROTECT(_index = duplicate(_index)); P++;
+  }
+  /* add tzone and tclass to index */
+  setAttrib(_index, install("tclass"), _tclass);
+  setAttrib(_index, install("tzone"), _tzone);
+
+  if(NAMED(_x) == 2) {
+    PROTECT(_x = duplicate(_x)); P++;
+    //_x = duplicate(_x);
+  }
+  setAttrib(_x, xts_IndexSymbol, _index);              /* index */
+  setAttrib(_x, xts_IndexClassSymbol, _indexClass);    /* .indexClass */
+  setAttrib(_x, xts_IndexTZSymbol, _tzone);            /* .indexTZ */
+  setAttrib(_x, install("tclass"), _tclass);           /* tclass */
+  setAttrib(_x, install("tzone"), _tzone);             /* tzone */
+  setAttrib(_x, R_ClassSymbol, _class);                /* class */
+
+  /* .indexFormat is only here because it's set in Ops.xts
+   * This should go away once this attribute is on the index */
+  if(_indexFormat != R_NilValue)
+    setAttrib(_x, xts_IndexFormatSymbol, _indexFormat);
+
+  UNPROTECT(P);
+  return(_x);
+}
+

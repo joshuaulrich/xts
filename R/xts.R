@@ -136,6 +136,49 @@ function(x=NULL, index, tclass=c("POSIXt","POSIXct"),
             class=c('xts','zoo'), ...)
 }
 
+`..xts` <-
+function(x=NULL, index, tclass=c("POSIXt","POSIXct"),
+         tzone=Sys.getenv("TZ"),
+         check=TRUE, unique=FALSE, .indexCLASS=tclass, ...) {
+  if(check) {
+    if( !isOrdered(index, increasing=TRUE, strictly=unique) )
+      stop('index is not in ',ifelse(unique, 'strictly', ''),' increasing order')
+  }
+  if(!is.numeric(index) && timeBased(index))
+    index <- as.numeric(as.POSIXct(index))
+  if(!is.null(x) && NROW(x) != length(index))
+    stop("index length must match number of observations")
+
+  if(!is.null(x)) {
+    if(!is.matrix(x))
+      x <- as.matrix(x)
+  } else
+  if(length(x) == 0 && !is.null(x)) {
+    x <- vector(storage.mode(x))
+  } else x <- numeric(0)
+
+  # don't overwrite index tzone if tzone arg is missing
+  if(missing(tzone)) {
+    if(!is.null(index.tz <- attr(index,'tzone')))
+      tzone <- index.tz
+  }
+
+  # work-around for Ops.xts
+  dots.names <- eval(substitute(alist(...)))
+  if(hasArg(.indexFORMAT))
+    .indexFORMAT <- eval(dots.names$.indexFORMAT,parent.frame())
+  else
+    .indexFORMAT <- NULL
+  xx <- .Call("add_xtsCoreAttributes", x, index, .indexCLASS, tzone, tclass,
+              c('xts','zoo'), .indexFORMAT, PACKAGE='xts')
+  # remove .indexFORMAT and .indexTZ that come through Ops.xts
+  dots.names$.indexFORMAT <- dots.names$.indexTZ <- NULL
+  # set any user attributes
+  if(length(dots.names))
+    attributes(xx) <- c(attributes(xx), ...)
+  xx
+}
+
 `reclass` <-
 function(x, match.to, error=FALSE, ...) {
   if(!missing(match.to) && is.xts(match.to)) {
