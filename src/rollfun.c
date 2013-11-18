@@ -23,9 +23,20 @@
 #include <Rinternals.h>
 #include "xts.h"
 
+/* http://en.wikipedia.org/wiki/Kahan_summation_algorithm
+ * sum += x, and updates the accumulated error "c" */
+void kahan_sum(long double x, long double * c, long double * sum)
+{
+  /* Author: Ivan Popivanov */
+   long double y = x - *c;
+   long double t = *sum + y;
+   *c = ( t - *sum ) - y;
+   *sum = t;
+}
+
 SEXP roll_sum (SEXP x, SEXP n)
 {
-  /* Author: Joshua Ulrich */
+  /* Author: Joshua Ulrich, with contributions from Ivan Popivanov */
   int i, P=0, nrs;
   nrs = nrows(x);
 
@@ -38,7 +49,6 @@ SEXP roll_sum (SEXP x, SEXP n)
   int *int_result=NULL, *int_x=NULL;
   int int_sum = 0;
   double *real_result=NULL, *real_x=NULL;
-  double real_sum = 0.0;
 
   /* check for non-leading NAs and get first non-NA location */
   SEXP first;
@@ -47,6 +57,8 @@ SEXP roll_sum (SEXP x, SEXP n)
   if(int_n + int_first > nrs)
     error("not enough non-NA values");
 
+  long double sum = 0.0;
+  long double comp = 0.0;
   switch(TYPEOF(x)) {
     case REALSXP:
       real_result = REAL(result);
@@ -56,12 +68,14 @@ SEXP roll_sum (SEXP x, SEXP n)
       for(i=0; i<int_n+int_first; i++) {
         real_result[i] = NA_REAL;
         if(i >= int_first)
-          real_sum += real_x[i];
+          kahan_sum(real_x[i], &comp, &sum);
       }
-      real_result[ int_n + int_first - 1 ] = real_sum;
+      real_result[ int_n + int_first - 1 ] = (double)sum;
       /* loop over all other values */
       for(i=int_n+int_first; i<nrs; i++) {
-        real_result[i] = real_result[i-1] + real_x[i] - real_x[i-int_n];
+        kahan_sum(-real_x[i-int_n], &comp, &sum);
+        kahan_sum( real_x[i],       &comp, &sum);
+        real_result[i] = (double)sum;
       }
       break;
     case INTSXP: /* how can we check for overflow? */
