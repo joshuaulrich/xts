@@ -113,7 +113,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     # subset is picky, 0's in the 'i' position cause failures
     zero.index <- binsearch(0, i, NULL)
     if(!is.na(zero.index))
-      i <- i[ -1L:-zero.index ]  # at least one 0; binsearch returns location of last 0
+      i <- i[i!=0]  # at least one 0; remove them all
 
     if(length(i) <= 0 && USE_EXTRACT) 
       USE_EXTRACT <- FALSE
