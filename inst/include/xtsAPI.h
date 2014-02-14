@@ -7,7 +7,7 @@ any user comments and bug reports are very
 welcomed.
 
 Copyright 2008 - 2014 Jeffrey A. Ryan   
-Copyright 2013 - 2014 2013 Dirk Eddelbuettel        
+Copyright 2013 - 2014 Dirk Eddelbuettel        
 
 This source is distributed with the same license
 as the full xts software, GPL (>= 2).
