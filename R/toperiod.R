@@ -255,7 +255,7 @@ function(x, by, k=1, name=NULL, OHLC=TRUE, ...) {
     cnames <- NULL
 
   # start to.frequency-specific code
-  if (missing(by)) by <- 1:NROW(x)
+  if (missing(by)) by <- rep(1L, nrow(x))
   byVec <- cumsum(by)
   bins <- byVec %/% k
   bins[1] <- 0
