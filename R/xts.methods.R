@@ -128,8 +128,8 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
         i <- seq_len(nr)
 
       if(length(x)==0) {
-        x.tmp <- .xts(rep(NA,length(i)), .index(x)[i])
-        return((colnames(x.tmp) <- colnames(x)))
+        x.tmp <- .xts(rep(NA,length(i)), .index(x)[i], dimnames=list(NULL, colnames(x)))
+        return(x.tmp)
       } else {
         if(USE_EXTRACT) {
           return(.Call('extract_col', 
