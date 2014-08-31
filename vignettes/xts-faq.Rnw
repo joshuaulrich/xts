@@ -155,7 +155,7 @@ sprintf("%20.10f", dt)
 @
 
 \q{I am using \code{apply} to run a custom function on my \pkg{xts} object.
-Why the returned matrix has different dimensions than the original one?}
+Why does the returned matrix has different dimensions than the original one?}
 %
 When working on rows, \code{apply} returns a transposed version of the
 original matrix. Simply call \code{t} on the returned matrix to restore the
