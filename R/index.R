@@ -74,6 +74,10 @@ function(x, ...) {
     attr(x, 'index') <- structure(unclass(value)*86400, tclass="Date", tzone="UTC")
   else attr(x, 'index') <- as.numeric(as.POSIXct(value))
 
+  # ensure new index is sorted
+  if(!isOrdered(.index(x)))
+    stop("new index needs to be sorted")
+
   # set the .indexCLASS/tclass attribute to the end-user specified class
   attr(x, '.indexCLASS') <- class(value)
   attr(.index(x), 'tclass') <- class(value)
