@@ -106,45 +106,35 @@ function(x, ...) {
 }
 
 `.indexsec` <- function(x) {
-  #as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$sec
-  as.POSIXlt(.POSIXct(.index(x)))$sec
+  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$sec
 }
 `.indexmin` <- function(x) {
-  #as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$min
-  as.POSIXlt(.POSIXct(.index(x)))$min
+  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$min
 }
 `.indexhour` <- function(x) {
-  #as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$hour
-  as.POSIXlt(.POSIXct(.index(x)))$hour
+  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$hour
 }
 `.indexmday` <- function(x) {
-  #as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$mday
-  as.POSIXlt(.POSIXct(.index(x)))$mday
+  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$mday
 }
 `.indexmon` <- function(x) {
-  #as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$mon
-  as.POSIXlt(.POSIXct(.index(x)))$mon
+  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$mon
 }
 `.indexyear` <- function(x) {
-  #as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$year
-  as.POSIXlt(.POSIXct(.index(x)))$year
+  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$year
 }
 `.indexwday` <- function(x) {
-  #as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$wday
-  as.POSIXlt(.POSIXct(.index(x)))$wday
+  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$wday
 }
 `.indexbday` <- function(x) {
   # is business day T/F
-  #as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$wday %% 6 > 0
-  as.POSIXlt(.POSIXct(.index(x)))$wday %% 6 > 0
+  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$wday %% 6 > 0
 }
 `.indexyday` <- function(x) {
-  #as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$yday
-  as.POSIXlt(.POSIXct(.index(x)))$yday
+  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$yday
 }
 `.indexisdst` <- function(x) {
-  #as.POSIXlt( structure( .index(x), class=c('POSIXt','POSIXct')) )$isdst
-  as.POSIXlt(.POSIXct(.index(x)))$isdst
+  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$isdst
 }
 `.indexDate` <- `.indexday` <- function(x) {
   .index(x) %/% 86400L
