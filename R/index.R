@@ -75,7 +75,7 @@ function(x, ...) {
   else attr(x, 'index') <- as.numeric(as.POSIXct(value))
 
   # ensure new index is sorted
-  if(!isOrdered(.index(x)))
+  if(!isOrdered(.index(x), strictly=FALSE))
     stop("new index needs to be sorted")
 
   # set the .indexCLASS/tclass attribute to the end-user specified class
