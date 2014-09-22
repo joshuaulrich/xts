@@ -261,9 +261,9 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP whichVolume, SEXP has
     SET_STRING_ELT(newcolnames, 1, mkChar("High"));
     SET_STRING_ELT(newcolnames, 2, mkChar("Low"));
     SET_STRING_ELT(newcolnames, 3, mkChar("Close"));
-    if(INTEGER(hasVolume))
+    if(INTEGER(hasVolume)[0])
       SET_STRING_ELT(newcolnames, 4, mkChar("Volume"));
-    if(INTEGER(hasVolume))
+    if(INTEGER(hasAdjusted)[0])
       SET_STRING_ELT(newcolnames, 5, mkChar("Adjusted"));
     SET_VECTOR_ELT(dimnames, 1, newcolnames);
   }
