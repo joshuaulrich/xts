@@ -120,10 +120,17 @@ export(split.xts)
 export(axTicksByTime)
 
 export(plot.xts)
-#export(lines.xts)
+export(addLegend)
+export(addLines)
+export(addPoints)
+export(addSeries)
 S3method(plot,xts)
-S3method(lines,xts)
-S3method(points,xts)
+S3method(print, replot_xts)
+S3method(plot, replot_xts)
+
+#export(lines.xts)
+#S3method(lines,xts)
+#S3method(points,xts)
 
 #export(Lag.xts, Next.xts) #, Diff.xts)
 
