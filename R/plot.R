@@ -896,7 +896,7 @@ addPoints <- function(x, main="", on=NA, col=NULL, pch=0, ...){
 #' @param col color palette to use, set by default to rational choices.
 #' @param \dots any other passthrough parameters. Not currently used.
 #' @author Ross Bennett
-addLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d", main="", on=NA, lty=1, lwd=1, col=1, ...){
+addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d", main="", on=NA, lty=1, lwd=1, col=1, ...){
   # add checks for event.dates and event.labels
   if(!is.null(event.labels))
     if(length(event.dates) != length(event.labels)) stop("length of event.dates must match length of event.labels")

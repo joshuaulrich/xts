@@ -121,7 +121,7 @@ export(axTicksByTime)
 
 export(plot.xts)
 export(addLegend)
-export(addLines)
+export(addEventLines)
 export(addPoints)
 export(addSeries)
 S3method(plot,xts)
