@@ -865,6 +865,15 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
   plot_object
 }
 
+lines.xts <- function(x, ..., main="", on=NA, col=NULL, lty=1, lwd=1, pch=0){
+  addSeries(x, ...=..., main=main, on=on, type="l", col=col, lty=lty, lwd=lwd, pch=pch)
+}
+
+
+# addPoints <- function(x, main="", on=NA, col=NULL, pch=0, ...){
+#   addSeries(x, main=main, on=on, type="p", col=col, pch=pch, ...)
+# }
+
 #' Add time series of points to an existing xts plot
 #' 
 #' @param x an xts object to plot.
@@ -874,8 +883,8 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
 #' @param pch the type of plot to be drawn, same as in \code{\link{plot}}.
 #' @param \dots any other passthrough parameters. Not currently used.
 #' @author Ross Bennett
-addPoints <- function(x, main="", on=NA, col=NULL, pch=0, ...){
-  addSeries(x, main=main, on=on, type="p", col=col, pch=pch, ...)
+points.xts <- function(x, ..., main="", on=NA, col=NULL, pch=0){
+  addSeries(x, ...=..., main=main, on=on, type="p", col=col, pch=pch)
 }
 
 #' Add vertical lines to an existing xts plot
