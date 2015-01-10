@@ -1051,31 +1051,17 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
 #' @param col fill colors for the legend. If \code{NULL},
 #' the colorset of the current plot object data is used.
 #' @param ncol number of columns for the legend
-#' @param \dots any other passthrough parameters. Not currently used.
+#' @param \dots any other passthrough parameters to \code{\link{legend}}.
 #' @author Ross Bennett
-addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, ...){
+addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, on=1, ...){
   lenv <- new.env()
-  lenv$main <- ""
-  
-  plot_object <- current.xts_chob()
-  ncalls <- length(plot_object$Env$call_list)
-  plot_object$Env$call_list[[ncalls+1]] <- match.call()
-  
-  # add the frame for drawdowns info
-  plot_object$add_frame(ylim=c(0,1),asp=0.25)
-  plot_object$next_frame()
-  text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
-                              col=1,adj=c(0,0),cex=0.9,offset=0,pos=4))
-  plot_object$add(text.exp, env=c(lenv,plot_object$Env), expr=TRUE)
-  
-  # add frame for the legend panel
-  plot_object$add_frame(ylim=c(0,1),asp=0.8,fixed=TRUE)
-  plot_object$next_frame()
-  
-  if(!is.null(legend.loc)){
-    yrange <- c(0,1)
-    nobs <- plot_object$Env$nobs
-    chob.xlim <- plot_object$Env$xlim
+  lenv$plot_legend <- function(x, legend.loc, legend.names, col, ncol, on, ...){
+    if(is.na(on)){
+      yrange <- c(0, 1)
+    } else {
+      yrange <- x$Env$ylim[[2*on]]
+    }
+    chob.xlim <- x$Env$xlim
     switch(legend.loc,
            topleft = {
              xjust <- 0
@@ -1132,28 +1118,76 @@ addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, 
              ly <- yrange[1]
            }
     )
+    # this just gets the data of the main plot
+    # TODO: get the data of frame[on]
+    if(is.null(ncol)){
+      ncol <- NCOL(x$Env$xdata)
+    }
+    if(is.null(col)){
+      col <- x$Env$theme$col[1:nc]
+    }
+    if(is.null(legend.names)){
+      legend.names <- x$Env$column_names
+    }
+    legend(x=lx, y=ly, legend=legend.names, xjust=xjust, yjust=yjust, 
+           ncol=ncol, col=col, bty="n", ...)
   }
-  nc <- NCOL(plot_object$Env$xdata)
-  lenv$lx <- lx
-  lenv$ly <- ly
-  lenv$xjust <- xjust
-  lenv$yjust <- yjust
-  if(!is.null(col)){
-    lenv$col <- col[1:nc]
-  } else {
-    lenv$col <- plot_object$Env$theme$col[1:nc]
-  }
-  if(!is.null(legend.names)){
-    lenv$names <- legend.names
-  } else {
-    lenv$names <- plot_object$Env$column_names
-  }
-  lenv$nc <- ncol
-  # add expression for legend
-  exp <- expression(legend(x=lx, y=ly, legend=names, xjust=xjust, yjust=yjust, 
-                           fill=col, ncol=nc, bty="n"))
   
-  plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
+  # store the call
+  plot_object <- current.xts_chob()
+  ncalls <- length(plot_object$Env$call_list)
+  plot_object$Env$call_list[[ncalls+1]] <- match.call()
+  
+  # if on[1] is NA, then add a new frame for the legend
+  if(is.na(on[1])){
+    # map all passed args (if any) to 'lenv' environment
+    mapply(function(name,value) { assign(name,value,envir=lenv) }, 
+           names(list(legend.loc=legend.loc, legend.names=legend.names, col=col, ncol=ncol, on=on,...)),
+           list(legend.loc=legend.loc, legend.names=legend.names, col=col, ncol=ncol, on=on,...))
+    exp <- parse(text=gsub("list","plot_legend",
+                           as.expression(substitute(list(x=current.xts_chob(),
+                                                         legend.loc=legend.loc,
+                                                         legend.names=legend.names,
+                                                         col=col,
+                                                         ncol=ncol,
+                                                         on=on,
+                                                         ...)))),
+                 srcfile=NULL)
+    
+    # add frame for spacing
+    plot_object$add_frame(ylim=c(0,1),asp=0.25)
+    plot_object$next_frame()
+    text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
+                                col=1,adj=c(0,0),cex=0.9,offset=0,pos=4))
+    plot_object$add(text.exp, env=c(lenv,plot_object$Env), expr=TRUE)
+    
+    # add frame for the legend panel
+    plot_object$add_frame(ylim=c(0,1),asp=0.8,fixed=TRUE)
+    plot_object$next_frame()
+    
+    # add plot_legend expression
+    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
+  } else {
+    for(i in 1:length(on)) {
+      ind <- on[i]
+      no.update <- FALSE
+      # map all passed args (if any) to 'lenv' environment
+      mapply(function(name,value) { assign(name,value,envir=lenv) }, 
+             names(list(legend.loc=legend.loc, legend.names=legend.names, col=col, ncol=ncol, on=on,...)),
+             list(legend.loc=legend.loc, legend.names=legend.names, col=col, ncol=ncol, on=on,...))
+      exp <- parse(text=gsub("list","plot_legend",
+                             as.expression(substitute(list(x=current.xts_chob(),
+                                                           legend.loc=legend.loc,
+                                                           legend.names=legend.names,
+                                                           col=col,
+                                                           ncol=ncol,
+                                                           on=on,
+                                                           ...)))),
+                   srcfile=NULL)
+      plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
+      plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=no.update)
+    }
+  }
   plot_object
 }
 
