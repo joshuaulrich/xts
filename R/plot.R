@@ -865,8 +865,8 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
   plot_object
 }
 
-lines.xts <- function(x, ..., main="", on=NA, col=NULL, lty=1, lwd=1, pch=0){
-  addSeries(x, ...=..., main=main, on=on, type="l", col=col, lty=lty, lwd=lwd, pch=pch)
+lines.xts <- function(x, ..., main="", on=NA, col=NULL, type="l", lty=1, lwd=1, pch=0){
+  addSeries(x, ...=..., main=main, on=on, type=type, col=col, lty=lty, lwd=lwd, pch=pch)
 }
 
 

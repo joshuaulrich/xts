@@ -1,6 +1,8 @@
 \name{plot.xts}
 \alias{plot.xts}
-\title{Time series Plotting}
+\alias{lines.xts}
+\alias{points.xts}
+\title{Plotting xts Objects}
 \usage{
 \method{plot}{xts}(x, y = NULL, ..., subset = "", FUN = NULL,
   panels = NULL, multi.panel = FALSE, col = 1:12, up.col = "green",
@@ -11,13 +13,17 @@
   grid.ticks.on = "months", grid.ticks.lwd = 1, grid.ticks.lty = 1,
   grid.col = "darkgray", labels.col = "#333333", format.labels = TRUE,
   shading = 1, bg.col = "#FFFFFF", grid2 = "#F5F5F5", legend.loc = NULL)
+\method{lines}{xts}(x, ..., main = "", on = NA, col = NULL, type = "l",
+  lty = 1, lwd = 1, pch = 0)
+\method{points}{xts}(x, ..., main = "", on = NA, col = NULL, pch = 0)
 }
 \arguments{
 \item{x}{xts object}
 
 \item{y}{NULL, not used}
 
-\item{\dots}{any passthrough parameters to FUN}
+\item{\dots}{any passthrough parameters to FUN for \code{plot} and additional graphical 
+arguments for \code{lines} and \code{points}}
 
 \item{subset}{character vector of length one of the subset range using subsetting as in \code{\link{xts}}}
 
@@ -88,6 +94,10 @@ separate panel.}
 \item{legend.loc}{places a legend into one of nine locations on the chart:
 bottomright, bottom, bottomleft, left, topleft, top, topright, right, or
 center. Default NULL does not draw a legend.}
+
+\item{pch}{the plotting character to use, same as in \code{\link{par}}.}
+
+\item{on}{panel number to draw on. A new panel will be drawn if \code{on=NA}.}
 }
 \description{
 Plotting for xts objects.
@@ -96,4 +106,45 @@ TODO: description, details, and examples
 \author{
 Ross Bennett
 }
+\references{
+based on \code{chart_Series} in the \code{quantmod} package by Jeffrey A. Ryan
+}
+\examples{
+\dontrun{
+data(sample_matrix)
+sample.xts <- as.xts(sample_matrix)
 
+# plot the Close
+plot(sample.xts[,"Close"])
+
+# plot a subset of the data
+plot(sample.xts[,"Close"], subset="2007-04-01/2007-06-31")
+
+# function to compute simple returns
+simple.ret <- function(x, col.name){
+  x[,col.name] / lag(x[,col.name]) - 1
+}
+
+# pass in the simple.ret function and plot the output
+plot(sample.xts, FUN=simple.ret, col.name="Close")
+
+# plot the close and add a panel with the simple returns
+plot(sample.xts[,"Close"])
+R <- simple.ret(sample.xts, "Close")
+lines(R, type="h")
+
+# add the 50 period simple moving average to panel 1 of the plot
+library(TTR)
+lines(SMA(sample.xts[,"Close"], n = 50), on=1, col="blue")
+
+# add month end points to the chart
+points(sample.xts[endpoints(sample.xts[,"Close"], on = "months"), "Close"], 
+       col="red", pch=17, on=1)
+
+# add legend to panel 1
+addLegend("topright", on=1, 
+          legend.names = c("Close", "SMA(50)"), 
+          lty=c(1, 1), lwd=c(2, 1),
+          col=c("black", "blue", "red"))
+}
+}
