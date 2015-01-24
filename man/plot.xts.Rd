@@ -8,8 +8,8 @@
   panels = NULL, multi.panel = FALSE, col = 1:12, up.col = "green",
   dn.col = "red", type = "l", lty = 1, lwd = 2, lend = 1,
   main = deparse(substitute(x)), clev = 0, cex = 0.6, cex.axis = 0.9,
-  mar = c(3, 2, 0, 2), srt = 0, xaxis.las = 0, ylim = NULL,
-  yaxis.same = TRUE, yaxis.left = TRUE, yaxis.right = TRUE,
+  mar = c(3, 2, 0, 2), srt = 0, observation.based = FALSE, xaxis.las = 0, 
+  ylim = NULL, yaxis.same = TRUE, yaxis.left = TRUE, yaxis.right = TRUE,
   grid.ticks.on = "months", grid.ticks.lwd = 1, grid.ticks.lty = 1,
   grid.col = "darkgray", labels.col = "#333333", format.labels = TRUE,
   shading = 1, bg.col = "#FFFFFF", grid2 = "#F5F5F5", legend.loc = NULL)
@@ -62,6 +62,8 @@ separate panel.}
 \item{mar}{set the margins, same as in par}
 
 \item{srt}{rotation for the y axis labels}
+
+\item{observation.based}{TRUE/FALSE (default FALSE). If \code{TRUE}, the x-axis is drawn based on observations in the data. If \code{FALSE}, the x-axis is drawn based on the time index of the data.}
 
 \item{xaxis.las}{rotation for the x axis labels}
 

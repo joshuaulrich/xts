@@ -263,6 +263,7 @@ plot.xts <- function(x,
                      cex.axis=0.9,
                      mar=c(3,2,0,2), 
                      srt=0,
+                     observation.based=FALSE,
                      xaxis.las=0,
                      ylim=NULL,
                      yaxis.same=TRUE,
@@ -341,6 +342,7 @@ plot.xts <- function(x,
                     cex.axis=cex.axis,
                     mar=mar, 
                     srt=srt,
+                    observation.based=observation.based,
                     xaxis.las=xaxis.las,
                     ylim=ylim,
                     yaxis.same=yaxis.same,
@@ -380,8 +382,6 @@ plot.xts <- function(x,
       x <- "" #1:NROW(Env$xdata)
     }
     Env$xsubset <<- x
-    # set_xlim(c(1,NROW(Env$xdata[Env$xsubset])))
-    # non equally spaced x-axis
     set_xlim(range(Env$xycoords$x, na.rm=TRUE))
     ylim <- get_ylim()
     for(y in seq(2,length(ylim),by=2)) {
@@ -444,6 +444,7 @@ plot.xts <- function(x,
   cs$Env$legend.loc <- legend.loc
   cs$Env$call_list <- list()
   cs$Env$call_list[[1]] <- match.call()
+  cs$Env$observation.based <- observation.based
   
   # Do some checks on x
   if(is.character(x))
@@ -458,12 +459,23 @@ plot.xts <- function(x,
   cs$Env$nobs <- NROW(cs$Env$xdata)
   cs$Env$main <- main
   
-  # non equally spaced x-axis
-  xycoords <- xy.coords(.index(cs$Env$xdata[cs$Env$xsubset]), 
-                        cs$Env$xdata[cs$Env$xsubset][,1])
-  cs$Env$xycoords <- xycoords
-  cs$Env$xlim <- range(xycoords$x, na.rm=TRUE)
-  cs$Env$xstep <- diff(xycoords$x[1:2])
+  # Set xlim using the raw returns data passed into function
+  # xlim can be based on observations or time
+  if(cs$Env$observation.based){
+    # observation based x-axis
+    cs$Env$xycoords <- xy.coords(1:NROW(cs$Env$xdata[subset]))
+    cs$set_xlim(c(1,NROW(cs$Env$xdata[subset])))
+    cs$Env$xstep <- 1
+  } else {
+    # time based x-axis
+    xycoords <- xy.coords(.index(cs$Env$xdata[cs$Env$xsubset]), 
+                          cs$Env$xdata[cs$Env$xsubset][,1])
+    cs$Env$xycoords <- xycoords
+    cs$Env$xlim <- range(xycoords$x, na.rm=TRUE)
+    cs$Env$xstep <- diff(xycoords$x[1:2])
+    # I don't think I need this because I already set cs$Env$xlim
+    cs$set_xlim(cs$Env$xlim)
+  }
   
   # Compute transformation if specified by panel argument
   # rough prototype for calling a function for the main "panel"
@@ -484,11 +496,6 @@ plot.xts <- function(x,
   } else {
     cs$Env$R <- x
   }
-  
-  # Set xlim based on the raw returns data passed into function
-  # cs$set_xlim(c(1,NROW(cs$Env$xdata[subset])))
-  # non equally spaced x-axis
-  cs$set_xlim(cs$Env$xlim)
   
   
   # Set ylim based on the transformed data
