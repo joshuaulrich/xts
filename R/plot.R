@@ -917,12 +917,18 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
   if(!is.null(event.labels))
     if(length(event.dates) != length(event.labels)) stop("length of event.dates must match length of event.labels")
   
+  if(length(event.dates) > 1){
+    if(length(lty) == 1) lty <- rep(lty, length(event.dates))
+    if(length(lwd) == 1) lwd <- rep(lwd, length(event.dates))
+    if(length(col) == 1) col <- rep(col, length(event.dates))
+  }
+  
   lenv <- new.env()
   lenv$main <- main
   lenv$plot_event_lines <- function(x, event.dates, event.labels, date.format, on, lty, lwd, col, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
-    col <- x$Env$theme$col
+    # col <- x$Env$theme$col
     if(all(is.na(on))){
       # Add x-axis grid lines
       atbt <- axTicksByTime2(xdata[xsubset])
