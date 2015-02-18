@@ -396,8 +396,10 @@ plot.xts <- function(x,
              if(frame %% 2 == 0 && !fixed) {
                lenv <- attr(x,"env")
                if(is.list(lenv)) lenv <- lenv[[1]]
-               min.tmp <- min(ylim[[frame]][1],range(lenv$xdata[Env$xsubset], na.rm=TRUE)[1],na.rm=TRUE)
-               max.tmp <- max(ylim[[frame]][2],range(lenv$xdata[Env$xsubset], na.rm=TRUE)[2],na.rm=TRUE)
+               yrange <- range(lenv$xdata[Env$xsubset], na.rm=TRUE)
+               if(all(yrange == 0)) yrange <- yrange + c(-1,1)
+               min.tmp <- min(ylim[[frame]][1],yrange[1],na.rm=TRUE)
+               max.tmp <- max(ylim[[frame]][2],yrange[2],na.rm=TRUE)
                ylim[[frame]] <<- structure(c(min.tmp,max.tmp),fixed=fixed)
              }
            })
@@ -505,14 +507,20 @@ plot.xts <- function(x,
     if(isTRUE(multi.panel)){
       if(yaxis.same){
         # set the ylim for the first panel based on all the data
-        cs$set_ylim(list(structure(range(cs$Env$R[subset], na.rm=TRUE),fixed=TRUE)))
+        yrange <- range(cs$Env$R[subset], na.rm=TRUE)
+        if(all(yrange == 0)) yrange <- yrange + c(-1,1)
+        cs$set_ylim(list(structure(yrange,fixed=TRUE)))
       } else {
         # set the ylim for the first panel based on the first column
-        cs$set_ylim(list(structure(range(cs$Env$R[,1][subset], na.rm=TRUE),fixed=TRUE))) 
+        yrange <- range(cs$Env$R[,1][subset], na.rm=TRUE)
+        if(all(yrange == 0)) yrange <- yrange + c(-1,1)
+        cs$set_ylim(list(structure(yrange,fixed=TRUE))) 
       }
     } else {
       # set the ylim based on all the data if this is not a multi.panel plot
-      cs$set_ylim(list(structure(range(cs$Env$R[subset], na.rm=TRUE),fixed=TRUE)))
+      yrange <- range(cs$Env$R[subset], na.rm=TRUE)
+      if(all(yrange == 0)) yrange <- yrange + c(-1,1)
+      cs$set_ylim(list(structure(yrange,fixed=TRUE)))
     }
     cs$Env$constant_ylim <- range(cs$Env$R[subset], na.rm=TRUE)
   } else {
@@ -648,7 +656,9 @@ plot.xts <- function(x,
         if(yaxis.same){
           lenv$ylim <- cs$Env$constant_ylim
         } else {
-          lenv$ylim <- range(cs$Env$R[,i][subset], na.rm=TRUE)
+          yrange <- range(cs$Env$R[,i][subset], na.rm=TRUE)
+          if(all(yrange == 0)) yrange <- yrange + c(-1,1)
+          lenv$ylim <- yrange
         }
         lenv$type <- cs$Env$type
         
