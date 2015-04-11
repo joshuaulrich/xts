@@ -76,7 +76,7 @@ function(x, retclass=NULL, length.out=NULL) {
   if(max.resolution == 0) 
     max.resolution <- 1
 
-  resolution <- c('year','month','day','hour','mins','secs')[max.resolution]
+  resolution <- c('year','month','DSTday','hour','mins','secs')[max.resolution]
 
   if(!is.na(BY)) resolution <- names(match.arg(BY, list(year  ='Y',
                                                         month ='m',
