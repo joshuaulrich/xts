@@ -330,40 +330,6 @@ plot.xts <- function(x,
   } #else grid.ticks.on <- theme$grid.ticks.on
   #label.bg <- theme$col$label.bg
   
-  # define a subset function
-  cs$subset <- function(x) {
-    if(FALSE) {set_ylim <- get_ylim <- set_xlim <- Env <-function(){} }  # appease R parser?
-    if(missing(x)) {
-      x <- "" #1:NROW(Env$xdata)
-    }
-    Env$xsubset <<- x
-    set_xlim(range(Env$xycoords$x, na.rm=TRUE))
-    ylim <- get_ylim()
-    for(y in seq(2,length(ylim),by=2)) {
-      if(!attr(ylim[[y]],'fixed'))
-        ylim[[y]] <- structure(c(Inf,-Inf),fixed=FALSE)
-    }
-    lapply(Env$actions,
-           function(x) {
-             frame <- abs(attr(x, "frame"))
-             fixed <- attr(ylim[[frame]],'fixed')
-             #fixed <- attr(x, "fixed")
-             if(frame %% 2 == 0 && !fixed) {
-               lenv <- attr(x,"env")
-               if(is.list(lenv)) lenv <- lenv[[1]]
-               yrange <- range(lenv$xdata[Env$xsubset], na.rm=TRUE)
-               if(all(yrange == 0)) yrange <- yrange + c(-1,1)
-               min.tmp <- min(ylim[[frame]][1],yrange[1],na.rm=TRUE)
-               max.tmp <- max(ylim[[frame]][2],yrange[2],na.rm=TRUE)
-               ylim[[frame]] <<- structure(c(min.tmp,max.tmp),fixed=fixed)
-             }
-           })
-    # reset all ylim values, by looking for range(env[[1]]$xdata)
-    # xdata should be either coming from Env or if lenv, lenv
-    set_ylim(ylim)
-  }
-  environment(cs$subset) <- environment(cs$get_asp)
-  
   # add theme and charting parameters to Env
   if(isTRUE(multi.panel)){
     if(NCOL(x) == 1)
@@ -1371,6 +1337,35 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     } 
     a <- structure(x,frame=Env$frame,clip=clip,env=env,...)
     Env$actions[[length(Env$actions)+1]] <<- a
+  }
+  
+  # subset function
+  subset <- function(x="") {
+    Env$xsubset <<- x
+    set_xlim(range(Env$xycoords$x, na.rm=TRUE))
+    ylim <- get_ylim()
+    for(y in seq(2,length(ylim),by=2)) {
+      if(!attr(ylim[[y]],'fixed'))
+        ylim[[y]] <- structure(c(Inf,-Inf),fixed=FALSE)
+    }
+    lapply(Env$actions,
+           function(x) {
+             frame <- abs(attr(x, "frame"))
+             fixed <- attr(ylim[[frame]],'fixed')
+             #fixed <- attr(x, "fixed")
+             if(frame %% 2 == 0 && !fixed) {
+               lenv <- attr(x,"env")
+               if(is.list(lenv)) lenv <- lenv[[1]]
+               yrange <- range(lenv$xdata[Env$xsubset], na.rm=TRUE)
+               if(all(yrange == 0)) yrange <- yrange + c(-1,1)
+               min.tmp <- min(ylim[[frame]][1],yrange[1],na.rm=TRUE)
+               max.tmp <- max(ylim[[frame]][2],yrange[2],na.rm=TRUE)
+               ylim[[frame]] <<- structure(c(min.tmp,max.tmp),fixed=fixed)
+             }
+           })
+    # reset all ylim values, by looking for range(env[[1]]$xdata)
+    # xdata should be either coming from Env or if lenv, lenv
+    set_ylim(ylim)
   }
   
   # prepare window to draw
