@@ -58,24 +58,24 @@ axTicksByTime <- function(x, ticks.on='auto', k=1,
 
     if(labels) {
       if(is.logical(format.labels) || is.character(format.labels)) {
-        # format by level of time detail, and platform 
-        unix <- ifelse(.Platform$OS.type=="unix", TRUE, FALSE)
+        # format by platform...
+        unix <- (.Platform$OS.type == "unix")
+        # ...and level of time detail
+        fmt <- switch(periodicity(x)$scale,
+          weekly    = ,
+          daily     = if (unix) '%b %d%n%Y' else '%b %d %Y',
+          minute    = ,
+          hourly    = if (unix) '%b %d%n%H:%M' else '%b %d %H:%M',
+          seconds   = if (unix) '%b %d%n%H:%M:%S' else '%b %d %H:%M:%S',
+                      if (unix) '%n%b%n%Y' else '%b %Y')
 
-        time.scale <- periodicity(x)$scale
-        fmt <- ifelse(unix, '%n%b%n%Y', '%b %Y')
-
-        if (time.scale == "weekly" | time.scale == "daily") 
-          fmt <- ifelse(unix, '%b %d%n%Y', '%b %d %Y')
-
-        if (time.scale == "minute" | time.scale == "hourly") 
-          fmt <- ifelse(unix, '%b %d%n%H:%M', '%b %d %H:%M')
-
-        if (time.scale == "seconds")
-          fmt <- ifelse(unix, '%b %d%n%H:%M:%S', '%b %d %H:%M:%S')
+        # special case yearqtr index
+        if(indexClass(x) == "yearqtr")
+          fmt <- '%Y-Q%q'
 
         if(is.character(format.labels)) fmt <- format.labels
         names(ep) <- format(index(x)[ep],fmt)
       } else names(ep) <- as.character(index(x)[ep])
     }
-    ep  
+    ep
 }
