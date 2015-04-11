@@ -194,6 +194,9 @@ function(x) {
     if(any(indexClass(x)=='POSIXt')) {
       indexClass(x) <- "Date"  # set indexClass to Date
     }
+    if(any(indexClass(x) %in% .classesWithoutTZ)) {
+      indexTZ(x) <- "UTC"  # set indexTZ to UTC
+    }
     # force conversion, even if we didn't set indexClass to Date
     # because indexAt yearmon/yearqtr won't drop time from index
     index(x) <- index(x)

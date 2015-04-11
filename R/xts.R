@@ -45,12 +45,10 @@ function(x=NULL,
   if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
 
-  if(inherits(order.by, 'dates'))
-    tzone <- ""
-
-  if(inherits(order.by, 'Date')) {
+  if(inherits(order.by, .classesWithoutTZ)) {
     if(!missing(tzone))
-      warning(paste(sQuote('tzone'),"setting ignored for Date indexes"))
+      warning(paste(sQuote('tzone'),"setting ignored for ",
+                    paste(class(order.by), collapse=", "), " indexes"))
     tzone <- "UTC"
   }
   

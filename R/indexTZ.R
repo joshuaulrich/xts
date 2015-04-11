@@ -59,6 +59,8 @@ tzone.xts <- indexTZ.xts <- function(x, ...)
     return(tzone)
 }
 
+.classesWithoutTZ <- c("chron","dates","times","Date","yearmon","yearqtr")
+
 check.TZ <- function(x, ...)
 {
   #if( !getOption("xts_check_TZ", FALSE))
@@ -67,8 +69,15 @@ check.TZ <- function(x, ...)
   if( !is.null(check) && !check)
     return()
   STZ <- as.character(Sys.getenv("TZ"))
-  if(any(indexClass(x) %in% c("chron","dates","times","Date")))
-    return()
+  if(any(indexClass(x) %in% .classesWithoutTZ)) {
+    # warn if indexTZ is not UTC
+    if (indexTZ(x) != "UTC")
+      warning(paste0("index class is ", paste(class(index(x)), collapse=", "),
+        ", which does not support timezones.\nExpected 'UTC' timezone",
+        ", but indexTZ is ", indexTZ(x)), call.=FALSE)
+    else
+      return()
+  }
   if(!is.null(indexTZ(x)) && indexTZ(x) != "" &&
      !identical(STZ, as.character(indexTZ(x))))
     warning(paste("timezone of object (",indexTZ(x),
