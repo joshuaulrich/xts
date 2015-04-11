@@ -206,6 +206,7 @@ plot.xts <- function(x,
                      col=1:12,
                      up.col="green",
                      dn.col="red",
+                     bg.col="#FFFFFF",
                      type="l",
                      lty=1,
                      lwd=2,
@@ -282,6 +283,7 @@ plot.xts <- function(x,
                     col=col,
                     up.col=up.col,
                     dn.col=dn.col,
+                    bg.col=bg.col,
                     type=type,
                     lty=lty,
                     lwd=lwd,
@@ -375,7 +377,7 @@ plot.xts <- function(x,
   }
   cs$Env$theme$rylab <- yaxis.right
   cs$Env$theme$lylab <- yaxis.left
-  #cs$Env$theme$bg <- bg.col # bg.col="#FFFFFF"
+  cs$Env$theme$bg <- bg.col
   cs$Env$theme$grid <- grid.col
   cs$Env$theme$grid2 <- grid2
   cs$Env$theme$labels <- labels.col
@@ -502,7 +504,7 @@ plot.xts <- function(x,
   
   # add observation level ticks on x-axis if < 400 obs.
   cs$add(expression(if(NROW(xdata[xsubset])<400) 
-  {axis(1,at=xycoords$x,labels=FALSE,col=theme$grid2,tcl=0.3)}),expr=TRUE)
+  {axis(1,at=xycoords$x,labels=FALSE,col=theme$grid2,col.axis=theme$grid2,tcl=0.3)}),expr=TRUE)
   
   # add "month" or "month.abb"
   cs$add(expression(axt <- axTicksByTime(xdata[xsubset],format.labels=format.labels),
@@ -510,17 +512,19 @@ plot.xts <- function(x,
                          at=xycoords$x[axt], #axTicksByTime(xdata[xsubset]),
                          labels=names(axt), #axTicksByTime(xdata[xsubset],format.labels=format.labels)),
                          las=theme$xaxis.las, lwd.ticks=1, mgp=c(3,1.5,0), 
-                         tcl=-0.4, cex.axis=theme$cex.axis)),
+                         tcl=-0.4, cex.axis=theme$cex.axis, 
+                         col=theme$labels, col.axis=theme$labels)),
          expr=TRUE)
   
   # add main and start/end dates
   #if((isTRUE(multi.panel)) | (multi.panel == 1) | (NCOL(x) == 1))
   #  cs$Env$main <- cs$Env$column_names[1] else cs$Env$main <- main
   
-  text.exp <- c(expression(text(xlim[1],0.5,main,font=2,col='#444444',offset=0,cex=1.1,pos=4)),
+  # add main title and date range of data
+  text.exp <- c(expression(text(xlim[1],0.5,main,font=2,col=theme$labels,offset=0,cex=1.1,pos=4)),
                 expression(text(xlim[2],0.5,
                                 paste(start(xdata[xsubset]),end(xdata[xsubset]),sep=" / "),
-                                col=1,adj=c(0,0),pos=2)))
+                                col=theme$labels,adj=c(0,0),pos=2)))
   cs$add(text.exp, env=cs$Env, expr=TRUE)
   
   cs$set_frame(2)
@@ -591,6 +595,7 @@ plot.xts <- function(x,
     text.exp <- expression(text(x=xycoords$x[2],
                                 y=ylim[2]*0.9,
                                 labels=label,
+                                col=theme$labels,
                                 adj=c(0,0),cex=1,offset=0,pos=4))
     cs$add(text.exp,env=c(lenv, cs$Env),expr=TRUE)
     
@@ -675,6 +680,7 @@ plot.xts <- function(x,
         text.exp <- expression(text(x=xycoords$x[2],
                                     y=ylim[2]*0.9,
                                     labels=label,
+                                    col=theme$labels,
                                     adj=c(0,0),cex=1,offset=0,pos=4))
         cs$add(text.exp,env=c(lenv, cs$Env),expr=TRUE)
       }
@@ -909,7 +915,8 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
     ta.y <- ta.adj[,-1]
     event.ind <- which(ta.y == 999)
     abline(v=x$Env$xycoords$x[event.ind], col=col, lty=lty, lwd=lwd)
-    text(x=x$Env$xycoords$x[event.ind], y=ypos, labels=event.labels, offset=.2, pos=2, , srt=90, col=1)
+    text(x=x$Env$xycoords$x[event.ind], y=ypos, labels=event.labels, 
+         offset=.2, pos=2, , srt=90, col=x$Env$theme$labels)
   }
   
   plot_object <- current.xts_chob()
@@ -1100,7 +1107,7 @@ addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, 
       legend.names <- x$Env$column_names
     }
     legend(x=lx, y=ly, legend=legend.names, xjust=xjust, yjust=yjust, 
-           ncol=ncol, col=col, bty="n", ...)
+           ncol=ncol, col=col, bty="n", text.col=x$Env$theme$labels, ...)
   }
   
   # store the call
@@ -1128,7 +1135,7 @@ addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, 
     plot_object$add_frame(ylim=c(0,1),asp=0.25)
     plot_object$next_frame()
     text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
-                                col=1,adj=c(0,0),cex=0.9,offset=0,pos=4))
+                                col=theme$labels,adj=c(0,0),cex=0.9,offset=0,pos=4))
     plot_object$add(text.exp, env=c(lenv,plot_object$Env), expr=TRUE)
     
     # add frame for the legend panel
@@ -1367,6 +1374,8 @@ str.replot_xts <- function(x, ...) {
 
 print.replot_xts <- function(x, ...) plot(x,...)
 plot.replot_xts <- function(x, ...) {
+  # must set the background color before calling plot.new
+  par(bg=x$Env$theme$bg)
   plot.new()
   assign(".xts_chob",x,.plotxtsEnv)
   cex <- par(cex=x$Env$cex)
@@ -1410,7 +1419,7 @@ plot.replot_xts <- function(x, ...) {
   #}
   x$set_frame(abs(last.frame),clip=FALSE)
   do.call("clip",as.list(usr))
-  par(xpd=oxpd,cex=cex$cex,mar=mar$mar)#,usr=usr)
+  par(xpd=oxpd,cex=cex$cex,mar=mar$mar, bg=x$Env$theme$bg)#,usr=usr)
   invisible(x$Env$actions)
 }
 

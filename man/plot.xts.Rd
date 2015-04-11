@@ -6,13 +6,13 @@
 \usage{
 \method{plot}{xts}(x, y = NULL, ..., subset = "", FUN = NULL,
   panels = NULL, multi.panel = FALSE, col = 1:12, up.col = "green",
-  dn.col = "red", type = "l", lty = 1, lwd = 2, lend = 1,
-  main = deparse(substitute(x)), clev = 0, cex = 0.6, cex.axis = 0.9,
+  dn.col = "red", bg.col = "#FFFFFF", type = "l", lty = 1, lwd = 2, lend = 1,
+  main = deparse(substitute(x)), cex = 0.6, cex.axis = 0.9,
   mar = c(3, 2, 0, 2), srt = 0, observation.based = FALSE, xaxis.las = 0, 
   ylim = NULL, yaxis.same = TRUE, yaxis.left = TRUE, yaxis.right = TRUE,
   grid.ticks.on = "months", grid.ticks.lwd = 1, grid.ticks.lty = 1,
   grid.col = "darkgray", labels.col = "#333333", format.labels = TRUE,
-  shading = 1, bg.col = "#FFFFFF", grid2 = "#F5F5F5", legend.loc = NULL)
+  grid2 = "#F5F5F5", legend.loc = NULL)
 \method{lines}{xts}(x, ..., main = "", on = NA, col = NULL, type = "l",
   lty = 1, lwd = 1, pch = 0)
 \method{points}{xts}(x, ..., main = "", on = NA, col = NULL, pch = 0)
@@ -42,6 +42,8 @@ separate panel.}
 \item{up.col}{color for positive bars if \code{type="h"}}
 
 \item{dn.col}{color for positive bars if \code{type="h"}}
+
+\item{bg.col}{background color of plotting area}
 
 \item{type}{the type of plot to be drawn, same as in \code{\link{plot}}}
 
