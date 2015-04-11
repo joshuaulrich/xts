@@ -84,7 +84,8 @@ function(x,dateFormat,...,.RECLASS=FALSE) {
                             list(as.numeric(time(x)),origin='1970-01-01',...))
       } else {
         mo <- ifelse(length(mo) < 1, 1,floor(mo * 12)+1)
-        order.by <- seq.Date(as.Date(firstof(yr,mo),origin='1970-01-01'),length.out=length(x),by='year')   
+        from <- as.Date(firstof(yr,mo),origin='1970-01-01')
+        order.by <- seq.Date(from,length.out=length(time(x)),by='year')
       }
     } else
       if(frequency(x) == 4) {
