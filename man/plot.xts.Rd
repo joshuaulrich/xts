@@ -45,21 +45,19 @@ separate panel.}
 
 \item{type}{the type of plot to be drawn, same as in \code{\link{plot}}}
 
-\item{lty}{set the line type, same as in plot}
+\item{lty}{set the line type, same as in \code{\link{plot}}}
 
-\item{lwd}{set the line width, same as in plot}
+\item{lwd}{set the line width, same as in \code{\link{plot}}}
 
-\item{lend}{set the line end style, same as in plot}
+\item{lend}{set the line end style, same as in \code{\link{plot}}}
 
 \item{main}{main title}
 
-\item{clev}{level for shading, not currently used}
+\item{cex}{A numerical value giving the amount by which plotting text and symbols should be magnified relative to the default, same as in \code{\link{par}}}
 
-\item{cex}{not currently used}
+\item{cex.axis}{cex of the axis, same as in \code{\link{par}}}
 
-\item{cex.axis}{cex of the axis}
-
-\item{mar}{set the margins, same as in par}
+\item{mar}{set the margins, same as in \code{\link{par}}}
 
 \item{srt}{rotation for the y axis labels}
 
@@ -85,11 +83,7 @@ separate panel.}
 
 \item{labels.col}{color of the axis labels}
 
-\item{format.labels}{not currently used}
-
-\item{shading}{not currently used}
-
-\item{bg.col}{not currently used}
+\item{format.labels}{label format to draw lower frequency x-axis ticks and lables passed to \code{\link{axTicksByTime}}}
 
 \item{grid2}{color for secondary x axis grid}
 

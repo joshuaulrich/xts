@@ -195,54 +195,7 @@ chart.lines <- function(x,
 #   theme
 # }
 
-# based on quantmod::chart_Series
-#' Time series Plotting
-#' 
-#' Plotting for xts objects.
-#' TODO: description, details, and examples
-#' 
-#' @param x xts object
-#' @param y NULL, not used
-#' @param \dots any passthrough parameters to FUN
-#' @param subset character vector of length one of the subset range using subsetting as in \code{\link{xts}}
-#' @param FUN function to apply to \code{x} and plot
-#' @param panels character vector of expressions to plot as panels
-#' @param multi.panel TRUE/FALSE or an integer less than or equal to the number 
-#' of columns in the data set. If TRUE, each column of the data is plotted in a 
-#' separate panel. For example, if \code{multi.panel = 2}, then the data
-#' will be plotted in groups of 2 columns and each group is plotted in a 
-#' separate panel. 
-#' @param col color palette to use, set by default to rational choices
-#' @param up.col color for positive bars if \code{type="h"}
-#' @param dn.col color for positive bars if \code{type="h"}
-#' @param type the type of plot to be drawn, same as in \code{\link{plot}}
-#' @param lty set the line type, same as in plot
-#' @param lwd set the line width, same as in plot
-#' @param lend set the line end style, same as in plot
-#' @param main main title
-#' @param clev level for shading, not currently used
-#' @param cex not currently used
-#' @param cex.axis
-#' @param mar set the margins, same as in par
-#' @param srt rotation for the y axis labels
-#' @param xaxis.las rotation for the x axis labels
-#' @param ylim the range of the y axis
-#' @param yaxis.same TRUE/FALSE. If TRUE, the y axis is drawn with the same ylim for multiple panels 
-#' @param yaxis.left if TRUE, draws the y axis on the left
-#' @param yaxis.right if TRUE, draws the y axis on the right
-#' @param grid.ticks.on period to draw the grid ticks on
-#' @param grid.ticks.lwd line width of the grid
-#' @param grid.ticks.lty line type of the grid
-#' @param grid.col color of the grid
-#' @param labels.col color of the axis labels
-#' @param format.labels not currently used
-#' @param shading not currently used
-#' @param bg.col not currently used
-#' @param grid2 color for secondary x axis grid
-#' @param legend.loc places a legend into one of nine locations on the chart: 
-#' bottomright, bottom, bottomleft, left, topleft, top, topright, right, or 
-#' center. Default NULL does not draw a legend. 
-#' @author Ross Bennett
+
 plot.xts <- function(x, 
                      y=NULL,
                      ...,
@@ -257,8 +210,7 @@ plot.xts <- function(x,
                      lty=1,
                      lwd=2,
                      lend=1,
-                     main=deparse(substitute(x)),  
-                     clev=0,
+                     main=deparse(substitute(x)),
                      cex=0.6, 
                      cex.axis=0.9,
                      mar=c(3,2,0,2), 
@@ -275,8 +227,6 @@ plot.xts <- function(x,
                      grid.col="darkgray",
                      labels.col="#333333",
                      format.labels=TRUE,
-                     shading=1,
-                     bg.col="#FFFFFF",
                      grid2="#F5F5F5",
                      legend.loc=NULL){
   
@@ -336,8 +286,7 @@ plot.xts <- function(x,
                     lty=lty,
                     lwd=lwd,
                     lend=lend,
-                    main=main,  
-                    clev=clev,
+                    main=main,
                     cex=cex, 
                     cex.axis=cex.axis,
                     mar=mar, 
@@ -354,8 +303,6 @@ plot.xts <- function(x,
                     grid.col=grid.col,
                     labels.col=labels.col,
                     format.labels=format.labels,
-                    shading=shading,
-                    bg.col=bg.col,
                     grid2=grid2,
                     legend.loc=legend.loc)
       if(i < length(chunks))
@@ -417,8 +364,8 @@ plot.xts <- function(x,
   }
   cs$Env$cex <- cex
   cs$Env$mar <- mar
-  cs$Env$clev = min(clev+0.01,1) # (0,1]
-  cs$Env$theme$shading <- shading
+  #cs$Env$clev = min(clev+0.01,1) # (0,1]
+  #cs$Env$theme$shading <- shading
   cs$Env$theme$up.col <- up.col
   cs$Env$theme$dn.col <- dn.col
   if (hasArg(colorset)){
@@ -428,7 +375,7 @@ plot.xts <- function(x,
   }
   cs$Env$theme$rylab <- yaxis.right
   cs$Env$theme$lylab <- yaxis.left
-  cs$Env$theme$bg <- bg.col
+  #cs$Env$theme$bg <- bg.col # bg.col="#FFFFFF"
   cs$Env$theme$grid <- grid.col
   cs$Env$theme$grid2 <- grid2
   cs$Env$theme$labels <- labels.col
