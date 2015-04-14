@@ -778,10 +778,12 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
   xsubset <- plot_object$Env$xsubset
   no.update <- FALSE
   lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
-  if(hasArg("ylim"))
-    ylim <- lenv$ylim
-  else
+  if(hasArg("ylim")) {
+    ylim <- lenv$ylim  # lenv$ylim assigned via mapply above
+  } else {
     ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
+    lenv$ylim <- ylim
+  }
   
   if(is.na(on)){
     # add the frame for drawdowns info
