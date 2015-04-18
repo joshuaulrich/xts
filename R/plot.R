@@ -240,6 +240,12 @@ plot.xts <- function(x,
     idx <- seq.int(1L, NCOL(x), 1L)
     chunks <- split(idx, ceiling(seq_along(idx)/multi.panel))
     
+    # allow color and line attributes for each panel in a multi.panel plot
+    if(length(col) == 1) col <- rep(col, NCOL(x))
+    if(length(lty) == 1) lty <- rep(lty, NCOL(x))
+    if(length(lwd) == 1) lwd <- rep(lwd, NCOL(x))
+    
+    
     if(!is.null(panels) && nchar(panels) > 0){
       # we will plot the panels, but not plot the returns by column
       multi.panel <- FALSE
@@ -280,13 +286,13 @@ plot.xts <- function(x,
                     FUN=FUN,
                     panels=panels,
                     multi.panel=multi.panel,
-                    col=col,
+                    col=col[tmp],
                     up.col=up.col,
                     dn.col=dn.col,
                     bg.col=bg.col,
                     type=type,
-                    lty=lty,
-                    lwd=lwd,
+                    lty=lty[tmp],
+                    lwd=lwd[tmp],
                     lend=lend,
                     main=main,
                     cex=cex, 
@@ -359,8 +365,11 @@ plot.xts <- function(x,
   environment(cs$subset) <- environment(cs$get_asp)
   
   # add theme and charting parameters to Env
-  if(multi.panel){
-    cs$set_asp(NCOL(x))
+  if(isTRUE(multi.panel)){
+    if(NCOL(x) == 1)
+      cs$set_asp(3)
+    else
+      cs$set_asp(NCOL(x))
   } else {
     cs$set_asp(3)
   }
@@ -370,11 +379,19 @@ plot.xts <- function(x,
   #cs$Env$theme$shading <- shading
   cs$Env$theme$up.col <- up.col
   cs$Env$theme$dn.col <- dn.col
+  
+  # check for colorset or col argument
+  # if col has a length of 1, replicate to NCOL(x) so we can keep it simple
+  # and color each line by its index in col
   if (hasArg(colorset)){
-    cs$Env$theme$col <- match.call(expand.dots=TRUE)$colorset
-  } else {
-    cs$Env$theme$col <- col
+    col <- match.call(expand.dots=TRUE)$colorset
+    if(length(col) == 1) 
+      col <- rep(col, NCOL(x))
   }
+  if(length(col) == 1) 
+    col <- rep(col, NCOL(x))
+  cs$Env$theme$col <- col
+  
   cs$Env$theme$rylab <- yaxis.right
   cs$Env$theme$lylab <- yaxis.left
   cs$Env$theme$bg <- bg.col
@@ -389,8 +406,14 @@ plot.xts <- function(x,
   cs$Env$grid.ticks.lwd <- grid.ticks.lwd
   cs$Env$grid.ticks.lty <- grid.ticks.lty
   cs$Env$type <- type
+  
+  # if lty or lwd has a length of 1, replicate to NCOL(x) so we can keep it 
+  # simple and draw each line with attributes by index
+  if(length(lty) == 1) lty <- rep(lty, NCOL(x))
+  if(length(lwd) == 1) lwd <- rep(lwd, NCOL(x))
   cs$Env$lty <- lty
   cs$Env$lwd <- lwd
+  
   cs$Env$lend <- lend
   cs$Env$legend.loc <- legend.loc
   cs$Env$call_list <- list()
@@ -581,6 +604,7 @@ plot.xts <- function(x,
     } else {
       lenv$ylim <- range(cs$Env$R[,1][subset], na.rm=TRUE)
     }
+    
     exp <- expression(chart.lines(xdata, 
                                   type=type, 
                                   lty=lty,
@@ -614,6 +638,11 @@ plot.xts <- function(x,
         }
         lenv$type <- cs$Env$type
         
+        # allow color and line attributes for each panel in a multi.panel plot
+        lenv$lty <- cs$Env$lty[i]
+        lenv$lwd <- cs$Env$lwd[i]
+        lenv$col <- cs$Env$theme$col[i]
+        
         # Add a small frame
         cs$add_frame(ylim=c(0,1),asp=0.25)
         cs$next_frame()
@@ -633,7 +662,7 @@ plot.xts <- function(x,
                                       lty=lty,
                                       lwd=lwd,
                                       lend=lend,
-                                      col=theme$col, 
+                                      col=col, 
                                       up.col=theme$up.col, 
                                       dn.col=theme$dn.col,
                                       legend.loc=legend.loc))
