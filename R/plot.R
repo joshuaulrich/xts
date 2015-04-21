@@ -126,66 +126,8 @@ chart.lines <- function(x,
     barplot.default(t(negatives), add=TRUE, col=col, axisnames=FALSE, axes=FALSE)
   }
   if(!is.null(legend.loc)){
-    yrange <- range(x, na.rm=TRUE)
-    # nobs <- NROW(x)
-    chob.xlim <- xx$Env$xlim
-    switch(legend.loc,
-           topleft = {
-             xjust <- 0
-             yjust <- 1
-             lx <- chob.xlim[1]
-             ly <- yrange[2]
-           },
-           left = {
-             xjust <- 0
-             yjust <- 0.5
-             lx <- chob.xlim[1]
-             ly <- sum(yrange) / 2
-           },
-           bottomleft = {
-             xjust <- 0
-             yjust <- 0
-             lx <- chob.xlim[1]
-             ly <- yrange[1]
-           },
-           top = {
-             xjust <- 0.5
-             yjust <- 1
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- yrange[2]
-           },
-           center = {
-             xjust <- 0.5
-             yjust <- 0.5
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- sum(yrange) / 2
-           },
-           bottom = {
-             xjust <- 0.5
-             yjust <- 0
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- yrange[1]
-           },
-           topright = {
-             xjust <- 1
-             yjust <- 1
-             lx <- chob.xlim[2]
-             ly <- yrange[2]
-           },
-           right = {
-             xjust <- 1
-             yjust <- 0.5
-             lx <- chob.xlim[2]
-             ly <- sum(yrange) / 2
-           },
-           bottomright = {
-             xjust <- 1
-             yjust <- 0
-             lx <- chob.xlim[2]
-             ly <- yrange[1]
-           }
-    )
-    legend(x=lx, y=ly, legend=colnames(x), xjust=xjust, yjust=yjust, 
+    lc <- legend.coords(legend.loc, xx$Env$xlim, range(x, na.rm=TRUE))
+    legend(x=lc$x, y=lc$y, legend=colnames(x), xjust=lc$xjust, yjust=lc$yjust,
            fill=col[1:NCOL(x)], bty="n")
   }
 }
@@ -1056,63 +998,6 @@ addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, 
     } else {
       yrange <- x$Env$ylim[[2*on]]
     }
-    chob.xlim <- x$Env$xlim
-    switch(legend.loc,
-           topleft = {
-             xjust <- 0
-             yjust <- 1
-             lx <- chob.xlim[1]
-             ly <- yrange[2]
-           },
-           left = {
-             xjust <- 0
-             yjust <- 0.5
-             lx <- chob.xlim[1]
-             ly <- sum(yrange) / 2
-           },
-           bottomleft = {
-             xjust <- 0
-             yjust <- 0
-             lx <- chob.xlim[1]
-             ly <- yrange[1]
-           },
-           top = {
-             xjust <- 0.5
-             yjust <- 1
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- yrange[2]
-           },
-           center = {
-             xjust <- 0.5
-             yjust <- 0.5
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- sum(yrange) / 2
-           },
-           bottom = {
-             xjust <- 0.5
-             yjust <- 0
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- yrange[1]
-           },
-           topright = {
-             xjust <- 1
-             yjust <- 1
-             lx <- chob.xlim[2]
-             ly <- yrange[2]
-           },
-           right = {
-             xjust <- 1
-             yjust <- 0.5
-             lx <- chob.xlim[2]
-             ly <- sum(yrange) / 2
-           },
-           bottomright = {
-             xjust <- 1
-             yjust <- 0
-             lx <- chob.xlim[2]
-             ly <- yrange[1]
-           }
-    )
     # this just gets the data of the main plot
     # TODO: get the data of frame[on]
     if(is.null(ncol)){
@@ -1124,7 +1009,8 @@ addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, 
     if(is.null(legend.names)){
       legend.names <- x$Env$column_names
     }
-    legend(x=lx, y=ly, legend=legend.names, xjust=xjust, yjust=yjust, 
+    lc <- legend.coords(legend.loc, x$Env$xlim, yrange)
+    legend(x=lc$x, y=lc$y, legend=legend.names, xjust=lc$xjust, yjust=lc$yjust,
            ncol=ncol, col=col, bty="n", text.col=x$Env$theme$labels, ...)
   }
   
@@ -1184,6 +1070,22 @@ addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, 
     }
   }
   plot_object
+}
+
+# Determine legend coordinates based on legend location,
+# range of x values and range of y values
+legend.coords <- function(legend.loc, xrange, yrange) {
+  switch(legend.loc,
+        topleft = list(xjust = 0,   yjust = 1,   x = xrange[1], y = yrange[2]),
+           left = list(xjust = 0,   yjust = 0.5, x = xrange[1], y = sum(yrange) / 2),
+     bottomleft = list(xjust = 0,   yjust = 0,   x = xrange[1], y = yrange[1]),
+            top = list(xjust = 0.5, yjust = 1,   x = (xrange[1] + xrange[2]) / 2, y = yrange[2]),
+         center = list(xjust = 0.5, yjust = 0.5, x = (xrange[1] + xrange[2]) / 2, y = sum(yrange) / 2),
+         bottom = list(xjust = 0.5, yjust = 0,   x = (xrange[1] + xrange[2]) / 2, y = yrange[1]),
+       topright = list(xjust = 1,   yjust = 1,   x = xrange[2], y = yrange[2]),
+          right = list(xjust = 1,   yjust = 0.5, x = xrange[2], y = sum(yrange) / 2),
+    bottomright = list(xjust = 1,   yjust = 0,   x = xrange[2], y = yrange[1])
+  )
 }
 
 
