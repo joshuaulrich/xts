@@ -1,0 +1,18 @@
+---
+title: "xts: extensible time-series"
+---
+
+### Installation
+The xts package can be installed from CRAN as follows
+```{r eval=FALSE}
+install.packages("xts")
+```
+
+### Documentation
+TODO: add content from package Rd file and/or vignettes
+
+### Examples
+TODO: add examples
+
+### About
+TODO: add authors and link to github repo
