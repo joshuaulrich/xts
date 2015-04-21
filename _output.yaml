@@ -1,6 +1,6 @@
 html_document:
   self_contained: false
-  theme: united
+  theme: spacelab
   highlight: textmate
   mathjax: null
   toc_depth: 2

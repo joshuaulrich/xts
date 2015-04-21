@@ -1,0 +1,27 @@
+---
+title: "Plotting Basics"
+---
+
+Load the xts package and some sample data
+```{r}
+library(xts)
+
+data(sample_matrix)
+sample.xts <- as.xts(sample_matrix)
+```
+
+Create a basic plot
+```{r fig.keep='last'}
+plot(sample.xts[,4])
+```
+
+<!--
+TODO
+- lines
+- points
+- event lines
+- legend
+- panels
+- multi.panel
+- small multiples
+-->
