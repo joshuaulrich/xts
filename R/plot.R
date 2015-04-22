@@ -1004,7 +1004,7 @@ addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, 
       ncol <- NCOL(x$Env$xdata)
     }
     if(is.null(col)){
-      col <- x$Env$theme$col[1:nc]
+      col <- x$Env$theme$col[1:NCOL(x$Env$xdata)]
     }
     if(is.null(legend.names)){
       legend.names <- x$Env$column_names
