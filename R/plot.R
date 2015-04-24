@@ -109,22 +109,8 @@ chart.lines <- function(x,
       # non-equally spaced x-axis
       lines(xx$Env$xycoords$x, x[,i], type=type, lend=lend, col=col[i], lty=lty[i], lwd=lwd[i], pch=pch)
     }
-  } else if(type == "bar"){
-    # This does not work correctly
-    # The geometry of the x-axis and y-axis is way off with stacked bar plot and
-    # the x-axis is off for unstacked bar plot
-    # We may need a separate function to do this correctly because of the
-    # different geometry/dimensions with stacked and unstacked barplots
-    positives = negatives = x
-    for(column in 1:NCOL(x)){
-      for(row in 1:NROW(x)){ 
-        positives[row,column] = max(0, x[row,column])
-        negatives[row,column] = min(0, x[row,column])
-      }
-    }
-    barplot.default(t(positives), add=TRUE, col=col, axisnames=FALSE, axes=FALSE)
-    barplot.default(t(negatives), add=TRUE, col=col, axisnames=FALSE, axes=FALSE)
   }
+
   if(!is.null(legend.loc)){
     lc <- legend.coords(legend.loc, xx$Env$xlim, range(x, na.rm=TRUE))
     legend(x=lc$x, y=lc$y, legend=colnames(x), xjust=lc$xjust, yjust=lc$yjust,
