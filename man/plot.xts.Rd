@@ -6,9 +6,8 @@
 \usage{
 \method{plot}{xts}(x, y = NULL, ..., subset = "", FUN = NULL,
   panels = NULL, multi.panel = FALSE, col = 1:12, up.col = "green",
-  dn.col = "red", bg.col = "#FFFFFF", type = "l", lty = 1, lwd = 2, lend = 1,
-  main = deparse(substitute(x)), cex = 0.6, cex.axis = 0.9,
-  mar = c(3, 2, 0, 2), srt = 0, observation.based = FALSE, xaxis.las = 0, 
+  dn.col = "red", bg = "#FFFFFF", type = "l", lty = 1, lwd = 2, lend = 1,
+  main = deparse(substitute(x)), observation.based = FALSE,
   ylim = NULL, yaxis.same = TRUE, yaxis.left = TRUE, yaxis.right = TRUE,
   grid.ticks.on = "months", grid.ticks.lwd = 1, grid.ticks.lty = 1,
   grid.col = "darkgray", labels.col = "#333333", format.labels = TRUE,
@@ -41,9 +40,9 @@ separate panel.}
 
 \item{up.col}{color for positive bars if \code{type="h"}}
 
-\item{dn.col}{color for positive bars if \code{type="h"}}
+\item{dn.col}{color for negative bars if \code{type="h"}}
 
-\item{bg.col}{background color of plotting area}
+\item{bg}{background color of plotting area, same as in \code{\link{par}}}
 
 \item{type}{the type of plot to be drawn, same as in \code{\link{plot}}}
 
@@ -51,21 +50,11 @@ separate panel.}
 
 \item{lwd}{set the line width, same as in \code{\link{plot}}}
 
-\item{lend}{set the line end style, same as in \code{\link{plot}}}
+\item{lend}{set the line end style, same as in \code{\link{par}}}
 
 \item{main}{main title}
 
-\item{cex}{A numerical value giving the amount by which plotting text and symbols should be magnified relative to the default, same as in \code{\link{par}}}
-
-\item{cex.axis}{cex of the axis, same as in \code{\link{par}}}
-
-\item{mar}{set the margins, same as in \code{\link{par}}}
-
-\item{srt}{rotation for the y axis labels}
-
 \item{observation.based}{TRUE/FALSE (default FALSE). If \code{TRUE}, the x-axis is drawn based on observations in the data. If \code{FALSE}, the x-axis is drawn based on the time index of the data.}
-
-\item{xaxis.las}{rotation for the x axis labels}
 
 \item{ylim}{the range of the y axis}
 
@@ -106,6 +95,9 @@ Ross Bennett
 }
 \references{
 based on \code{chart_Series} in the \code{quantmod} package by Jeffrey A. Ryan
+}
+\seealso{
+\code{\link{addSeries}}
 }
 \examples{
 \dontrun{

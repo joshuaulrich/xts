@@ -120,18 +120,13 @@ plot.xts <- function(x,
                      col=1:12,
                      up.col="green",
                      dn.col="red",
-                     bg.col="#FFFFFF",
+                     bg="#FFFFFF",
                      type="l",
                      lty=1,
                      lwd=2,
                      lend=1,
                      main=deparse(substitute(x)),
-                     cex=0.6, 
-                     cex.axis=0.9,
-                     mar=c(3,2,0,2), 
-                     srt=0,
                      observation.based=FALSE,
-                     xaxis.las=0,
                      ylim=NULL,
                      yaxis.same=TRUE,
                      yaxis.left=TRUE,
@@ -203,18 +198,13 @@ plot.xts <- function(x,
                     col=col[tmp],
                     up.col=up.col,
                     dn.col=dn.col,
-                    bg.col=bg.col,
+                    bg=bg,
                     type=type,
                     lty=lty[tmp],
                     lwd=lwd[tmp],
                     lend=lend,
                     main=main,
-                    cex=cex, 
-                    cex.axis=cex.axis,
-                    mar=mar, 
-                    srt=srt,
                     observation.based=observation.based,
-                    xaxis.las=xaxis.las,
                     ylim=ylim,
                     yaxis.same=yaxis.same,
                     yaxis.left=yaxis.left,
@@ -244,6 +234,7 @@ plot.xts <- function(x,
   }
 
   # add theme and charting parameters to Env
+  plot.call <- match.call(expand.dots=TRUE)
   if(isTRUE(multi.panel)){
     if(NCOL(x) == 1)
       cs$set_asp(3)
@@ -252,16 +243,16 @@ plot.xts <- function(x,
   } else {
     cs$set_asp(3)
   }
-  cs$Env$cex <- cex
-  cs$Env$mar <- mar
+  cs$Env$cex <- if (hasArg("cex")) plot.call$cex else 0.6
+  cs$Env$mar <- if (hasArg("mar")) plot.call$mar else c(3,2,0,2)
   cs$Env$theme$up.col <- up.col
   cs$Env$theme$dn.col <- dn.col
   
   # check for colorset or col argument
   # if col has a length of 1, replicate to NCOL(x) so we can keep it simple
   # and color each line by its index in col
-  if (hasArg(colorset)){
-    col <- match.call(expand.dots=TRUE)$colorset
+  if (hasArg("colorset")){
+    col <- plot.call$colorset
     if(length(col) == 1) 
       col <- rep(col, NCOL(x))
   }
@@ -271,13 +262,13 @@ plot.xts <- function(x,
   
   cs$Env$theme$rylab <- yaxis.right
   cs$Env$theme$lylab <- yaxis.left
-  cs$Env$theme$bg <- bg.col
+  cs$Env$theme$bg <- bg
   cs$Env$theme$grid <- grid.col
   cs$Env$theme$grid2 <- grid2
   cs$Env$theme$labels <- labels.col
-  cs$Env$theme$srt <- srt
-  cs$Env$theme$xaxis.las <- xaxis.las
-  cs$Env$theme$cex.axis <- cex.axis
+  cs$Env$theme$srt <- if (hasArg("srt")) plot.call$srt else 0
+  cs$Env$theme$las <- if (hasArg("las")) plot.call$las else 0
+  cs$Env$theme$cex.axis <- if (hasArg("cex.axis")) plot.call$cex.axis else 0.9
   cs$Env$format.labels <- format.labels
   cs$Env$grid.ticks.on <- grid.ticks.on
   cs$Env$grid.ticks.lwd <- grid.ticks.lwd
@@ -294,7 +285,7 @@ plot.xts <- function(x,
   cs$Env$lend <- lend
   cs$Env$legend.loc <- legend.loc
   cs$Env$call_list <- list()
-  cs$Env$call_list[[1]] <- match.call()
+  cs$Env$call_list[[1]] <- plot.call
   cs$Env$observation.based <- observation.based
   
   # Do some checks on x
@@ -400,7 +391,7 @@ plot.xts <- function(x,
                     axis(1,
                          at=xycoords$x[axt], #axTicksByTime(xdata[xsubset]),
                          labels=names(axt), #axTicksByTime(xdata[xsubset],format.labels=format.labels)),
-                         las=theme$xaxis.las, lwd.ticks=1, mgp=c(3,1.5,0), 
+                         las=theme$las, lwd.ticks=1, mgp=c(3,1.5,0), 
                          tcl=-0.4, cex.axis=theme$cex.axis, 
                          col=theme$labels, col.axis=theme$labels)),
          expr=TRUE)
