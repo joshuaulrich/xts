@@ -1372,30 +1372,6 @@ plot.replot_xts <- function(x, ...) {
   invisible(x$Env$actions)
 }
 
-scale.ranges <- function(frame, asp, ranges)
-{
-  asp/asp[frame] * abs(diff(ranges[[frame]]))
-}
-
-`+.replot` <- function(e1, e2) {
-  e2 <- match.call()$e2
-  e2$plot_object <- (substitute(e1))
-  eval(e2)
-}
-
-`+.replot` <- function(e1, e2) {
-  assign(".xts_chob",e1,.plotxtsEnv)
-  e2 <- eval(e2)
-  e2
-}
-
-
-##### accessor functions
-
-re_Chart <- function() current.xts_chob()
-chart_asp <- function() current.xts_chob()$get_asp()
-chart_ylim <- function() current.xts_chob()$get_ylim()
-chart_xlim <- function() current.xts_chob()$get_xlim()
-
 actions <- function(obj) obj$Env$actions
 chart_actions <- function() actions(current.xts_chob())
+
