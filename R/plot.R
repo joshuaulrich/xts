@@ -752,7 +752,7 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
                par("usr")[4],
                col=x$Env$theme$grid)
     }
-    ypos <- x$Env$ylim[[2*on]][2]
+    ypos <- x$Env$ylim[[2*on]][2]*0.995
     # create a new xts object out of event.dates
     event.dates.xts <- xts(rep(999, length(event.dates)), 
                            order.by=as.POSIXct(event.dates, tz=indexTZ(xdata), format=date.format))
@@ -767,7 +767,7 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
     event.ind <- which(ta.y == 999)
     abline(v=x$Env$xycoords$x[event.ind], col=col, lty=lty, lwd=lwd)
     text(x=x$Env$xycoords$x[event.ind], y=ypos, labels=event.labels, 
-         offset=.2, pos=2, , srt=90, col=x$Env$theme$labels)
+         col=x$Env$theme$labels, ...)
   }
   
   plot_object <- current.xts_chob()
