@@ -705,19 +705,28 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
 
 # Add time series of lines to an existing xts plot
 # author: Ross Bennett
-lines.xts <- function(x, ..., main="", on=NA, col=NULL, type="l", lty=1, lwd=1, pch=0){
+lines.xts <- function(x, ..., main="", on="current", col=NULL, type="l", lty=1, lwd=1, pch=0){
+  if(!is.na(on))
+    if(on == "current") on <- current_panel()
+  
   addSeries(x, ...=..., main=main, on=on, type=type, col=col, lty=lty, lwd=lwd, pch=pch)
 }
 
 # Add time series of points to an existing xts plot
 # author: Ross Bennett
-points.xts <- function(x, ..., main="", on=NA, col=NULL, pch=0){
+points.xts <- function(x, ..., main="", on="current", col=NULL, pch=0){
+  if(!is.na(on))
+    if(on == "current") on <- current_panel()
+  
   addSeries(x, ...=..., main=main, on=on, type="p", col=col, pch=pch)
 }
 
 # Add vertical lines to an existing xts plot
 # author: Ross Bennett
-addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d", main="", on=NA, lty=1, lwd=1, col=1, ...){
+addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d", main="", on="current", lty=1, lwd=1, col=1, ...){
+  if(!is.na(on))
+    if(on == "current") on <- current_panel()
+  
   # add checks for event.dates and event.labels
   if(!is.null(event.labels))
     if(length(event.dates) != length(event.labels)) stop("length of event.dates must match length of event.labels")
@@ -861,7 +870,10 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
 
 # Add legend to an existing xts plot
 # author: Ross Bennett
-addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, on=1, ...){
+addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, on="current", ...){
+  if(!is.na(on))
+    if(on == "current") on <- current_panel()
+  
   lenv <- new.env()
   lenv$plot_legend <- function(x, legend.loc, legend.names, col, ncol, on, ...){
     if(is.na(on)){
@@ -1238,3 +1250,8 @@ plot.replot_xts <- function(x, ...) {
 actions <- function(obj) obj$Env$actions
 chart_actions <- function() actions(current.xts_chob())
 
+current_panel <- function() {
+  act <- chart_actions()
+  # we need to divide by 2 because there are 2 frames per panel
+  attr(act[[length(act)]], "frame") / 2
+}
