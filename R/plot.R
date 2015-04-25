@@ -1,14 +1,29 @@
-
-# Environment for our xts chart objects (xts_chob)
-# .plotxtsEnv <- new.env()
+#
+#   xts: eXtensible time-series
+#
+#   Copyright (C) 2009-2015  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
+#
+#   Contributions from Ross Bennett and Joshua M. Ulrich
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 axTicksByTime2 <- function (x, ticks.on = "auto", k = 1, labels = TRUE, 
                             format.labels = TRUE,  ends = TRUE, 
                             gt = 2, lt = 25){
   if (timeBased(x)) 
     x <- xts(rep(1, length(x)), x)
-  #tick.opts <- c("years", "months", "days", "hours", 
-  #    "minutes", "seconds")
+
   tick.opts <- c("years", "months", "weeks", "days")
   tick.k.opts <- c(1,1,1,1)
   if (ticks.on %in% tick.opts) {
@@ -33,17 +48,13 @@ axTicksByTime2 <- function (x, ticks.on = "auto", k = 1, labels = TRUE,
   }
   if (is.na(cl) || is.na(ck) || is.null(cl)) {
     return(c(1,NROW(x)))
-    #ep <- NULL
   }
   else ep <- endpoints(x, cl, ck)
   if (ends) 
     ep <- ep + c(rep(1, length(ep) - 1), 0)
   if (labels) {
     if (is.logical(format.labels) || is.character(format.labels)) {
-      unix <- ifelse(.Platform$OS.type == "unix", TRUE, 
-                     FALSE)
-      #time.scale <- periodicity(x)$scale
-      #fmt <- ifelse(unix, "%n%b%n%Y", "%b %Y")
+      unix <- ifelse(.Platform$OS.type == "unix", TRUE, FALSE)
       fmt <- switch(cl,
                     "years"="%Y",
                     "months"="%b",
@@ -79,123 +90,26 @@ chart.lines <- function(x,
   xx <- current.xts_chob()
   if(type == "h"){
     colors <- ifelse(x[,1] < 0, dn.col, up.col)
-    # lines(1:NROW(x),x[,1],lwd=2,col=colors,lend=lend,lty=1,type="h")
     # non-equally spaced x-axis
     lines(xx$Env$xycoords$x,x[,1],lwd=2,col=colors,lend=lend,lty=1,type="h")
   } else if(type == "l" || type == "p") {
     if(length(lty) == 1) lty <- rep(lty, NCOL(x))
     if(length(lwd) == 1) lwd <- rep(lwd, NCOL(x))
     for(i in NCOL(x):1){
-      # lines(1:NROW(x), x[,i], type=type, lend=lend, col=col[i], lty=lty[i], lwd=lwd[i], pch=pch)
       # non-equally spaced x-axis
       lines(xx$Env$xycoords$x, x[,i], type=type, lend=lend, col=col[i], lty=lty[i], lwd=lwd[i], pch=pch)
     }
-  } else if(type == "bar"){
-    # This does not work correctly
-    # The geometry of the x-axis and y-axis is way off with stacked bar plot and
-    # the x-axis is off for unstacked bar plot
-    # We may need a separate function to do this correctly because of the
-    # different geometry/dimensions with stacked and unstacked barplots
-    positives = negatives = x
-    for(column in 1:NCOL(x)){
-      for(row in 1:NROW(x)){ 
-        positives[row,column] = max(0, x[row,column])
-        negatives[row,column] = min(0, x[row,column])
-      }
-    }
-    barplot.default(t(positives), add=TRUE, col=col, axisnames=FALSE, axes=FALSE)
-    barplot.default(t(negatives), add=TRUE, col=col, axisnames=FALSE, axes=FALSE)
   }
+
   if(!is.null(legend.loc)){
-    yrange <- range(x, na.rm=TRUE)
-    # nobs <- NROW(x)
-    chob.xlim <- xx$Env$xlim
-    switch(legend.loc,
-           topleft = {
-             xjust <- 0
-             yjust <- 1
-             lx <- chob.xlim[1]
-             ly <- yrange[2]
-           },
-           left = {
-             xjust <- 0
-             yjust <- 0.5
-             lx <- chob.xlim[1]
-             ly <- sum(yrange) / 2
-           },
-           bottomleft = {
-             xjust <- 0
-             yjust <- 0
-             lx <- chob.xlim[1]
-             ly <- yrange[1]
-           },
-           top = {
-             xjust <- 0.5
-             yjust <- 1
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- yrange[2]
-           },
-           center = {
-             xjust <- 0.5
-             yjust <- 0.5
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- sum(yrange) / 2
-           },
-           bottom = {
-             xjust <- 0.5
-             yjust <- 0
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- yrange[1]
-           },
-           topright = {
-             xjust <- 1
-             yjust <- 1
-             lx <- chob.xlim[2]
-             ly <- yrange[2]
-           },
-           right = {
-             xjust <- 1
-             yjust <- 0.5
-             lx <- chob.xlim[2]
-             ly <- sum(yrange) / 2
-           },
-           bottomright = {
-             xjust <- 1
-             yjust <- 0
-             lx <- chob.xlim[2]
-             ly <- yrange[1]
-           }
-    )
-    legend(x=lx, y=ly, legend=colnames(x), xjust=xjust, yjust=yjust, 
+    lc <- legend.coords(legend.loc, xx$Env$xlim, range(x, na.rm=TRUE))
+    legend(x=lc$x, y=lc$y, legend=colnames(x), xjust=lc$xjust, yjust=lc$yjust,
            fill=col[1:NCOL(x)], bty="n")
   }
 }
 
-
-# xtsExtraTheme <- function(){
-#   theme <-list(col=list(bg="#FFFFFF",
-#                         label.bg="#F0F0F0",
-#                         grid="darkgray", #grid="#F0F0F0",
-#                         grid2="#F5F5F5",
-#                         ticks="#999999",
-#                         labels="#333333",
-#                         line.col="darkorange",
-#                         dn.col="red",
-#                         up.col="green", 
-#                         dn.border="#333333", 
-#                         up.border="#333333",
-#                         colorset=1:10),
-#                shading=1,
-#                format.labels=TRUE,
-#                coarse.time=TRUE,
-#                rylab=TRUE,
-#                lylab=TRUE,
-#                grid.ticks.lwd=1,
-#                grid.ticks.on="months")
-#   theme
-# }
-
-
+# Main plot.xts method.
+# author: Ross Bennett (adapted from Jeffrey Ryan's chart_Series)
 plot.xts <- function(x, 
                      y=NULL,
                      ...,
@@ -206,18 +120,13 @@ plot.xts <- function(x,
                      col=1:12,
                      up.col="green",
                      dn.col="red",
-                     bg.col="#FFFFFF",
+                     bg="#FFFFFF",
                      type="l",
                      lty=1,
                      lwd=2,
                      lend=1,
                      main=deparse(substitute(x)),
-                     cex=0.6, 
-                     cex.axis=0.9,
-                     mar=c(3,2,0,2), 
-                     srt=0,
                      observation.based=FALSE,
-                     xaxis.las=0,
                      ylim=NULL,
                      yaxis.same=TRUE,
                      yaxis.left=TRUE,
@@ -289,18 +198,13 @@ plot.xts <- function(x,
                     col=col[tmp],
                     up.col=up.col,
                     dn.col=dn.col,
-                    bg.col=bg.col,
+                    bg=bg,
                     type=type,
                     lty=lty[tmp],
                     lwd=lwd[tmp],
                     lend=lend,
                     main=main,
-                    cex=cex, 
-                    cex.axis=cex.axis,
-                    mar=mar, 
-                    srt=srt,
                     observation.based=observation.based,
-                    xaxis.las=xaxis.las,
                     ylim=ylim,
                     yaxis.same=yaxis.same,
                     yaxis.left=yaxis.left,
@@ -327,44 +231,10 @@ plot.xts <- function(x,
                     months=nmonths(xs),
                     days=ndays(xs))
     grid.ticks.on <- names(major.grid)[rev(which(major.grid < 30))[1]]
-  } #else grid.ticks.on <- theme$grid.ticks.on
-  #label.bg <- theme$col$label.bg
-  
-  # define a subset function
-  cs$subset <- function(x) {
-    if(FALSE) {set_ylim <- get_ylim <- set_xlim <- Env <-function(){} }  # appease R parser?
-    if(missing(x)) {
-      x <- "" #1:NROW(Env$xdata)
-    }
-    Env$xsubset <<- x
-    set_xlim(range(Env$xycoords$x, na.rm=TRUE))
-    ylim <- get_ylim()
-    for(y in seq(2,length(ylim),by=2)) {
-      if(!attr(ylim[[y]],'fixed'))
-        ylim[[y]] <- structure(c(Inf,-Inf),fixed=FALSE)
-    }
-    lapply(Env$actions,
-           function(x) {
-             frame <- abs(attr(x, "frame"))
-             fixed <- attr(ylim[[frame]],'fixed')
-             #fixed <- attr(x, "fixed")
-             if(frame %% 2 == 0 && !fixed) {
-               lenv <- attr(x,"env")
-               if(is.list(lenv)) lenv <- lenv[[1]]
-               yrange <- range(lenv$xdata[Env$xsubset], na.rm=TRUE)
-               if(all(yrange == 0)) yrange <- yrange + c(-1,1)
-               min.tmp <- min(ylim[[frame]][1],yrange[1],na.rm=TRUE)
-               max.tmp <- max(ylim[[frame]][2],yrange[2],na.rm=TRUE)
-               ylim[[frame]] <<- structure(c(min.tmp,max.tmp),fixed=fixed)
-             }
-           })
-    # reset all ylim values, by looking for range(env[[1]]$xdata)
-    # xdata should be either coming from Env or if lenv, lenv
-    set_ylim(ylim)
   }
-  environment(cs$subset) <- environment(cs$get_asp)
-  
+
   # add theme and charting parameters to Env
+  plot.call <- match.call(expand.dots=TRUE)
   if(isTRUE(multi.panel)){
     if(NCOL(x) == 1)
       cs$set_asp(3)
@@ -373,18 +243,16 @@ plot.xts <- function(x,
   } else {
     cs$set_asp(3)
   }
-  cs$Env$cex <- cex
-  cs$Env$mar <- mar
-  #cs$Env$clev = min(clev+0.01,1) # (0,1]
-  #cs$Env$theme$shading <- shading
+  cs$Env$cex <- if (hasArg("cex")) plot.call$cex else 0.6
+  cs$Env$mar <- if (hasArg("mar")) plot.call$mar else c(3,2,0,2)
   cs$Env$theme$up.col <- up.col
   cs$Env$theme$dn.col <- dn.col
   
   # check for colorset or col argument
   # if col has a length of 1, replicate to NCOL(x) so we can keep it simple
   # and color each line by its index in col
-  if (hasArg(colorset)){
-    col <- match.call(expand.dots=TRUE)$colorset
+  if (hasArg("colorset")){
+    col <- plot.call$colorset
     if(length(col) == 1) 
       col <- rep(col, NCOL(x))
   }
@@ -394,13 +262,13 @@ plot.xts <- function(x,
   
   cs$Env$theme$rylab <- yaxis.right
   cs$Env$theme$lylab <- yaxis.left
-  cs$Env$theme$bg <- bg.col
+  cs$Env$theme$bg <- bg
   cs$Env$theme$grid <- grid.col
   cs$Env$theme$grid2 <- grid2
   cs$Env$theme$labels <- labels.col
-  cs$Env$theme$srt <- srt
-  cs$Env$theme$xaxis.las <- xaxis.las
-  cs$Env$theme$cex.axis <- cex.axis
+  cs$Env$theme$srt <- if (hasArg("srt")) plot.call$srt else 0
+  cs$Env$theme$las <- if (hasArg("las")) plot.call$las else 0
+  cs$Env$theme$cex.axis <- if (hasArg("cex.axis")) plot.call$cex.axis else 0.9
   cs$Env$format.labels <- format.labels
   cs$Env$grid.ticks.on <- grid.ticks.on
   cs$Env$grid.ticks.lwd <- grid.ticks.lwd
@@ -417,14 +285,12 @@ plot.xts <- function(x,
   cs$Env$lend <- lend
   cs$Env$legend.loc <- legend.loc
   cs$Env$call_list <- list()
-  cs$Env$call_list[[1]] <- match.call()
+  cs$Env$call_list[[1]] <- plot.call
   cs$Env$observation.based <- observation.based
   
   # Do some checks on x
   if(is.character(x))
     stop("'x' must be a time-series object")
-  
-  # If we detect an OHLC object, we should call quantmod::chart_Series
   
   # Raw returns data passed into function
   cs$Env$xdata <- x
@@ -502,15 +368,6 @@ plot.xts <- function(x,
   }
   
   cs$set_frame(1,FALSE)
-  # axis_ticks function to label lower frequency ranges/grid lines
-  #cs$Env$axis_ticks <- function(xdata,xsubset) {
-  #  ticks <- diff(axTicksByTime2(xdata[xsubset],labels=FALSE))/2 + 
-  #    last(axTicksByTime2(xdata[xsubset],labels=TRUE),-1)
-  #  if(min(diff(ticks)) < max(strwidth(names(ticks)))) {
-  #    ticks <- unname(ticks)
-  #  }
-  #  ticks
-  #}
   
   # compute the x-axis ticks
   cs$add(expression(atbt <- axTicksByTime2(xdata[xsubset]),
@@ -534,14 +391,10 @@ plot.xts <- function(x,
                     axis(1,
                          at=xycoords$x[axt], #axTicksByTime(xdata[xsubset]),
                          labels=names(axt), #axTicksByTime(xdata[xsubset],format.labels=format.labels)),
-                         las=theme$xaxis.las, lwd.ticks=1, mgp=c(3,1.5,0), 
+                         las=theme$las, lwd.ticks=1, mgp=c(3,1.5,0), 
                          tcl=-0.4, cex.axis=theme$cex.axis, 
                          col=theme$labels, col.axis=theme$labels)),
          expr=TRUE)
-  
-  # add main and start/end dates
-  #if((isTRUE(multi.panel)) | (multi.panel == 1) | (NCOL(x) == 1))
-  #  cs$Env$main <- cs$Env$column_names[1] else cs$Env$main <- main
   
   # add main title and date range of data
   text.exp <- c(expression(text(xlim[1],0.5,main,font=2,col=theme$labels,offset=0,cex=1.1,pos=4)),
@@ -551,15 +404,9 @@ plot.xts <- function(x,
   cs$add(text.exp, env=cs$Env, expr=TRUE)
   
   cs$set_frame(2)
-  # define function for y-axis labels
-  #cs$Env$grid_lines <- function(xdata, xsubset) {
-  #  ylim <- range(xdata[xsubset])
-  #  p <- pretty(ylim, 5)
-  #  p[p > ylim[1] & p < ylim[2]]
-  #}
   
+  # define function to plot the y-axis grid lines
   cs$Env$y_grid_lines <- function(ylim) { 
-    #pretty(range(xdata[xsubset]))
     p <- pretty(ylim,5)
     p[p > ylim[1] & p < ylim[2]]
   }
@@ -669,7 +516,6 @@ plot.xts <- function(x,
         
         # define function to plot the y-axis grid lines
         lenv$y_grid_lines <- function(ylim) { 
-          #pretty(range(xdata[xsubset]))
           p <- pretty(ylim,5)
           p[p > ylim[1] & p < ylim[2]]
         }
@@ -744,18 +590,8 @@ plot.xts <- function(x,
   cs
 }
 
-#' Add a time series to an existing xts plot
-#' 
-#' @param x an xts object to plot.
-#' @param main main title for a new panel if drawn.
-#' @param on panel number to draw on. A new panel will be drawn if \code{on=NA}.
-#' @param type the type of plot to be drawn, same as in \code{\link{plot}}.
-#' @param col color palette to use, set by default to rational choices.
-#' @param lty set the line type, same as in \code{\link{plot}}.
-#' @param lwd set the line width, same as in \code{\link{plot}}.
-#' @param pch the type of plot to be drawn, same as in \code{\link{plot}}.
-#' @param \dots any other passthrough parameters. Not currently used.
-#' @author Ross Bennett
+# Add a time series to an existing xts plot
+# author: Ross Bennett
 addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0, ...){
   lenv <- new.env()
   lenv$main <- main
@@ -828,7 +664,6 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
     
     # define function to plot the y-axis grid lines
     lenv$y_grid_lines <- function(ylim) { 
-      #pretty(range(xdata[xsubset]))
       p <- pretty(ylim,5)
       p[p > ylim[1] & p < ylim[2]]
     }
@@ -868,46 +703,20 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
   plot_object
 }
 
+# Add time series of lines to an existing xts plot
+# author: Ross Bennett
 lines.xts <- function(x, ..., main="", on=NA, col=NULL, type="l", lty=1, lwd=1, pch=0){
   addSeries(x, ...=..., main=main, on=on, type=type, col=col, lty=lty, lwd=lwd, pch=pch)
 }
 
-
-# addPoints <- function(x, main="", on=NA, col=NULL, pch=0, ...){
-#   addSeries(x, main=main, on=on, type="p", col=col, pch=pch, ...)
-# }
-
-#' Add time series of points to an existing xts plot
-#' 
-#' @param x an xts object to plot.
-#' @param main main title for a new panel if drawn.
-#' @param on panel number to draw on. A new panel will be drawn if \code{on=NA}.
-#' @param col color palette to use, set by default to rational choices.
-#' @param pch the type of plot to be drawn, same as in \code{\link{plot}}.
-#' @param \dots any other passthrough parameters. Not currently used.
-#' @author Ross Bennett
+# Add time series of points to an existing xts plot
+# author: Ross Bennett
 points.xts <- function(x, ..., main="", on=NA, col=NULL, pch=0){
   addSeries(x, ...=..., main=main, on=on, type="p", col=col, pch=pch)
 }
 
-#' Add vertical lines to an existing xts plot
-#' 
-#' @param event.lines character vector of dates. Vertical lines will be drawn 
-#' to indicate that an event happened during that time period.  \code{event.lines} should
-#' be a vector of dates (e.g., \code{c("09/03","05/06"))} formatted the same as
-#' \code{date.format}. This function matches the re-formatted row names (dates) with
-#' the events.list, so to get a match the formatting needs to be correct.
-#' @param event.labels character vector of event labels corresponding to 
-#' \code{event.lines}. This will apply text labels (e.g., 
-#' \code{c("This Event", "That Event")} to the vertical lines drawn.
-#' @param date.format format for the dates in \code{event.lines}.
-#' @param main main title for a new panel if drawn.
-#' @param on panel number to draw on. A new panel will be drawn if \code{on=NA}.
-#' @param lty set the line type, same as in \code{\link{plot}}.
-#' @param lwd set the line width, same as in \code{\link{plot}}.
-#' @param col color palette to use, set by default to rational choices.
-#' @param \dots any other passthrough parameters. Not currently used.
-#' @author Ross Bennett
+# Add vertical lines to an existing xts plot
+# author: Ross Bennett
 addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d", main="", on=NA, lty=1, lwd=1, col=1, ...){
   # add checks for event.dates and event.labels
   if(!is.null(event.labels))
@@ -924,7 +733,7 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
   lenv$plot_event_lines <- function(x, event.dates, event.labels, date.format, on, lty, lwd, col, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
-    # col <- x$Env$theme$col
+
     if(all(is.na(on))){
       # Add x-axis grid lines
       atbt <- axTicksByTime2(xdata[xsubset])
@@ -993,7 +802,6 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
     
     # define function to plot the y-axis grid lines
     lenv$y_grid_lines <- function(ylim) { 
-      #pretty(range(xdata[xsubset]))
       p <- pretty(ylim,5)
       p[p > ylim[1] & p < ylim[2]]
     }
@@ -1051,18 +859,8 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
   plot_object
 }
 
-#' Add Legend
-#' 
-#' @param legend.loc legend.loc places a legend into one of nine locations on 
-#' the chart: bottomright, bottom, bottomleft, left, topleft, top, topright, 
-#' right, or center.
-#' @param legend.names character vector of names for the legend. If \code{NULL},
-#' the column names of the current plot object are used.
-#' @param col fill colors for the legend. If \code{NULL},
-#' the colorset of the current plot object data is used.
-#' @param ncol number of columns for the legend
-#' @param \dots any other passthrough parameters to \code{\link{legend}}.
-#' @author Ross Bennett
+# Add legend to an existing xts plot
+# author: Ross Bennett
 addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, on=1, ...){
   lenv <- new.env()
   lenv$plot_legend <- function(x, legend.loc, legend.names, col, ncol, on, ...){
@@ -1071,75 +869,19 @@ addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, 
     } else {
       yrange <- x$Env$ylim[[2*on]]
     }
-    chob.xlim <- x$Env$xlim
-    switch(legend.loc,
-           topleft = {
-             xjust <- 0
-             yjust <- 1
-             lx <- chob.xlim[1]
-             ly <- yrange[2]
-           },
-           left = {
-             xjust <- 0
-             yjust <- 0.5
-             lx <- chob.xlim[1]
-             ly <- sum(yrange) / 2
-           },
-           bottomleft = {
-             xjust <- 0
-             yjust <- 0
-             lx <- chob.xlim[1]
-             ly <- yrange[1]
-           },
-           top = {
-             xjust <- 0.5
-             yjust <- 1
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- yrange[2]
-           },
-           center = {
-             xjust <- 0.5
-             yjust <- 0.5
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- sum(yrange) / 2
-           },
-           bottom = {
-             xjust <- 0.5
-             yjust <- 0
-             lx <- (chob.xlim[1] + chob.xlim[2]) / 2
-             ly <- yrange[1]
-           },
-           topright = {
-             xjust <- 1
-             yjust <- 1
-             lx <- chob.xlim[2]
-             ly <- yrange[2]
-           },
-           right = {
-             xjust <- 1
-             yjust <- 0.5
-             lx <- chob.xlim[2]
-             ly <- sum(yrange) / 2
-           },
-           bottomright = {
-             xjust <- 1
-             yjust <- 0
-             lx <- chob.xlim[2]
-             ly <- yrange[1]
-           }
-    )
     # this just gets the data of the main plot
     # TODO: get the data of frame[on]
     if(is.null(ncol)){
       ncol <- NCOL(x$Env$xdata)
     }
     if(is.null(col)){
-      col <- x$Env$theme$col[1:nc]
+      col <- x$Env$theme$col[1:NCOL(x$Env$xdata)]
     }
     if(is.null(legend.names)){
       legend.names <- x$Env$column_names
     }
-    legend(x=lx, y=ly, legend=legend.names, xjust=xjust, yjust=yjust, 
+    lc <- legend.coords(legend.loc, x$Env$xlim, yrange)
+    legend(x=lc$x, y=lc$y, legend=legend.names, xjust=lc$xjust, yjust=lc$yjust,
            ncol=ncol, col=col, bty="n", text.col=x$Env$theme$labels, ...)
   }
   
@@ -1201,6 +943,22 @@ addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, 
   plot_object
 }
 
+# Determine legend coordinates based on legend location,
+# range of x values and range of y values
+legend.coords <- function(legend.loc, xrange, yrange) {
+  switch(legend.loc,
+        topleft = list(xjust = 0,   yjust = 1,   x = xrange[1], y = yrange[2]),
+           left = list(xjust = 0,   yjust = 0.5, x = xrange[1], y = sum(yrange) / 2),
+     bottomleft = list(xjust = 0,   yjust = 0,   x = xrange[1], y = yrange[1]),
+            top = list(xjust = 0.5, yjust = 1,   x = (xrange[1] + xrange[2]) / 2, y = yrange[2]),
+         center = list(xjust = 0.5, yjust = 0.5, x = (xrange[1] + xrange[2]) / 2, y = sum(yrange) / 2),
+         bottom = list(xjust = 0.5, yjust = 0,   x = (xrange[1] + xrange[2]) / 2, y = yrange[1]),
+       topright = list(xjust = 1,   yjust = 1,   x = xrange[2], y = yrange[2]),
+          right = list(xjust = 1,   yjust = 0.5, x = xrange[2], y = sum(yrange) / 2),
+    bottomright = list(xjust = 1,   yjust = 0,   x = xrange[2], y = yrange[1])
+  )
+}
+
 
 # R/replot.R in quantmod with only minor edits to change class name to
 # replot_xts and use the .plotxtsEnv instead of the .plotEnv in quantmod
@@ -1210,7 +968,6 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   Env <- new.env()
   Env$frame <- frame
   Env$asp   <- asp
-  #Env$usr   <- par("usr")
   Env$xlim  <- xlim
   Env$ylim  <- ylim
   Env$pad1 <- -0 # bottom padding per frame
@@ -1231,7 +988,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   reset_ylim <- function() {
     ylim <- get_ylim()
     ylim <- rep(list(c(Inf,-Inf)),length(ylim))
-    #ylim[[1]] <- range(OHLC(Env$xdata)[x]) # main data
+
     lapply(Env$actions,
            function(x) {
              frame <- attr(x, "frame")
@@ -1320,7 +1077,6 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                return(NULL)
              frame <- abs(attr(x, "frame"))
              fixed <- attr(ylim[[frame]],'fixed')
-             #fixed <- attr(x, "fixed")
              if(frame %% from_by == 0 && !fixed) {
                lenv <- attr(x,"env")
                if(is.list(lenv)) lenv <- lenv[[1]]
@@ -1373,8 +1129,34 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     Env$actions[[length(Env$actions)+1]] <<- a
   }
   
-  # prepare window to draw
-  #set_window()
+  # subset function
+  subset <- function(x="") {
+    Env$xsubset <<- x
+    set_xlim(range(Env$xycoords$x, na.rm=TRUE))
+    ylim <- get_ylim()
+    for(y in seq(2,length(ylim),by=2)) {
+      if(!attr(ylim[[y]],'fixed'))
+        ylim[[y]] <- structure(c(Inf,-Inf),fixed=FALSE)
+    }
+    lapply(Env$actions,
+           function(x) {
+             frame <- abs(attr(x, "frame"))
+             fixed <- attr(ylim[[frame]],'fixed')
+             if(frame %% 2 == 0 && !fixed) {
+               lenv <- attr(x,"env")
+               if(is.list(lenv)) lenv <- lenv[[1]]
+               yrange <- range(lenv$xdata[Env$xsubset], na.rm=TRUE)
+               if(all(yrange == 0)) yrange <- yrange + c(-1,1)
+               min.tmp <- min(ylim[[frame]][1],yrange[1],na.rm=TRUE)
+               max.tmp <- max(ylim[[frame]][2],yrange[2],na.rm=TRUE)
+               ylim[[frame]] <<- structure(c(min.tmp,max.tmp),fixed=fixed)
+             }
+           })
+    # reset all ylim values, by looking for range(env[[1]]$xdata)
+    # xdata should be either coming from Env or if lenv, lenv
+    set_ylim(ylim)
+  }
+  
   # return
   replot_env <- new.env()
   class(replot_env) <- c("replot_xts","environment")
@@ -1446,40 +1228,13 @@ plot.replot_xts <- function(x, ...) {
            }
          }
   )
-  #for(frames in 1:length(x$get_ylim())) {
-  #x$set_frame(frames)
-  #abline(h=x$get_ylim()[[frames]][1], col=x$Env$theme$grid, lwd=1)
-  #}
+
   x$set_frame(abs(last.frame),clip=FALSE)
   do.call("clip",as.list(usr))
-  par(xpd=oxpd,cex=cex$cex,mar=mar$mar, bg=x$Env$theme$bg)#,usr=usr)
+  par(xpd=oxpd,cex=cex$cex,mar=mar$mar, bg=x$Env$theme$bg)
   invisible(x$Env$actions)
 }
 
-scale.ranges <- function(frame, asp, ranges)
-{
-  asp/asp[frame] * abs(diff(ranges[[frame]]))
-}
-
-`+.replot` <- function(e1, e2) {
-  e2 <- match.call()$e2
-  e2$plot_object <- (substitute(e1))
-  eval(e2)
-}
-
-`+.replot` <- function(e1, e2) {
-  assign(".xts_chob",e1,.plotxtsEnv)
-  e2 <- eval(e2)
-  e2
-}
-
-
-##### accessor functions
-
-re_Chart <- function() current.xts_chob()
-chart_asp <- function() current.xts_chob()$get_asp()
-chart_ylim <- function() current.xts_chob()$get_ylim()
-chart_xlim <- function() current.xts_chob()$get_xlim()
-
 actions <- function(obj) obj$Env$actions
 chart_actions <- function() actions(current.xts_chob())
+
