@@ -10,18 +10,65 @@ data(sample_matrix)
 sample.xts <- as.xts(sample_matrix)
 ```
 
-Create a basic plot
+Create a basic plot.
 ```{r fig.keep='last'}
-plot(sample.xts[,4])
+plot(sample.xts[,"Close"])
 ```
 
-<!--
-TODO
-- lines
-- points
-- event lines
-- legend
-- panels
-- multi.panel
-- small multiples
--->
+Subset to only plot March 2007. The `subset` argument uses xts subsetting
+described in `?xts`.
+```{r fig.keep='last'}
+plot(sample.xts[,"Close"], subset="2007-03")
+```
+
+Customize the plot by changing the color (`col`), line type (`lty`), and 
+line width (`lwd`). See `?par` for more valid values for `lty` and `lwd`. 
+```{r fig.keep='last'}
+plot(sample.xts[,"Close"], col="blue", lwd=2, lty=2)
+```
+
+The `FUN` argument can be used to apply a function to the `x` data and plot
+the output. Here we define a function to compute the simple returns given
+an xts object of prices. Any additional arguments to `FUN` can be passed in
+through the dots (`...`) argument. The function passed to `FUN` must be a 
+valid R function with a couple requirements:
+* must have an `x` argument for the data. The xts object passed to the `x` 
+argument in `plot` is passed to the `x` argument in `FUN`.
+* must return an xts object. The object returned from `FUN` is what is plotted.
+```{r}
+# function to compute simple returns
+simple.ret <- function(x, col.name){
+  R <- x[,col.name]
+  R / lag(R) - 1
+}
+
+# Plot the simple returns of the Close prices in sample.xts.
+plot(sample.xts, FUN=simple.ret, col.name="Close", type="h")
+```
+
+Here we start with a basic plot, then add moving average lines, and a legend.
+```{r fig.keep='last'}
+plot(sample.xts[,"Close"])
+lines(TTR::SMA(sample.xts[,"Close"], n = 20), on=1, col="blue")
+lines(TTR::SMA(sample.xts[,"Close"], n = 50), on=1, col="red", lty=2)
+
+# add legend to panel 1
+addLegend("topright", on=1, 
+          legend.names = c("Close", "SMA(20)", "SMA(50)"), 
+          lty=c(1, 1, 2), lwd=c(2, 1, 1),
+          col=c("black", "blue", "red"))
+```
+
+We can also add points to a plot in the same way we added lines
+```{r fig.keep='last'}
+plot(sample.xts[,"Close"])
+points(TTR::SMA(sample.xts[,"Close"], n = 20), on=1, col="blue", pch=2)
+points(TTR::SMA(sample.xts[,"Close"], n = 50), on=1, col="red", pch=5)
+
+# add legend to panel 1
+addLegend("topright", on=1, 
+          legend.names = c("Close", "SMA(20)", "SMA(50)"), 
+          lty=c(1, NA, NA), pch=c(NA, 2, 5),
+          col=c("black", "blue", "red"))
+```
+

@@ -1,0 +1,121 @@
+---
+title: "Plotting Panels"
+---
+
+Load the xts package and some sample OHLC data. The PerformanceAnalytics 
+package is loaded for functions that will be used in the examples and the
+edhec dataset of EDHEC composite hedge fund style index returns.
+```{r}
+library(xts)
+library(PerformanceAnalytics)
+
+data(sample_matrix)
+sample.xts <- as.xts(sample_matrix)
+```
+
+Create a basic plot and add a panel of the simple returns
+```{r fig.keep='last'}
+plot(sample.xts[,"Close"])
+lines(Return.calculate(sample.xts[,"Close"]), type="h")
+```
+
+We can also create the same plot by using the `panels` argument. 
+```{r fig.keep='last'}
+plot(sample.xts[,"Close"], 
+     panels='lines(Return.calculate(sample.xts[,"Close"]), type="h")')
+```
+
+Load the edhec data from PerformanceAnalytics. Here will use the first 4 
+columns of the edhec returns data to demonstrate panel and small multiples
+functionality.
+```{r}
+data(edhec)
+R <- edhec[,1:4]
+head(R)
+```
+
+To plot each column in a separate panel, specify `multi.panel = TRUE`. The 
+default behavior is to use the same range for the y-axis for each panel.
+```{r fig.keep='last'}
+plot(R, multi.panel=TRUE, type="h")
+```
+
+Plot each column of data in a separate panel, setting the range of the y-axis 
+for each panel based on each column of data. Note how each panel has a 
+different y-axis range.
+```{r fig.keep='last'}
+plot(R, multi.panel=TRUE, type="h", yaxis.same=FALSE)
+```
+
+Attributes such as `col`, `lty`, and `lwd` are passed to each panel.
+```{r fig.keep='last'}
+plot(R, multi.panel=TRUE, col=c("black", "blue", "red", "green"), lty=1:4)
+```
+
+An important feature of `plot.xts` is that it does not use `layout` internally 
+for panels. This means that `plot.xts` is "layout safe" and multiple panels can 
+be plotted in a specified layout for custom plots.
+
+Plot the returns data in a 1x2 panel.
+```{r fig.keep='last'}
+layout(matrix(1:2, 1, 2))
+plot(R, multi.panel=2, type="h")
+layout(matrix(1))
+```
+
+Plot the returns data in a 2x2 panel.
+```{r fig.keep='last'}
+layout(matrix(1:4, 2, 2))
+plot(R, multi.panel=1, type="h")
+layout(matrix(1))
+```
+
+Define a custom function to add a drawdowns panel.
+```{r}
+addDrawdowns <- function(){
+  # Get the current charting object (i.e. chob) and extract the data
+  plot_object <- xts:::current.xts_chob()
+  x <- plot_object$Env$xdata
+  
+  # compute the drawdowns
+  dd <- PerformanceAnalytics:::Drawdowns(x)
+  # simply call addSeries with the computed data 
+  addSeries(dd, main = "Drawdowns", col="black")
+}
+```
+```{r fig.keep='last'}
+plot(R[,1], type="h")
+addDrawdowns()
+```
+
+Multiple panels of returns with the custom drawdowns panel.
+```{r fig.keep='last'}
+layout(matrix(1:4, 2, 2))
+plot(R, type="h", multi.panel=1, panels="addDrawdowns()")
+layout(matrix(1))
+```
+
+Another example of a custom panel function is to add a rolling Expected
+Shortfall to the main panel.
+```{r}
+addrollingES <- function(gap=50, p=0.95, method="historical", ...){
+  # Get the current charting object (i.e. chob) and extract the data
+  plot_object <- xts:::current.xts_chob()
+  x <- plot_object$Env$xdata
+  
+  # compute the rolling Expected Shortfall
+  rollingES <- as.xts(apply.fromstart(x, FUN="ES", gap=gap, p=p, method=method))
+  # simply call addSeries with the computed data 
+  addSeries(rollingES, on=1, ...)
+}
+```
+```{r fig.keep='last'}
+plot(R[,1], type="h", main="Convertible Arbitrage Returns")
+addrollingES(lty=2, col="blue", lwd=2)
+addLegend("topleft", on=1, 
+          legend.names = "Historical 95% ES", 
+          lty=2, lwd=2, col="blue")
+```
+
+
+

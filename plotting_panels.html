@@ -10,7 +10,7 @@
 
 
 
-<title>Plotting Basics</title>
+<title>Plotting Panels</title>
 
 <script src="libs/jquery-1.11.0/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -179,11 +179,11 @@ img {
 </div><!--/.navbar -->
 
 <div id="header">
-<h1 class="title">Plotting Basics</h1>
+<h1 class="title">Plotting Panels</h1>
 </div>
 
 
-<p>Load the xts package and some sample data</p>
+<p>Load the xts package and some sample OHLC data. The PerformanceAnalytics package is loaded for functions that will be used in the examples and the edhec dataset of EDHEC composite hedge fund style index returns.</p>
 <pre class="r"><code>library(xts)</code></pre>
 <pre><code>## Loading required package: zoo
 ## 
@@ -192,51 +192,97 @@ img {
 ## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>library(PerformanceAnalytics)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;PerformanceAnalytics&#39;
+## 
+## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     legend</code></pre>
 <pre class="r"><code>data(sample_matrix)
 sample.xts &lt;- as.xts(sample_matrix)</code></pre>
-<p>Create a basic plot.</p>
-<pre class="r"><code>plot(sample.xts[,&quot;Close&quot;])</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-2-1.png" title="" alt="" width="672" /></p>
-<p>Subset to only plot March 2007. The <code>subset</code> argument uses xts subsetting described in <code>?xts</code>.</p>
-<pre class="r"><code>plot(sample.xts[,&quot;Close&quot;], subset=&quot;2007-03&quot;)</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-3-1.png" title="" alt="" width="672" /></p>
-<p>Customize the plot by changing the color (<code>col</code>), line type (<code>lty</code>), and line width (<code>lwd</code>). See <code>?par</code> for more valid values for <code>lty</code> and <code>lwd</code>.</p>
-<pre class="r"><code>plot(sample.xts[,&quot;Close&quot;], col=&quot;blue&quot;, lwd=2, lty=2)</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-4-1.png" title="" alt="" width="672" /></p>
-<p>The <code>FUN</code> argument can be used to apply a function to the <code>x</code> data and plot the output. Here we define a function to compute the simple returns given an xts object of prices. Any additional arguments to <code>FUN</code> can be passed in through the dots (<code>...</code>) argument. The function passed to <code>FUN</code> must be a valid R function with a couple requirements: * must have an <code>x</code> argument for the data. The xts object passed to the <code>x</code> argument in <code>plot</code> is passed to the <code>x</code> argument in <code>FUN</code>. * must return an xts object. The object returned from <code>FUN</code> is what is plotted.</p>
-<pre class="r"><code># function to compute simple returns
-simple.ret &lt;- function(x, col.name){
-  R &lt;- x[,col.name]
-  R / lag(R) - 1
-}
-
-# Plot the simple returns of the Close prices in sample.xts.
-plot(sample.xts, FUN=simple.ret, col.name=&quot;Close&quot;, type=&quot;h&quot;)</code></pre>
-<pre><code>## Warning in plot.xts(sample.xts, FUN = simple.ret, col.name = &quot;Close&quot;, type
-## = &quot;h&quot;): only the univariate series will be plotted</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-5-1.png" title="" alt="" width="672" /><img src="plotting_basics_files/figure-html/unnamed-chunk-5-2.png" title="" alt="" width="672" /></p>
-<p>Here we start with a basic plot, then add moving average lines, and a legend.</p>
+<p>Create a basic plot and add a panel of the simple returns</p>
 <pre class="r"><code>plot(sample.xts[,&quot;Close&quot;])
-lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 20), on=1, col=&quot;blue&quot;)
-lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 50), on=1, col=&quot;red&quot;, lty=2)
-
-# add legend to panel 1
-addLegend(&quot;topright&quot;, on=1, 
-          legend.names = c(&quot;Close&quot;, &quot;SMA(20)&quot;, &quot;SMA(50)&quot;), 
-          lty=c(1, 1, 2), lwd=c(2, 1, 1),
-          col=c(&quot;black&quot;, &quot;blue&quot;, &quot;red&quot;))</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-6-1.png" title="" alt="" width="672" /></p>
-<p>We can also add points to a plot in the same way we added lines</p>
-<pre class="r"><code>plot(sample.xts[,&quot;Close&quot;])
-points(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 20), on=1, col=&quot;blue&quot;, pch=2)
-points(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 50), on=1, col=&quot;red&quot;, pch=5)
-
-# add legend to panel 1
-addLegend(&quot;topright&quot;, on=1, 
-          legend.names = c(&quot;Close&quot;, &quot;SMA(20)&quot;, &quot;SMA(50)&quot;), 
-          lty=c(1, NA, NA), pch=c(NA, 2, 5),
-          col=c(&quot;black&quot;, &quot;blue&quot;, &quot;red&quot;))</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-7-1.png" title="" alt="" width="672" /></p>
+lines(Return.calculate(sample.xts[,&quot;Close&quot;]), type=&quot;h&quot;)</code></pre>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-2-1.png" title="" alt="" width="672" /></p>
+<p>We can also create the same plot by using the <code>panels</code> argument.</p>
+<pre class="r"><code>plot(sample.xts[,&quot;Close&quot;], 
+     panels=&#39;lines(Return.calculate(sample.xts[,&quot;Close&quot;]), type=&quot;h&quot;)&#39;)</code></pre>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-3-1.png" title="" alt="" width="672" /></p>
+<p>Load the edhec data from PerformanceAnalytics. Here will use the first 4 columns of the edhec returns data to demonstrate panel and small multiples functionality.</p>
+<pre class="r"><code>data(edhec)
+R &lt;- edhec[,1:4]
+head(R)</code></pre>
+<pre><code>##            Convertible Arbitrage CTA Global Distressed Securities
+## 1997-01-31                0.0119     0.0393                0.0178
+## 1997-02-28                0.0123     0.0298                0.0122
+## 1997-03-31                0.0078    -0.0021               -0.0012
+## 1997-04-30                0.0086    -0.0170                0.0030
+## 1997-05-31                0.0156    -0.0015                0.0233
+## 1997-06-30                0.0212     0.0085                0.0217
+##            Emerging Markets
+## 1997-01-31           0.0791
+## 1997-02-28           0.0525
+## 1997-03-31          -0.0120
+## 1997-04-30           0.0119
+## 1997-05-31           0.0315
+## 1997-06-30           0.0581</code></pre>
+<p>To plot each column in a separate panel, specify <code>multi.panel = TRUE</code>. The default behavior is to use the same range for the y-axis for each panel.</p>
+<pre class="r"><code>plot(R, multi.panel=TRUE, type=&quot;h&quot;)</code></pre>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-5-1.png" title="" alt="" width="672" /></p>
+<p>Plot each column of data in a separate panel, setting the range of the y-axis for each panel based on each column of data. Note how each panel has a different y-axis range.</p>
+<pre class="r"><code>plot(R, multi.panel=TRUE, type=&quot;h&quot;, yaxis.same=FALSE)</code></pre>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-6-1.png" title="" alt="" width="672" /></p>
+<p>Attributes such as <code>col</code>, <code>lty</code>, and <code>lwd</code> are passed to each panel.</p>
+<pre class="r"><code>plot(R, multi.panel=TRUE, col=c(&quot;black&quot;, &quot;blue&quot;, &quot;red&quot;, &quot;green&quot;), lty=1:4)</code></pre>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-7-1.png" title="" alt="" width="672" /></p>
+<p>An important feature of <code>plot.xts</code> is that it does not use <code>layout</code> internally for panels. This means that <code>plot.xts</code> is “layout safe” and multiple panels can be plotted in a specified layout for custom plots.</p>
+<p>Plot the returns data in a 1x2 panel.</p>
+<pre class="r"><code>layout(matrix(1:2, 1, 2))
+plot(R, multi.panel=2, type=&quot;h&quot;)</code></pre>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-8-1.png" title="" alt="" width="672" /></p>
+<pre class="r"><code>layout(matrix(1))</code></pre>
+<p>Plot the returns data in a 2x2 panel.</p>
+<pre class="r"><code>layout(matrix(1:4, 2, 2))
+plot(R, multi.panel=1, type=&quot;h&quot;)</code></pre>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-9-1.png" title="" alt="" width="672" /></p>
+<pre class="r"><code>layout(matrix(1))</code></pre>
+<p>Define a custom function to add a drawdowns panel.</p>
+<pre class="r"><code>addDrawdowns &lt;- function(){
+  # Get the current charting object (i.e. chob) and extract the data
+  plot_object &lt;- xts:::current.xts_chob()
+  x &lt;- plot_object$Env$xdata
+  
+  # compute the drawdowns
+  dd &lt;- PerformanceAnalytics:::Drawdowns(x)
+  # simply call addSeries with the computed data 
+  addSeries(dd, main = &quot;Drawdowns&quot;, col=&quot;black&quot;)
+}</code></pre>
+<pre class="r"><code>plot(R[,1], type=&quot;h&quot;)
+addDrawdowns()</code></pre>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-11-1.png" title="" alt="" width="672" /></p>
+<p>Multiple panels of returns with the custom drawdowns panel.</p>
+<pre class="r"><code>layout(matrix(1:4, 2, 2))
+plot(R, type=&quot;h&quot;, multi.panel=1, panels=&quot;addDrawdowns()&quot;)</code></pre>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-12-1.png" title="" alt="" width="672" /></p>
+<pre class="r"><code>layout(matrix(1))</code></pre>
+<p>Another example of a custom panel function is to add a rolling Expected Shortfall to the main panel.</p>
+<pre class="r"><code>addrollingES &lt;- function(gap=50, p=0.95, method=&quot;historical&quot;, ...){
+  # Get the current charting object (i.e. chob) and extract the data
+  plot_object &lt;- xts:::current.xts_chob()
+  x &lt;- plot_object$Env$xdata
+  
+  # compute the rolling Expected Shortfall
+  rollingES &lt;- as.xts(apply.fromstart(x, FUN=&quot;ES&quot;, gap=gap, p=p, method=method))
+  # simply call addSeries with the computed data 
+  addSeries(rollingES, on=1, ...)
+}</code></pre>
+<pre class="r"><code>plot(R[,1], type=&quot;h&quot;, main=&quot;Convertible Arbitrage Returns&quot;)
+addrollingES(lty=2, col=&quot;blue&quot;, lwd=2)
+addLegend(&quot;topleft&quot;, on=1, 
+          legend.names = &quot;Historical 95% ES&quot;, 
+          lty=2, lwd=2, col=&quot;blue&quot;)</code></pre>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-14-1.png" title="" alt="" width="672" /></p>
 
 
 <!-- some extra javascript for older browsers -->
