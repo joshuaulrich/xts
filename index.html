@@ -10,7 +10,7 @@
 
 
 
-<title>xts: extensible time-series</title>
+<title>xts: eXtensible Time Series</title>
 
 <script src="libs/jquery-1.11.0/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -137,12 +137,13 @@ img {
              -->
           </ul>
         </li>
-        <!-- add another dropdown menu
+        <!-- add another dropdown menu -->
         <li class="dropdown">
-          <a href="formats" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Formats <span class="caret"></span></a>
+          <a href="faq" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">FAQ <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-             <li class="dropdown-header">Documents</li>
-             <li><a href="html_document_format.html">HTML</a></li>
+             <li class="dropdown-header">FAQ</li>
+             <li><a href="xts_faq.html">xts FAQ</a></li>
+             <!--
              <li><a href="pdf_document_format.html">PDF</a></li>
              <li><a href="word_document_format.html">Word</a></li>
              <li><a href="markdown_document_format.html">Markdown</a></li>
@@ -179,26 +180,150 @@ img {
 </div><!--/.navbar -->
 
 <div id="header">
-<h1 class="title">xts: extensible time-series</h1>
+<h1 class="title">xts: eXtensible Time Series</h1>
 </div>
 
 
+<div id="using-the-xts-package" class="section level2">
+<h2>Using the xts package</h2>
+<p>The <code>xts</code> package provides an extensible time series class that provides uniform handling of many R time series classes by extending zoo.</p>
 <div id="installation" class="section level3">
 <h3>Installation</h3>
 <p>The xts package can be installed from CRAN as follows</p>
 <pre class="r"><code>install.packages(&quot;xts&quot;)</code></pre>
 </div>
-<div id="documentation" class="section level3">
-<h3>Documentation</h3>
-<p>TODO: add content from package Rd file and/or vignettes</p>
+<div id="creating-data-objects-as.xts-and-xts" class="section level3">
+<h3>Creating data objects: <code>as.xts</code> and <code>xts</code></h3>
+<p>Existing time-series data can be converted to an <code>xts</code> object with <code>as,xts</code>. <!-- from ?'as.xts' --> It is possible with a call to <code>as.xts</code> to convert objects of class <code>timeSeries</code>, <code>ts</code>, <code>irts</code>, <code>fts</code>, <code>its</code>, <code>matrix</code>, <code>data.frame</code>, and <code>zoo</code>.</p>
+<pre class="r"><code>library(xts)</code></pre>
+<pre><code>## Loading required package: zoo
+## 
+## Attaching package: &#39;zoo&#39;
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>data(sample_matrix)
+class(sample_matrix)</code></pre>
+<pre><code>## [1] &quot;matrix&quot;</code></pre>
+<pre class="r"><code>matrix_xts &lt;- as.xts(sample_matrix, dateFormat=&#39;Date&#39;)
+str(matrix_xts)</code></pre>
+<pre><code>## An &#39;xts&#39; object on 2007-01-02/2007-06-30 containing:
+##   Data: num [1:180, 1:4] 50 50.2 50.4 50.4 50.2 ...
+##  - attr(*, &quot;dimnames&quot;)=List of 2
+##   ..$ : NULL
+##   ..$ : chr [1:4] &quot;Open&quot; &quot;High&quot; &quot;Low&quot; &quot;Close&quot;
+##   Indexed by objects of class: [Date] TZ: UTC
+##   xts Attributes:  
+##  NULL</code></pre>
+<pre class="r"><code>df_xts &lt;- as.xts(as.data.frame(sample_matrix),
+                 important=&#39;very important info!&#39;)
+str(df_xts)</code></pre>
+<pre><code>## An &#39;xts&#39; object on 2007-01-02/2007-06-30 containing:
+##   Data: num [1:180, 1:4] 50 50.2 50.4 50.4 50.2 ...
+##  - attr(*, &quot;dimnames&quot;)=List of 2
+##   ..$ : NULL
+##   ..$ : chr [1:4] &quot;Open&quot; &quot;High&quot; &quot;Low&quot; &quot;Close&quot;
+##   Indexed by objects of class: [POSIXct,POSIXt] TZ: 
+##   xts Attributes:  
+## List of 1
+##  $ important: chr &quot;very important info!&quot;</code></pre>
+<p>Data objects can also be constructed directly from raw data with the <code>xts</code> constructor function, in essentially the same way a <code>zoo</code> object is created with the exception that at present there is no equivelant <code>zooreg</code> class.</p>
+<pre class="r"><code>xts(1:10, Sys.Date()+1:10)</code></pre>
+<pre><code>##            [,1]
+## 2015-04-27    1
+## 2015-04-28    2
+## 2015-04-29    3
+## 2015-04-30    4
+## 2015-05-01    5
+## 2015-05-02    6
+## 2015-05-03    7
+## 2015-05-04    8
+## 2015-05-05    9
+## 2015-05-06   10</code></pre>
 </div>
-<div id="examples" class="section level3">
-<h3>Examples</h3>
-<p>TODO: add examples</p>
+<div id="subsetting" class="section level3">
+<h3>Subsetting</h3>
+<!-- from ?'[.xts' -->
+<p>One of the primary motivations, and key points of differentiation of the time series class xts, is the ability to subset rows by specifying ISO-8601 compatible range strings. This allows for natural range-based time queries without requiring prior knowledge of the underlying time object used in construction.</p>
+<p>When a raw character vector is used for the i subset argument, it is processed as if it was ISO-8601 compliant. This means that it is parsed from left to right, according to the following specification:</p>
+<pre><code>CCYYMMDD HH:MM:SS.ss+</code></pre>
+<p>A full description will be expanded from a left-specified truncated one.</p>
+<p>Additionally, one may specify range-based queries by simply supplying two time descriptions seperated by a forward slash:</p>
+<pre><code>CCYYMMDD HH:MM:SS.ss+/CCYYMMDD HH:MM:SS.ss</code></pre>
+<p>Extract a specific date</p>
+<pre class="r"><code>matrix_xts[&#39;2007-01-06&#39;]</code></pre>
+<pre><code>##                Open     High      Low    Close
+## 2007-01-06 50.24433 50.24433 50.11121 50.18112</code></pre>
+<p>Extract the entire month of March</p>
+<pre class="r"><code>matrix_xts[&#39;2007-03&#39;]</code></pre>
+<pre><code>##                Open     High      Low    Close
+## 2007-03-01 50.81620 50.81620 50.56451 50.57075
+## 2007-03-02 50.60980 50.72061 50.50808 50.61559
+## 2007-03-03 50.73241 50.73241 50.40929 50.41033
+## 2007-03-04 50.39273 50.40881 50.24922 50.32636
+## 2007-03-05 50.26501 50.34050 50.26501 50.29567
+## 2007-03-06 50.27464 50.32019 50.16380 50.16380
+## 2007-03-07 50.14458 50.20278 49.91381 49.91381
+## 2007-03-08 49.93149 50.00364 49.84893 49.91839
+## 2007-03-09 49.92377 49.92377 49.74242 49.80712
+## 2007-03-10 49.79370 49.88984 49.70385 49.88698
+## 2007-03-11 49.83062 49.88295 49.76031 49.78806
+## 2007-03-12 49.82763 49.90311 49.67049 49.74033
+## 2007-03-13 49.69628 49.70863 49.37924 49.37924
+## 2007-03-14 49.36270 49.53735 49.30746 49.53735
+## 2007-03-15 49.57374 49.62310 49.39876 49.49600
+## 2007-03-16 49.44900 49.65285 49.42416 49.59500
+## 2007-03-17 49.55666 49.55666 49.33564 49.34714
+## 2007-03-18 49.29778 49.67857 49.29778 49.65463
+## 2007-03-19 49.62747 49.65407 49.51604 49.54590
+## 2007-03-20 49.59529 49.62003 49.42321 49.50690
+## 2007-03-21 49.49765 49.53961 49.41610 49.51807
+## 2007-03-22 49.42306 49.42306 49.31184 49.39687
+## 2007-03-23 49.27281 49.27281 48.93095 48.93095
+## 2007-03-24 48.86635 48.86635 48.52684 48.52684
+## 2007-03-25 48.50649 48.50649 48.33409 48.33973
+## 2007-03-26 48.34210 48.44637 48.28969 48.28969
+## 2007-03-27 48.25248 48.41572 48.23648 48.30851
+## 2007-03-28 48.33090 48.53595 48.33090 48.53595
+## 2007-03-29 48.59236 48.69988 48.57432 48.69988
+## 2007-03-30 48.74562 49.00218 48.74562 48.93546
+## 2007-03-31 48.95616 49.09728 48.95616 48.97490</code></pre>
+<p>Extract all the data from the beginning through January 7, 2007.</p>
+<pre class="r"><code>matrix_xts[&#39;/2007-01-07&#39;]</code></pre>
+<pre><code>##                Open     High      Low    Close
+## 2007-01-02 50.03978 50.11778 49.95041 50.11778
+## 2007-01-03 50.23050 50.42188 50.23050 50.39767
+## 2007-01-04 50.42096 50.42096 50.26414 50.33236
+## 2007-01-05 50.37347 50.37347 50.22103 50.33459
+## 2007-01-06 50.24433 50.24433 50.11121 50.18112
+## 2007-01-07 50.13211 50.21561 49.99185 49.99185</code></pre>
+<p>Extract all the data from June 25, 2007 through the end.</p>
+<pre class="r"><code>matrix_xts[&#39;2007-06-25/&#39;]</code></pre>
+<pre><code>##                Open     High      Low    Close
+## 2007-06-25 47.20471 47.42772 47.13405 47.42772
+## 2007-06-26 47.44300 47.61611 47.44300 47.61611
+## 2007-06-27 47.62323 47.71673 47.60015 47.62769
+## 2007-06-28 47.67604 47.70460 47.57241 47.60716
+## 2007-06-29 47.63629 47.77563 47.61733 47.66471
+## 2007-06-30 47.67468 47.94127 47.67468 47.76719</code></pre>
+<p>Extract data from May 28, 2007 through June 2, 2007</p>
+<pre class="r"><code>matrix_xts[&#39;2007-05-28/2007-06-02&#39;]</code></pre>
+<pre><code>##                Open     High      Low    Close
+## 2007-05-28 47.90142 47.93398 47.64718 47.64718
+## 2007-05-29 47.65665 47.89342 47.65446 47.87252
+## 2007-05-30 47.78866 47.93267 47.78866 47.83291
+## 2007-05-31 47.82845 47.84044 47.73780 47.73780
+## 2007-06-01 47.74432 47.74432 47.54820 47.65123
+## 2007-06-02 47.60223 47.74542 47.56796 47.72569</code></pre>
+<p>see <code>help(&quot;[.xts&quot;)</code> for more details and examples for extracting subsets of <code>xts</code> objects.</p>
 </div>
 <div id="about" class="section level3">
 <h3>About</h3>
-<p>TODO: add authors and link to github repo</p>
+<p><strong>Authors:</strong> Jeffrey A. Ryan and <a href="https://github.com/joshuaulrich">Joshua M. Ulrich</a></p>
+<p><a href="http://cran.r-project.org/web/packages/xts/index.html">xts on CRAN</a></p>
+<p><a href="https://github.com/joshuaulrich/xts">xts on github</a></p>
+</div>
 </div>
 
 
@@ -218,7 +343,7 @@ $(document).ready(function () {
     // manage active menu header
     if (href.startsWith('plotting_'))
       $('a[href="' + 'plotting' + '"]').parent().addClass('active');
-    else if (href.endsWith('_format.html'))
+    else if (href.endsWith('_faq.html'))
       $('a[href="' + 'formats' + '"]').parent().addClass('active');
     else if (href.startsWith('developer_'))
       $('a[href="' + 'developer' + '"]').parent().addClass('active');

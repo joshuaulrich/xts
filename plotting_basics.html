@@ -137,12 +137,13 @@ img {
              -->
           </ul>
         </li>
-        <!-- add another dropdown menu
+        <!-- add another dropdown menu -->
         <li class="dropdown">
-          <a href="formats" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Formats <span class="caret"></span></a>
+          <a href="faq" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">FAQ <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-             <li class="dropdown-header">Documents</li>
-             <li><a href="html_document_format.html">HTML</a></li>
+             <li class="dropdown-header">FAQ</li>
+             <li><a href="xts_faq.html">xts FAQ</a></li>
+             <!--
              <li><a href="pdf_document_format.html">PDF</a></li>
              <li><a href="word_document_format.html">Word</a></li>
              <li><a href="markdown_document_format.html">Markdown</a></li>
@@ -302,7 +303,7 @@ $(document).ready(function () {
     // manage active menu header
     if (href.startsWith('plotting_'))
       $('a[href="' + 'plotting' + '"]').parent().addClass('active');
-    else if (href.endsWith('_format.html'))
+    else if (href.endsWith('_faq.html'))
       $('a[href="' + 'formats' + '"]').parent().addClass('active');
     else if (href.startsWith('developer_'))
       $('a[href="' + 'developer' + '"]').parent().addClass('active');

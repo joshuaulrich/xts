@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Joshua M. Ulrich" />
+
+
+<title>xts FAQ</title>
+
+<script src="libs/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.1/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+<style type="text/css">
+
+/* padding for bootstrap navbar */
+body {
+  padding-top: 50px;
+  padding-bottom: 40px;
+}
+
+
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h2 {
+  padding-top: 55px;
+  margin-top: -55px;
+}
+.section h3 {
+  padding-top: 55px;
+  margin-top: -55px;
+}
+
+
+
+/* don't use link color in navbar */
+.dropdown-menu>li>a {
+  color: black;
+}
+
+/* some padding for disqus
+#disqus_thread {
+  margin-top: 45px;
+}
+*/
+
+</style>
+
+<link rel="stylesheet" href="libs/font-awesome-4.1.0/css/font-awesome.min.css"/>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="libs/highlight/textmate.css"
+      type="text/css" />
+<script src="libs/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <!-- add the xts version here? -->
+      <a class="navbar-brand" href="index.html">xts</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+      <!-- Home item -->
+        <li><a href="index.html">Home</a></li>
+        <!-- plotting dropdown -->
+        <li class="dropdown">
+          <a href="plotting" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Plotting <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+             <li class="dropdown-header">plot.xts</li>
+             <li><a href="plotting_basics.html">Plotting Basics</a></li>
+             <li><a href="plotting_panels.html">Plotting Panels</a></li>
+             <!-- 
+             add more plotting items
+             <li><a href="authoring_pandoc_markdown.html">Pandoc Markdown</a></li>
+             <li><a href="authoring_rcodechunks.html">R Code Chunks</a></li>
+             <li><a href="authoring_bibliographies_and_citations.html">Bibliographies &amp; Citations</a></li>
+             <li><a href="authoring_migrating_from_v1.html">Migrating from v1</a></li>
+             <li class="divider"></li>
+             <li><a href="http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">Cheat Sheet [PDF]</a></li>
+             <li><a href="http://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf">Reference Guide [PDF]</a></li>
+             <li class="divider"></li>
+             <li class="dropdown-header">Shiny</li>
+             <li><a href="authoring_shiny.html">Interactive Documents</a></li>
+             <li><a href="authoring_embedded_shiny.html">Embedded Shiny Apps</a></li>
+             <li><a href="authoring_shiny_widgets.html">Creating Shiny Widgets</a></li>
+             <li><a href="authoring_shiny_advanced.html">Advanced Topics</a></li>
+             -->
+          </ul>
+        </li>
+        <!-- add another dropdown menu -->
+        <li class="dropdown">
+          <a href="faq" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">FAQ <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+             <li class="dropdown-header">FAQ</li>
+             <li><a href="xts_faq.html">xts FAQ</a></li>
+             <!--
+             <li><a href="pdf_document_format.html">PDF</a></li>
+             <li><a href="word_document_format.html">Word</a></li>
+             <li><a href="markdown_document_format.html">Markdown</a></li>
+             <li class="divider"></li>
+             <li class="dropdown-header">Presentations</li>
+             <li><a href="ioslides_presentation_format.html">ioslides</a></li>
+             <li><a href="slidy_presentation_format.html">Slidy</a></li>
+             <li><a href="beamer_presentation_format.html">Beamer</a></li>
+             <li class="divider"></li>
+             <li class="dropdown-header">Other</li>
+             <li><a href="package_vignette_format.html">Package Vignette</a></li>
+             <li><a href="tufte_handout_format.html">Tufte Handout</a></li>
+             <li class="divider"></li>
+             <li><a href="r_notebook_format.html">R Notebooks</a></li>
+          </ul>
+        </li>
+        -->
+        <!-- add another dropdown menu
+         <li class="dropdown">
+          <a href="developer" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Developer <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+             <li><a href="developer_html_widgets.html">HTML Widgets</a></li>
+             <li class="divider"></li>
+             <li><a href="developer_document_templates.html">Document Templates</a></li>
+             <li><a href="developer_custom_formats.html">Creating New Formats</a></li>
+             <li class="divider"></li>
+             <li><a href="https://github.com/rstudio/rmarkdown">R Markdown on GitHub</a></li>
+          </ul>
+        </li>
+        -->
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+<h1 class="title">xts FAQ</h1>
+<h4 class="author"><em>Joshua M. Ulrich</em></h4>
+</div>
+
+
+<!-- xts-faq.Rnw converted to Rmd -->
+<!--
+\author{xts Deveopment Team%
+ \footnote{Contact author: Joshua M. Ulrich \email{josh.m.ulrich```gmail.com}}
+ \footnote{Thanks to Alberto Giannetti and Michael R. Weylandt for their many contributions.}
+}
+
+
+%\Keywords{irregular time series, time index, daily data, weekly data, returns}
+
+%\Abstract{
+%  This is a collection of frequently asked questions (FAQ) about the
+%  `xts` package together with their answers.
+%}
+-->
+<div id="collection-of-frequently-asked-questions-and-answers" class="section level3">
+<h3>Collection of Frequently Asked Questions and Answers</h3>
+<pre class="r"><code>library(&quot;xts&quot;)</code></pre>
+<pre><code>## Loading required package: zoo
+## 
+## Attaching package: &#39;zoo&#39;
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>Sys.setenv(TZ=&quot;GMT&quot;)</code></pre>
+<p><strong>Q:</strong> What is <code>xts</code>?</p>
+<p><code>xts</code> is an <code>R</code> package offering a number of functionalities to work on time-indexed data. <code>xts</code> extends <code>zoo</code>, another popular package for time-series analysis. <!-- should point to the zoo FAQ here (or at some early point) --></p>
+<p><strong>Q:</strong> Why should I use <code>xts</code> rather than <code>zoo</code> or another time-series package?</p>
+<p>The main benefit of <code>xts</code> is its seamless compatibility with other packages using different time-series classes (<code>timeSeries</code>, <code>zoo</code>, …). In addition, <code>xts</code> allows the user to add custom attributes to any object. See the main <code>xts</code> vignette for more information.</p>
+<p><strong>Q:</strong> How do I install <code>xts</code>?</p>
+<p><code>xts</code> depends on <code>zoo</code> and suggests some other packages. You should be able to install <code>xts</code> and all the other required components by simply calling <code>install.packages('pkg')</code> from the <code>R</code> prompt.</p>
+<p><strong>Q:</strong> I have multiple .csv time-series files that I need to load in a single <code>xts</code> object. What is the most efficient way to import the files?</p>
+<p>If the files have the same format, load them with <code>read.zoo</code> and then call <code>rbind</code> to join the series together; finally, call <code>as.xts</code> on the result. Using a combination of <code>lapply</code> and <code>do.call</code> can accomplish this with very little code:</p>
+<pre class="r"><code>filenames &lt;- c(&quot;a.csv&quot;, &quot;b.csv&quot;, &quot;c.csv&quot;)
+sample.xts &lt;- as.xts(do.call(&quot;rbind&quot;, lapply(filenames, read.zoo)))</code></pre>
+<p><strong>Q:</strong> Why is <code>xts</code> implemented as a matrix rather than a data frame?</p>
+<p><code>xts</code> uses a matrix rather than data.frame because: * <code>xts</code> is a subclass of <code>zoo</code>, and that’s how <code>zoo</code> objects are structured; and * matrix objects have much better performance than data.frames.</p>
+<p><strong>Q:</strong> How can I simplify the syntax when referring to <code>xts</code> object column names?</p>
+<p><code>with</code> allows you to use the colmn names while avoiding the full square brackets syntax. For example:</p>
+<pre class="r"><code>lm(sample.xts[, &quot;Res&quot;] ~ sample.xts[, &quot;ThisVar&quot;] + sample.xts[, &quot;ThatVar&quot;])</code></pre>
+<p>can be converted to</p>
+<pre class="r"><code>with(sample.xts, lm(Res ~ ThisVar + ThatVar))</code></pre>
+<p><strong>Q:</strong> How can I replace the zeros in an <code>xts</code> object with the last non-zero value in the series?</p>
+<p>Convert the zeros to <code>NA</code> and then use <code>na.locf</code>:</p>
+<pre class="r"><code>sample.xts &lt;- xts(c(1:3, 0, 0, 0), as.POSIXct(&quot;1970-01-01&quot;)+0:5)
+sample.xts[sample.xts==0] &lt;- NA
+cbind(orig=sample.xts, locf=na.locf(sample.xts))</code></pre>
+<pre><code>##                     orig locf
+## 1970-01-01 00:00:00    1    1
+## 1970-01-01 00:00:01    2    2
+## 1970-01-01 00:00:02    3    3
+## 1970-01-01 00:00:03   NA    3
+## 1970-01-01 00:00:04   NA    3
+## 1970-01-01 00:00:05   NA    3</code></pre>
+<p><strong>Q:</strong> How do I create an <code>xts</code> index with millisecond precision?</p>
+<p>Milliseconds in <code>xts</code> indexes are stored as decimal values. This example builds an index spaced by 100 milliseconds, starting at the current system time:</p>
+<pre class="r"><code>data(sample_matrix)
+sample.xts &lt;- xts(1:10, seq(as.POSIXct(&quot;1970-01-01&quot;), by=0.1, length=10))</code></pre>
+<p><strong>Q:</strong> I have a millisecond-resolution index, but the milliseconds aren’t displayed. What went wrong?</p>
+<p>Set the <code>digits.secs</code> option to some sub-second precision. Continuing from the previous example, if you are interested in milliseconds:</p>
+<pre class="r"><code>options(digits.secs=3)
+head(sample.xts)</code></pre>
+<pre><code>##                       [,1]
+## 1970-01-01 00:00:00.0    1
+## 1970-01-01 00:00:00.1    2
+## 1970-01-01 00:00:00.2    3
+## 1970-01-01 00:00:00.3    4
+## 1970-01-01 00:00:00.4    5
+## 1970-01-01 00:00:00.5    6</code></pre>
+<p><strong>Q:</strong> I set <code>digits.sec=3</code>, but <code>R</code> doesn’t show the values correctly.</p>
+<p>Sub-second values are stored with approximately microsecond precision. Setting the precision to only 3 decimal hides the full index value in microseconds and might be tricky to interpret depending how the machine rounds the millisecond (3rd) digit. Set the <code>digits.secs</code> option to a value higher than 3 or convert the date-time to numeric and use <code>print</code>’s <code>digits</code> argument, or <code>sprintf</code> to display the full value. For example:</p>
+<pre class="r"><code>dt &lt;- as.POSIXct(&quot;2012-03-20 09:02:50.001&quot;)
+print(as.numeric(dt), digits=20)</code></pre>
+<pre><code>## [1] 1332234170.0009999275</code></pre>
+<pre class="r"><code>sprintf(&quot;%20.10f&quot;, dt)</code></pre>
+<pre><code>## [1] &quot;1332234170.0009999275&quot;</code></pre>
+<p><strong>Q:</strong> I am using <code>apply</code> to run a custom function on my <code>xts</code> object. Why does the returned matrix have different dimensions than the original one?</p>
+<p>When working on rows, <code>apply</code> returns a transposed version of the original matrix. Simply call <code>t</code> on the returned matrix to restore the original dimensions:</p>
+<pre class="r"><code>sample.xts.2 &lt;- xts(t(apply(sample.xts, 1, myfun)), index(sample.xts))</code></pre>
+<p><strong>Q:</strong> I have an <code>xts</code> object with varying numbers of observations per day (e.g., one day might contain 10 observations, while another day contains 20 observations). How can I apply a function to all observations for each day?</p>
+<p>You can use <code>apply.daily</code>, or <code>period.apply</code> more generally:</p>
+<pre class="r"><code>sample.xts &lt;- xts(1:50, seq(as.POSIXct(&quot;1970-01-01&quot;),
+  as.POSIXct(&quot;1970-01-03&quot;)-1, length=50))
+apply.daily(sample.xts, mean)</code></pre>
+<pre><code>##                         [,1]
+## 1970-01-01 23:30:36.244   13
+## 1970-01-02 23:59:59.000   38</code></pre>
+<pre class="r"><code>period.apply(sample.xts, endpoints(sample.xts, &quot;days&quot;), mean)</code></pre>
+<pre><code>##                         [,1]
+## 1970-01-01 23:30:36.244   13
+## 1970-01-02 23:59:59.000   38</code></pre>
+<pre class="r"><code>period.apply(sample.xts, endpoints(sample.xts, &quot;hours&quot;, 6), mean)</code></pre>
+<pre><code>##                         [,1]
+## 1970-01-01 05:52:39.061  4.0
+## 1970-01-01 11:45:18.122 10.5
+## 1970-01-01 17:37:57.183 16.5
+## 1970-01-01 23:30:36.244 22.5
+## 1970-01-02 05:23:15.306 28.5
+## 1970-01-02 11:15:54.367 34.5
+## 1970-01-02 17:08:33.428 40.5
+## 1970-01-02 23:59:59.000 47.0</code></pre>
+<p><strong>Q:</strong> How can I process daily data for a specific time subset?</p>
+<p>First use time-of-day subsetting to extract the time range you want to work on (note the leading <code>&quot;T&quot;</code> and leading zeros are required for each time in the range: <code>&quot;T06:00&quot;</code>), then use <code>apply.daily</code> to apply your function to the subset:</p>
+<pre class="r"><code>apply.daily(sample.xts[&#39;T06:00/T17:00&#39;,], mean)</code></pre>
+<p><strong>Q:</strong> How can I analyze my irregular data in regular blocks, adding observations for each regular block if one doesn’t exist in the origianl time-series object?</p>
+<p>Use <code>align.time</code> to round-up the indexes to the periods you are interested in, then call <code>period.apply</code> to apply your function. Finally, merge the result with an empty xts object that contains all the regular index values you want:</p>
+<pre class="r"><code>sample.xts &lt;- xts(1:6, as.POSIXct(c(&quot;2009-09-22 07:43:30&quot;,
+  &quot;2009-10-01 03:50:30&quot;, &quot;2009-10-01 08:45:00&quot;, &quot;2009-10-01 09:48:15&quot;,
+  &quot;2009-11-11 10:30:30&quot;, &quot;2009-11-11 11:12:45&quot;)))
+# align index into regular (e.g. 3-hour) blocks
+aligned.xts &lt;- align.time(sample.xts, n=60*60*3)
+# apply your function to each block
+count &lt;- period.apply(aligned.xts, endpoints(aligned.xts, &quot;hours&quot;, 3), length)
+# create an empty xts object with the desired regular index
+empty.xts &lt;- xts(, seq(start(aligned.xts), end(aligned.xts), by=&quot;3 hours&quot;))
+# merge the counts with the empty object
+head(out1 &lt;- merge(empty.xts, count))</code></pre>
+<pre><code>##                     count
+## 2009-09-22 09:00:00     1
+## 2009-09-22 12:00:00    NA
+## 2009-09-22 15:00:00    NA
+## 2009-09-22 18:00:00    NA
+## 2009-09-22 21:00:00    NA
+## 2009-09-23 00:00:00    NA</code></pre>
+<pre class="r"><code># or fill with zeros
+head(out2 &lt;- merge(empty.xts, count, fill=0))</code></pre>
+<pre><code>##                     count
+## 2009-09-22 09:00:00     1
+## 2009-09-22 12:00:00     0
+## 2009-09-22 15:00:00     0
+## 2009-09-22 18:00:00     0
+## 2009-09-22 21:00:00     0
+## 2009-09-23 00:00:00     0</code></pre>
+<p><strong>Q:</strong> Why do I get a <code>zoo</code> object when I call <code>transform</code> on my <code>xts</code> object?</p>
+<p>There’s no <code>xts</code> method for <code>transform</code>, so the <code>zoo</code> method is dispatched. The <code>zoo</code> method explicitly creates a new <code>zoo</code> object. To convert the transformed object back to an <code>xts</code> object wrap the <code>transform</code> call in <code>as.xts</code>:</p>
+<pre class="r"><code>sample.xts &lt;- as.xts(transform(sample.xts, ABC=1))</code></pre>
+<p>You might also have to reset the index timezone:</p>
+<pre class="r"><code>indexTZ(sample.xts) &lt;- Sys.getenv(&quot;TZ&quot;)</code></pre>
+<p><strong>Q:</strong> Why can’t I use the <code>\&amp;</code> operator in <code>xts</code> objects when querying dates?</p>
+<p><code>&quot;2011-09-21&quot;</code> is not a logical vector and cannot be coerced to a logical vector. See <code>?&quot;\&amp;&quot;</code> for details.</p>
+<p><code>xts</code> ISO-8601 style subsetting is nice, but there’s nothing we can do to change the behavior of <code>.Primitive(&quot;\&amp;&quot;)</code>. You can do something like this though:</p>
+<pre class="r"><code>sample.xts[sample.xts$Symbol == &quot;AAPL&quot; &amp; index(sample.xts) == as.POSIXct(&quot;2011-09-21&quot;),]</code></pre>
+<p>or:</p>
+<pre class="r"><code>sample.xts[sample.xts$Symbol == &quot;AAPL&quot;][&#39;2011-09-21&#39;]</code></pre>
+<p><strong>Q:</strong> How do I subset an <code>xts</code> object to only include weekdays (excluding Saturday and Sundays)?</p>
+<p>Use <code>.indexwday</code> to only include Mon-Fri days:</p>
+<pre class="r"><code>data(sample_matrix)
+sample.xts &lt;- as.xts(sample_matrix)
+wday.xts &lt;- sample.xts[.indexwday(sample.xts) %in% 1:5]
+head(wday.xts)</code></pre>
+<pre><code>##                Open     High      Low    Close
+## 2007-01-02 50.03978 50.11778 49.95041 50.11778
+## 2007-01-03 50.23050 50.42188 50.23050 50.39767
+## 2007-01-04 50.42096 50.42096 50.26414 50.33236
+## 2007-01-05 50.37347 50.37347 50.22103 50.33459
+## 2007-01-08 50.03555 50.10363 49.96971 49.98806
+## 2007-01-09 49.99489 49.99489 49.80454 49.91333</code></pre>
+<p><strong>Q:</strong> I need to quickly convert a data.frame that contains the time-stamps in one of the columns. Using <code>as.xts(Data)</code> returns an error. How do I build my <code>xts</code> object?</p>
+<p>The <code>as.xts</code> function assumes the date-time index is contained in the <code>rownames</code> of the object to be converted. If this is not the case, you need to use the <code>xts</code> constructor, which requires two arguments: a vector or a matrix carrying data and a vector of type <code>Date</code>, <code>POSIXct</code>, <code>chron</code>, <code>...</code>, supplying the time index information. If you are certain the time-stamps are in a specific column, you can use:</p>
+<pre class="r"><code>Data &lt;- data.frame(timestamp=as.Date(&quot;1970-01-01&quot;), obs=21)
+sample.xts &lt;- xts(Data[,-1], order.by=Data[,1])</code></pre>
+<p>If you aren’t certain, you need to explicitly reference the column name that contains the time-stamps:</p>
+<pre class="r"><code>Data &lt;- data.frame(obs=21, timestamp=as.Date(&quot;1970-01-01&quot;))
+sample.xts &lt;- xts(Data[,!grepl(&quot;timestamp&quot;,colnames(Data))],
+  order.by=Data$timestamp)</code></pre>
+<p><strong>Q:</strong> I have two time-series with different frequency. I want to combine the data into a single <code>xts</code> object, but the times are not exactly aligned. I want to have one row in the result for each ten minute period, with the time index showing the beginning of the time period.</p>
+<p><code>align.time</code> creates evenly spaced time-series from a set of indexes, <code>merge</code> ensure two time-series are combined in a single <code>xts</code> object with all original columns and indexes preserved. The new object has one entry for each timestamp from both series and missing values are replaced with <code>NA</code>.</p>
+<pre class="r"><code>x1 &lt;- align.time(xts(Data1$obs, Data1$timestamp), n=600)
+x2 &lt;- align.time(xts(Data2$obs, Data2$timestamp), n=600)
+merge(x1, x2)</code></pre>
+<p><strong>Q:</strong> Why do I get a warning when running the code below?</p>
+<pre class="r"><code>data(sample_matrix)
+sample.xts &lt;- as.xts(sample_matrix)
+sample.xts[&quot;2007-01&quot;]$Close &lt;- sample.xts[&quot;2007-01&quot;]$Close + 1</code></pre>
+<pre><code>## Warning in NextMethod(.Generic): number of items to replace is not a
+## multiple of replacement length</code></pre>
+<p>This code creates two calls to the subset-replacement function <code>xts:::[&lt;-.xts</code>. The first call replaces the value of <code>Close</code> in a temporary copy of the first row of the object on the left-hand-side of the assignment, which works fine. The second call tries to replace the first <strong>element</strong> of the object on the left-hand-side of the assignment with the modified temporary copy of the first row. This is the problem.</p>
+<p>For the command to work, there needs to be a comma in the first subset call on the left-hand-side:</p>
+<pre class="r"><code>sample.xts[&quot;2007-01&quot;,]$Close &lt;- sample.xts[&quot;2007-01&quot;]$Close + 1</code></pre>
+<p>This isn’t encouraged, because the code isn’t clear. Simply remember to subset by column first, then row, if you insist on making two calls to the subset-replacement function. A cleaner and faster solution is below. It’s only one function call and it avoids the <code>$</code> function (which is marginally slower on xts objects).</p>
+<pre class="r"><code>sample.xts[&quot;2007-01&quot;,&quot;Close&quot;] &lt;- sample.xts[&quot;2007-01&quot;,&quot;Close&quot;] + 1</code></pre>
+</div>
+<div id="acknowledgements" class="section level3">
+<h3>Acknowledgements</h3>
+<p>Thanks to Alberto Giannetti and Michael R. Weylandt for their many contributions.</p>
+<!--
+%%% What is the fastest way to subset an xts object?
+-->
+</div>
+
+
+<!-- some extra javascript for older browsers -->
+<script type="text/javascript" src="libs/polyfill.js"></script>
+
+<script>
+
+// manage active state of menu based on current page
+$(document).ready(function () {
+
+    // active menu
+    href = window.location.pathname
+    href = href.substr(href.lastIndexOf('/') + 1)
+    $('a[href="' + href + '"]').parent().addClass('active');
+
+    // manage active menu header
+    if (href.startsWith('plotting_'))
+      $('a[href="' + 'plotting' + '"]').parent().addClass('active');
+    else if (href.endsWith('_faq.html'))
+      $('a[href="' + 'formats' + '"]').parent().addClass('active');
+    else if (href.startsWith('developer_'))
+      $('a[href="' + 'developer' + '"]').parent().addClass('active');
+
+});
+
+</script>
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+
+</body>
+</html>
