@@ -164,6 +164,9 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     } else
     if(is.character(j)) {
       j <- match(j, colnames(x), nomatch=0L)
+      # ensure all j are in colnames(x)
+      if(any(j==0))
+        stop("subscript out of bounds")
     }
 
     j0 <- which(!as.logical(j))
