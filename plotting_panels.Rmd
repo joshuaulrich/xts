@@ -2,6 +2,8 @@
 title: "Plotting Panels"
 ---
 
+### Panel Basics
+
 Load the xts package and some sample OHLC data. The PerformanceAnalytics 
 package is loaded for functions that will be used in the examples and the
 edhec dataset of EDHEC composite hedge fund style index returns.
@@ -16,14 +18,16 @@ sample.xts <- as.xts(sample_matrix)
 Create a basic plot and add a panel of the simple returns
 ```{r fig.keep='last'}
 plot(sample.xts[,"Close"])
-lines(Return.calculate(sample.xts[,"Close"]), type="h")
+lines(Return.calculate(sample.xts[,"Close"]), type="h", on=NA)
 ```
 
 We can also create the same plot by using the `panels` argument. 
 ```{r fig.keep='last'}
 plot(sample.xts[,"Close"], 
-     panels='lines(Return.calculate(sample.xts[,"Close"]), type="h")')
+     panels='lines(Return.calculate(sample.xts[,"Close"]), type="h", on=NA)')
 ```
+
+### Multiple Panels
 
 Load the edhec data from PerformanceAnalytics. Here will use the first 4 
 columns of the edhec returns data to demonstrate panel and small multiples
@@ -70,9 +74,10 @@ plot(R, multi.panel=1, type="h")
 layout(matrix(1))
 ```
 
+### Custom Panels
 Define a custom function to add a drawdowns panel.
 ```{r}
-addDrawdowns <- function(){
+addDrawdowns <- function(main = "Drawdowns", col="black", on=NA, ...){
   # Get the current charting object (i.e. chob) and extract the data
   plot_object <- xts:::current.xts_chob()
   x <- plot_object$Env$xdata
@@ -80,7 +85,7 @@ addDrawdowns <- function(){
   # compute the drawdowns
   dd <- PerformanceAnalytics:::Drawdowns(x)
   # simply call addSeries with the computed data 
-  addSeries(dd, main = "Drawdowns", col="black")
+  addSeries(dd, main=main, col=col, on=on, ...)
 }
 ```
 ```{r fig.keep='last'}
@@ -98,7 +103,7 @@ layout(matrix(1))
 Another example of a custom panel function is to add a rolling Expected
 Shortfall to the main panel.
 ```{r}
-addrollingES <- function(gap=50, p=0.95, method="historical", ...){
+addrollingES <- function(gap=50, p=0.95, method="historical", on=1, ...){
   # Get the current charting object (i.e. chob) and extract the data
   plot_object <- xts:::current.xts_chob()
   x <- plot_object$Env$xdata
@@ -106,14 +111,13 @@ addrollingES <- function(gap=50, p=0.95, method="historical", ...){
   # compute the rolling Expected Shortfall
   rollingES <- as.xts(apply.fromstart(x, FUN="ES", gap=gap, p=p, method=method))
   # simply call addSeries with the computed data 
-  addSeries(rollingES, on=1, ...)
+  addSeries(rollingES, on=on, ...)
 }
 ```
 ```{r fig.keep='last'}
 plot(R[,1], type="h", main="Convertible Arbitrage Returns")
 addrollingES(lty=2, col="blue", lwd=2)
-addLegend("topleft", on=1, 
-          legend.names = "Historical 95% ES", 
+addLegend("topleft", legend.names = "Historical 95% ES", 
           lty=2, lwd=2, col="blue")
 ```
 

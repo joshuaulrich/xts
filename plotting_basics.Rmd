@@ -2,7 +2,8 @@
 title: "Plotting Basics"
 ---
 
-=== Basics ===
+### Basics
+
 Load the xts package and some sample data
 ```{r}
 library(xts)
@@ -48,7 +49,8 @@ plot(sample.xts, FUN=simple.ret, col.name="Close", type="h")
 ```
 
 
-=== Lines ===
+### Lines
+
 Here we start with a basic plot, then add moving average lines, and a legend.
 The default behavior for `lines` is to add to the current panel. The current
 panel is defined as the panel on which the most recent action was performed.
@@ -74,7 +76,7 @@ lines(TTR::SMA(sample.xts[,"Close"], n = 20), on=NA, col="blue")
 # add a new panel
 lines(TTR::SMA(sample.xts[,"Close"], n = 50), on=NA, col="red")
 # draw a line on panel 3
-lines(TTR::SMA(sample.xts[,"Close"], n = 60), on=3, col="darkred", lty=2)
+lines(TTR::SMA(sample.xts[,"Close"], n = 60), on=3, col="darkred")
 # draw a line on panel 2
 lines(TTR::SMA(sample.xts[,"Close"], n = 25), on=2, col="darkblue")
 # draw a line on the current panel
@@ -85,10 +87,11 @@ lines(TTR::SMA(sample.xts[,"Close"], n = 100), on=1, col="lightblue")
 # add legend to the current panel
 addLegend("topright", legend.names = c("Close", "SMA(100)"), 
           lty=c(1, 1), lwd=c(2, 1),
-          col=c("black", "lightblue")
+          col=c("black", "lightblue"))
 ```
 
-=== Points ===
+### Points
+
 We can also add points to a plot in the same way we added lines. The default
 behavior for `points` is the same as `lines`, which is to draw the points on
 on the current panel.
@@ -103,30 +106,30 @@ addLegend("topright", legend.names = c("Close", "SMA(20)", "SMA(50)"),
           col=c("black", "blue", "red"))
 ```
 
-=== Event Lines ===
+### Event Lines
+
 `addEventLines` will draw lines on the current panel just as in `lines`, 
 `points`, and `addLegend`.
-```{r}
+```{r fig.keep='last'}
 plot(sample.xts[,4])
 addEventLines(c("2007-03-20","2007-05-28"), c("foo", "bar"))
 addEventLines(c("2007-03-20","2007-05-28"), c("foo", "bar"), 
-              offset=.4, pos=2, , srt=90, cex=1.5)
+              offset=1.2, pos=2, , srt=90, cex=1.5)
 addEventLines(c("2007-03-20","2007-05-28"), c("foo", "bar"), 
-              offset=.4, pos=4, , srt=-90, cex=1.8)
+              offset=1.2, pos=4, , srt=-90, cex=1.5)
 
 
 ```
 
-A new panel is drawn if `on=NA`. Event lines can
-be drawn on a specific panel by specifying an integer corresponding to the 
-desired panel for `on`.
-```{r}
+Event lines can be drawn on a specific panel by specifying an integer 
+corresponding to the desired panel for `on`. A new panel is drawn if `on=NA`.
+```{r fig.keep='last'}
 plot(sample.xts[,"Close"])
 # add a new panel
 lines(TTR::SMA(sample.xts[,"Close"], n = 20), on=NA, col="blue")
 # add a new panel
 lines(TTR::SMA(sample.xts[,"Close"], n = 50), on=NA, col="red")
-addEventLines(c("2007-03-20","2007-05-28"), c("foo", "bar"), on=1:3,
+addEventLines(c("2007-03-20","2007-05-28"), c("foo", "bar"), on=1,
               offset=.4, pos=2, srt=90, cex=1.5, col="red")
 ```
 

@@ -183,6 +183,8 @@ img {
 </div>
 
 
+<div id="psnel-basics" class="section level3">
+<h3>Psnel Basics</h3>
 <p>Load the xts package and some sample OHLC data. The PerformanceAnalytics package is loaded for functions that will be used in the examples and the edhec dataset of EDHEC composite hedge fund style index returns.</p>
 <pre class="r"><code>library(xts)</code></pre>
 <pre><code>## Loading required package: zoo
@@ -203,16 +205,22 @@ img {
 sample.xts &lt;- as.xts(sample_matrix)</code></pre>
 <p>Create a basic plot and add a panel of the simple returns</p>
 <pre class="r"><code>plot(sample.xts[,&quot;Close&quot;])
-lines(Return.calculate(sample.xts[,&quot;Close&quot;]), type=&quot;h&quot;)</code></pre>
+lines(Return.calculate(sample.xts[,&quot;Close&quot;]), type=&quot;h&quot;, on=NA)</code></pre>
 <p><img src="plotting_panels_files/figure-html/unnamed-chunk-2-1.png" title="" alt="" width="672" /></p>
 <p>We can also create the same plot by using the <code>panels</code> argument.</p>
 <pre class="r"><code>plot(sample.xts[,&quot;Close&quot;], 
-     panels=&#39;lines(Return.calculate(sample.xts[,&quot;Close&quot;]), type=&quot;h&quot;)&#39;)</code></pre>
+     panels=&#39;lines(Return.calculate(sample.xts[,&quot;Close&quot;]), type=&quot;h&quot;, on=NA)&#39;)</code></pre>
 <p><img src="plotting_panels_files/figure-html/unnamed-chunk-3-1.png" title="" alt="" width="672" /></p>
+</div>
+<div id="multiple-panels" class="section level3">
+<h3>Multiple Panels</h3>
 <p>Load the edhec data from PerformanceAnalytics. Here will use the first 4 columns of the edhec returns data to demonstrate panel and small multiples functionality.</p>
 <pre class="r"><code>data(edhec)
 R &lt;- edhec[,1:4]
 head(R)</code></pre>
+<pre><code>## Warning: index class is Date, which does not support timezones.
+## Expected &#39;UTC&#39; timezone, but indexTZ is GMT</code></pre>
+<pre><code>## Warning: timezone of object (GMT) is different than current timezone ().</code></pre>
 <pre><code>##            Convertible Arbitrage CTA Global Distressed Securities
 ## 1997-01-31                0.0119     0.0393                0.0178
 ## 1997-02-28                0.0123     0.0298                0.0122
@@ -247,8 +255,11 @@ plot(R, multi.panel=2, type=&quot;h&quot;)</code></pre>
 plot(R, multi.panel=1, type=&quot;h&quot;)</code></pre>
 <p><img src="plotting_panels_files/figure-html/unnamed-chunk-9-1.png" title="" alt="" width="672" /></p>
 <pre class="r"><code>layout(matrix(1))</code></pre>
+</div>
+<div id="custom-panels" class="section level3">
+<h3>Custom Panels</h3>
 <p>Define a custom function to add a drawdowns panel.</p>
-<pre class="r"><code>addDrawdowns &lt;- function(){
+<pre class="r"><code>addDrawdowns &lt;- function(main = &quot;Drawdowns&quot;, col=&quot;black&quot;, on=NA, ...){
   # Get the current charting object (i.e. chob) and extract the data
   plot_object &lt;- xts:::current.xts_chob()
   x &lt;- plot_object$Env$xdata
@@ -256,7 +267,7 @@ plot(R, multi.panel=1, type=&quot;h&quot;)</code></pre>
   # compute the drawdowns
   dd &lt;- PerformanceAnalytics:::Drawdowns(x)
   # simply call addSeries with the computed data 
-  addSeries(dd, main = &quot;Drawdowns&quot;, col=&quot;black&quot;)
+  addSeries(dd, main=main, col=col, on=on, ...)
 }</code></pre>
 <pre class="r"><code>plot(R[,1], type=&quot;h&quot;)
 addDrawdowns()</code></pre>
@@ -267,7 +278,7 @@ plot(R, type=&quot;h&quot;, multi.panel=1, panels=&quot;addDrawdowns()&quot;)</c
 <p><img src="plotting_panels_files/figure-html/unnamed-chunk-12-1.png" title="" alt="" width="672" /></p>
 <pre class="r"><code>layout(matrix(1))</code></pre>
 <p>Another example of a custom panel function is to add a rolling Expected Shortfall to the main panel.</p>
-<pre class="r"><code>addrollingES &lt;- function(gap=50, p=0.95, method=&quot;historical&quot;, ...){
+<pre class="r"><code>addrollingES &lt;- function(gap=50, p=0.95, method=&quot;historical&quot;, on=1, ...){
   # Get the current charting object (i.e. chob) and extract the data
   plot_object &lt;- xts:::current.xts_chob()
   x &lt;- plot_object$Env$xdata
@@ -275,14 +286,14 @@ plot(R, type=&quot;h&quot;, multi.panel=1, panels=&quot;addDrawdowns()&quot;)</c
   # compute the rolling Expected Shortfall
   rollingES &lt;- as.xts(apply.fromstart(x, FUN=&quot;ES&quot;, gap=gap, p=p, method=method))
   # simply call addSeries with the computed data 
-  addSeries(rollingES, on=1, ...)
+  addSeries(rollingES, on=on, ...)
 }</code></pre>
 <pre class="r"><code>plot(R[,1], type=&quot;h&quot;, main=&quot;Convertible Arbitrage Returns&quot;)
 addrollingES(lty=2, col=&quot;blue&quot;, lwd=2)
-addLegend(&quot;topleft&quot;, on=1, 
-          legend.names = &quot;Historical 95% ES&quot;, 
+addLegend(&quot;topleft&quot;, legend.names = &quot;Historical 95% ES&quot;, 
           lty=2, lwd=2, col=&quot;blue&quot;)</code></pre>
 <p><img src="plotting_panels_files/figure-html/unnamed-chunk-14-1.png" title="" alt="" width="672" /></p>
+</div>
 
 
 <!-- some extra javascript for older browsers -->
