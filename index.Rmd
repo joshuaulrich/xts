@@ -1,18 +1,100 @@
 ---
-title: "xts: extensible time-series"
+title: "xts: eXtensible Time Series"
 ---
 
+## Using the xts package
+
+The `xts` package provides an extensible time series class that provides 
+uniform handling of many R time series classes by extending zoo.
+
 ### Installation
+
 The xts package can be installed from CRAN as follows
 ```{r eval=FALSE}
 install.packages("xts")
 ```
 
-### Documentation
-TODO: add content from package Rd file and/or vignettes
+### Creating data objects: `as.xts` and `xts`
 
-### Examples
-TODO: add examples
+Existing time-series data can be converted to an `xts` object with `as,xts`.
+<!-- from ?'as.xts' -->
+It is possible with a call to `as.xts` to convert objects of class 
+`timeSeries`, `ts`, `irts`, `fts`, `its`, `matrix`, `data.frame`, and `zoo`.
+```{r tidy=FALSE}
+library(xts)
+data(sample_matrix)
+class(sample_matrix)
+matrix_xts <- as.xts(sample_matrix, dateFormat='Date')
+str(matrix_xts)
+df_xts <- as.xts(as.data.frame(sample_matrix),
+                 important='very important info!')
+str(df_xts)
+```
+
+Data objects can also be constructed directly from raw data with the `xts` 
+constructor function, in essentially the same way a `zoo` object is created 
+with the exception that at present there is no equivelant `zooreg` class.
+```{r}
+xts(1:10, Sys.Date()+1:10)
+```
+
+### Subsetting
+<!-- from ?'[.xts' -->
+One of the primary motivations, and key points of differentiation of the 
+time series class xts, is the ability to subset rows by specifying ISO-8601 
+compatible range strings. This allows for natural range-based time queries 
+without requiring prior knowledge of the underlying time object used in 
+construction.
+
+When a raw character vector is used for the i subset argument, it is processed 
+as if it was ISO-8601 compliant. This means that it is parsed from left to 
+right, according to the following specification:
+
+```
+CCYYMMDD HH:MM:SS.ss+
+```
+A full description will be expanded from a left-specified truncated one.
+
+Additionally, one may specify range-based queries by simply supplying two time 
+descriptions seperated by a forward slash:
+
+```
+CCYYMMDD HH:MM:SS.ss+/CCYYMMDD HH:MM:SS.ss
+```
+
+Extract a specific date
+```{r}
+matrix_xts['2007-01-06']
+```
+
+Extract the entire month of March
+```{r}
+matrix_xts['2007-03']
+```
+
+Extract all the data from the beginning through January 7, 2007.
+```{r}
+matrix_xts['/2007-01-07']
+```
+
+Extract all the data from June 25, 2007 through the end.
+```{r}
+matrix_xts['2007-06-25/']
+```
+
+Extract data from May 28, 2007 through June 2, 2007
+```{r}
+matrix_xts['2007-05-28/2007-06-02']
+```
+
+see `help("[.xts")` for more details and examples for extracting subsets of 
+`xts` objects.
 
 ### About
-TODO: add authors and link to github repo
+
+**Authors:** Jeffrey A. Ryan and [Joshua M. Ulrich](https://github.com/joshuaulrich)
+
+[xts on CRAN](http://cran.r-project.org/web/packages/xts/index.html)
+
+[xts on github](https://github.com/joshuaulrich/xts)
+
