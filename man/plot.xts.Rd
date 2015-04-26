@@ -12,9 +12,9 @@
   grid.ticks.on = "months", grid.ticks.lwd = 1, grid.ticks.lty = 1,
   grid.col = "darkgray", labels.col = "#333333", format.labels = TRUE,
   grid2 = "#F5F5F5", legend.loc = NULL)
-\method{lines}{xts}(x, ..., main = "", on = NA, col = NULL, type = "l",
+\method{lines}{xts}(x, ..., main = "", on = "current", col = NULL, type = "l",
   lty = 1, lwd = 1, pch = 0)
-\method{points}{xts}(x, ..., main = "", on = NA, col = NULL, pch = 0)
+\method{points}{xts}(x, ..., main = "", on = "current", col = NULL, pch = 0)
 }
 \arguments{
 \item{x}{xts object}
@@ -84,7 +84,8 @@ center. Default NULL does not draw a legend.}
 
 \item{pch}{the plotting character to use, same as in \code{\link{par}}.}
 
-\item{on}{panel number to draw on. A new panel will be drawn if \code{on=NA}.}
+\item{on}{panel number to draw on. A new panel will be drawn if \code{on=NA}.
+The default, \code{"current"}, will add to the last active panel. }
 }
 \description{
 Plotting for xts objects.

@@ -4,7 +4,7 @@
 \title{Add vertical lines to an existing xts plot}
 \usage{
 addEventLines(event.dates, event.labels = NULL, date.format = "\%Y-\%m-\%d",
-  main = "", on = NA, lty = 1, lwd = 1, col = 1, ...)
+  main = "", on = "current", lty = 1, lwd = 1, col = 1, ...)
 }
 \arguments{
 \item{event.dates}{character vector of dates. Vertical lines will be drawn
@@ -21,7 +21,8 @@ the events.list, so to get a match the formatting needs to be correct.}
 
 \item{main}{main title for a new panel if drawn.}
 
-\item{on}{panel number to draw on. A new panel will be drawn if \code{on=NA}.}
+\item{on}{panel number to draw on. A new panel will be drawn if \code{on=NA}.
+The default, \code{"current"}, will add to the last active panel. }
 
 \item{lty}{set the line type, same as in \code{\link{plot}}.}
 

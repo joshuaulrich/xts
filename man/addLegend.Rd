@@ -3,7 +3,7 @@
 \title{Add Legend}
 \usage{
 addLegend(legend.loc = "center", legend.names = NULL, col = NULL,
-  ncol = 1, on = 1, ...)
+  ncol = 1, on = "current", ...)
 }
 \arguments{
 \item{legend.loc}{legend.loc places a legend into one of nine locations on
@@ -18,7 +18,8 @@ the colorset of the current plot object data is used.}
 
 \item{ncol}{number of columns for the legend}
 
-\item{on}{panel number to draw on. A new panel will be drawn if \code{on=NA}.}
+\item{on}{panel number to draw on. A new panel will be drawn if \code{on=NA}.
+The default, \code{"current"}, will add to the last active panel. }
 
 \item{\dots}{any other passthrough parameters to \code{\link{legend}}.}
 }
