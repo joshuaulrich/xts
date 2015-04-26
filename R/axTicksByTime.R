@@ -49,8 +49,8 @@ axTicksByTime <- function(x, ticks.on='auto', k=1,
         ck <- as.numeric(strsplit(nms, " ")[[1]][2])
     }   
 
-    if (is.null(cl)) {
-        ep <- NULL
+    if (is.null(cl) || is.na(cl) || is.na(ck)) {
+        ep <- c(0, NROW(x))
     } else  ep <- endpoints(x, cl, ck) 
     if(ends)
       ep <- ep + c(rep(1,length(ep)-1),0)
