@@ -75,6 +75,8 @@ axTicksByTime2 <- function (x, ticks.on = "auto", k = 1, labels = TRUE,
 
 current.xts_chob <- function() invisible(get(".xts_chob",.plotxtsEnv))
 
+# Currently not necessary, but potentially very useful:
+# http://www.fromthebottomoftheheap.net/2011/07/23/passing-non-graphical-parameters-to-graphical-functions-using/
 chart.lines <- function(x, 
                         type="l", 
                         lty=1,
@@ -84,21 +86,21 @@ chart.lines <- function(x,
                         up.col=NULL, 
                         dn.col=NULL,
                         legend.loc=NULL,
-                        pch=1){
+                        ...){
   if(is.null(up.col)) up.col <- "green"
   if(is.null(dn.col)) dn.col <- "red"
   xx <- current.xts_chob()
   switch(type,
          h={
            colors <- ifelse(x[,1] < 0, dn.col, up.col)
-           lines(xx$Env$xycoords$x,x[,1],lwd=2,col=colors,lend=lend,lty=1,type="h")
+           lines(xx$Env$xycoords$x,x[,1],lwd=2,col=colors,lend=lend,lty=1,type="h",...)
          },
          p=, l=, b=, c=, o=, s=, S=, n={
            if(length(lty) == 1) lty <- rep(lty, NCOL(x))
            if(length(lwd) == 1) lwd <- rep(lwd, NCOL(x))
            for(i in NCOL(x):1){
              # non-equally spaced x-axis
-             lines(xx$Env$xycoords$x, x[,i], type=type, lend=lend, col=col[i], lty=lty[i], lwd=lwd[i], pch=pch)
+             lines(xx$Env$xycoords$x, x[,i], type=type, lend=lend, col=col[i], lty=lty[i], lwd=lwd[i], ...)
            }
          },
          {
@@ -115,6 +117,12 @@ chart.lines <- function(x,
     legend(x=lc$x, y=lc$y, legend=colnames(x), xjust=lc$xjust, yjust=lc$yjust,
            fill=col[1:NCOL(x)], bty="n")
   }
+}
+
+chart.lines.expression <- function(...) {
+    mc <- match.call()
+    mc[[1]] <- quote(chart.lines)
+    as.expression(mc)
 }
 
 # Main plot.xts method.
@@ -461,7 +469,7 @@ plot.xts <- function(x,
       lenv$ylim <- range(cs$Env$R[,1][subset], na.rm=TRUE)
     }
     
-    exp <- expression(chart.lines(xdata, 
+    exp <- chart.lines.expression(xdata, 
                                   type=type, 
                                   lty=lty,
                                   lwd=lwd,
@@ -469,7 +477,8 @@ plot.xts <- function(x,
                                   col=theme$col, 
                                   up.col=theme$up.col, 
                                   dn.col=theme$dn.col,
-                                  legend.loc=legend.loc))
+                                  legend.loc=legend.loc,
+                                  ...)
     # Add expression for the main plot
     cs$add(exp, env=c(lenv,cs$Env), expr=TRUE)
     text.exp <- expression(text(x=xycoords$x[2],
@@ -513,7 +522,7 @@ plot.xts <- function(x,
         cs$add_frame(ylim=lenv$ylim, asp=NCOL(cs$Env$xdata), fixed=TRUE)
         cs$next_frame()
         
-        exp <- expression(chart.lines(xdata[xsubset], 
+        exp <- chart.lines.expression(xdata[xsubset], 
                                       type=type, 
                                       lty=lty,
                                       lwd=lwd,
@@ -521,7 +530,8 @@ plot.xts <- function(x,
                                       col=col, 
                                       up.col=theme$up.col, 
                                       dn.col=theme$dn.col,
-                                      legend.loc=legend.loc))
+                                      legend.loc=legend.loc,
+                                      ...)
         
         # define function to plot the y-axis grid lines
         lenv$y_grid_lines <- function(ylim) { 
@@ -572,7 +582,8 @@ plot.xts <- function(x,
   } else {
     if(type == "h" & NCOL(x) > 1) 
       warning("only the univariate series will be plotted")
-    cs$add(expression(chart.lines(R[xsubset], 
+
+    cs$add(chart.lines.expression(R[xsubset],
                                   type=type, 
                                   lty=lty,
                                   lwd=lwd,
@@ -580,7 +591,9 @@ plot.xts <- function(x,
                                   col=theme$col,
                                   up.col=theme$up.col, 
                                   dn.col=theme$dn.col,
-                                  legend.loc=legend.loc)),expr=TRUE)
+                                  legend.loc=legend.loc,
+                                  ...), expr=TRUE)
+
     assign(".xts_chob", cs, .plotxtsEnv)
   }
   
@@ -626,7 +639,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
                            tzone=indexTZ(xdata)),ta)[subset.range]
     ta.x <- as.numeric(na.approx(ta.adj[,1], rule=2) )
     ta.y <- ta.adj[,-1]
-    chart.lines(ta.y, type=type, col=col, lty=lty, lwd=lwd, pch=pch)
+    chart.lines(ta.y, type=type, col=col, lty=lty, lwd=lwd, pch=pch, ...)
   }
   # map all passed args (if any) to 'lenv' environment
   mapply(function(name,value) { assign(name,value,envir=lenv) }, 
