@@ -58,6 +58,12 @@ DATA TOOLS
 #define  SET_xtsCLASS(x,value)          setAttrib(x, xts_ClassSymbol, value)
 
 /*
+IMPORTS FROM zoo
+*/
+SEXP(*zoo_lag)(SEXP,SEXP,SEXP);
+SEXP(*zoo_coredata)(SEXP,SEXP);
+
+/*
 FUNCTIONS
 */
 SEXP do_xtsAttributes(SEXP x);              // xtsAttributes i.e. user-added attributes
