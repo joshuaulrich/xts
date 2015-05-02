@@ -4,7 +4,7 @@
 \alias{points.xts}
 \title{Plotting xts Objects}
 \usage{
-\method{plot}{xts}(x, y = NULL, ..., subset = "", FUN = NULL,
+\method{plot}{xts}(x, y = NULL, ..., subset = "",
   panels = NULL, multi.panel = FALSE, col = 1:12, up.col = "green",
   dn.col = "red", bg = "#FFFFFF", type = "l", lty = 1, lwd = 2, lend = 1,
   main = deparse(substitute(x)), observation.based = FALSE,
@@ -21,12 +21,9 @@
 
 \item{y}{NULL, not used}
 
-\item{\dots}{any passthrough parameters to FUN for \code{plot} and additional graphical 
-arguments for \code{lines} and \code{points}}
+\item{\dots}{any passthrough graphical arguments for \code{lines} and \code{points}}
 
 \item{subset}{character vector of length one of the subset range using subsetting as in \code{\link{xts}}}
-
-\item{FUN}{function to apply to \code{x} and plot}
 
 \item{panels}{character vector of expressions to plot as panels}
 
@@ -89,7 +86,6 @@ The default, \code{"current"}, will add to the last active panel. }
 }
 \description{
 Plotting for xts objects.
-TODO: description, details, and examples
 }
 \author{
 Ross Bennett
@@ -116,13 +112,10 @@ simple.ret <- function(x, col.name){
   x[,col.name] / lag(x[,col.name]) - 1
 }
 
-# pass in the simple.ret function and plot the output
-plot(sample.xts, FUN=simple.ret, col.name="Close")
-
 # plot the close and add a panel with the simple returns
 plot(sample.xts[,"Close"])
 R <- simple.ret(sample.xts, "Close")
-lines(R, type="h")
+lines(R, type="h", on=NA)
 
 # add the 50 period simple moving average to panel 1 of the plot
 library(TTR)

@@ -155,7 +155,6 @@ plot.xts <- function(x,
                      y=NULL,
                      ...,
                      subset="",
-                     FUN=NULL,
                      panels=NULL,
                      multi.panel=FALSE,
                      col=1:12,
@@ -197,34 +196,16 @@ plot.xts <- function(x,
     
     
     if(!is.null(panels) && nchar(panels) > 0){
-      # we will plot the panels, but not plot the returns by column
+      # we will plot the panels, but not plot the data by column
       multi.panel <- FALSE
     } else {
-      # we will plot the returns by column, but not the panels
+      # we will plot the data by column, but not the panels
       multi.panel <- TRUE
       panels <- NULL
       
-      if(yaxis.same){
-        # If we want the same y-axis and a FUN is specified, we need to
-        # apply the transformation first to compute the range for the y-axis
-        if(!is.null(FUN) && nchar(FUN) > 0){
-          fun <- match.fun(FUN)
-          .formals <- formals(fun)
-          .formals <- modify.args(formals=.formals, arglist=list(...), dots=TRUE)
-          if("R" %in% names(.formals)) .formals <- modify.args(formals=.formals, arglist=NULL, R=x, dots=TRUE)
-          .formals$... <- NULL
-          R <- try(do.call(fun, .formals), silent=TRUE)
-          if(inherits(R, "try-error")) { 
-            message(paste("FUN function failed with message", R))
-            ylim <- range(x[subset], na.rm=TRUE)
-          } else {
-            ylim <- range(R[subset], na.rm=TRUE)
-          }
-        } else {
-          # set the ylim based on the data passed into the x argument
-          ylim <- range(x[subset], na.rm=TRUE)
-        }
-      }
+      # set the ylim based on the data passed into the x argument
+      if(yaxis.same)
+        ylim <- range(x[subset], na.rm=TRUE)
     }
     
     for(i in 1:length(chunks)){
@@ -233,7 +214,6 @@ plot.xts <- function(x,
                     y=y,
                     ...=...,
                     subset=subset,
-                    FUN=FUN,
                     panels=panels,
                     multi.panel=multi.panel,
                     col=col[tmp],
@@ -358,50 +338,28 @@ plot.xts <- function(x,
     cs$set_xlim(cs$Env$xlim)
   }
   
-  # Compute transformation if specified by panel argument
-  # rough prototype for calling a function for the main "panel"
-  if(!is.null(FUN)){
-    fun <- match.fun(FUN)
-    .formals <- formals(fun)
-    .formals <- modify.args(formals=.formals, arglist=list(...), dots=TRUE)
-    if("R" %in% names(.formals)) .formals <- modify.args(formals=.formals, arglist=NULL, R=x, dots=TRUE)
-    if("x" %in% names(.formals)) .formals <- modify.args(formals=.formals, arglist=NULL, x=x, dots=TRUE)
-    .formals$... <- NULL
-    R <- try(do.call(fun, .formals), silent=TRUE)
-    if(inherits(R, "try-error")) { 
-      message(paste("FUN function failed with message", R))
-      cs$Env$R <- x
-    } else {
-      cs$Env$R <- R
-    }
-  } else {
-    cs$Env$R <- x
-  }
-  
-  
-  # Set ylim based on the transformed data
   # chart_Series uses fixed=FALSE and add_* uses fixed=TRUE, not sure why or
   # which is best.
   if(is.null(ylim)){
     if(isTRUE(multi.panel)){
       if(yaxis.same){
         # set the ylim for the first panel based on all the data
-        yrange <- range(cs$Env$R[subset], na.rm=TRUE)
+        yrange <- range(cs$Env$xdata[subset], na.rm=TRUE)
         if(all(yrange == 0)) yrange <- yrange + c(-1,1)
         cs$set_ylim(list(structure(yrange,fixed=TRUE)))
       } else {
         # set the ylim for the first panel based on the first column
-        yrange <- range(cs$Env$R[,1][subset], na.rm=TRUE)
+        yrange <- range(cs$Env$xdata[,1][subset], na.rm=TRUE)
         if(all(yrange == 0)) yrange <- yrange + c(-1,1)
         cs$set_ylim(list(structure(yrange,fixed=TRUE))) 
       }
     } else {
       # set the ylim based on all the data if this is not a multi.panel plot
-      yrange <- range(cs$Env$R[subset], na.rm=TRUE)
+      yrange <- range(cs$Env$xdata[subset], na.rm=TRUE)
       if(all(yrange == 0)) yrange <- yrange + c(-1,1)
       cs$set_ylim(list(structure(yrange,fixed=TRUE)))
     }
-    cs$Env$constant_ylim <- range(cs$Env$R[subset], na.rm=TRUE)
+    cs$Env$constant_ylim <- range(cs$Env$xdata[subset], na.rm=TRUE)
   } else {
     # use the ylim arg passed in
     cs$set_ylim(list(structure(ylim, fixed=TRUE)))
@@ -484,13 +442,13 @@ plot.xts <- function(x,
     # We need to plot the first "panel" here because the plot area is
     # set up based on the code above
     lenv <- new.env()
-    lenv$xdata <- cs$Env$R[,1][subset]
-    lenv$label <- colnames(cs$Env$R[,1])
+    lenv$xdata <- cs$Env$xdata[,1][subset]
+    lenv$label <- colnames(cs$Env$xdata[,1])
     lenv$type <- cs$Env$type
     if(yaxis.same){
       lenv$ylim <- cs$Env$constant_ylim
     } else {
-      lenv$ylim <- range(cs$Env$R[,1][subset], na.rm=TRUE)
+      lenv$ylim <- range(cs$Env$xdata[,1][subset], na.rm=TRUE)
     }
     
     exp <- quote(chart.lines(xdata,
@@ -517,12 +475,12 @@ plot.xts <- function(x,
       for(i in 2:NCOL(cs$Env$xdata)){
         # create a local environment
         lenv <- new.env()
-        lenv$xdata <- cs$Env$R[,i][subset]
+        lenv$xdata <- cs$Env$xdata[,i][subset]
         lenv$label <- cs$Env$column_names[i]
         if(yaxis.same){
           lenv$ylim <- cs$Env$constant_ylim
         } else {
-          yrange <- range(cs$Env$R[,i][subset], na.rm=TRUE)
+          yrange <- range(cs$Env$xdata[,i][subset], na.rm=TRUE)
           if(all(yrange == 0)) yrange <- yrange + c(-1,1)
           lenv$ylim <- yrange
         }
@@ -543,7 +501,6 @@ plot.xts <- function(x,
         cs$add(text.exp, env=c(lenv,cs$Env), expr=TRUE)
         
         # Add the frame for the sub-plots
-        # Set the ylim based on the (potentially) transformed data in cs$Env$R
         cs$add_frame(ylim=lenv$ylim, asp=NCOL(cs$Env$xdata), fixed=TRUE)
         cs$next_frame()
         
@@ -608,7 +565,7 @@ plot.xts <- function(x,
     if(type == "h" & NCOL(x) > 1) 
       warning("only the univariate series will be plotted")
 
-    exp <- quote(chart.lines(R[xsubset],
+    exp <- quote(chart.lines(xdata[xsubset],
                              type=type, 
                              lty=lty,
                              lwd=lwd,
