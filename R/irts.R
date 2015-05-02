@@ -23,7 +23,7 @@
 
 `re.irts` <-
 function(x,...) {
-  if(!require('tseries', quietly=TRUE))
+  if(!requireNamespace('tseries', quietly=TRUE))
     irts <- function(...) message("package 'tseries' is required for re.irts")
 
   indexClass(x) <- "POSIXct"

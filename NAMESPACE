@@ -167,6 +167,11 @@ importFrom(zoo, na.locf)
 importFrom(zoo, as.zoo)
 #importFrom(zoo, lagts)
 importFrom(zoo, rollapply)
+importFrom(zoo, na.approx)
+importFrom(zoo, na.fill)
+importFrom(zoo, as.yearmon)
+importFrom(zoo, as.yearqtr)
+importFrom(zoo, is.regular)
 importFrom(stats,na.omit)
 importFrom(stats,start)
 importFrom(stats,end)
@@ -185,6 +190,9 @@ S3method(na.locf,xts)
 S3method(print,xts)
 S3method(print,CLASS)
 S3method('CLASS<-',xts)
+
+S3method(dimnames, xts)
+S3method('dimnames<-', xts)
 
 S3method('indexClass<-',xts)
 S3method('tclass<-',xts)
@@ -242,6 +250,10 @@ S3method(as.data.frame, xts)
 # matrix specific methods
 S3method(as.xts,matrix)
 S3method(as.matrix,xts)
+
+# environment specific methods
+#S3method(as.xts,environment)
+S3method(as.environment,xts)
 
 # timeSeries (package:timeSeries) specific methods
 #export(xts.as.timeSeries)

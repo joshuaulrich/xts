@@ -72,7 +72,7 @@ as.POSIXct.dates <- function(x, ...)
 }
 as.chron.POSIXct <- function(x, ...)
 {
-  if( !require('chron', quietly=TRUE))
+  if(!requireNamespace('chron', quietly=TRUE))
     as.chron <- function(...) message("package 'chron' required")
 
   structure(as.chron(as.POSIXlt(as.character(x))))

@@ -23,7 +23,7 @@
 
 `re.its` <-
 function(x, ...) {
-  if(!require('its', quietly=TRUE))
+  if(!requireNamespace('its', quietly=TRUE))
     its <- function(...) message("package 'fts' is required")
 
   xx <- coredata(x)

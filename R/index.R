@@ -45,13 +45,15 @@ function(x, ...) {
        stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
   }
   if(value[[1]]=='timeDate') {
-    stopifnot('package:timeDate' %in% search() | require('timeDate',quietly=TRUE))
+    if(!requireNamespace("timeDate", quietly=TRUE))
+      stop("package:",dQuote("timeDate"),"cannot be loaded.")
     x.index <- do.call(paste('as',value[[1]],sep='.'),list(x.index))
   } 
   else if(value[[1]] %in% c('chron','dates','POSIXt','POSIXct','POSIXlt','yearmon','yearqtr')) {
     if('POSIXt' %in% value[[1]]) value[[1]] <- value[[2]] # get specific ct/lt value
     if(value[[1]] %in% c('dates','chron')) {
-      stopifnot('package:chron' %in% search() | require('chron',quietly=TRUE))
+      if(!requireNamespace("chron", quietly=TRUE))
+        stop("package:",dQuote("chron"),"cannot be loaded.")
       x.index <- format(x.index)
       value[[1]] <- 'chron'
     } 

@@ -72,7 +72,7 @@ time-based object.
 }
 \references{
 \url{http://en.wikipedia.org/wiki/ISO_8601}\cr
-\url{http://www.iso.org/iso/support/faqs/faqs_widely_used_standards/widely_used_standards_other/date_and_time_format.htm}
+\url{http://www.iso.org/iso/support/faqs/faqs_widely_used_standards/widely_used_standards_other/iso8601}
 }
 \author{
 Jeffrey A. Ryan
