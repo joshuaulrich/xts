@@ -94,8 +94,8 @@ Ross Bennett
 based on \code{chart_Series} in the \code{quantmod} package by Jeffrey A. Ryan
 }
 \seealso{
-\code{\link{addSeries}}
-}
+\code{\link{addSeries}}, \code{\link{addPanel}}
+}, 
 \examples{
 \dontrun{
 data(sample_matrix)

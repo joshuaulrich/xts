@@ -595,6 +595,33 @@ plot.xts <- function(x,
   cs
 }
 
+# apply a function to the xdata in the xts chob and add a panel with the result
+addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0, ...){
+  # get the chob and the raw data (i.e. xdata)
+  chob <- current.xts_chob()
+  x <- chob$Env$xdata
+  
+  fun <- match.fun(FUN)
+  .formals <- formals(fun)
+  .formals <- modify.args(formals=.formals, arglist=list(...), dots=TRUE)
+  # the user supplied function, FUN, should have named argument x or R that we
+  # pass chob$Env$xdata to
+  if("R" %in% names(.formals)) .formals <- modify.args(formals=.formals, arglist=NULL, R=x, dots=TRUE)
+  if("x" %in% names(.formals)) .formals <- modify.args(formals=.formals, arglist=NULL, x=x, dots=TRUE)
+  .formals$... <- NULL
+  R <- try(do.call(fun, .formals), silent=TRUE)
+  if(inherits(R, "try-error")) {
+    message(paste("FUN function failed with message", R))
+    return(NULL)
+  }
+  
+  addSeriesCall <- quote(addSeries(x = R, main = main, on = on,
+    type = type, col = col, lty = lty, lwd = lwd, pch = pch))
+
+  addSeriesCall <- add.par.from.dots(addSeriesCall, ...)
+  eval(addSeriesCall)
+}
+
 # Add a time series to an existing xts plot
 # author: Ross Bennett
 addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0, ...){
