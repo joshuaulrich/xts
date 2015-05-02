@@ -119,6 +119,30 @@ chart.lines <- function(x,
   }
 }
 
+add.par.from.dots <- function(call., ...) {
+  stopifnot(is.call(call.))
+
+  # from graphics:::.Pars
+  parnames <- c("xlog","ylog","adj","ann","ask","bg","bty","cex","cex.axis",
+                "cex.lab","cex.main","cex.sub","cin","col","col.axis","col.lab",
+                "col.main","col.sub","cra","crt","csi","cxy","din","err",
+                "family", "fg","fig","fin","font","font.axis","font.lab",
+                "font.main","font.sub","lab","las","lend","lheight","ljoin",
+                "lmitre","lty","lwd","mai","mar","mex","mfcol","mfg","mfrow",
+                "mgp","mkh","new","oma","omd","omi","page","pch","pin","plt",
+                "ps","pty","smo","srt","tck","tcl","usr","xaxp","xaxs","xaxt",
+                "xpd","yaxp","yaxs","yaxt","ylbias")
+
+  dots <- list(...)
+  argnames <- names(dots)
+  pm <- pmatch(argnames, parnames, nomatch = 0L)
+
+  call.list <- as.list(call.)
+  # only pass the args from dots ('...') that are in parnames
+  as.call(c(call.list, dots[pm > 0L]))
+}
+
+
 chart.lines.expression <- function(...) {
     mc <- match.call()
     mc[[1]] <- quote(chart.lines)
@@ -469,16 +493,17 @@ plot.xts <- function(x,
       lenv$ylim <- range(cs$Env$R[,1][subset], na.rm=TRUE)
     }
     
-    exp <- chart.lines.expression(xdata, 
-                                  type=type, 
-                                  lty=lty,
-                                  lwd=lwd,
-                                  lend=lend,
-                                  col=theme$col, 
-                                  up.col=theme$up.col, 
-                                  dn.col=theme$dn.col,
-                                  legend.loc=legend.loc,
-                                  ...)
+    exp <- quote(chart.lines(xdata,
+                             type=type, 
+                             lty=lty,
+                             lwd=lwd,
+                             lend=lend,
+                             col=theme$col, 
+                             up.col=theme$up.col, 
+                             dn.col=theme$dn.col,
+                             legend.loc=legend.loc))
+    exp <- as.expression(add.par.from.dots(exp, ...))
+
     # Add expression for the main plot
     cs$add(exp, env=c(lenv,cs$Env), expr=TRUE)
     text.exp <- expression(text(x=xycoords$x[2],
@@ -522,16 +547,16 @@ plot.xts <- function(x,
         cs$add_frame(ylim=lenv$ylim, asp=NCOL(cs$Env$xdata), fixed=TRUE)
         cs$next_frame()
         
-        exp <- chart.lines.expression(xdata[xsubset], 
-                                      type=type, 
-                                      lty=lty,
-                                      lwd=lwd,
-                                      lend=lend,
-                                      col=col, 
-                                      up.col=theme$up.col, 
-                                      dn.col=theme$dn.col,
-                                      legend.loc=legend.loc,
-                                      ...)
+        exp <- quote(chart.lines(xdata[xsubset],
+                                 type=type, 
+                                 lty=lty,
+                                 lwd=lwd,
+                                 lend=lend,
+                                 col=col, 
+                                 up.col=theme$up.col, 
+                                 dn.col=theme$dn.col,
+                                 legend.loc=legend.loc))
+        exp <- as.expression(add.par.from.dots(exp, ...))
         
         # define function to plot the y-axis grid lines
         lenv$y_grid_lines <- function(ylim) { 
@@ -583,16 +608,17 @@ plot.xts <- function(x,
     if(type == "h" & NCOL(x) > 1) 
       warning("only the univariate series will be plotted")
 
-    cs$add(chart.lines.expression(R[xsubset],
-                                  type=type, 
-                                  lty=lty,
-                                  lwd=lwd,
-                                  lend=lend,
-                                  col=theme$col,
-                                  up.col=theme$up.col, 
-                                  dn.col=theme$dn.col,
-                                  legend.loc=legend.loc,
-                                  ...), expr=TRUE)
+    exp <- quote(chart.lines(R[xsubset],
+                             type=type, 
+                             lty=lty,
+                             lwd=lwd,
+                             lend=lend,
+                             col=theme$col,
+                             up.col=theme$up.col, 
+                             dn.col=theme$dn.col,
+                             legend.loc=legend.loc))
+    exp <- as.expression(add.par.from.dots(exp, ...))
+    cs$add(exp, expr=TRUE)
 
     assign(".xts_chob", cs, .plotxtsEnv)
   }
