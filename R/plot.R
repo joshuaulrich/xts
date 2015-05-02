@@ -142,6 +142,7 @@ plot.xts <- function(x,
                      lty=1,
                      lwd=2,
                      lend=1,
+                     pch=0,
                      main=deparse(substitute(x)),
                      observation.based=FALSE,
                      ylim=NULL,
@@ -170,6 +171,8 @@ plot.xts <- function(x,
     if(length(col) == 1) col <- rep(col, NCOL(x))
     if(length(lty) == 1) lty <- rep(lty, NCOL(x))
     if(length(lwd) == 1) lwd <- rep(lwd, NCOL(x))
+    
+    if(length(pch) == 1) pch <- rep(pch, NCOL(x))
     
     
     if(!is.null(panels) && nchar(panels) > 0){
@@ -219,6 +222,7 @@ plot.xts <- function(x,
                     type=type,
                     lty=lty[tmp],
                     lwd=lwd[tmp],
+                    pch=pch[tmp],
                     lend=lend,
                     main=main,
                     observation.based=observation.based,
@@ -298,6 +302,9 @@ plot.xts <- function(x,
   if(length(lwd) == 1) lwd <- rep(lwd, NCOL(x))
   cs$Env$lty <- lty
   cs$Env$lwd <- lwd
+  
+  if(length(pch) == 1) pch <- rep(pch, NCOL(x))
+  cs$Env$pch <- pch
   
   cs$Env$lend <- lend
   cs$Env$legend.loc <- legend.loc
@@ -473,6 +480,7 @@ plot.xts <- function(x,
                                   type=type, 
                                   lty=lty,
                                   lwd=lwd,
+                                  pch=pch,
                                   lend=lend,
                                   col=theme$col, 
                                   up.col=theme$up.col, 
@@ -508,6 +516,8 @@ plot.xts <- function(x,
         lenv$lwd <- cs$Env$lwd[i]
         lenv$col <- cs$Env$theme$col[i]
         
+        lenv$pch <- cs$Env$pch[i]
+        
         # Add a small frame
         cs$add_frame(ylim=c(0,1),asp=0.25)
         cs$next_frame()
@@ -526,6 +536,7 @@ plot.xts <- function(x,
                                       type=type, 
                                       lty=lty,
                                       lwd=lwd,
+                                      pch=pch,
                                       lend=lend,
                                       col=col, 
                                       up.col=theme$up.col, 
@@ -587,6 +598,7 @@ plot.xts <- function(x,
                                   type=type, 
                                   lty=lty,
                                   lwd=lwd,
+                                  pch=pch,
                                   lend=lend,
                                   col=theme$col,
                                   up.col=theme$up.col, 
