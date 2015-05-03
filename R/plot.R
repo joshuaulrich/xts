@@ -135,7 +135,7 @@ add.par.from.dots <- function(call., ...) {
 
   dots <- list(...)
   argnames <- names(dots)
-  pm <- pmatch(argnames, parnames, nomatch = 0L)
+  pm <- match(argnames, parnames, nomatch = 0L)
 
   call.list <- as.list(call.)
   # only pass the args from dots ('...') that are in parnames
