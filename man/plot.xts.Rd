@@ -43,9 +43,9 @@ separate panel.}
 
 \item{type}{the type of plot to be drawn, same as in \code{\link{plot}}}
 
-\item{lty}{set the line type, same as in \code{\link{plot}}}
+\item{lty}{set the line type, same as in \code{\link{par}}}
 
-\item{lwd}{set the line width, same as in \code{\link{plot}}}
+\item{lwd}{set the line width, same as in \code{\link{par}}}
 
 \item{lend}{set the line end style, same as in \code{\link{par}}}
 
@@ -71,7 +71,7 @@ separate panel.}
 
 \item{labels.col}{color of the axis labels}
 
-\item{format.labels}{label format to draw lower frequency x-axis ticks and lables passed to \code{\link{axTicksByTime}}}
+\item{format.labels}{label format to draw lower frequency x-axis ticks and labels passed to \code{\link{axTicksByTime}}}
 
 \item{grid2}{color for secondary x axis grid}
 
@@ -95,7 +95,7 @@ based on \code{chart_Series} in the \code{quantmod} package by Jeffrey A. Ryan
 }
 \seealso{
 \code{\link{addSeries}}, \code{\link{addPanel}}
-}, 
+}
 \examples{
 \dontrun{
 data(sample_matrix)

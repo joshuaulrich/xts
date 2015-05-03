@@ -16,11 +16,11 @@ addPanel(FUN, main = "", on = NA, type = "l", col = NULL, lty = 1,
 
 \item{col}{color palette to use, set by default to rational choices.}
 
-\item{lty}{set the line type, same as in \code{\link{plot}}.}
+\item{lty}{set the line type, same as in \code{\link{par}}.}
 
-\item{lwd}{set the line width, same as in \code{\link{plot}}.}
+\item{lwd}{set the line width, same as in \code{\link{par}}.}
 
-\item{pch}{the type of plot to be drawn, same as in \code{\link{plot}}.}
+\item{pch}{the type of plot to be drawn, same as in \code{\link{par}}.}
 
 \item{\dots}{additional named arguments passed through to \code{FUN} and 
 any other graphical passthrough parameters.}
@@ -33,4 +33,24 @@ arguments for \code{FUN} are passed through \dots.
 }
 \author{
 Ross Bennett
+}
+\examples{
+\dontrun{
+library(xts)
+
+data(sample_matrix)
+sample.xts <- as.xts(sample_matrix)
+
+calcReturns <- function(x, method){
+  PerformanceAnalytics::Return.calculate(prices = x, method = method)
+}
+
+# plot the Close
+plot(sample.xts[,"Close"])
+# calculate returns 
+addPanel(calcReturns, method="discrete", type="h")
+# Add SMA to panel 1
+addPanel(TTR::SMA, n=20, on=1)
+addPanel(TTR::SMA, n=40, col="blue", on=1)
+}
 }
