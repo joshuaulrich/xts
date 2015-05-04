@@ -21,7 +21,9 @@ the events.list, so to get a match the formatting needs to be correct.}
 \item{main}{main title for a new panel if drawn.}
 
 \item{on}{panel number to draw on. A new panel will be drawn if \code{on=NA}.
-The default, \code{"current"}, will add to the last active panel. }
+The default, \code{"current"}, will add to the last active panel. Note that
+only the first element of \code{on} is checked for the default behavior to
+add to the last active panel.}
 
 \item{lty}{set the line type, same as in \code{\link{par}}.}
 

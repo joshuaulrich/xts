@@ -19,7 +19,9 @@ the colorset of the current plot object data is used.}
 \item{ncol}{number of columns for the legend}
 
 \item{on}{panel number to draw on. A new panel will be drawn if \code{on=NA}.
-The default, \code{"current"}, will add to the last active panel. }
+The default, \code{"current"}, will add to the last active panel. Note that
+only the first element of \code{on} is checked for the default behavior to
+add to the last active panel.}
 
 \item{\dots}{any other passthrough parameters to \code{\link{legend}}.}
 }

@@ -682,7 +682,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
     lenv$ylim <- ylim
   }
   
-  if(is.na(on)){
+  if(is.na(on[1])){
     # add the frame for drawdowns info
     plot_object$add_frame(ylim=c(0,1),asp=0.25)
     plot_object$next_frame()
@@ -738,8 +738,8 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
 # Add time series of lines to an existing xts plot
 # author: Ross Bennett
 lines.xts <- function(x, ..., main="", on="current", col=NULL, type="l", lty=1, lwd=1, pch=0){
-  if(!is.na(on))
-    if(on == "current") on <- current_panel()
+  if(!is.na(on[1]))
+    if(on[1] == "current") on <- current_panel()
   
   addSeries(x, ...=..., main=main, on=on, type=type, col=col, lty=lty, lwd=lwd, pch=pch)
 }
@@ -747,8 +747,8 @@ lines.xts <- function(x, ..., main="", on="current", col=NULL, type="l", lty=1, 
 # Add time series of points to an existing xts plot
 # author: Ross Bennett
 points.xts <- function(x, ..., main="", on="current", col=NULL, pch=0){
-  if(!is.na(on))
-    if(on == "current") on <- current_panel()
+  if(!is.na(on[1]))
+    if(on[1] == "current") on <- current_panel()
   
   addSeries(x, ...=..., main=main, on=on, type="p", col=col, pch=pch)
 }
@@ -756,8 +756,8 @@ points.xts <- function(x, ..., main="", on="current", col=NULL, pch=0){
 # Add vertical lines to an existing xts plot
 # author: Ross Bennett
 addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d", main="", on="current", lty=1, lwd=1, col=1, ...){
-  if(!is.na(on))
-    if(on == "current") on <- current_panel()
+  if(!is.na(on[1]))
+    if(on[1] == "current") on <- current_panel()
   
   # add checks for event.dates and event.labels
   if(!is.null(event.labels))
@@ -903,12 +903,12 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
 # Add legend to an existing xts plot
 # author: Ross Bennett
 addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, on="current", ...){
-  if(!is.na(on))
-    if(on == "current") on <- current_panel()
+  if(!is.na(on[1]))
+    if(on[1] == "current") on <- current_panel()
   
   lenv <- new.env()
   lenv$plot_legend <- function(x, legend.loc, legend.names, col, ncol, on, ...){
-    if(is.na(on)){
+    if(is.na(on[1])){
       yrange <- c(0, 1)
     } else {
       yrange <- x$Env$ylim[[2*on]]
