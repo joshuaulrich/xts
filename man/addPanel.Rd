@@ -35,22 +35,26 @@ arguments for \code{FUN} are passed through \dots.
 Ross Bennett
 }
 \examples{
-\dontrun{
 library(xts)
-
 data(sample_matrix)
 sample.xts <- as.xts(sample_matrix)
 
-calcReturns <- function(x, method){
-  PerformanceAnalytics::Return.calculate(prices = x, method = method)
+calcReturns <- function(price, method = c("discrete", "log")){
+  px <- try.xts(price)
+  method <- match.arg(method)[1L]
+  returns <- switch(method,
+    simple = ,
+    discrete = px / lag(px) - 1,
+    compound = ,
+    log = diff(log(px)))
+  reclass(returns, px)
 }
 
 # plot the Close
 plot(sample.xts[,"Close"])
 # calculate returns 
 addPanel(calcReturns, method="discrete", type="h")
-# Add SMA to panel 1
-addPanel(TTR::SMA, n=20, on=1)
-addPanel(TTR::SMA, n=40, col="blue", on=1)
-}
+# Add simple moving average to panel 1
+addPanel(rollmean, k=20, on=1)
+addPanel(rollmean, k=40, col="blue", on=1)
 }
