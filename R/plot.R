@@ -599,17 +599,21 @@ plot.xts <- function(x,
 addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0, ...){
   # get the chob and the raw data (i.e. xdata)
   chob <- current.xts_chob()
+  # x will be passed as first argument to FUN
   x <- chob$Env$xdata
   
   fun <- match.fun(FUN)
   .formals <- formals(fun)
-  .formals <- modify.args(formals=.formals, arglist=list(...), dots=TRUE)
-  # the user supplied function, FUN, should have named argument x or R that we
-  # pass chob$Env$xdata to
-  if("R" %in% names(.formals)) .formals <- modify.args(formals=.formals, arglist=NULL, R=x, dots=TRUE)
-  if("x" %in% names(.formals)) .formals <- modify.args(formals=.formals, arglist=NULL, x=x, dots=TRUE)
-  .formals$... <- NULL
-  R <- try(do.call(fun, .formals), silent=TRUE)
+  if("..." %in% names(.formals)) {
+    # Just call do.call if FUN has '...'
+    R <- try(do.call(fun, c(list(x), list(...)), quote=TRUE), silent=TRUE)
+  } else {
+    # Otherwise, ensure we only pass relevant args to FUN
+    .formals <- modify.args(formals=.formals, arglist=list(...))
+    .formals[[1]] <- quote(x)
+    R <- try(do.call(fun, .formals), silent=TRUE)
+  }
+
   if(inherits(R, "try-error")) {
     message(paste("FUN function failed with message", R))
     return(NULL)
