@@ -12,9 +12,9 @@ modify.args <- function(formals, arglist, ..., dots=FALSE)
   
   # see 'S Programming' p. 67 for this matching
   
-  # nothing to do if arglist is empty; return formals
+  # nothing to do if arglist is empty; return formals as a list
   if(!length(arglist))
-    return(formals)
+    return(as.list(formals))
   
   argnames <- names(arglist)
   if(!is.list(arglist) && !is.null(argnames) && !any(argnames == ""))
@@ -35,7 +35,9 @@ modify.args <- function(formals, arglist, ..., dots=FALSE)
     .formals[dotnames] <- arglist[dotnames]
     #.formals$... <- NULL  # should we assume we matched them all?
   }
-  .formals
+
+  # return a list (not a pairlist)
+  as.list(.formals)
 }
 
 # This is how it is used in quantstrat in applyIndicators()
