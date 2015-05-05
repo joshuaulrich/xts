@@ -1,7 +1,9 @@
-#inst
-#inst/doc
-inst/doc/xts-faq.Rnw
 tests
 tests/doRUnit.R
 DEVELOPMENT-NOTES
 WISHLIST
+^.*\.Rproj$
+^\.Rproj\.user$
+\.git
+\.gitignore
+\.orig$
