@@ -337,13 +337,13 @@ head(out2 &lt;- merge(empty.xts, count, fill=0))</code></pre>
 sample.xts &lt;- as.xts(sample_matrix)
 wday.xts &lt;- sample.xts[.indexwday(sample.xts) %in% 1:5]
 head(wday.xts)</code></pre>
-<pre><code>##                Open     High      Low    Close
-## 2007-01-02 50.03978 50.11778 49.95041 50.11778
-## 2007-01-03 50.23050 50.42188 50.23050 50.39767
-## 2007-01-04 50.42096 50.42096 50.26414 50.33236
-## 2007-01-05 50.37347 50.37347 50.22103 50.33459
-## 2007-01-08 50.03555 50.10363 49.96971 49.98806
-## 2007-01-09 49.99489 49.99489 49.80454 49.91333</code></pre>
+<pre><code>##             Open  High   Low Close
+## 2007-01-02 50.04 50.12 49.95 50.12
+## 2007-01-03 50.23 50.42 50.23 50.40
+## 2007-01-04 50.42 50.42 50.26 50.33
+## 2007-01-05 50.37 50.37 50.22 50.33
+## 2007-01-08 50.04 50.10 49.97 49.99
+## 2007-01-09 49.99 49.99 49.80 49.91</code></pre>
 <p><strong>Q:</strong> I need to quickly convert a data.frame that contains the time-stamps in one of the columns. Using <code>as.xts(Data)</code> returns an error. How do I build my <code>xts</code> object?</p>
 <p>The <code>as.xts</code> function assumes the date-time index is contained in the <code>rownames</code> of the object to be converted. If this is not the case, you need to use the <code>xts</code> constructor, which requires two arguments: a vector or a matrix carrying data and a vector of type <code>Date</code>, <code>POSIXct</code>, <code>chron</code>, <code>...</code>, supplying the time index information. If you are certain the time-stamps are in a specific column, you can use:</p>
 <pre class="r"><code>Data &lt;- data.frame(timestamp=as.Date(&quot;1970-01-01&quot;), obs=21)
@@ -361,8 +361,8 @@ merge(x1, x2)</code></pre>
 <pre class="r"><code>data(sample_matrix)
 sample.xts &lt;- as.xts(sample_matrix)
 sample.xts[&quot;2007-01&quot;]$Close &lt;- sample.xts[&quot;2007-01&quot;]$Close + 1</code></pre>
-<pre><code>## Warning in NextMethod(.Generic): number of items to replace is not a
-## multiple of replacement length</code></pre>
+<pre><code>## Warning: number of items to replace is not a multiple of replacement
+## length</code></pre>
 <p>This code creates two calls to the subset-replacement function <code>xts:::[&lt;-.xts</code>. The first call replaces the value of <code>Close</code> in a temporary copy of the first row of the object on the left-hand-side of the assignment, which works fine. The second call tries to replace the first <strong>element</strong> of the object on the left-hand-side of the assignment with the modified temporary copy of the first row. This is the problem.</p>
 <p>For the command to work, there needs to be a comma in the first subset call on the left-hand-side:</p>
 <pre class="r"><code>sample.xts[&quot;2007-01&quot;,]$Close &lt;- sample.xts[&quot;2007-01&quot;]$Close + 1</code></pre>

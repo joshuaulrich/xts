@@ -29,32 +29,12 @@ line width (`lwd`). See `?par` for more valid values for `lty` and `lwd`.
 plot(sample.xts[,"Close"], col="blue", lwd=2, lty=2)
 ```
 
-The `FUN` argument can be used to apply a function to the `x` data and plot
-the output. Here we define a function to compute the simple returns given
-an xts object of prices. Any additional arguments to `FUN` can be passed in
-through the dots (`...`) argument. The function passed to `FUN` must be a 
-valid R function with a couple requirements:
-* must have an `x` argument for the data. The xts object passed to the `x` 
-argument in `plot` is passed to the `x` argument in `FUN`.
-* must return an xts object. The object returned from `FUN` is what is plotted.
-```{r}
-# function to compute simple returns
-simple.ret <- function(x, col.name){
-  R <- x[,col.name]
-  R / lag(R) - 1
-}
-
-# Plot the simple returns of the Close prices in sample.xts.
-plot(sample.xts, FUN=simple.ret, col.name="Close", type="h")
-```
-
-
 ### Lines
 
 Here we start with a basic plot, then add moving average lines, and a legend.
 The default behavior for `lines` is to add to the current panel. The current
 panel is defined as the panel on which the most recent action was performed.
-Note that the default for behavior for `addLegend` is to add to the 
+Note that the default behavior for `addLegend` is also to add to the 
 current panel.
 ```{r fig.keep='last'}
 plot(sample.xts[,"Close"])
@@ -80,7 +60,7 @@ lines(TTR::SMA(sample.xts[,"Close"], n = 60), on=3, col="darkred")
 # draw a line on panel 2
 lines(TTR::SMA(sample.xts[,"Close"], n = 25), on=2, col="darkblue")
 # draw a line on the current panel
-lines(TTR::SMA(sample.xts[,"Close"], n = 10), col="purple", lty=2)
+lines(TTR::SMA(sample.xts[,"Close"], n = 10), col="green", lty=2)
 # draw a line on panel 1
 lines(TTR::SMA(sample.xts[,"Close"], n = 100), on=1, col="lightblue")
 

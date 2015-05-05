@@ -199,29 +199,17 @@ img {
 sample.xts &lt;- as.xts(sample_matrix)</code></pre>
 <p>Create a basic plot.</p>
 <pre class="r"><code>plot(sample.xts[,&quot;Close&quot;])</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-2-1.png" title="" alt="" width="672" /></p>
+<p><img src="plotting_basics_files/figure-html/unnamed-chunk-2.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="672" /></p>
 <p>Subset to only plot March 2007. The <code>subset</code> argument uses xts subsetting described in <code>?xts</code>.</p>
 <pre class="r"><code>plot(sample.xts[,&quot;Close&quot;], subset=&quot;2007-03&quot;)</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-3-1.png" title="" alt="" width="672" /></p>
+<p><img src="plotting_basics_files/figure-html/unnamed-chunk-3.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" width="672" /></p>
 <p>Customize the plot by changing the color (<code>col</code>), line type (<code>lty</code>), and line width (<code>lwd</code>). See <code>?par</code> for more valid values for <code>lty</code> and <code>lwd</code>.</p>
 <pre class="r"><code>plot(sample.xts[,&quot;Close&quot;], col=&quot;blue&quot;, lwd=2, lty=2)</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-4-1.png" title="" alt="" width="672" /></p>
-<p>The <code>FUN</code> argument can be used to apply a function to the <code>x</code> data and plot the output. Here we define a function to compute the simple returns given an xts object of prices. Any additional arguments to <code>FUN</code> can be passed in through the dots (<code>...</code>) argument. The function passed to <code>FUN</code> must be a valid R function with a couple requirements: * must have an <code>x</code> argument for the data. The xts object passed to the <code>x</code> argument in <code>plot</code> is passed to the <code>x</code> argument in <code>FUN</code>. * must return an xts object. The object returned from <code>FUN</code> is what is plotted.</p>
-<pre class="r"><code># function to compute simple returns
-simple.ret &lt;- function(x, col.name){
-  R &lt;- x[,col.name]
-  R / lag(R) - 1
-}
-
-# Plot the simple returns of the Close prices in sample.xts.
-plot(sample.xts, FUN=simple.ret, col.name=&quot;Close&quot;, type=&quot;h&quot;)</code></pre>
-<pre><code>## Warning in plot.xts(sample.xts, FUN = simple.ret, col.name = &quot;Close&quot;, type
-## = &quot;h&quot;): only the univariate series will be plotted</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-5-1.png" title="" alt="" width="672" /><img src="plotting_basics_files/figure-html/unnamed-chunk-5-2.png" title="" alt="" width="672" /></p>
+<p><img src="plotting_basics_files/figure-html/unnamed-chunk-4.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="672" /></p>
 </div>
 <div id="lines" class="section level3">
 <h3>Lines</h3>
-<p>Here we start with a basic plot, then add moving average lines, and a legend. The default behavior for <code>lines</code> is to add to the current panel. The current panel is defined as the panel on which the most recent action was performed. Note that the default for behavior for <code>addLegend</code> is to add to the current panel.</p>
+<p>Here we start with a basic plot, then add moving average lines, and a legend. The default behavior for <code>lines</code> is to add to the current panel. The current panel is defined as the panel on which the most recent action was performed. Note that the default behavior for <code>addLegend</code> is also to add to the current panel.</p>
 <pre class="r"><code>plot(sample.xts[,&quot;Close&quot;])
 lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 20), col=&quot;blue&quot;)
 lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 50), col=&quot;red&quot;, lty=2)
@@ -230,7 +218,7 @@ lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 50), col=&quot;red&quot;, lty
 addLegend(&quot;topright&quot;, legend.names = c(&quot;Close&quot;, &quot;SMA(20)&quot;, &quot;SMA(50)&quot;), 
           lty=c(1, 1, 2), lwd=c(2, 1, 1),
           col=c(&quot;black&quot;, &quot;blue&quot;, &quot;red&quot;))</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-6-1.png" title="" alt="" width="672" /></p>
+<p><img src="plotting_basics_files/figure-html/unnamed-chunk-5.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" width="672" /></p>
 <p>A new panel is drawn by specifying <code>on=NA</code>. To draw lines on a specific panel, pass an integer corresponding to the panel number to <code>on</code>.</p>
 <pre class="r"><code>plot(sample.xts[,&quot;Close&quot;])
 # add a new panel
@@ -242,7 +230,7 @@ lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 60), on=3, col=&quot;darkred&
 # draw a line on panel 2
 lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 25), on=2, col=&quot;darkblue&quot;)
 # draw a line on the current panel
-lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 10), col=&quot;purple&quot;, lty=2)
+lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 10), col=&quot;green&quot;, lty=2)
 # draw a line on panel 1
 lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 100), on=1, col=&quot;lightblue&quot;)
 
@@ -250,7 +238,7 @@ lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 100), on=1, col=&quot;lightbl
 addLegend(&quot;topright&quot;, legend.names = c(&quot;Close&quot;, &quot;SMA(100)&quot;), 
           lty=c(1, 1), lwd=c(2, 1),
           col=c(&quot;black&quot;, &quot;lightblue&quot;))</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-7-1.png" title="" alt="" width="672" /></p>
+<p><img src="plotting_basics_files/figure-html/unnamed-chunk-6.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="672" /></p>
 </div>
 <div id="points" class="section level3">
 <h3>Points</h3>
@@ -263,7 +251,7 @@ points(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 50), col=&quot;red&quot;, pc
 addLegend(&quot;topright&quot;, legend.names = c(&quot;Close&quot;, &quot;SMA(20)&quot;, &quot;SMA(50)&quot;), 
           lty=c(1, NA, NA), pch=c(NA, 2, 5),
           col=c(&quot;black&quot;, &quot;blue&quot;, &quot;red&quot;))</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-8-1.png" title="" alt="" width="672" /></p>
+<p><img src="plotting_basics_files/figure-html/unnamed-chunk-7.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="672" /></p>
 </div>
 <div id="event-lines" class="section level3">
 <h3>Event Lines</h3>
@@ -274,7 +262,7 @@ addEventLines(c(&quot;2007-03-20&quot;,&quot;2007-05-28&quot;), c(&quot;foo&quot
               offset=1.2, pos=2, , srt=90, cex=1.5)
 addEventLines(c(&quot;2007-03-20&quot;,&quot;2007-05-28&quot;), c(&quot;foo&quot;, &quot;bar&quot;), 
               offset=1.2, pos=4, , srt=-90, cex=1.5)</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-9-1.png" title="" alt="" width="672" /></p>
+<p><img src="plotting_basics_files/figure-html/unnamed-chunk-8.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" width="672" /></p>
 <p>Event lines can be drawn on a specific panel by specifying an integer corresponding to the desired panel for <code>on</code>. A new panel is drawn if <code>on=NA</code>.</p>
 <pre class="r"><code>plot(sample.xts[,&quot;Close&quot;])
 # add a new panel
@@ -283,7 +271,7 @@ lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 20), on=NA, col=&quot;blue&qu
 lines(TTR::SMA(sample.xts[,&quot;Close&quot;], n = 50), on=NA, col=&quot;red&quot;)
 addEventLines(c(&quot;2007-03-20&quot;,&quot;2007-05-28&quot;), c(&quot;foo&quot;, &quot;bar&quot;), on=1,
               offset=.4, pos=2, srt=90, cex=1.5, col=&quot;red&quot;)</code></pre>
-<p><img src="plotting_basics_files/figure-html/unnamed-chunk-10-1.png" title="" alt="" width="672" /></p>
+<p><img src="plotting_basics_files/figure-html/unnamed-chunk-9.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="672" /></p>
 </div>
 
 

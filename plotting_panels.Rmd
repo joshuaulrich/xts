@@ -1,6 +1,9 @@
 ---
 title: "Plotting Panels"
 ---
+```{r echo=FALSE}
+Sys.setenv(TZ="GMT")
+```
 
 ### Panel Basics
 
@@ -19,6 +22,20 @@ Create a basic plot and add a panel of the simple returns
 ```{r fig.keep='last'}
 plot(sample.xts[,"Close"])
 lines(Return.calculate(sample.xts[,"Close"]), type="h", on=NA)
+```
+
+Instead of calculating the returns and plotting the result, an alternative is 
+to use `addPanel` which is useful for applying a function to the raw data in 
+the current plot object. Note that `addPanel` accepts a function, it does not 
+accept data like `lines` and `points`. The raw data in the current plot
+object is passed to the first argument in `FUN`. Additional arguments to 
+`FUN` are passed via dots (`...`).
+```{r fig.keep='last'}
+# plot the Close
+plot(sample.xts[,"Close"], col="blue")
+
+# calculate returns
+addPanel(Return.calculate, method="discrete", type="h")
 ```
 
 We can also create the same plot by using the `panels` argument. 
