@@ -96,8 +96,9 @@ chart.lines <- function(x,
            lines(xx$Env$xycoords$x,x[,1],lwd=2,col=colors,lend=lend,lty=1,type="h",...)
          },
          p=, l=, b=, c=, o=, s=, S=, n={
-           if(length(lty) == 1) lty <- rep(lty, NCOL(x))
-           if(length(lwd) == 1) lwd <- rep(lwd, NCOL(x))
+           if(length(lty) < NCOL(x)) lty <- rep(lty, length.out = NCOL(x))
+           if(length(lwd) < NCOL(x)) lwd <- rep(lwd, length.out = NCOL(x))
+           if(length(col) < NCOL(x)) col <- rep(col, length.out = NCOL(x))
            for(i in NCOL(x):1){
              # non-equally spaced x-axis
              lines(xx$Env$xycoords$x, x[,i], type=type, lend=lend, col=col[i], lty=lty[i], lwd=lwd[i], ...)
@@ -157,7 +158,7 @@ plot.xts <- function(x,
                      subset="",
                      panels=NULL,
                      multi.panel=FALSE,
-                     col=1:12,
+                     col=1:8,
                      up.col="green",
                      dn.col="red",
                      bg="#FFFFFF",
@@ -190,9 +191,9 @@ plot.xts <- function(x,
     chunks <- split(idx, ceiling(seq_along(idx)/multi.panel))
     
     # allow color and line attributes for each panel in a multi.panel plot
-    if(length(col) == 1) col <- rep(col, NCOL(x))
-    if(length(lty) == 1) lty <- rep(lty, NCOL(x))
-    if(length(lwd) == 1) lwd <- rep(lwd, NCOL(x))
+    if(length(lty) < ncol(x)) lty <- rep(lty, length.out = ncol(x))
+    if(length(lwd) < ncol(x)) lwd <- rep(lwd, length.out = ncol(x))
+    if(length(col) < ncol(x)) col <- rep(col, length.out = ncol(x))
     
     
     if(!is.null(panels) && nchar(panels) > 0){
@@ -272,13 +273,8 @@ plot.xts <- function(x,
   # check for colorset or col argument
   # if col has a length of 1, replicate to NCOL(x) so we can keep it simple
   # and color each line by its index in col
-  if (hasArg("colorset")){
-    col <- plot.call$colorset
-    if(length(col) == 1) 
-      col <- rep(col, NCOL(x))
-  }
-  if(length(col) == 1) 
-    col <- rep(col, NCOL(x))
+  if(hasArg("colorset")) col <- plot.call$colorset
+  if(length(col) < ncol(x)) col <- rep(col, length.out = ncol(x))
   cs$Env$theme$col <- col
   
   cs$Env$theme$rylab <- yaxis.right
@@ -298,8 +294,8 @@ plot.xts <- function(x,
   
   # if lty or lwd has a length of 1, replicate to NCOL(x) so we can keep it 
   # simple and draw each line with attributes by index
-  if(length(lty) == 1) lty <- rep(lty, NCOL(x))
-  if(length(lwd) == 1) lwd <- rep(lwd, NCOL(x))
+  if(length(lty) < ncol(x)) lty <- rep(lty, length.out = ncol(x))
+  if(length(lwd) < ncol(x)) lwd <- rep(lwd, length.out = ncol(x))
   cs$Env$lty <- lty
   cs$Env$lwd <- lwd
   
