@@ -737,27 +737,27 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
 
 # Add time series of lines to an existing xts plot
 # author: Ross Bennett
-lines.xts <- function(x, ..., main="", on="current", col=NULL, type="l", lty=1, lwd=1, pch=0){
+lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, pch=0){
   if(!is.na(on[1]))
-    if(on[1] == "current") on <- current_panel()
+    if(on[1] == 0) on[1] <- current_panel()
   
   addSeries(x, ...=..., main=main, on=on, type=type, col=col, lty=lty, lwd=lwd, pch=pch)
 }
 
 # Add time series of points to an existing xts plot
 # author: Ross Bennett
-points.xts <- function(x, ..., main="", on="current", col=NULL, pch=0){
+points.xts <- function(x, ..., main="", on=0, col=NULL, pch=0){
   if(!is.na(on[1]))
-    if(on[1] == "current") on <- current_panel()
+    if(on[1] == 0) on[1] <- current_panel()
   
   addSeries(x, ...=..., main=main, on=on, type="p", col=col, pch=pch)
 }
 
 # Add vertical lines to an existing xts plot
 # author: Ross Bennett
-addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d", main="", on="current", lty=1, lwd=1, col=1, ...){
+addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d", main="", on=0, lty=1, lwd=1, col=1, ...){
   if(!is.na(on[1]))
-    if(on[1] == "current") on <- current_panel()
+    if(on[1] == 0) on[1] <- current_panel()
   
   # add checks for event.dates and event.labels
   if(!is.null(event.labels))
@@ -902,9 +902,9 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
 
 # Add legend to an existing xts plot
 # author: Ross Bennett
-addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, on="current", ...){
+addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, on=0, ...){
   if(!is.na(on[1]))
-    if(on[1] == "current") on <- current_panel()
+    if(on[1] == 0) on[1] <- current_panel()
   
   lenv <- new.env()
   lenv$plot_legend <- function(x, legend.loc, legend.names, col, ncol, on, ...){
