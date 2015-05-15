@@ -87,7 +87,7 @@ function(x, retclass=NULL, length.out=NULL) {
 
   convert.to <- 'Date'
   if(max.resolution == 2 || resolution == 'month' ) convert.to <- 'yearmon'
-  if(max.resolution >  3 || resolution %in% c("H","M","S")) convert.to <- 'POSIXct'
+  if(max.resolution >  3 || resolution %in% c("hour","mins","secs")) convert.to <- 'POSIXct'
 
  
   if(is.na(to) && missing(length.out))
