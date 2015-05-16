@@ -902,7 +902,7 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
 
 # Add legend to an existing xts plot
 # author: Ross Bennett
-addLegend <- function(legend.loc="center", legend.names=NULL, col=NULL, ncol=1, on=0, ...){
+addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1, on=0, ...){
   if(!is.na(on[1]))
     if(on[1] == 0) on[1] <- current_panel()
   
