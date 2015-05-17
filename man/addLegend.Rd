@@ -2,7 +2,7 @@
 \alias{addLegend}
 \title{Add Legend}
 \usage{
-addLegend(legend.loc = "center", legend.names = NULL, col = NULL,
+addLegend(legend.loc = "topright", legend.names = NULL, col = NULL,
   ncol = 1, on = 0, ...)
 }
 \arguments{
