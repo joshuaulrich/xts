@@ -70,11 +70,12 @@ check.TZ <- function(x, ...)
     return()
   STZ <- as.character(Sys.getenv("TZ"))
   if(any(indexClass(x) %in% .classesWithoutTZ)) {
-    # warn if indexTZ is not UTC
-    if (indexTZ(x) != "UTC")
+    # warn if indexTZ is not UTC or GMT (GMT is not technically correct, since
+    # it *is* a timezone, but it should work for all practical purposes)
+    if (!(indexTZ(x) %in% c("UTC","GMT")))
       warning(paste0("index class is ", paste(class(index(x)), collapse=", "),
         ", which does not support timezones.\nExpected 'UTC' timezone",
-        ", but indexTZ is ", indexTZ(x)), call.=FALSE)
+        ", but indexTZ is ", ifelse(indexTZ(x)=="", "''", indexTZ(x))), call.=FALSE)
     else
       return()
   }
