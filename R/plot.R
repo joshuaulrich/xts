@@ -907,7 +907,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     if(on[1] == 0) on[1] <- current_panel()
   
   lenv <- new.env()
-  lenv$plot_legend <- function(x, legend.loc, legend.names, col, ncol, on, ...){
+  lenv$plot_legend <- function(x, legend.loc, legend.names, col, ncol, on, bty, text.col, ...){
     if(is.na(on[1])){
       yrange <- c(0, 1)
     } else {
@@ -924,9 +924,15 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     if(is.null(legend.names)){
       legend.names <- x$Env$column_names
     }
+    if(missing(bty)){
+      bty <- "n"
+    }
+    if(missing(text.col)){
+      text.col <- x$Env$theme$labels
+    }
     lc <- legend.coords(legend.loc, x$Env$xlim, yrange)
     legend(x=lc$x, y=lc$y, legend=legend.names, xjust=lc$xjust, yjust=lc$yjust,
-           ncol=ncol, col=col, bty="n", text.col=x$Env$theme$labels, ...)
+           ncol=ncol, col=col, bty=bty, text.col=text.col, ...)
   }
   
   # store the call
