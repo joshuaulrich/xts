@@ -131,9 +131,11 @@ function (year = 1970,
             !year%%100 %in% 0) | (year%%400 %in% 0)), 29, 28), 
             mon.lengths[month])
     }
-    if (length(c(year, month, day, hour, min, sec)) == 6 && c(year, 
-        month, day, hour, min, sec) == c(1969, 12, 31, 23, 59, 
-        59) && Sys.getenv("TZ") %in% c("", "GMT", "UTC")) 
+    # strptime has an issue (bug?) which returns NA when passed
+    # 1969-12-31-23-59-59; pass 58.9 secs instead.
+    if (length(c(year, month, day, hour, min, sec)) == 6 &&
+        all(c(year, month, day, hour, min, sec) == c(1969, 12, 31, 23, 59, 59)) &&
+        Sys.getenv("TZ") %in% c("", "GMT", "UTC"))
         sec <- sec-1
     ISOdatetime(year, month, day, hour, min, sec, tz)
 }
