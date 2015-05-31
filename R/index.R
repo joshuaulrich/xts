@@ -38,30 +38,31 @@ function(x, ...) {
 
   if(!is.list(value)) 
     value <- as.list(value)
-  if(!value[[1]] %in% c('multitime','dates','chron',
-                        'POSIXt','POSIXlt','POSIXct',
-                        'Date','timeDate',
-                        'yearmon','yearqtr') ) {
-       stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
-  }
-  if(value[[1]]=='timeDate') {
-    if(!requireNamespace("timeDate", quietly=TRUE))
-      stop("package:",dQuote("timeDate"),"cannot be loaded.")
-    x.index <- do.call(paste('as',value[[1]],sep='.'),list(x.index))
-  } 
-  else if(value[[1]] %in% c('chron','dates','POSIXt','POSIXct','POSIXlt','yearmon','yearqtr')) {
-    if('POSIXt' %in% value[[1]]) value[[1]] <- value[[2]] # get specific ct/lt value
-    if(value[[1]] %in% c('dates','chron')) {
+
+  switch(value[[1]],
+    multitime = as.Date(as.character(x.index)),
+    POSIXt = {
+      # get specific ct/lt value
+      do.call(paste('as',value[[2]],sep='.'),list(x.index))
+    },
+    POSIXct = as.POSIXct(x.index),
+    POSIXlt = as.POSIXlt(x.index),
+    timeDate = {
+      if(!requireNamespace("timeDate", quietly=TRUE))
+          stop("package:",dQuote("timeDate"),"cannot be loaded.")
+      timeDate::as.timeDate(x.index)
+    },
+    chron = ,
+    dates = {
       if(!requireNamespace("chron", quietly=TRUE))
         stop("package:",dQuote("chron"),"cannot be loaded.")
-      x.index <- format(x.index)
-      value[[1]] <- 'chron'
-    } 
-    x.index <- do.call(paste('as',value[[1]],sep='.'),list(x.index))
-  } else x.index <- as.Date(as.character(x.index))
-  if(class(x.index)[1] %in% c('chron'))
-    attr(x.index, 'tzone') <- NULL
-  x.index
+      chron::as.chron(format(x.index))
+    },
+    #Date = as.Date(as.character(x.index)),  # handled above
+    yearmon = as.yearmon(x.index),
+    yearqtr = as.yearqtr(x.index),
+    stop(paste('unsupported',sQuote('indexClass'),'indexing type:',value[[1]]))
+  )
 }
 
 `time<-.xts` <- `index<-.xts` <- function(x, value) {
