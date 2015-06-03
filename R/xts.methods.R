@@ -227,7 +227,7 @@ window_bin <- function(x, start, end)
   si <- binsearch(start, idx, TRUE)
   ei <- binsearch(end, idx, FALSE)
   if(si > ei) return(x[NULL,])  # Empty range / no match
-  firstlast = seq.int(si, ei)
+  firstlast <- seq.int(si, ei)
   x[firstlast,]
 }
 
