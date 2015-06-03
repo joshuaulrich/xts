@@ -205,3 +205,96 @@ function(x, i, j, value)
     .Class <- "matrix"
     NextMethod(.Generic)
 }
+
+# window function for xts series, use basic logic for testing
+window_reg <- function(x, start, end)
+{                   
+  idx <- index(x)
+  matches <- (idx >= start & idx <= end)
+  x[matches,]
+}
+
+
+# window function for xts series, use binary search to be faster than base zoo function
+window_bin <- function(x, start, end)
+{
+  # Binary search on start and end
+  # Copied from .subset.xts in xts.methods.R
+  # TODO: .subset.xts should probably call this for range lookup.
+  start <- as.POSIXct(start)
+  end <- as.POSIXct(end)
+  idx <- index(x)
+  si <- binsearch(start, idx, TRUE)
+  ei <- binsearch(end, idx, FALSE)
+  if(si > ei) return(x[NULL,])  # Empty range / no match
+  firstlast = seq.int(si, ei)
+  x[firstlast,]
+}
+
+# Test the above window functions.
+# Not quite sure how unit tests are done in this package.
+test_window <- 
+function()
+{
+  DAY = 24*3600
+  base <- as.POSIXct("2000-12-31")
+  dts <- base + c(1:10, 12:15, 17:20)*DAY
+  x <- xts(1:length(dts), dts)
+  
+  # Range over gap
+  start <- base + 11*DAY
+  end <- base + 16*DAY
+  bin <- window_bin(x, start, end)
+  reg <- window_reg(x, start, end)
+  stopifnot(length(bin) == length(reg))
+  stopifnot(all(bin == reg))
+  
+  # Range over one day
+  start <- base + 12*DAY
+  end <- base + 12*DAY
+  bin <- window_bin(x, start, end)
+  reg <- window_reg(x, start, end)
+  stopifnot(length(bin) == length(reg))
+  stopifnot(all(bin == reg))
+  
+  # Empty Range over one day
+  start <- base + 11*DAY
+  end <- base + 11*DAY
+  bin <- window_bin(x, start, end)
+  reg <- window_reg(x, start, end)
+  stopifnot(length(bin) == length(reg))
+  stopifnot(all(bin == reg))
+  
+  # Range containing all dates
+  start <- base 
+  end <- base + 21*DAY
+  bin <- window_bin(x, start, end)
+  reg <- window_reg(x, start, end)
+  stopifnot(length(bin) == length(reg))
+  stopifnot(all(bin == reg))
+
+  # Range past end
+  start <- base + 16*DAY
+  end <- base + 30*DAY
+  bin <- window_bin(x, start, end)
+  reg <- window_reg(x, start, end)
+  stopifnot(length(bin) == length(reg))
+  stopifnot(all(bin == reg))
+
+  # Range before begin
+  start <- base 
+  end <- base + 3*DAY
+  bin <- window_bin(x, start, end)
+  reg <- window_reg(x, start, end)
+  stopifnot(length(bin) == length(reg))
+  stopifnot(all(bin == reg))
+  
+  # Test performance difference
+  start <- base + 14*DAY
+  end <- base + 14*DAY
+  system.time(replicate(1000, window_bin(x, start, end))) # Binary search is about 2x faster than regular
+  system.time(replicate(1000, window_reg(x, start, end)))  
+}
+
+# Choose binary search for the official window function
+window.xts <- window_bin
