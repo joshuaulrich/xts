@@ -216,23 +216,31 @@ window_reg <- function(x, start, end)
 
 
 # window function for xts series, use binary search to be faster than base zoo function
-window_bin <- function(x, start, end)
+window_bin <- function(x, start = NULL, end = NULL)
 {
   # Binary search on start and end
   # Copied from .subset.xts in xts.methods.R
   # TODO: .subset.xts should probably call this for range lookup.
-  start <- as.POSIXct(start)
-  end <- as.POSIXct(end)
+  if(is.null(start) && is.null(end)) return(x)
   idx <- index(x)
-  si <- binsearch(start, idx, TRUE)
-  ei <- binsearch(end, idx, FALSE)
+  if(is.null(start)) {
+    si <- 1
+  } else {
+    start <- as.POSIXct(start)
+    si <- binsearch(start, idx, TRUE)
+  }
+  if(is.null(end)) {
+    ei <- length(idx)
+  } else {
+    end <- as.POSIXct(end)
+    ei <- binsearch(end, idx, FALSE)
+  }
   if(si > ei) return(x[NULL,])  # Empty range / no match
   firstlast <- seq.int(si, ei)
   x[firstlast,]
 }
 
 # Test the above window functions.
-# Not quite sure how unit tests are done in this package.
 test_window <- 
 function()
 {
@@ -289,11 +297,37 @@ function()
   stopifnot(length(bin) == length(reg))
   stopifnot(all(bin == reg))
   
+  # Test just start, end = NULL
+  start <- base + 13 * DAY
+  end <- base + 30*DAY
+  bin <- window_bin(x, start = start)
+  reg <- window_reg(x, start, end)
+  stopifnot(length(bin) == length(reg))
+  stopifnot(all(bin == reg))
+  
+  # Test just end, start = NULL
+  end <- base + 13 * DAY
+  start <- base
+  bin <- window_bin(x, end = end)
+  reg <- window_reg(x, start, end)
+  stopifnot(length(bin) == length(reg))
+  stopifnot(all(bin == reg))
+  
+  # Test end = NULL, start = NULL
+  start <- base  
+  end <- base + 30*DAY
+  bin <- window_bin(x)
+  reg <- window_reg(x, start, end)
+  stopifnot(length(bin) == length(reg))
+  stopifnot(all(bin == reg))
+  
   # Test performance difference
   start <- base + 14*DAY
   end <- base + 14*DAY
-  system.time(replicate(1000, window_bin(x, start, end))) # Binary search is about 2x faster than regular
-  system.time(replicate(1000, window_reg(x, start, end)))  
+  print("binary search")
+  print(system.time(replicate(1000, window_bin(x, start, end)))) # Binary search is about 2x faster than regular
+  print("regular search")
+  print(system.time(replicate(1000, window_reg(x, start, end)))) 
 }
 
 # Choose binary search for the official window function
