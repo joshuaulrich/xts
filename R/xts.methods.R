@@ -221,19 +221,18 @@ window_bin <- function(x, start = NULL, end = NULL)
 {
   # Binary search on start and end
   # Copied from .subset.xts in xts.methods.R
-  # TODO: .subset.xts should probably call this for range lookup.
   if(is.null(start) && is.null(end)) return(x)
   idx <- index(x)
   if(is.null(start)) {
     si <- 1
   } else {
-    start <- as.POSIXct(start)
+    start <- as.POSIXct(start, tz=indexTZ(x))
     si <- binsearch(start, idx, TRUE)
   }
   if(is.null(end)) {
     ei <- length(idx)
   } else {
-    end <- as.POSIXct(end)
+    end <- as.POSIXct(end, tz=indexTZ(x))
     ei <- binsearch(end, idx, FALSE)
   }
   if(si > ei) return(x[NULL,])  # Empty range / no match
