@@ -4,6 +4,7 @@
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
 #   Contributions from Joshua M. Ulrich
+#   Contributions from Corwin Joy
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
