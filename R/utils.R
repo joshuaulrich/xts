@@ -34,13 +34,17 @@ function(key,  vec, start=TRUE) {
   rec <- NULL
 
   while(hi >= lo) {
-    mid <- round((lo + hi) / 2)
+    # This is a classic pitfall in binary search.
+    # I am concerned that mid can overflow and give the wrong answer.
+    # See: http://en.wikipedia.org/wiki/Binary_search_algorithm#Algorithm
+    # mid <- round((lo + hi) / 2)
+    mid <- round(lo + ((hi - lo) / 2))
     if(mid == 0)
       return(NA)
-    if(mid != 0 && key < vec[mid]) {
+    if(key < vec[mid]) {  # I don't see why we need mid != 0
       hi <- mid - 1
     } else 
-    if(mid != 0 && key > vec[mid]) {
+    if(key > vec[mid]) {
       lo <- mid + 1
     } else {
       found <- TRUE
