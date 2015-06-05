@@ -210,7 +210,7 @@ function(x, i, j, value)
 # window function for xts series, use basic logic for testing
 window_reg <- function(x, start, end)
 {                   
-  idx <- index(x)
+  idx <- .index(x)
   matches <- (idx >= start & idx <= end)
   x[matches,]
 }
@@ -222,7 +222,7 @@ window_bin <- function(x, start = NULL, end = NULL)
   # Binary search on start and end
   # Copied from .subset.xts in xts.methods.R
   if(is.null(start) && is.null(end)) return(x)
-  idx <- index(x)
+  idx <- .index(x)
   if(is.null(start)) {
     si <- 1
   } else {
