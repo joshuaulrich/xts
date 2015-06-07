@@ -364,11 +364,11 @@ plot.xts <- function(x,
   
   cs$set_frame(1,FALSE)
   
-  # compute the x-axis ticks
-  cs$add(expression(atbt <- axTicksByTime2(xdata[xsubset]),
-                    segments(xycoords$x[atbt], #axTicksByTime2(xdata[xsubset]),
+  # compute the x-axis ticks for the grid
+  cs$add(expression(atbt <- axTicksByTime2(xdata[xsubset], ticks.on=grid.ticks.on),
+                    segments(xycoords$x[atbt],
                              get_ylim()[[2]][1],
-                             xycoords$x[atbt], #axTicksByTime2(xdata[xsubset]),
+                             xycoords$x[atbt],
                              get_ylim()[[2]][2], 
                              col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)),
          clip=FALSE,expr=TRUE)
@@ -381,11 +381,11 @@ plot.xts <- function(x,
   cs$add(expression(if(NROW(xdata[xsubset])<400) 
   {axis(1,at=xycoords$x,labels=FALSE,col=theme$grid2,col.axis=theme$grid2,tcl=0.3)}),expr=TRUE)
   
-  # add "month" or "month.abb"
-  cs$add(expression(axt <- axTicksByTime(xdata[xsubset],format.labels=format.labels),
+  # x-axis ticks and labels
+  cs$add(expression(axt <- axTicksByTime(xdata[xsubset], ticks.on=grid.ticks.on, format.labels=format.labels),
                     axis(1,
-                         at=xycoords$x[axt], #axTicksByTime(xdata[xsubset]),
-                         labels=names(axt), #axTicksByTime(xdata[xsubset],format.labels=format.labels)),
+                         at=xycoords$x[axt],
+                         labels=names(axt),
                          las=theme$las, lwd.ticks=1, mgp=c(3,1.5,0), 
                          tcl=-0.4, cex.axis=theme$cex.axis, 
                          col=theme$labels, col.axis=theme$labels)),
@@ -526,10 +526,10 @@ plot.xts <- function(x,
                                      y_grid_lines(ylim), 
                                      col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)),
                  # x-axis grid lines
-                 expression(atbt <- axTicksByTime2(xdata[xsubset]),
-                            segments(xycoords$x[atbt], #axTicksByTime2(xdata[xsubset]),
+                 expression(atbt <- axTicksByTime2(xdata[xsubset], ticks.on=grid.ticks.on),
+                            segments(xycoords$x[atbt],
                                      ylim[1],
-                                     xycoords$x[atbt], #axTicksByTime2(xdata[xsubset]),
+                                     xycoords$x[atbt],
                                      ylim[2], 
                                      col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)))
         if(yaxis.left){
@@ -633,7 +633,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
     if(is.null(col)) col <- x$Env$theme$col
     if(all(is.na(on))){
       # Add x-axis grid lines
-      atbt <- axTicksByTime2(xdata[xsubset])
+      atbt <- axTicksByTime2(xdata[xsubset], ticks.on=x$Env$grid.ticks.on)
       segments(x$Env$xycoords$x[atbt],
                par("usr")[3],
                x$Env$xycoords$x[atbt],
@@ -777,7 +777,7 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
 
     if(all(is.na(on))){
       # Add x-axis grid lines
-      atbt <- axTicksByTime2(xdata[xsubset])
+      atbt <- axTicksByTime2(xdata[xsubset], ticks.on=x$Env$grid.ticks.on)
       segments(x$Env$xycoords$x[atbt],
                par("usr")[3],
                x$Env$xycoords$x[atbt],
