@@ -37,7 +37,7 @@ function(x)
   if(!requireNamespace('fts', quietly=TRUE))
     fts <- function(...) message("package 'fts' is required")
 
-  fts(coredata(x), structure(.index(x), class=c("POSIXt","POSIXct")))
+  fts::fts(coredata(x), structure(.index(x), class=c("POSIXt","POSIXct")))
 }
 
 re.fts <- function(x, ...) 
@@ -45,5 +45,5 @@ re.fts <- function(x, ...)
   if(!requireNamespace('fts', quietly=TRUE))
     fts <- function(...) message("package 'fts' is required")
 
-  fts(coredata(x), structure(.index(x), class=c("POSIXt","POSIXct")))
+  fts::fts(coredata(x), structure(.index(x), class=c("POSIXt","POSIXct")))
 }

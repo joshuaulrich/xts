@@ -29,7 +29,7 @@ function(x,...) {
   indexClass(x) <- "POSIXct"
   xx <- coredata(x)
 #  rownames(xx) <- attr(x,'irts.rownames')
-  irts(index(x),xx)
+  tseries::irts(index(x),xx)
 }
 
 `as.xts.irts` <-

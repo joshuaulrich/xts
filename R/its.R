@@ -24,11 +24,11 @@
 `re.its` <-
 function(x, ...) {
   if(!requireNamespace('its', quietly=TRUE))
-    its <- function(...) message("package 'fts' is required")
+    its <- function(...) message("package 'its' is required")
 
   xx <- coredata(x)
   dates <- index(x)
-  its(xx,dates=dates,...)
+  its::its(xx,dates=dates,...)
 }
 
 `as.xts.its` <-
