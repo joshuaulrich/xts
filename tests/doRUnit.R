@@ -28,8 +28,12 @@ if(require("RUnit", quietly=TRUE)) {
  
   ## Define tests
   testSuite <- defineTestSuite(name=paste(pkg, "unit testing"),
-                                          dirs=path)
-  ## Run
+                               dirs=path)
+                                            
+  # Run one file
+  # runTestFile(paste(path, "/runit.xts.methods.R", sep = ""))
+  
+  ## Run all
   tests <- runTestSuite(testSuite)
  
   ## Default report name

@@ -4,7 +4,7 @@
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
 #   Contributions from Joshua M. Ulrich
-#   Contributions from Corwin Joy
+#   window.xts contributed by Corwin Joy
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -60,19 +60,9 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
         stop('subscript out of bounds')
       #i <- i[-which(i == 0)]
     } else
-    if(inherits(i, "AsIs") && is.character(i)) {
-      i <- MATCH(i, format(index(x)))
-    } else
-    if (timeBased(i)) { # || (inherits(i, "AsIs") && is.character(i))) {
-      if(inherits(i, "POSIXct")) {
-        i <- which(!is.na(match(.index(x), i)))
-      } else if(inherits(i, "Date")) {
-        i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i),tz=indexTZ(x)))))
-      } else {
-        # force all other time classes to be POSIXct
-        i <- which(!is.na(match(.index(x), as.POSIXct(i,tz=indexTZ(x)))))
-      }
-      i[is.na(i)] <- 0
+    if (timeBased(i) || (inherits(i, "AsIs") && is.character(i)) ) {
+      # Fast binary search on set of dates    
+      i <- window_idx(x, index. = i)
     } else 
     if(is.logical(i)) {
       i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]
@@ -95,11 +85,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       for(ii in i) {
         adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[nr], tz=tz)
         if(length(adjusted.times) > 1) {
-          firstlast <- c(seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
-                                 binsearch(adjusted.times$last.time,  .index(x), FALSE))
-                     )
-          if(isOrdered(firstlast, strictly=FALSE)) # fixed non-match within range bug
-            i.tmp <- c(i.tmp, firstlast)
+          i.tmp <- c(i.tmp, index_bsearch(.index(x), adjusted.times$first.time, adjusted.times$last.time))
         }
       }
       i <- i.tmp
@@ -207,128 +193,104 @@ function(x, i, j, value)
     NextMethod(.Generic)
 }
 
-# window function for xts series, use basic logic for testing
-window_reg <- function(x, start, end)
-{                   
-  idx <- .index(x)
-  matches <- (idx >= start & idx <= end)
-  x[matches,]
+# Convert a character or time type to POSIXct for use by subsetting and window
+# We make this an explicit function so that subset and window will convert dates consistently.
+.toPOSIXct <-
+function(i, tz) {
+  if(inherits(i, "POSIXct")) {
+    dts <- i
+  } else if(is.character(i)) {
+    dts <- as.POSIXct(i,tz=tz)
+  } else if (timeBased(i)) { 
+    if(inherits(i, "Date")) {
+      dts <- as.POSIXct(as.character(i),tz=tz)  
+    } else {
+      # force all other time classes to be POSIXct
+      dts <- as.POSIXct(i,tz=tz)
+    }
+  } else {
+    stop("invalid time / time based class")
+  }
+  dts
 }
-
-
-# window function for xts series, use binary search to be faster than base zoo function
-window_bin <- function(x, start = NULL, end = NULL)
+    
+# find the rows of index. where the date is in [start, end].
+# use binary search.
+# convention is that NA start or end returns empty
+index_bsearch <- function(index., start, end)
 {
-  # Binary search on start and end
-  # Copied from .subset.xts in xts.methods.R
-  if(is.null(start) && is.null(end)) return(x)
-  idx <- .index(x)
+  if(!is.null(start) && is.na(start)) return(NULL)
+  if(!is.null(end) && is.na(end)) return(NULL) 
+  
   if(is.null(start)) {
     si <- 1
   } else {
-    start <- as.POSIXct(start, tz=indexTZ(x))
-    si <- binsearch(start, idx, TRUE)
+    si <- binsearch(start, index., TRUE)
   }
   if(is.null(end)) {
-    ei <- length(idx)
+    ei <- length(index.)
   } else {
-    end <- as.POSIXct(end, tz=indexTZ(x))
-    ei <- binsearch(end, idx, FALSE)
+    ei <- binsearch(end, index., FALSE)
   }
-  if(si > ei) return(x[NULL,])  # Empty range / no match
+  if(si > ei) return(NULL)  
   firstlast <- seq.int(si, ei)
-  x[firstlast,]
+  firstlast
 }
 
-# Test the above window functions.
-test_window <- 
-function()
+# window function for xts series
+# return indexes in x matching dates
+window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
 {
-  DAY = 24*3600
-  base <- as.POSIXct("2000-12-31")
-  dts <- base + c(1:10, 12:15, 17:20)*DAY
-  x <- xts(1:length(dts), dts)
+  usr_idx <- FALSE
+  if(is.null(index.)) {
+    index. <- .index(x)
+  } else {
+    # Translate the user index to the xts index 
+    usr_idx <- TRUE
+    idx <- .index(x)
+    index. <- .toPOSIXct(index., indexTZ(x))
+    index. <- index.[!is.na(index.)]
+    # Fast search on index., faster than binsearch if index. is sorted (see findInterval)
+    base_idx <- findInterval(index., idx) 
+    base_idx <- pmax(base_idx, 1)
+    # Only include indexes where we have an exact match in the xts series
+    match <- idx[base_idx] == index.  
+    base_idx <- base_idx[match]
+    index. <- index.[match]
+    if(length(base_idx) < 1) return(x[NULL,]) 
+  }
   
-  # Range over gap
-  start <- base + 11*DAY
-  end <- base + 16*DAY
-  bin <- window_bin(x, start, end)
-  reg <- window_reg(x, start, end)
-  stopifnot(length(bin) == length(reg))
-  stopifnot(all(bin == reg))
+  if(!is.null(start)) {
+    start <- .toPOSIXct(start, indexTZ(x))
+  }
   
-  # Range over one day
-  start <- base + 12*DAY
-  end <- base + 12*DAY
-  bin <- window_bin(x, start, end)
-  reg <- window_reg(x, start, end)
-  stopifnot(length(bin) == length(reg))
-  stopifnot(all(bin == reg))
+  if(!is.null(end)) {
+    end <- .toPOSIXct(end, indexTZ(x))
+  }
   
-  # Empty Range over one day
-  start <- base + 11*DAY
-  end <- base + 11*DAY
-  bin <- window_bin(x, start, end)
-  reg <- window_reg(x, start, end)
-  stopifnot(length(bin) == length(reg))
-  stopifnot(all(bin == reg))
+  firstlast <- index_bsearch(index., start, end)
   
-  # Range containing all dates
-  start <- base 
-  end <- base + 21*DAY
-  bin <- window_bin(x, start, end)
-  reg <- window_reg(x, start, end)
-  stopifnot(length(bin) == length(reg))
-  stopifnot(all(bin == reg))
-
-  # Range past end
-  start <- base + 16*DAY
-  end <- base + 30*DAY
-  bin <- window_bin(x, start, end)
-  reg <- window_reg(x, start, end)
-  stopifnot(length(bin) == length(reg))
-  stopifnot(all(bin == reg))
-
-  # Range before begin
-  start <- base 
-  end <- base + 3*DAY
-  bin <- window_bin(x, start, end)
-  reg <- window_reg(x, start, end)
-  stopifnot(length(bin) == length(reg))
-  stopifnot(all(bin == reg))
+  if(usr_idx && !is.null(firstlast)) {
+    # Translate from user .index to xts index
+    firstlast <- base_idx[firstlast]
+  }
   
-  # Test just start, end = NULL
-  start <- base + 13 * DAY
-  end <- base + 30*DAY
-  bin <- window_bin(x, start = start)
-  reg <- window_reg(x, start, end)
-  stopifnot(length(bin) == length(reg))
-  stopifnot(all(bin == reg))
-  
-  # Test just end, start = NULL
-  end <- base + 13 * DAY
-  start <- base
-  bin <- window_bin(x, end = end)
-  reg <- window_reg(x, start, end)
-  stopifnot(length(bin) == length(reg))
-  stopifnot(all(bin == reg))
-  
-  # Test end = NULL, start = NULL
-  start <- base  
-  end <- base + 30*DAY
-  bin <- window_bin(x)
-  reg <- window_reg(x, start, end)
-  stopifnot(length(bin) == length(reg))
-  stopifnot(all(bin == reg))
-  
-  # Test performance difference
-  start <- base + 14*DAY
-  end <- base + 14*DAY
-  print("binary search")
-  print(system.time(replicate(1000, window_bin(x, start, end)))) # Binary search is about 2x faster than regular
-  print("regular search")
-  print(system.time(replicate(1000, window_reg(x, start, end)))) 
+  firstlast
 }
 
-# Choose binary search for the official window function
-window.xts <- window_bin
+# window function for xts series, use binary search to be faster than base zoo function
+# index. defaults to the xts time index.  If you use something else, it must conform to the standard for order.by in the xts constructor.
+# that is, index. must be time based,
+window.xts <- function(x, index. = NULL, start = NULL, end = NULL)
+{
+  if(is.null(start) && is.null(end) && is.null(index.)) return(x)
+  
+  firstlast <- window_idx(x, index., start, end) # firstlast may be NULL
+  
+  .Call('_do_subset_xts', 
+     x, as.integer(firstlast),
+     seq.int(1, ncol(x)),
+     drop = FALSE, PACKAGE='xts')
+}
+
+# Unit tests for the above code may be found in runit.xts.methods.R
