@@ -317,8 +317,8 @@ window.xts <- function(x, index. = NULL, start = NULL, end = NULL, ...)
 
 # Redeclare the binsearch call in xts::utils.R 
 # Useful for testing the above functions on-the-fly
- binsearch = function(key, vec, start=TRUE) {
-  .Call("binsearch", as.double(key),vec, start, PACKAGE='xts')
- }
+# binsearch = function(key, vec, start=TRUE) {
+#  .Call("binsearch", as.double(key),vec, start, PACKAGE='xts')
+# }
 
 # Unit tests for the above code may be found in runit.xts.methods.R
