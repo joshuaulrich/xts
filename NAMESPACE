@@ -34,7 +34,6 @@ export(isOrdered)
 
 export(.subset.xts)
 export(.subset_xts)
-S3method(window,xts)
 export(window.xts)
 
 # user visible core xts functions

@@ -145,7 +145,24 @@ function()
   reg <- window_dbg(x, index = x.date[c(4, 8, 10)], start = as.Date("2003-01-01"), end = as.Date("2004-01-01"))
   checkIdentical(bin, reg, "Test just index")
   
+  # Test decreasing index
+  bin <- window.xts(x, index = x.date[c(10, 8, 4)])
+  reg <- window_dbg(x, index = x.date[c(10, 8, 4)], start = as.Date("2003-01-01"), end = as.Date("2004-01-01"))
+  checkIdentical(bin, reg, "Test decreasing index")
+  
+  # Test index parameter with repeated dates in xts series
+  idx <- sort(rep(1:5, 5))
+  x <- xts(1:length(idx), as.Date("1999-12-31")+idx)
+  bin <- window.xts(x, index = as.Date("1999-12-31")+c(1,3,5))
+  reg <- window_dbg(x, index = as.Date("1999-12-31")+c(1,3,5), start = as.Date("2000-01-01"), end = as.Date("2000-01-05"))
+  checkIdentical(bin, reg, "Test index parameter with repeated dates in xts series")
+  checkTrue(nrow(bin) == 3*5, "Test index parameter with repeated dates in xts series")
+  
   # Test performance difference
+  DAY = 24*3600
+  base <- as.POSIXct("2000-12-31")
+  dts <- base + c(1:10, 12:15, 17:20)*DAY
+  x <- xts(1:length(dts), dts)
   start <- base + 14*DAY
   end <- base + 14*DAY
   cat("\n")
@@ -171,7 +188,14 @@ function()
   checkIdentical(bin, sub, "Test character")
   
   # Test character vector
-  sub <- .subset.xts(x, c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13"))  # Note that "2001-01-11" is not in the series. Skipped by convention.
+  dts <- c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13") # Note that "2001-01-11" is not in the series. Skipped by convention.
+  sub <- .subset.xts(x, dts)  
+  bin <- window.xts(x, start = "2001-01-10", end = "2001-01-13")
+  checkIdentical(bin, sub, "Test character vector")
+  
+  # Test I() of the same thing
+  dts <- c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13") # Note that "2001-01-11" is not in the series. Skipped by convention.
+  sub <- .subset.xts(x, I(dts))  
   bin <- window.xts(x, start = "2001-01-10", end = "2001-01-13")
   checkIdentical(bin, sub, "Test character vector")
   
@@ -191,6 +215,8 @@ function()
   checkIdentical(bin, sub, "Test Date")
   
   # Test character dates, and single column selection
+  base <- as.POSIXct("2000-12-31")
+  dts <- base + c(1:10, 12:15, 17:20)*DAY
   x <- xts(1:length(dts), dts)
   y <- xts(rep(2, length(dts)), dts)
   z <- xts(rep(3, length(dts)), dts)

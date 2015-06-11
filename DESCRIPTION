@@ -3,6 +3,8 @@ Type: Package
 Title: eXtensible Time Series
 Version: 0.9-8
 Date: 2015-05-15
+Author: Jeffrey Ryan
+Maintainer: Joshua Ulrich <josh.m.ulrich@gmail.com>
 Authors@R: c(
   person(given=c("Jeffrey","A."), family="Ryan", role=c("aut","cph")),
   person(given=c("Joshua","M."), family="Ulrich", role=c("cre","aut"), email="josh.m.ulrich@gmail.com"),

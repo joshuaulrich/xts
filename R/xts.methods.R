@@ -200,7 +200,7 @@ function(i, tz) {
   if(inherits(i, "POSIXct")) {
     dts <- i
   } else if(is.character(i)) {
-    dts <- as.POSIXct(i,tz=tz)
+    dts <- as.POSIXct(as.character(i),tz=tz)  # Need as.character because i could be AsIs from I(dates)
   } else if (timeBased(i)) { 
     if(inherits(i, "Date")) {
       dts <- as.POSIXct(as.character(i),tz=tz)  
@@ -241,15 +241,21 @@ index_bsearch <- function(index., start, end)
 # return indexes in x matching dates
 window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
 {
-  usr_idx <- FALSE
   if(is.null(index.)) {
+    usr_idx <- FALSE
     index. <- .index(x)
   } else {
     # Translate the user index to the xts index 
     usr_idx <- TRUE
     idx <- .index(x)
+    
     index. <- .toPOSIXct(index., indexTZ(x))
     index. <- index.[!is.na(index.)]
+    if(is.unsorted(index.)) {
+      # index. must be sorted for index_bsearch 
+      # N.B!! This forces the returned values to be in ascending time order, regardless of the ordering in index, as is done in subset.xts.
+      index. <- sort(index.)   
+    }
     # Fast search on index., faster than binsearch if index. is sorted (see findInterval)
     base_idx <- findInterval(index., idx) 
     base_idx <- pmax(base_idx, 1)
@@ -272,7 +278,23 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
   
   if(usr_idx && !is.null(firstlast)) {
     # Translate from user .index to xts index
-    firstlast <- base_idx[firstlast]
+    # We get back upper bound of index as per findInterval
+    tmp <- base_idx[firstlast]
+    
+    # Iterate in reverse to grab all matches
+    # We have to do this to handle duplicate dates in the xts index.
+    tmp <- rev(tmp)
+    res <- NULL
+    for(i in tmp) {
+      dt <- idx[i]
+      j <- i
+      repeat {
+        res <- c(res, j)
+        j <- j -1
+        if(j < 1 || idx[j] != dt) break      
+      }
+    }    
+    firstlast <- rev(res)
   }
   
   firstlast
@@ -281,7 +303,7 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
 # window function for xts series, use binary search to be faster than base zoo function
 # index. defaults to the xts time index.  If you use something else, it must conform to the standard for order.by in the xts constructor.
 # that is, index. must be time based,
-window.xts <- function(x, index. = NULL, start = NULL, end = NULL)
+window.xts <- function(x, index. = NULL, start = NULL, end = NULL, ...)
 {
   if(is.null(start) && is.null(end) && is.null(index.)) return(x)
   
@@ -292,5 +314,11 @@ window.xts <- function(x, index. = NULL, start = NULL, end = NULL)
      seq.int(1, ncol(x)),
      drop = FALSE, PACKAGE='xts')
 }
+
+# Redeclare the binsearch call in xts::utils.R 
+# Useful for testing the above functions on-the-fly
+ binsearch = function(key, vec, start=TRUE) {
+  .Call("binsearch", as.double(key),vec, start, PACKAGE='xts')
+ }
 
 # Unit tests for the above code may be found in runit.xts.methods.R
