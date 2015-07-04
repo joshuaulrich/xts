@@ -172,6 +172,8 @@ plot.xts <- function(x,
                      yaxis.same=TRUE,
                      yaxis.left=TRUE,
                      yaxis.right=TRUE,
+                     major.ticks="months",
+                     minor.ticks=NULL,
                      grid.ticks.on="months",
                      grid.ticks.lwd=1,
                      grid.ticks.lty=1,
@@ -231,6 +233,8 @@ plot.xts <- function(x,
                     yaxis.same=yaxis.same,
                     yaxis.left=yaxis.left,
                     yaxis.right=yaxis.right,
+                    major.ticks=major.ticks,
+                    minor.ticks=minor.ticks,
                     grid.ticks.on=grid.ticks.on,
                     grid.ticks.lwd=grid.ticks.lwd,
                     grid.ticks.lty=grid.ticks.lty,
@@ -247,12 +251,13 @@ plot.xts <- function(x,
   }
   
   cs <- new.replot_xts()
-  if(is.null(grid.ticks.on)) {
+  # major.ticks shouldn't be null so we'll set major.ticks here if it is null
+  if(is.null(major.ticks)) {
     xs <- x[subset]
-    major.grid <- c(years=nyears(xs),
+    mt <- c(years=nyears(xs),
                     months=nmonths(xs),
                     days=ndays(xs))
-    grid.ticks.on <- names(major.grid)[rev(which(major.grid < 30))[1]]
+    major.ticks <- names(mt)[rev(which(mt < 30))[1]]
   }
 
   # add theme and charting parameters to Env
@@ -287,6 +292,8 @@ plot.xts <- function(x,
   cs$Env$theme$las <- if (hasArg("las")) plot.call$las else 0
   cs$Env$theme$cex.axis <- if (hasArg("cex.axis")) plot.call$cex.axis else 0.9
   cs$Env$format.labels <- format.labels
+  cs$Env$major.ticks <- major.ticks
+  cs$Env$minor.ticks <- minor.ticks
   cs$Env$grid.ticks.on <- grid.ticks.on
   cs$Env$grid.ticks.lwd <- grid.ticks.lwd
   cs$Env$grid.ticks.lty <- grid.ticks.lty
@@ -381,8 +388,8 @@ plot.xts <- function(x,
   cs$add(expression(if(NROW(xdata[xsubset])<400) 
   {axis(1,at=xycoords$x,labels=FALSE,col=theme$grid2,col.axis=theme$grid2,tcl=0.3)}),expr=TRUE)
   
-  # x-axis ticks and labels
-  cs$add(expression(axt <- axTicksByTime(xdata[xsubset], ticks.on=grid.ticks.on, format.labels=format.labels),
+  # major x-axis ticks and labels
+  cs$add(expression(axt <- axTicksByTime(xdata[xsubset], ticks.on=major.ticks, format.labels=format.labels),
                     axis(1,
                          at=xycoords$x[axt],
                          labels=names(axt),
@@ -390,6 +397,18 @@ plot.xts <- function(x,
                          tcl=-0.4, cex.axis=theme$cex.axis, 
                          col=theme$labels, col.axis=theme$labels)),
          expr=TRUE)
+  
+  # minor x-axis ticks
+  if(!is.null(minor.ticks)){
+    cs$add(expression(axt <- axTicksByTime(xdata[xsubset], ticks.on=minor.ticks, format.labels=format.labels),
+                      axis(1,
+                           at=xycoords$x[axt],
+                           labels=FALSE,
+                           las=theme$las, lwd.ticks=1, mgp=c(3,1.5,0),
+                           tcl=-0.4, cex.axis=theme$cex.axis,
+                           col=theme$labels, col.axis=theme$labels)),
+           expr=TRUE)
+  }
   
   # add main title and date range of data
   text.exp <- c(expression(text(xlim[1],0.5,main,font=2,col=theme$labels,offset=0,cex=1.1,pos=4)),
