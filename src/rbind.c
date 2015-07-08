@@ -508,9 +508,10 @@ return(result);
 // SEXP rbindXts ( .External("rbindXts", ...) ) {{{
 SEXP rbindXts (SEXP args)
 {
-  SEXP _x, _y;
+  SEXP _x;
   SEXP dup;
   int P=0;
+  PROTECT_INDEX ipx;
 
   args = CDR(args); // 'rbindXts' call name
   PROTECT(dup = CAR(args)); P++;
@@ -524,12 +525,10 @@ SEXP rbindXts (SEXP args)
     return(_x);
   }
 
-  PROTECT(_y = CAR(args)); P++;
+  PROTECT_WITH_INDEX(_x = do_rbind_xts(_x, CAR(args), dup), &ipx); P++;
   args = CDR(args);
-
-  PROTECT(_x = do_rbind_xts(_x, _y, dup)); P++;
   while(args != R_NilValue) {
-    PROTECT(_x = do_rbind_xts(_x, CAR(args), dup)); P++;
+    REPROTECT(_x = do_rbind_xts(_x, CAR(args), dup), ipx);
     args = CDR(args);
   }
 
