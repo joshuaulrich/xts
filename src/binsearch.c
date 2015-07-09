@@ -6,38 +6,38 @@
 
 /* Find the smallest index for which A[index] >= key */
 int lower_bound(double key, double *A, int len_A) {
-	int mid;
-	int lo = 0;
-	int hi = len_A-1;
-	while (lo < hi) {
-		mid = lo + (hi - lo) / 2;
-		if (A[mid] >= key) {
-			hi = mid;
-		} 
-		else {
-			lo = mid + 1;
-		}
-	}
+  int mid;
+  int lo = 0;
+  int hi = len_A-1;
+  while (lo < hi) {
+    mid = lo + (hi - lo) / 2;
+    if (A[mid] >= key) {
+      hi = mid;
+    } 
+    else {
+      lo = mid + 1;
+    }
+  }
 
-	return lo; // lo is the least x for which A[x] >= key is true
+  return lo; // lo is the least x for which A[x] >= key is true
 }
 
 /* Find the smallest index for which A[index] > key */
 int upper_bound(double key, double *A, int len_A) {
-	int mid;
-	int lo = 0;
-	int hi = len_A - 1;
-	while (lo < hi) {
-		mid = lo + (hi - lo) / 2;
-		if (A[mid] > key) {
-			hi = mid;
-		}
-		else {
-			lo = mid + 1;
-		}
-	}
+  int mid;
+  int lo = 0;
+  int hi = len_A - 1;
+  while (lo < hi) {
+    mid = lo + (hi - lo) / 2;
+    if (A[mid] > key) {
+      hi = mid;
+    }
+    else {
+      lo = mid + 1;
+    }
+  }
 
-	return lo; // lo is the least x for which A[x] > key is true
+  return lo; // lo is the least x for which A[x] > key is true
 }
 
 /* bound the key in the array of vals.
@@ -45,16 +45,16 @@ int upper_bound(double key, double *A, int len_A) {
    if start == false, return highest index s.t. vals[index] <= key
 */
 int bound(double key, double *vals, int len_vals, int start) {
-	int item; 
-	if (start) {
-		item = lower_bound(key, vals, len_vals);
-	}
-	else {
-		item = upper_bound(key, vals, len_vals);
+  int item; 
+  if (start) {
+    item = lower_bound(key, vals, len_vals);
+  }
+  else {
+    item = upper_bound(key, vals, len_vals);
     /* if handles edge cases. item may be at the lo/hi end of array */
-		if (item > 0 && vals[item] > key) --item;
-	}
-	return(item);
+    if (item > 0 && vals[item] > key) --item;
+  }
+  return(item);
 }
    
 SEXP binsearch(SEXP key, SEXP vec, SEXP start)
