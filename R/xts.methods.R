@@ -98,10 +98,8 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       i <- sort(i)
     }
     # subset is picky, 0's in the 'i' position cause failures
-    zero.index <- binsearch(0, i, NULL)
-    if(!is.na(zero.index))
-      i <- i[i!=0]  # at least one 0; remove them all
-
+    i <- i[i!=0]
+   
     if(length(i) <= 0 && USE_EXTRACT) 
       USE_EXTRACT <- FALSE
 
@@ -232,7 +230,7 @@ index_bsearch <- function(index., start, end)
   } else {
     ei <- binsearch(end, index., FALSE)
   }
-  if(si > ei) return(NULL)  
+  if(is.na(si) || is.na(ei) || si > ei) return(NULL)  
   firstlast <- seq.int(si, ei)
   firstlast
 }
@@ -315,10 +313,9 @@ window.xts <- function(x, index. = NULL, start = NULL, end = NULL, ...)
      drop = FALSE, PACKAGE='xts')
 }
 
-# Redeclare the binsearch call in xts::utils.R 
-# Useful for testing the above functions on-the-fly
-# binsearch = function(key, vec, start=TRUE) {
-#  .Call("binsearch", as.double(key),vec, start, PACKAGE='xts')
-# }
+# Declare binsearch to call the routine in binsearch.c
+binsearch <- function(key, vec, start=TRUE) {
+  .Call("binsearch", as.double(key), as.double(vec), start, PACKAGE='xts')
+}
 
 # Unit tests for the above code may be found in runit.xts.methods.R
