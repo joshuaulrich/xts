@@ -9,6 +9,7 @@
   dn.col = "red", bg = "#FFFFFF", type = "l", lty = 1, lwd = 2, lend = 1,
   main = deparse(substitute(x)), observation.based = FALSE,
   ylim = NULL, yaxis.same = TRUE, yaxis.left = TRUE, yaxis.right = TRUE,
+  major.ticks = "months", minor.ticks = NULL,
   grid.ticks.on = "months", grid.ticks.lwd = 1, grid.ticks.lty = 1,
   grid.col = "darkgray", labels.col = "#333333", format.labels = TRUE,
   grid2 = "#F5F5F5", legend.loc = NULL)
@@ -61,7 +62,11 @@ separate panel.}
 
 \item{yaxis.right}{if TRUE, draws the y axis on the right}
 
-\item{grid.ticks.on}{period to draw the grid ticks on}
+\item{major.ticks}{period to draw the ticks and labels on the x-axis}
+
+\item{minor.ticks}{period to draw minor ticks on the x-axis. If \code{NULL}, minor ticks are not drawn.}
+
+\item{grid.ticks.on}{period to draw the vertical grid lines on}
 
 \item{grid.ticks.lwd}{line width of the grid}
 
