@@ -1,12 +1,44 @@
-# load fortran symbol table
+# load symbol table
 useDynLib(xts)
 
-# imports
-importFrom(stats, lag)
-importFrom(stats, as.ts)
-importFrom(zoo,zoo)
-importFrom(zoo,MATCH)
+# non-base package imports
+importFrom(stats,
+  lag,
+  time,
+  sd,
+  median,
+  na.omit,
+  na.action,
+  na.pass,
+  start,
+  end,
+  ts,
+  as.ts,
+  frequency,
+  tsp,
+  'tsp<-')
 
+importFrom(methods,
+  hasArg)
+
+importFrom(grDevices,
+  xy.coords)
+
+importFrom(graphics,
+  abline,
+  legend,
+  lines,
+  par,
+  plot,
+  plot.new,
+  polygon,
+  segments,
+  text)
+
+importFrom(utils,
+  str)
+
+# xts exports
 export(.parseISO8601)
 
 export(firstof,
@@ -173,9 +205,8 @@ importFrom(zoo, na.fill)
 importFrom(zoo, as.yearmon)
 importFrom(zoo, as.yearqtr)
 importFrom(zoo, is.regular)
-importFrom(stats,na.omit)
-importFrom(stats,start)
-importFrom(stats,end)
+importFrom(zoo, zoo)
+importFrom(zoo, MATCH)
 S3method(coredata,xts)
 S3method(xcoredata,default)
 S3method('xcoredata<-',default)
