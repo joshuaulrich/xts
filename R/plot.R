@@ -87,8 +87,9 @@ chart.lines <- function(x,
                         dn.col=NULL,
                         legend.loc=NULL,
                         ...){
-  if(is.null(up.col)) up.col <- "green"
-  if(is.null(dn.col)) dn.col <- "red"
+  if(is.null(up.col)) up.col <- "yellow"
+  if(is.null(dn.col)) dn.col <- "light blue"
+  if(is.null(color.vol)) color.vol <- FALSE
   xx <- current.xts_chob()
   switch(type,
          h={
