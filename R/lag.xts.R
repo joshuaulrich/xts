@@ -92,7 +92,7 @@ lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
 diff.xts <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad=TRUE, ...)
 {
   if(is.logical(x))
-    x <- .xts(matrix(as.integer(x),ncol=NCOL(x)), .index(x))
+    x <- .xts(matrix(as.integer(x),ncol=NCOL(x)), .index(x), indexClass(x))
 
   if(lag < 1 || differences < 1)
     stop("'diff.xts' defined only for positive lag and differences arguments")
