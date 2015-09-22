@@ -24,8 +24,9 @@ axTicksByTime2 <- function (x, ticks.on = "auto", k = 1, labels = TRUE,
   if (timeBased(x)) 
     x <- xts(rep(1, length(x)), x)
 
-  tick.opts <- c("years", "months", "weeks", "days")
-  tick.k.opts <- c(1,1,1,1)
+  tick.opts <- c("years", "months", "weeks", "days", "hours", "minutes", 
+                 "seconds", "milliseconds", "microseconds")
+  tick.k.opts <- rep(1, length(tick.opts))
   if (ticks.on %in% tick.opts) {
     cl <- ticks.on[1]
     ck <- k
