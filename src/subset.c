@@ -126,7 +126,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         if(int_sr[i] > nrs || int_sc[j] > ncs)
           error("'i' or 'j' out of range");
         int_nindex[i] = int_oindex[int_sr[i]-1];
-        int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          int_result[i+j*nr] = NA_INTEGER;
+        else
+          int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     } else
     if(TYPEOF(nindex)==REALSXP) {
@@ -134,14 +137,20 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
       real_oindex = REAL(oindex);
       for(i=0; i<nr; i++) {
         real_nindex[i] = real_oindex[int_sr[i]-1];
-        int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          int_result[i+j*nr] = NA_INTEGER;
+        else
+          int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
     copyAttributes(oindex, nindex);
     setAttrib(result, install("index"), nindex);
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
-        int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          int_result[i+j*nr] = NA_INTEGER;
+        else
+          int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
   } else
@@ -160,7 +169,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         if(int_sr[i] > nrs || int_sc[j] > ncs)
           error("'i' or 'j' out of range");
         int_nindex[i] = int_oindex[int_sr[i]-1];
-        int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          int_result[i+j*nr] = NA_INTEGER;
+        else
+          int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     } else
     if(TYPEOF(nindex)==REALSXP) {
@@ -172,7 +184,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         if(int_sr[i] > nrs || int_sc[j] > ncs)
           error("'i' or 'j' out of range");
         real_nindex[i] = real_oindex[int_sr[i]-1];
-        int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          int_result[i+j*nr] = NA_INTEGER;
+        else
+          int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
     copyAttributes(oindex, nindex);
@@ -181,7 +196,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
     /* loop through remaining columns */
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
-        int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          int_result[i+j*nr] = NA_INTEGER;
+        else
+          int_result[i+j*nr] = int_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
   } else
@@ -197,7 +215,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         if(int_sr[i] > nrs || int_sc[j] > ncs)
           error("'i' or 'j' out of range");
         int_nindex[i] = int_oindex[int_sr[i]-1];
-        real_result[i+j*nr] = real_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          real_result[i+j*nr] = NA_REAL;
+        else
+          real_result[i+j*nr] = real_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     } else
     if(TYPEOF(nindex)==REALSXP) {
@@ -209,7 +230,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         if(int_sr[i] > nrs || int_sc[j] > ncs)
           error("'i' or 'j' out of range");
         real_nindex[i] = real_oindex[int_sr[i]-1];
-        real_result[i+j*nr] = real_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          real_result[i+j*nr] = NA_REAL;
+        else
+          real_result[i+j*nr] = real_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
     copyAttributes(oindex, nindex);
@@ -217,7 +241,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
 
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
-        real_result[i+j*nr] = real_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          real_result[i+j*nr] = NA_REAL;
+        else
+          real_result[i+j*nr] = real_x[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
   } else
@@ -235,7 +262,11 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         if(int_sr[i] > nrs || int_sc[j] > ncs)
           error("'i' or 'j' out of range");
         int_nindex[i] = int_oindex[int_sr[i]-1];
-        COMPLEX(result)[i+j*nr] = COMPLEX(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER) {
+          COMPLEX(result)[i+j*nr].r = NA_REAL;
+          COMPLEX(result)[i+j*nr].i = NA_REAL;
+        } else
+          COMPLEX(result)[i+j*nr] = COMPLEX(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     } else
     if(TYPEOF(nindex)==REALSXP) {
@@ -247,7 +278,11 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         if(int_sr[i] > nrs || int_sc[j] > ncs)
           error("'i' or 'j' out of range");
         real_nindex[i] = real_oindex[int_sr[i]-1];
-        COMPLEX(result)[i+j*nr] = COMPLEX(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER) {
+          COMPLEX(result)[i+j*nr].r = NA_REAL;
+          COMPLEX(result)[i+j*nr].i = NA_REAL;
+        } else
+          COMPLEX(result)[i+j*nr] = COMPLEX(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
     copyAttributes(oindex, nindex);
@@ -255,7 +290,11 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
 
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
-        COMPLEX(result)[i+j*nr] = COMPLEX(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER) {
+          COMPLEX(result)[i+j*nr].r = NA_REAL;
+          COMPLEX(result)[i+j*nr].i = NA_REAL;
+        } else
+          COMPLEX(result)[i+j*nr] = COMPLEX(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
   } else
@@ -269,7 +308,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         if(int_sr[i] > nrs || int_sc[j] > ncs)
           error("'i' or 'j' out of range");
         int_nindex[i] = int_oindex[int_sr[i]-1];
-        SET_STRING_ELT(result, i+j*nr, STRING_ELT(x, int_sr[i]-1 + ((int_sc[j]-1) * nrs)));
+        if(int_sc[j] == NA_INTEGER)
+          SET_STRING_ELT(result, i+j*nr, NA_STRING);
+        else
+          SET_STRING_ELT(result, i+j*nr, STRING_ELT(x, int_sr[i]-1 + ((int_sc[j]-1) * nrs)));
       }
     } else
     if(TYPEOF(nindex)==REALSXP) {
@@ -281,7 +323,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         if(int_sr[i] > nrs || int_sc[j] > ncs)
           error("'i' or 'j' out of range");
         real_nindex[i] = real_oindex[int_sr[i]-1];
-        SET_STRING_ELT(result, i+j*nr, STRING_ELT(x, int_sr[i]-1 + ((int_sc[j]-1) * nrs)));
+        if(int_sc[j] == NA_INTEGER)
+          SET_STRING_ELT(result, i+j*nr, NA_STRING);
+        else
+          SET_STRING_ELT(result, i+j*nr, STRING_ELT(x, int_sr[i]-1 + ((int_sc[j]-1) * nrs)));
       }
     }
     copyAttributes(oindex, nindex);
@@ -289,7 +334,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
 
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
-        SET_STRING_ELT(result, i+j*nr, STRING_ELT(x, int_sr[i]-1 + ((int_sc[j]-1) * nrs)));
+        if(int_sc[j] == NA_INTEGER)
+          SET_STRING_ELT(result, i+j*nr, NA_STRING);
+        else
+          SET_STRING_ELT(result, i+j*nr, STRING_ELT(x, int_sr[i]-1 + ((int_sc[j]-1) * nrs)));
       }
     }
   } else
@@ -307,7 +355,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         if(int_sr[i] > nrs || int_sc[j] > ncs)
           error("'i' or 'j' out of range");
         int_nindex[i] = int_oindex[int_sr[i]-1];
-        RAW(result)[i+j*nr] = RAW(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          RAW(result)[i+j*nr] = 0;
+        else
+          RAW(result)[i+j*nr] = RAW(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     } else
     if(TYPEOF(nindex)==REALSXP) {
@@ -319,7 +370,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         if(int_sr[i] > nrs || int_sc[j] > ncs)
           error("'i' or 'j' out of range");
         real_nindex[i] = real_oindex[int_sr[i]-1];
-        RAW(result)[i+j*nr] = RAW(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          RAW(result)[i+j*nr] = 0;
+        else
+          RAW(result)[i+j*nr] = RAW(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
     copyAttributes(oindex, nindex);
@@ -327,7 +381,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
 
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
-        RAW(result)[i+j*nr] = RAW(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
+        if(int_sc[j] == NA_INTEGER)
+          RAW(result)[i+j*nr] = 0;
+        else
+          RAW(result)[i+j*nr] = RAW(x)[int_sr[i]-1 + ((int_sc[j]-1) * nrs)];
       }
     }
   }
