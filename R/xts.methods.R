@@ -172,7 +172,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     j0 <- which(!as.logical(j))
     if(length(j0)) 
       j <- j[-j0]
-    if(length(j) == 0 || (length(j)==1 && j==0)) {
+    if(length(j) == 0 || (length(j)==1 && (is.na(j) || j==0))) {
       if(missing(i))
         i <- seq_len(nr)
       return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i],
