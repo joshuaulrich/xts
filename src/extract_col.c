@@ -17,7 +17,7 @@
 
 SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_) {
   SEXP result, index, new_index;
-  int nrs, nrsx, i, jj, first, last;
+  int nrs, nrsx, i, ii, jj, first, last;
 
   nrsx = nrows(x);
 
@@ -37,43 +37,80 @@ SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_) {
 Rprintf("j + i*nrs + first=%i\n", (int)(INTEGER(j)[i]-1 + i*nrs + first));
 Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
 */
-        memcpy(&(REAL(result)[i*nrs]), 
-               &(REAL(x)[(INTEGER(j)[i]-1)*nrsx + first]), 
-               nrs*sizeof(double));
+        if(INTEGER(j)[i] == NA_INTEGER) {
+          for(ii=0; ii < nrs; ii++) {
+            REAL(result)[(i*nrs) + ii] = NA_REAL;
+          }
+        } else {
+          memcpy(&(REAL(result)[i*nrs]),
+                 &(REAL(x)[(INTEGER(j)[i]-1)*nrsx + first]),
+                 nrs*sizeof(double));
+        }
       }
       break;
     case INTSXP:
       for(i=0; i<length(j); i++) {
-        memcpy(&(INTEGER(result)[i*nrs]), 
-               &(INTEGER(x)[(INTEGER(j)[i]-1)*nrsx + first]), 
-               nrs*sizeof(int));
+        if(INTEGER(j)[i] == NA_INTEGER) {
+          for(ii=0; ii < nrs; ii++) {
+            INTEGER(result)[(i*nrs) + ii] = NA_INTEGER;
+          }
+        } else {
+          memcpy(&(INTEGER(result)[i*nrs]),
+                 &(INTEGER(x)[(INTEGER(j)[i]-1)*nrsx + first]),
+                 nrs*sizeof(int));
+        }
       }
       break;
     case LGLSXP:
       for(i=0; i<length(j); i++) {
-        memcpy(&(LOGICAL(result)[i*nrs]), 
-               &(LOGICAL(x)[(INTEGER(j)[i]-1)*nrsx + first]), 
-               nrs*sizeof(int));
+        if(INTEGER(j)[i] == NA_INTEGER) {
+          for(ii=0; ii < nrs; ii++) {
+            LOGICAL(result)[(i*nrs) + ii] = NA_LOGICAL;
+          }
+        } else {
+          memcpy(&(LOGICAL(result)[i*nrs]),
+                 &(LOGICAL(x)[(INTEGER(j)[i]-1)*nrsx + first]),
+                 nrs*sizeof(int));
+        }
       }
       break;
     case CPLXSXP:
       for(i=0; i<length(j); i++) {
-        memcpy(&(COMPLEX(result)[i*nrs]), 
-               &(COMPLEX(x)[(INTEGER(j)[i]-1)*nrsx + first]), 
-               nrs*sizeof(Rcomplex));
+        if(INTEGER(j)[i] == NA_INTEGER) {
+          for(ii=0; ii < nrs; ii++) {
+            COMPLEX(result)[(i*nrs) + ii].r = NA_REAL;
+            COMPLEX(result)[(i*nrs) + ii].i = NA_REAL;
+          }
+        } else {
+          memcpy(&(COMPLEX(result)[i*nrs]),
+                 &(COMPLEX(x)[(INTEGER(j)[i]-1)*nrsx + first]),
+                 nrs*sizeof(Rcomplex));
+        }
       }
       break;
     case RAWSXP:
       for(i=0; i<length(j); i++) {
-        memcpy(&(RAW(result)[i*nrs]), 
-               &(RAW(x)[(INTEGER(j)[i]-1)*nrsx + first]), 
-               nrs*sizeof(Rbyte));
+        if(INTEGER(j)[i] == NA_INTEGER) {
+          for(ii=0; ii < nrs; ii++) {
+            RAW(result)[(i*nrs) + ii] = 0;
+          }
+        } else {
+          memcpy(&(RAW(result)[i*nrs]),
+                 &(RAW(x)[(INTEGER(j)[i]-1)*nrsx + first]),
+                 nrs*sizeof(Rbyte));
+        }
       }
       break;
     case STRSXP:
-      for(jj=0; jj<length(j); jj++)
-      for(i=0; i< nrs; i++)
-        SET_STRING_ELT(result, i+jj*nrs, STRING_ELT(x, i+(INTEGER(j)[jj]-1)*nrsx+first));
+      for(jj=0; jj<length(j); jj++) {
+        if(INTEGER(j)[jj] == NA_INTEGER) {
+          for(i=0; i< nrs; i++)
+            SET_STRING_ELT(result, i+jj*nrs, NA_STRING);
+        } else {
+          for(i=0; i< nrs; i++)
+            SET_STRING_ELT(result, i+jj*nrs, STRING_ELT(x, i+(INTEGER(j)[jj]-1)*nrsx+first));
+        }
+      }
       break;
     default:
       error("unsupported type");
