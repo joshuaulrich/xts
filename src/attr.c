@@ -70,8 +70,9 @@ SEXP do_xtsAttributes(SEXP x)
     return R_NilValue;
   }
 
-  SET_LENGTH(values, i); /* truncate list back to i-size */
-  SET_LENGTH(names,  i);
+  /* truncate list back to i-size */
+  PROTECT(values = lengthgets(values, i)); P++;
+  PROTECT(names = lengthgets(names, i)); P++;
   setAttrib(values, R_NamesSymbol, names);
   UNPROTECT(P);
   return values;
@@ -111,8 +112,9 @@ SEXP do_xtsCoreAttributes(SEXP x)
     return R_NilValue;
   }
 
-  SET_LENGTH(values, i); /* truncate list back to i-size */
-  SET_LENGTH(names,  i);
+  /* truncate list back to i-size */
+  PROTECT(values = lengthgets(values, i)); P++;
+  PROTECT(names = lengthgets(names, i)); P++;
   setAttrib(values, R_NamesSymbol, names);
   UNPROTECT(P);
   return values;
