@@ -213,7 +213,7 @@ return(result);
       xp++;
     } else
     if( real_xindex[ xp-1 ] == real_yindex[ yp-1 ] ) {
-      if( real_xindex[ xp-1 ] < real_xindex[ xp   ] )
+      if( xp < nrx && real_xindex[ xp-1 ] < real_xindex[ xp   ] )
         add_y = 1;  /* add y values only if next xindex is new */
       if(no_duplicate) {
         add_y = 0;
@@ -380,7 +380,7 @@ return(result);
       xp++;
     } else
     if( int_xindex[ xp-1 ] == int_yindex[ yp-1 ] ) {
-      if( int_xindex[ xp-1 ] < int_xindex[ xp  ] )
+      if( xp < nrx && int_xindex[ xp-1 ] < int_xindex[ xp   ] )
         add_y = 1;
       if(no_duplicate) {
         add_y = 0;
