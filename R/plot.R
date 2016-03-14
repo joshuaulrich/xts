@@ -1029,6 +1029,125 @@ legend.coords <- function(legend.loc, xrange, yrange) {
   )
 }
 
+# Add a polygon to an existing xts plot
+# author: Ross Bennett
+addPolygon <- function(x, main="", on=NA, col=NULL, ...){
+  # add polygon to xts plot based on http://dirk.eddelbuettel.com/blog/2011/01/16/
+  lenv <- new.env()
+  lenv$main <- main
+  lenv$plot_lines <- function(x, ta, on, col, ...){
+    xdata <- x$Env$xdata
+    xsubset <- x$Env$xsubset
+    if(is.null(col)) col <- x$Env$theme$col
+    if(all(is.na(on))){
+      # Add x-axis grid lines
+      atbt <- axTicksByTime2(xdata[xsubset], ticks.on=x$Env$grid.ticks.on)
+      segments(x$Env$xycoords$x[atbt],
+               par("usr")[3],
+               x$Env$xycoords$x[atbt],
+               par("usr")[4],
+               col=x$Env$theme$grid)
+    }
+    # we can add points that are not necessarily at the points
+    # on the main series
+    subset.range <- paste(start(xdata[xsubset]),
+                          end(xdata[xsubset]),sep="/")
+    ta.adj <- merge(n=.xts(1:NROW(xdata[xsubset]),
+                           .index(xdata[xsubset]), 
+                           tzone=indexTZ(xdata)),ta)[subset.range]
+    ta.x <- as.numeric(na.approx(ta.adj[,1], rule=2) )
+    ta.y <- ta.adj[,-1]
+    
+    n <- NROW(ta)
+    # x coordinates
+    xx <- x$Env$xycoords$x[c(1,1:n,n:1)]
+    # y coordinates upper and lower
+    # FIXME: upper and lower should be arguments
+    # assume first column is upper and second column is lower y coords for
+    # initial prototype
+    yu <- as.vector(coredata(ta.y[,1]))
+    yl <- as.vector(coredata(ta.y[,2]))
+    polygon(x=xx, y=c(yl[1], yu, rev(yl)), border=NA, col=col)
+  }
+  # map all passed args (if any) to 'lenv' environment
+  mapply(function(name,value) { assign(name,value,envir=lenv) }, 
+         names(list(x=x,on=on,col=col,...)),
+         list(x=x,on=on,col=col,...))
+  exp <- parse(text=gsub("list","plot_lines",
+                         as.expression(substitute(list(x=current.xts_chob(),
+                                                       ta=get("x"),
+                                                       on=on,
+                                                       col=col,
+                                                       ...)))),
+               srcfile=NULL)
+  
+  plot_object <- current.xts_chob()
+  ncalls <- length(plot_object$Env$call_list)
+  plot_object$Env$call_list[[ncalls+1]] <- match.call()
+  
+  xdata <- plot_object$Env$xdata
+  xsubset <- plot_object$Env$xsubset
+  no.update <- FALSE
+  lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
+  if(hasArg("ylim")) {
+    ylim <- lenv$ylim  # lenv$ylim assigned via mapply above
+  } else {
+    ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
+    lenv$ylim <- ylim
+  }
+  
+  if(is.na(on[1])){
+    plot_object$add_frame(ylim=c(0,1),asp=0.25)
+    plot_object$next_frame()
+    text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
+                                col=1,adj=c(0,0),cex=0.9,offset=0,pos=4))
+    plot_object$add(text.exp, env=c(lenv,plot_object$Env), expr=TRUE)
+    
+    # add frame for the data
+    plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
+    plot_object$next_frame()
+    
+    # define function to plot the y-axis grid lines
+    lenv$y_grid_lines <- function(ylim) { 
+      p <- pretty(ylim,5)
+      p[p > ylim[1] & p < ylim[2]]
+    }
+    
+    # NOTE 'exp' was defined earlier as plot_lines
+    exp <- c(exp, 
+             # y-axis grid lines
+             expression(segments(xlim[1],
+                                 y_grid_lines(ylim),
+                                 xlim[2], 
+                                 y_grid_lines(ylim), 
+                                 col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)))
+    if(plot_object$Env$theme$lylab){
+      exp <- c(exp, 
+               # y-axis labels/boxes
+               expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim))), 
+                               y_grid_lines(ylim),
+                               noquote(format(y_grid_lines(ylim),justify="right")),
+                               col=theme$labels, srt=theme$srt, offset=0, 
+                               pos=4, cex=theme$cex.axis, xpd=TRUE)))
+    }
+    if(plot_object$Env$theme$rylab){
+      exp <- c(exp, 
+               expression(text(xlim[2]+xstep*2/3, 
+                               y_grid_lines(ylim),
+                               noquote(format(y_grid_lines(ylim),justify="right")),
+                               col=theme$labels, srt=theme$srt, offset=0,
+                               pos=4, cex=theme$cex.axis, xpd=TRUE)))
+    }
+    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
+  } else {
+    for(i in 1:length(on)) {
+      plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
+      plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=no.update)
+    }
+  }
+  plot_object
+}# polygon
+
 
 # R/replot.R in quantmod with only minor edits to change class name to
 # replot_xts and use the .plotxtsEnv instead of the .plotEnv in quantmod
