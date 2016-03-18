@@ -1031,8 +1031,14 @@ legend.coords <- function(legend.loc, xrange, yrange) {
 
 # Add a polygon to an existing xts plot
 # author: Ross Bennett
-addPolygon <- function(x, main="", on=NA, col=NULL, ...){
+addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   # add polygon to xts plot based on http://dirk.eddelbuettel.com/blog/2011/01/16/
+  
+  # some simple checks
+  x <- try.xts(x)
+  if(!is.null(y)) stop("y is not null")
+  if(ncol(x) > 2) warning("more than 2 columns detected in x, only the first 2 will be used")
+  
   lenv <- new.env()
   lenv$main <- main
   lenv$plot_lines <- function(x, ta, on, col, ...){
@@ -1056,18 +1062,18 @@ addPolygon <- function(x, main="", on=NA, col=NULL, ...){
                            .index(xdata[xsubset]), 
                            tzone=indexTZ(xdata)),ta)[subset.range]
     ta.x <- as.numeric(na.approx(ta.adj[,1], rule=2) )
-    ta.y <- ta.adj[,-1]
+    # NAs in the coordinates break the polygon which is not the behavior we want
+    ta.y <- na.omit(ta.adj[,-1])
     
-    n <- NROW(ta)
+    n <- NROW(ta.y)
     # x coordinates
-    xx <- x$Env$xycoords$x[c(1,1:n,n:1)]
+    xx <- .index(ta.y)[c(1,1:n,n:1)]
     # y coordinates upper and lower
-    # FIXME: upper and lower should be arguments
     # assume first column is upper and second column is lower y coords for
     # initial prototype
     yu <- as.vector(coredata(ta.y[,1]))
     yl <- as.vector(coredata(ta.y[,2]))
-    polygon(x=xx, y=c(yl[1], yu, rev(yl)), border=NA, col=col)
+    polygon(x=xx, y=c(yl[1], yu, rev(yl)), border=NA, col=col, ...)
   }
   # map all passed args (if any) to 'lenv' environment
   mapply(function(name,value) { assign(name,value,envir=lenv) }, 
