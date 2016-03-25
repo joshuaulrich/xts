@@ -2,21 +2,11 @@
 \alias{addEventLines}
 \title{Add vertical lines to an existing xts plot}
 \usage{
-addEventLines(event.dates, event.labels = NULL, date.format = "\%Y-\%m-\%d",
-  main = "", on = 0, lty = 1, lwd = 1, col = 1, ...)
+addEventLines(events, main = "", on = 0, lty = 1, lwd = 1, col = 1, ...)
 }
 \arguments{
-\item{event.dates}{character vector of dates. Vertical lines will be drawn
-to indicate that an event happened during that time period.  \code{event.lines} should
-be a vector of dates (e.g., \code{c("09/03","05/06"))} formatted the same as
-\code{date.format}. This function matches the re-formatted row names (dates) with
-the events.list, so to get a match the formatting needs to be correct.}
-
-\item{event.labels}{character vector of event labels corresponding to
-\code{event.dates}. This will apply text labels (e.g.,
-\code{c("This Event", "That Event")} to the vertical lines drawn.}
-
-\item{date.format}{format for the dates in \code{event.lines}.}
+\item{events}{xts object of events and their associated labels. It is assumed
+that the first column of \code{events} is the event description/label.}
 
 \item{main}{main title for a new panel if drawn.}
 
@@ -36,9 +26,19 @@ add to the last active panel.}
 control how the event labels are drawn}
 }
 \description{
-Add vertical lines to an existing xts plot
+Add vertical lines and labels to an existing xts plot
 }
 \author{
 Ross Bennett
 }
-
+\examples{
+\dontrun{
+library(xts)
+data(sample_matrix)
+sample.xts <- as.xts(sample_matrix)
+events <- xts(letters[1:3], 
+              as.Date(c("2007-01-12", "2007-04-22", "2007-06-13")))
+plot(sample.xts[,4])
+addEventLines(events, srt=90, pos=2)
+}
+}

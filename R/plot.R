@@ -775,23 +775,20 @@ points.xts <- function(x, ..., main="", on=0, col=NULL, pch=0){
 
 # Add vertical lines to an existing xts plot
 # author: Ross Bennett
-addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d", main="", on=0, lty=1, lwd=1, col=1, ...){
+addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
+  events <- try.xts(events)
   if(!is.na(on[1]))
     if(on[1] == 0) on[1] <- current_panel()
   
-  # add checks for event.dates and event.labels
-  if(!is.null(event.labels))
-    if(length(event.dates) != length(event.labels)) stop("length of event.dates must match length of event.labels")
-  
-  if(length(event.dates) > 1){
-    if(length(lty) == 1) lty <- rep(lty, length(event.dates))
-    if(length(lwd) == 1) lwd <- rep(lwd, length(event.dates))
-    if(length(col) == 1) col <- rep(col, length(event.dates))
+  if(nrow(events) > 1){
+    if(length(lty) == 1) lty <- rep(lty, nrow(events))
+    if(length(lwd) == 1) lwd <- rep(lwd, nrow(events))
+    if(length(col) == 1) col <- rep(col, nrow(events))
   }
   
   lenv <- new.env()
   lenv$main <- main
-  lenv$plot_event_lines <- function(x, event.dates, event.labels, date.format, on, lty, lwd, col, ...){
+  lenv$plot_event_lines <- function(x, events, on, lty, lwd, col, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
 
@@ -805,20 +802,22 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
                col=x$Env$theme$grid)
     }
     ypos <- x$Env$ylim[[2*on]][2]*0.995
-    # create a new xts object out of event.dates
-    event.dates.xts <- xts(rep(999, length(event.dates)), 
-                           order.by=as.POSIXct(event.dates, tz=indexTZ(xdata), format=date.format))
     # we can add points that are not necessarily at the points on the main series
     subset.range <- paste(start(xdata[xsubset]),
                           end(xdata[xsubset]),sep="/")
     ta.adj <- merge(n=.xts(1:NROW(xdata[xsubset]),
                            .index(xdata[xsubset]), 
-                           tzone=indexTZ(xdata)),event.dates.xts)[subset.range]
+                           tzone=indexTZ(xdata)),
+                    .xts(rep(1, NROW(events)),# use numeric for the merge
+                         .index(events)))[subset.range]
+    # should we not merge and only add events that are in index(xdata)?
     ta.x <- as.numeric(na.approx(ta.adj[,1], rule=2) )
     ta.y <- ta.adj[,-1]
-    event.ind <- which(ta.y == 999)
+    # the merge should result in NAs for any object that is not in events
+    event.ind <- which(!is.na(ta.y))
     abline(v=x$Env$xycoords$x[event.ind], col=col, lty=lty, lwd=lwd)
-    text(x=x$Env$xycoords$x[event.ind], y=ypos, labels=event.labels, 
+    text(x=x$Env$xycoords$x[event.ind], y=ypos, 
+         labels=as.character(events[,1]), 
          col=x$Env$theme$labels, ...)
   }
   
@@ -829,13 +828,11 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
   if(is.na(on[1])){
     # map all passed args (if any) to 'lenv' environment
     mapply(function(name,value) { assign(name,value,envir=lenv) }, 
-           names(list(event.dates=event.dates,event.labels=event.labels,date.format=date.format,on=on,lty=lty,lwd=lwd,col=col,...)),
-           list(event.dates=event.dates,event.labels=event.labels,date.format=date.format,on=on,lty=lty,lwd=lwd,col=col,...))
+           names(list(events=events,on=on,lty=lty,lwd=lwd,col=col,...)),
+           list(events=events,on=on,lty=lty,lwd=lwd,col=col,...))
     exp <- parse(text=gsub("list","plot_event_lines",
                            as.expression(substitute(list(x=current.xts_chob(),
-                                                         event.dates=event.dates,
-                                                         event.labels=event.labels,
-                                                         date.format=date.format,
+                                                         events=get("events"),
                                                          on=on,
                                                          lty=lty,
                                                          lwd=lwd,
@@ -899,13 +896,11 @@ addEventLines <- function(event.dates, event.labels=NULL, date.format="%Y-%m-%d"
       no.update <- FALSE
       # map all passed args (if any) to 'lenv' environment
       mapply(function(name,value) { assign(name,value,envir=lenv) }, 
-             names(list(event.dates=event.dates,event.labels=event.labels,date.format=date.format,on=ind,lty=lty,lwd=lwd,col=col,...)),
-             list(event.dates=event.dates,event.labels=event.labels,date.format=date.format,on=ind,lty=lty,lwd=lwd,col=col,...))
+             names(list(events=events,on=ind,lty=lty,lwd=lwd,col=col,...)),
+             list(events=events,on=ind,lty=lty,lwd=lwd,col=col,...))
       exp <- parse(text=gsub("list","plot_event_lines",
                              as.expression(substitute(list(x=current.xts_chob(),
-                                                           event.dates=event.dates,
-                                                           event.labels=event.labels,
-                                                           date.format=date.format,
+                                                           events=get("events"),
                                                            on=ind,
                                                            lty=lty,
                                                            lwd=lwd,
