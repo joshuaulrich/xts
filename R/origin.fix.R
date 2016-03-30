@@ -28,7 +28,7 @@
 }
 
 `as.POSIXct.numeric` <- function(x, tz="", origin='1970-01-01', ...) {
-  structure(x, class=c("POSIXt", "POSIXct"))
+  structure(x, class=c("POSIXct", "POSIXt"))
 }
 
 `as.POSIXlt.numeric` <- function(x, tz="", origin='1970-01-01', ...) {
@@ -56,7 +56,7 @@ as.POSIXlt.Date <- function(x, ...)
 #as.POSIXct.yearmon <- function(x, ...)
 #{
 #  structure(as.POSIXct("1970-01-01") + unclass(as.Date(x))*86400,
-#            class=c("POSIXt","POSIXct"))
+#            class=c("POSIXct","POSIXt"))
 #}
 #
 #as.POSIXlt.yearmon <- function(x, ...)
@@ -68,7 +68,7 @@ as.POSIXct.dates <- function(x, ...)
 {
   # need to implement our own method to correctly handle TZ
   #as.POSIXct(as.character(as.POSIXlt(x,tz="GMT")))
-  structure(as.POSIXct(as.POSIXlt(x, tz="GMT"), tz="GMT"),class=c("POSIXt","POSIXct"))
+  structure(as.POSIXct(as.POSIXlt(x, tz="GMT"), tz="GMT"),class=c("POSIXct","POSIXt"))
 }
 as.chron.POSIXct <- function(x, ...)
 {

@@ -53,7 +53,7 @@ function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,..., .RE
   if(missing(documentation)) 
     documentation <- x@documentation
 
-  indexBy <- structure(x@positions, class=c("POSIXt","POSIXct"), tzone=FinCenter)
+  indexBy <- structure(x@positions, class=c("POSIXct","POSIXt"), tzone=FinCenter)
   order.by <- do.call(paste('as',dateFormat,sep='.'),list(as.character(indexBy)))
 
 

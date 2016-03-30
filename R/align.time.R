@@ -9,7 +9,7 @@ align.time.xts <- function(x, n=60, ...) {
 
 align.time.POSIXct <- function(x, n=60, ...) {
   if(n <= 0) stop("'n' must be positive")
-  structure(unclass(x) + (n - unclass(x) %% n),class=c("POSIXt","POSIXct"))
+  structure(unclass(x) + (n - unclass(x) %% n),class=c("POSIXct","POSIXt"))
 }
 
 align.time.POSIXlt <- function(x, n=60, ...) {

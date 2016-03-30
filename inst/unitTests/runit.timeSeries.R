@@ -48,14 +48,14 @@ test.convert_timeSeries_to_xts_i1j1 <- function() {
 # test 'reclass'
 
 test.timeSeries_reclass <- function() {
-  checkIdentical(sample.timeSeries,reclass(as.xts(sample.timeSeries)))
+  checkIdentical(sample.timeSeries,reclass(try.xts(sample.timeSeries)))
 }
 test.timeSeries_reclass_subset_reclass_j1 <- function() {
-  checkIdentical(sample.timeSeries[,1],reclass(as.xts(sample.timeSeries))[,1])
+  checkIdentical(sample.timeSeries[,1],reclass(try.xts(sample.timeSeries))[,1])
 }
 test.timeSeries_reclass_subset_as.xts_j1 <- function() {
   spl <- sample.timeSeries[,1:2]
-  respl <- reclass(as.xts(sample.timeSeries)[,1:2])
+  respl <- reclass(try.xts(sample.timeSeries)[,1:2])
   # timeSeries fails to maintain @positions correctly if one column is selected
 
   # checkIdentical(spl,respl)
@@ -63,7 +63,7 @@ test.timeSeries_reclass_subset_as.xts_j1 <- function() {
 }
 test.timeSeries_reclass_subset_timeSeries_j1 <- function() {
   spl <- sample.timeSeries[,1:2]
-  respl <- reclass(as.xts(sample.timeSeries[,1:2]))
+  respl <- reclass(try.xts(sample.timeSeries[,1:2]))
   # timeSeries fails to maintain @positions correctly if one column is selected
   
   # checkIdentical(spl,respl)

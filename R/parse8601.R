@@ -115,13 +115,13 @@
  if(!missing(start)) {
    start <- as.numeric(start)
    #s <- as.POSIXlt(structure(max(start, as.numeric(s), na.rm=TRUE),
-   #        class=c("POSIXt","POSIXct"),tz=tz))
+   #        class=c("POSIXct","POSIXt"),tz=tz))
    s <- as.POSIXlt(.POSIXct(max(start, as.numeric(s), na.rm=TRUE),tz=tz))
  }
  if(!missing(end)) {
    end <- as.numeric(end)
    #e <- as.POSIXlt(structure(min(end, as.numeric(e), na.rm=TRUE),
-   #        class=c("POSIXt","POSIXct"),tz=tz))
+   #        class=c("POSIXct","POSIXt"),tz=tz))
    e <- as.POSIXlt(.POSIXct(min(end, as.numeric(e), na.rm=TRUE),tz=tz))
  }
  if(nzchar(DURATION)) {
@@ -143,10 +143,10 @@
 
    if(DURATION_LHS) {
      s <- as.POSIXct(structure(as.list(mapply(`-`,e,parse_duration(DURATION))),
-                    class=c("POSIXt","POSIXlt"), tzone=attr(e,"tzone")))
+                    class=c("POSIXlt","POSIXt"), tzone=attr(e,"tzone")))
    } else {
      e <- as.POSIXct(structure(as.list(mapply(`+`,s,parse_duration(DURATION))),
-                    class=c("POSIXt","POSIXlt"), tzone=attr(e,"tzone")))
+                    class=c("POSIXlt","POSIXt"), tzone=attr(e,"tzone")))
    }
  }
 

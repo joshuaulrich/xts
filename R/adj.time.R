@@ -13,7 +13,7 @@ function(x, ...) {
     sec=ntime$sec, min=ntime$min, hour=ntime$hour, 
     mday=ntime$mday, mon=ntime$mon, year=ntime$year,
     wday=ntime$wday, yday=ntime$yday,isdst=ntime$isdst), tzone=attr(x,"tzone"),
-    class=c("POSIXt","POSIXlt"))
+    class=c("POSIXlt","POSIXt"))
   do.call(paste('as',oClass[1],sep='.'), list(x))
 }
 

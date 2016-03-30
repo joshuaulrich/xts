@@ -101,7 +101,7 @@ function(x=NULL,
 }
 
 `.xts` <-
-function(x=NULL, index, tclass=c("POSIXt","POSIXct"),
+function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
          tzone=Sys.getenv("TZ"),
          check=TRUE, unique=FALSE, .indexCLASS=tclass, ...) {
   if(check) {
@@ -135,7 +135,7 @@ function(x=NULL, index, tclass=c("POSIXt","POSIXct"),
 }
 
 `..xts` <-
-function(x=NULL, index, tclass=c("POSIXt","POSIXct"),
+function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
          tzone=Sys.getenv("TZ"),
          check=TRUE, unique=FALSE, .indexCLASS=tclass, ...) {
   if(check) {

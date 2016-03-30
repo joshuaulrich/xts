@@ -32,15 +32,15 @@ test.convert_zoo_to_xts_i1j1 <- function() {
 }
 test.zoo_reclass <- function() {
   DEACTIVATED("rownames are not kept yet in current xts-dev")
-  checkIdentical(sample.zoo,reclass(as.xts(sample.zoo)))
+  checkIdentical(sample.zoo,reclass(try.xts(sample.zoo)))
 }
 test.zoo_reclass_subset_reclass_j1 <- function() {
   DEACTIVATED("rownames are not kept yet in current xts-dev")
-  checkIdentical(sample.zoo[,1],reclass(as.xts(sample.zoo))[,1])
+  checkIdentical(sample.zoo[,1],reclass(try.xts(sample.zoo))[,1])
 }
 test.zoo_reclass_subset_as.xts_j1 <- function() {
-  checkIdentical(sample.zoo[,1],reclass(as.xts(sample.zoo)[,1]))
+  checkIdentical(sample.zoo[,1],reclass(try.xts(sample.zoo)[,1]))
 }
 test.zoo_reclass_subset_zoo_j1 <- function() {
-  checkIdentical(sample.zoo[,1],reclass(as.xts(sample.zoo[,1])))
+  checkIdentical(sample.zoo[,1],reclass(try.xts(sample.zoo[,1])))
 }

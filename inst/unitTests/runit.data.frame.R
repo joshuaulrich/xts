@@ -20,20 +20,20 @@ test.convert_data.frame_to_xts_i1j1 <- function() {
   checkIdentical(sample.xts[1,1],as.xts(sample.data.frame)[1,1])
 }
 test.data.frame_reclass <- function() {
-  checkIdentical(sample.data.frame,reclass(as.xts(sample.data.frame)))
+  checkIdentical(sample.data.frame,reclass(try.xts(sample.data.frame)))
 }
 test.data.frame_reclass_subset_reclass_j1 <- function() {
-  checkIdentical(sample.data.frame[,1],reclass(as.xts(sample.data.frame))[,1])
+  checkIdentical(sample.data.frame[,1],reclass(try.xts(sample.data.frame))[,1])
 }
 
 # subsetting to 1 col converts to simple numeric - can't successfully handle
 
 test.data.frame_reclass_subset_as.xts_j1 <- function() {
-  checkIdentical(sample.data.frame[,1,drop=FALSE],reclass(as.xts(sample.data.frame)[,1]))
+  checkIdentical(sample.data.frame[,1,drop=FALSE],reclass(try.xts(sample.data.frame)[,1]))
 }
 test.data.frame_reclass_subset_data.frame_j1 <- function() {
   # subsetting results in a vector, so can't be converted to xts
-  checkException(as.xts(sample.data.frame[,1]))
+  checkException(try.xts(sample.data.frame[,1]))
 }
 
 Sys.setenv(TZ=sysTZ)

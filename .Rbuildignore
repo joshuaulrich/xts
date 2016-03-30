@@ -1,5 +1,3 @@
-tests
-tests/doRUnit.R
 DEVELOPMENT-NOTES
 WISHLIST
 ^.*\.Rproj$
