@@ -188,16 +188,10 @@ plot.xts <- function(x,
   # an integer. (i.e. multi.panel=2 means to iterate over the data in a step
   # size of 2 and plot 2 panels on each page
   # Make recursive calls and return
-  if(is.numeric(multi.panel)){
+  if(multi.panel > 0){
     multi.panel <- min(NCOL(x), multi.panel)
     idx <- seq.int(1L, NCOL(x), 1L)
     chunks <- split(idx, ceiling(seq_along(idx)/multi.panel))
-    
-    # allow color and line attributes for each panel in a multi.panel plot
-    if(length(lty) < ncol(x)) lty <- rep(lty, length.out = ncol(x))
-    if(length(lwd) < ncol(x)) lwd <- rep(lwd, length.out = ncol(x))
-    if(length(col) < ncol(x)) col <- rep(col, length.out = ncol(x))
-    
     
     if(!is.null(panels) && nchar(panels) > 0){
       # we will plot the panels, but not plot the data by column
@@ -211,44 +205,6 @@ plot.xts <- function(x,
       if(yaxis.same)
         ylim <- range(x[subset], na.rm=TRUE)
     }
-    
-    for(i in 1:length(chunks)){
-      tmp <- chunks[[i]]
-      p <- plot.xts(x=x[,tmp], 
-                    y=y,
-                    ...=...,
-                    subset=subset,
-                    panels=panels,
-                    multi.panel=multi.panel,
-                    col=col[tmp],
-                    up.col=up.col,
-                    dn.col=dn.col,
-                    bg=bg,
-                    type=type,
-                    lty=lty[tmp],
-                    lwd=lwd[tmp],
-                    lend=lend,
-                    main=main,
-                    observation.based=observation.based,
-                    ylim=ylim,
-                    yaxis.same=yaxis.same,
-                    yaxis.left=yaxis.left,
-                    yaxis.right=yaxis.right,
-                    major.ticks=major.ticks,
-                    minor.ticks=minor.ticks,
-                    grid.ticks.on=grid.ticks.on,
-                    grid.ticks.lwd=grid.ticks.lwd,
-                    grid.ticks.lty=grid.ticks.lty,
-                    grid.col=grid.col,
-                    labels.col=labels.col,
-                    format.labels=format.labels,
-                    grid2=grid2,
-                    legend.loc=legend.loc)
-      if(i < length(chunks))
-        print(p)
-    }
-    # NOTE: return here so we don't draw another chart
-    return(p)
   }
   
   cs <- new.replot_xts()
@@ -263,11 +219,11 @@ plot.xts <- function(x,
 
   # add theme and charting parameters to Env
   plot.call <- match.call(expand.dots=TRUE)
-  if(isTRUE(multi.panel)){
+  if(multi.panel >0){
     if(NCOL(x) == 1)
       cs$set_asp(3)
     else
-      cs$set_asp(NCOL(x))
+      cs$set_asp(length(chunks))
   } else {
     cs$set_asp(3)
   }
@@ -345,15 +301,15 @@ plot.xts <- function(x,
   # chart_Series uses fixed=FALSE and add_* uses fixed=TRUE, not sure why or
   # which is best.
   if(is.null(ylim)){
-    if(isTRUE(multi.panel)){
+    if(multi.panel > 0){
       if(yaxis.same){
         # set the ylim for the first panel based on all the data
         yrange <- range(cs$Env$xdata[subset], na.rm=TRUE)
         if(all(yrange == 0)) yrange <- yrange + c(-1,1)
         cs$set_ylim(list(structure(yrange,fixed=TRUE)))
       } else {
-        # set the ylim for the first panel based on the first column
-        yrange <- range(cs$Env$xdata[,1][subset], na.rm=TRUE)
+        # set the ylim for the first panel based on the first chunk of data
+        yrange <- range(cs$Env$xdata[,chunks[[1]]][subset], na.rm=TRUE)
         if(all(yrange == 0)) yrange <- yrange + c(-1,1)
         cs$set_ylim(list(structure(yrange,fixed=TRUE))) 
       }
@@ -454,18 +410,21 @@ plot.xts <- function(x,
   
   # add main series
   cs$set_frame(2)
-  if(isTRUE(multi.panel)){
+  if(multi.panel > 0){
     # We need to plot the first "panel" here because the plot area is
     # set up based on the code above
     lenv <- new.env()
-    lenv$xdata <- cs$Env$xdata[,1][subset]
+    lenv$xdata <- cs$Env$xdata[, chunks[[1]]][subset]
     lenv$label <- colnames(cs$Env$xdata[,1])
     lenv$type <- cs$Env$type
     if(yaxis.same){
       lenv$ylim <- cs$Env$constant_ylim
     } else {
-      lenv$ylim <- range(cs$Env$xdata[,1][subset], na.rm=TRUE)
+      lenv$ylim <- range(cs$Env$xdata[,chunks[[1]]][subset], na.rm=TRUE)
     }
+    lenv$lty <- cs$Env$lty[chunks[[1]]]
+    lenv$lwd <- cs$Env$lwd[chunks[[1]]]
+    lenv$col <- cs$Env$theme$col[chunks[[1]]]
     
     exp <- quote(chart.lines(xdata,
                              type=type, 
@@ -488,24 +447,25 @@ plot.xts <- function(x,
     cs$add(text.exp,env=c(lenv, cs$Env),expr=TRUE)
     
     if(NCOL(cs$Env$xdata) > 1){
-      for(i in 2:NCOL(cs$Env$xdata)){
+      for(i in 2:length(chunks)){
         # create a local environment
+        tmp <- chunks[[i]]
         lenv <- new.env()
-        lenv$xdata <- cs$Env$xdata[,i][subset]
-        lenv$label <- cs$Env$column_names[i]
+        lenv$xdata <- cs$Env$xdata[,tmp][subset]
+        lenv$label <- cs$Env$column_names[tmp]
         if(yaxis.same){
           lenv$ylim <- cs$Env$constant_ylim
         } else {
-          yrange <- range(cs$Env$xdata[,i][subset], na.rm=TRUE)
+          yrange <- range(cs$Env$xdata[,tmp][subset], na.rm=TRUE)
           if(all(yrange == 0)) yrange <- yrange + c(-1,1)
           lenv$ylim <- yrange
         }
         lenv$type <- cs$Env$type
         
         # allow color and line attributes for each panel in a multi.panel plot
-        lenv$lty <- cs$Env$lty[i]
-        lenv$lwd <- cs$Env$lwd[i]
-        lenv$col <- cs$Env$theme$col[i]
+        lenv$lty <- cs$Env$lty[tmp]
+        lenv$lwd <- cs$Env$lwd[tmp]
+        lenv$col <- cs$Env$theme$col[tmp]
         
         # Add a small frame
         cs$add_frame(ylim=c(0,1),asp=0.25)
@@ -517,7 +477,7 @@ plot.xts <- function(x,
         cs$add(text.exp, env=c(lenv,cs$Env), expr=TRUE)
         
         # Add the frame for the sub-plots
-        cs$add_frame(ylim=lenv$ylim, asp=NCOL(cs$Env$xdata), fixed=TRUE)
+        cs$add_frame(ylim=lenv$ylim, asp=length(chunks), fixed=TRUE)
         cs$next_frame()
         
         exp <- quote(chart.lines(xdata[xsubset],
