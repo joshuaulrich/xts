@@ -494,11 +494,11 @@ plot.xts <- function(x,
         lenv$xdata <- cs$Env$xdata[,i][subset]
         lenv$label <- cs$Env$column_names[i]
         if(yaxis.same){
-          lenv$ylim <- cs$Env$constant_ylim
+          l.ylim <- cs$Env$constant_ylim
         } else {
           yrange <- range(cs$Env$xdata[,i][subset], na.rm=TRUE)
           if(all(yrange == 0)) yrange <- yrange + c(-1,1)
-          lenv$ylim <- yrange
+          l.ylim <- yrange
         }
         lenv$type <- cs$Env$type
 
@@ -517,7 +517,7 @@ plot.xts <- function(x,
         cs$add(text.exp, env=c(lenv,cs$Env), expr=TRUE)
 
         # Add the frame for the sub-plots
-        cs$add_frame(ylim=lenv$ylim, asp=NCOL(cs$Env$xdata), fixed=TRUE)
+        cs$add_frame(ylim=l.ylim, asp=NCOL(cs$Env$xdata), fixed=FALSE)
         cs$next_frame()
 
         exp <- quote(chart.lines(xdata[xsubset],
@@ -531,46 +531,42 @@ plot.xts <- function(x,
                                  legend.loc=legend.loc))
         exp <- as.expression(add.par.from.dots(exp, ...))
 
-        # define function to plot the y-axis grid lines
-        lenv$y_grid_lines <- function(ylim) {
-          p <- pretty(ylim,5)
-          p[p > ylim[1] & p < ylim[2]]
-        }
-
         # NOTE 'exp' was defined earlier as chart.lines
         exp <- c(exp,
                  # y-axis grid lines
                  expression(segments(xlim[1],
-                                     y_grid_lines(ylim),
+                                     y_grid_lines(ylim[[frame]]),
                                      xlim[2],
-                                     y_grid_lines(ylim),
+                                     y_grid_lines(ylim[[frame]]),
                                      col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)),
                  # x-axis grid lines
                  expression(atbt <- axTicksByTime2(xdata[xsubset], ticks.on=grid.ticks.on),
                             segments(xycoords$x[atbt],
-                                     ylim[1],
+                                     ylim[[frame]][1],
                                      xycoords$x[atbt],
-                                     ylim[2],
+                                     ylim[[frame]][2],
                                      col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)))
         if(yaxis.left){
           exp <- c(exp,
                    # y-axis labels/boxes
-                   expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim))),
-                                   y_grid_lines(ylim),
-                                   noquote(format(y_grid_lines(ylim),justify="right")),
+                   expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim[[frame]]))),
+                                   y_grid_lines(ylim[[frame]]),
+                                   noquote(format(y_grid_lines(ylim[[frame]]),justify="right")),
                                    col=theme$labels, srt=theme$srt, offset=0,
                                    pos=4, cex=theme$cex.axis, xpd=TRUE)))
         }
         if(yaxis.right){
           exp <- c(exp,
-                   expression(text(xlim[2]+xstep*2/3, y_grid_lines(ylim),
-                                   noquote(format(y_grid_lines(ylim),justify="right")),
+                   expression(text(xlim[2]+xstep*2/3, y_grid_lines(ylim[[frame]]),
+                                   noquote(format(y_grid_lines(ylim[[frame]]),justify="right")),
                                    col=theme$labels, srt=theme$srt, offset=0,
                                    pos=4, cex=theme$cex.axis, xpd=TRUE)))
         }
-        cs$add(exp,env=c(lenv, cs$Env),expr=TRUE,no.update=TRUE)
+        # set no.update=FALSE so we can redraw the plots if the ylim changes
+        no.update <- FALSE
+        cs$add(exp,env=c(lenv, cs$Env),expr=TRUE,no.update=no.update)
         text.exp <- expression(text(x=xycoords$x[2],
-                                    y=ylim[2]*0.9,
+                                    y=ylim[[frame]][2]*0.9,
                                     labels=label,
                                     col=theme$labels,
                                     adj=c(0,0),cex=1,offset=0,pos=4))
@@ -696,10 +692,10 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
   no.update <- FALSE
   lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
   if(hasArg("ylim")) {
-    ylim <- lenv$ylim  # lenv$ylim assigned via mapply above
+    l.ylim <- lenv$ylim  # lenv$ylim assigned via mapply above
+    lenv$ylim <- NULL
   } else {
-    ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
-    lenv$ylim <- ylim
+    l.ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
   }
 
   if(is.na(on[1])){
@@ -711,41 +707,36 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
     plot_object$add(text.exp, env=c(lenv,plot_object$Env), expr=TRUE)
 
     # add frame for the data
-    plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
+    # set fixed=FALSE so the ylim can be adjusted as series are added to panel
+    plot_object$add_frame(ylim=l.ylim,asp=1,fixed=FALSE)
     plot_object$next_frame()
-
-    # define function to plot the y-axis grid lines
-    lenv$y_grid_lines <- function(ylim) {
-      p <- pretty(ylim,5)
-      p[p > ylim[1] & p < ylim[2]]
-    }
 
     # NOTE 'exp' was defined earlier as chart.lines
     exp <- c(exp,
              # y-axis grid lines
              expression(segments(xlim[1],
-                                 y_grid_lines(ylim),
+                                 y_grid_lines(ylim[[frame]]),
                                  xlim[2],
-                                 y_grid_lines(ylim),
+                                 y_grid_lines(ylim[[frame]]),
                                  col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)))
     if(plot_object$Env$theme$lylab){
       exp <- c(exp,
                # y-axis labels/boxes
-               expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim))),
-                               y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
+               expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim[[frame]]))),
+                               y_grid_lines(ylim[[frame]]),
+                               noquote(format(y_grid_lines(ylim[[frame]]),justify="right")),
                                col=theme$labels, srt=theme$srt, offset=0,
                                pos=4, cex=theme$cex.axis, xpd=TRUE)))
     }
     if(plot_object$Env$theme$rylab){
       exp <- c(exp,
                expression(text(xlim[2]+xstep*2/3,
-                               y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
+                               y_grid_lines(ylim[[frame]]),
+                               noquote(format(y_grid_lines(ylim[[frame]]),justify="right")),
                                col=theme$labels, srt=theme$srt, offset=0,
                                pos=4, cex=theme$cex.axis, xpd=TRUE)))
     }
-    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
+    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=no.update)
   } else {
     for(i in 1:length(on)) {
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
@@ -800,6 +791,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
                x$Env$xycoords$x[atbt],
                par("usr")[4],
                col=x$Env$theme$grid)
+      on <- x$get_frame() / 2
     }
     ypos <- x$Env$ylim[[2*on]][2]*0.995
     # we can add points that are not necessarily at the points on the main series
@@ -842,10 +834,9 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
 
     xdata <- plot_object$Env$xdata
     xsubset <- plot_object$Env$xsubset
-    no.update <- FALSE
+    no.update <- TRUE
     lenv$xdata <- xdata
-    ylim <- range(xdata[xsubset], na.rm=TRUE)
-    lenv$ylim <- ylim
+    l.ylim <- range(xdata[xsubset], na.rm=TRUE)
 
     # add the frame for drawdowns info
     plot_object$add_frame(ylim=c(0,1),asp=0.25)
@@ -855,45 +846,39 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     plot_object$add(text.exp, env=c(lenv,plot_object$Env), expr=TRUE)
 
     # add frame for the data
-    plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
+    plot_object$add_frame(ylim=l.ylim,asp=1,fixed=TRUE)
     plot_object$next_frame()
-
-    # define function to plot the y-axis grid lines
-    lenv$y_grid_lines <- function(ylim) {
-      p <- pretty(ylim,5)
-      p[p > ylim[1] & p < ylim[2]]
-    }
 
     # NOTE 'exp' was defined earlier as chart.lines
     exp <- c(exp,
              # y-axis grid lines
              expression(segments(xlim[1],
-                                 y_grid_lines(ylim),
+                                 y_grid_lines(ylim[[frame]]),
                                  xlim[2],
-                                 y_grid_lines(ylim),
+                                 y_grid_lines(ylim[[frame]]),
                                  col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)))
     if(plot_object$Env$theme$lylab){
       exp <- c(exp,
                # y-axis labels/boxes
-               expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim))),
-                               y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
+               expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim[[frame]]))),
+                               y_grid_lines(ylim[[frame]]),
+                               noquote(format(y_grid_lines(ylim[[frame]]),justify="right")),
                                col=theme$labels, srt=theme$srt, offset=0,
                                pos=4, cex=theme$cex.axis, xpd=TRUE)))
     }
     if(plot_object$Env$theme$rylab){
       exp <- c(exp,
                expression(text(xlim[2]+xstep*2/3,
-                               y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
+                               y_grid_lines(ylim[[frame]]),
+                               noquote(format(y_grid_lines(ylim[[frame]]),justify="right")),
                                col=theme$labels, srt=theme$srt, offset=0,
                                pos=4, cex=theme$cex.axis, xpd=TRUE)))
     }
-    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
+    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=no.update)
   } else {
     for(i in 1:length(on)) {
       ind <- on[i]
-      no.update <- FALSE
+      no.update <- TRUE
       # map all passed args (if any) to 'lenv' environment
       mapply(function(name,value) { assign(name,value,envir=lenv) },
              names(list(events=events,on=ind,lty=lty,lwd=lwd,col=col,...)),
@@ -983,7 +968,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     plot_object$next_frame()
 
     # add plot_legend expression
-    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
+    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=FALSE)
   } else {
     for(i in 1:length(on)) {
       ind <- on[i]
@@ -1002,7 +987,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
                                                            ...)))),
                    srcfile=NULL)
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=no.update)
+      plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
     }
   }
   plot_object
@@ -1091,10 +1076,10 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   no.update <- FALSE
   lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
   if(hasArg("ylim")) {
-    ylim <- lenv$ylim  # lenv$ylim assigned via mapply above
+    l.ylim <- lenv$ylim  # lenv$ylim assigned via mapply above
+    lenv$ylim <- NULL
   } else {
-    ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
-    lenv$ylim <- ylim
+    l.ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
   }
 
   if(is.na(on[1])){
@@ -1105,41 +1090,35 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     plot_object$add(text.exp, env=c(lenv,plot_object$Env), expr=TRUE)
 
     # add frame for the data
-    plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
+    plot_object$add_frame(ylim=l.ylim,asp=1,fixed=FALSE)
     plot_object$next_frame()
-
-    # define function to plot the y-axis grid lines
-    lenv$y_grid_lines <- function(ylim) {
-      p <- pretty(ylim,5)
-      p[p > ylim[1] & p < ylim[2]]
-    }
 
     # NOTE 'exp' was defined earlier as plot_lines
     exp <- c(exp,
              # y-axis grid lines
              expression(segments(xlim[1],
-                                 y_grid_lines(ylim),
+                                 y_grid_lines(ylim[[frame]]),
                                  xlim[2],
-                                 y_grid_lines(ylim),
+                                 y_grid_lines(ylim[[frame]]),
                                  col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)))
     if(plot_object$Env$theme$lylab){
       exp <- c(exp,
                # y-axis labels/boxes
-               expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim))),
-                               y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
+               expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim[[frame]]))),
+                               y_grid_lines(ylim[[frame]]),
+                               noquote(format(y_grid_lines(ylim[[frame]]),justify="right")),
                                col=theme$labels, srt=theme$srt, offset=0,
                                pos=4, cex=theme$cex.axis, xpd=TRUE)))
     }
     if(plot_object$Env$theme$rylab){
       exp <- c(exp,
                expression(text(xlim[2]+xstep*2/3,
-                               y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
+                               y_grid_lines(ylim[[frame]]),
+                               noquote(format(y_grid_lines(ylim[[frame]]),justify="right")),
                                col=theme$labels, srt=theme$srt, offset=0,
                                pos=4, cex=theme$cex.axis, xpd=TRUE)))
     }
-    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
+    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=no.update)
   } else {
     for(i in 1:length(on)) {
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
