@@ -350,7 +350,8 @@ plot.xts <- function(x,
         # set the ylim for the first panel based on all the data
         yrange <- range(cs$Env$xdata[subset], na.rm=TRUE)
         if(all(yrange == 0)) yrange <- yrange + c(-1,1)
-        cs$set_ylim(list(structure(yrange,fixed=FALSE)))
+        # fixed ylim for a multi.panel panel plot with yaxis.same=TRUE
+        cs$set_ylim(list(structure(yrange,fixed=TRUE)))
       } else {
         # set the ylim for the first panel based on the first column
         yrange <- range(cs$Env$xdata[,1][subset], na.rm=TRUE)
@@ -517,7 +518,8 @@ plot.xts <- function(x,
         cs$add(text.exp, env=c(lenv,cs$Env), expr=TRUE)
 
         # Add the frame for the sub-plots
-        cs$add_frame(ylim=l.ylim, asp=NCOL(cs$Env$xdata), fixed=FALSE)
+        fixed <- ifelse(yaxis.same, TRUE, FALSE)
+        cs$add_frame(ylim=l.ylim, asp=NCOL(cs$Env$xdata), fixed=fixed)
         cs$next_frame()
 
         exp <- quote(chart.lines(xdata[xsubset],
