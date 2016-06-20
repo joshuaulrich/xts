@@ -32,67 +32,70 @@ function(x,on='months',k=1) {
   if(!is.xts(x)) 
     x <- try.xts(x, error='must be either xts-coercible or timeBased')
 
+  on <- match.arg(on, c("years", "quarters", "months", "weeks", "days", "hours",
+    "minutes", "seconds", "milliseconds", "microseconds", "ms", "us"))
+
   # posixltindex is costly in memory (9x length of time)
   # make sure we really need it
   if(on %in% c('years','quarters','months','weeks','days'))
     #posixltindex <- as.POSIXlt(structure( .index(x), class=c("POSIXct","POSIXt")))
     posixltindex <- as.POSIXlt(.POSIXct(.index(x)),tz=indexTZ(x))
 
-  if(on == 'years') {
-    #as.integer(c(0, which(diff(as.POSIXlt(index(x))$year %/% k + 1) != 0), NR) )
-    as.integer(c(0, which(diff(posixltindex$year %/% k + 1) != 0), NR))
-  } else
-
-  if(on == 'quarters') {
-    xi <- (posixltindex$mon%/%3) + 1
-    as.integer(c(0,which(diff(xi) != 0),NR))
-  } else 
-
-  if(on == 'months') {
-    #as.integer(c(0, which(diff(posixltindex$mon %/% k + 1) != 0), NR) )
-    # x[which(diff(as.POSIXlt(index(x))$mon) != 0)[seq(0,328,12)]]
-    ep <- .Call("endpoints", posixltindex$mon, 1L, 1L, addlast, PACKAGE='xts')
-    if(k > 1)
-      ep[seq(1,length(ep),k)]
-    else ep
-  } else 
-  if(on == 'weeks') {
-    #as.integer(c(0, which(diff( (.index(x) + (3L * 86400L)) %/% 604800L %/% k + 1) != 0), NR) )
-    .Call("endpoints", .index(x)+3L*86400L, 604800L, k, addlast, PACKAGE='xts')
-  } else
-  if(on == 'days') {
-    #as.integer(c(0, which(diff(.index(x) %/% 86400L %/% k + 1) != 0), NR))
-    #as.integer(c(0, which(diff(posixltindex$yday %/% k + 1) != 0), NR))
-    .Call("endpoints", posixltindex$yday, 1L, k, addlast, PACKAGE='xts')
-  } else
-  # non-date slicing should be indifferent to TZ and DST, so use math instead
-  if(on == 'hours') {
-    #c(0, which(diff(as.POSIXlt(index(x))$hour %/% k + 1) != 0), NR) 
-    #as.integer(c(0, which(diff(.index(x) %/% 3600L %/% k + 1) != 0), NR))
-    #as.integer(c(0, which(diff(posixltindex$hour %/% k + 1) != 0), NR))
-    .Call("endpoints", .index(x), 3600L, k, addlast, PACKAGE='xts')
-  } else
-  if(on == 'minutes' || on == 'mins') {
-    #c(0, which(diff(as.POSIXlt(index(x))$min %/% k + 1) != 0), NR) 
-    #as.integer(c(0, which(diff(.index(x) %/% 60L %/% k + 1) != 0), NR))
-    #as.integer(c(0, which(diff(posixltindex$min %/% k + 1) != 0), NR))
-    .Call("endpoints", .index(x), 60L, k, addlast, PACKAGE='xts')
-  } else
-  if(on == 'seconds' || on == 'secs') {
-    #c(0, which(diff(as.POSIXlt(index(x))$sec %/% k + 1) != 0), NR) 
-    #as.integer(c(0, which(diff(.index(x) %/%  k + 1) != 0), NR))
-    .Call("endpoints", .index(x), 1L, k, addlast, PACKAGE='xts')
-  } else
-  if(on == 'milliseconds' || on == 'ms') {
-    #as.integer(c(0, which(diff(.index(x)%/%.001%/%k + 1) != 0), NR))
-    .Call("endpoints", .index(x)%/%.001, 1L, k, addlast, PACKAGE='xts')
-  } else
-  if(on == 'microseconds' || on == 'us') {
-    #as.integer(c(0, which(diff(.index(x)%/%.000001%/%k + 1) != 0), NR))
-    .Call("endpoints", .index(x)%/%.000001, 1L, k, addlast, PACKAGE='xts')
-  } else {
-    stop('unsupported "on" argument')
-  }
+  switch(on,
+    "years" = {
+      #as.integer(c(0, which(diff(as.POSIXlt(index(x))$year %/% k + 1) != 0), NR) )
+      as.integer(c(0, which(diff(posixltindex$year %/% k + 1) != 0), NR))
+    },
+    "quarters" = {
+      xi <- (posixltindex$mon%/%3) + 1
+      as.integer(c(0,which(diff(xi) != 0),NR))
+    },
+    "months" = {
+      #as.integer(c(0, which(diff(posixltindex$mon %/% k + 1) != 0), NR) )
+      # x[which(diff(as.POSIXlt(index(x))$mon) != 0)[seq(0,328,12)]]
+      ep <- .Call("endpoints", posixltindex$mon, 1L, 1L, addlast, PACKAGE='xts')
+      if(k > 1)
+        ep[seq(1,length(ep),k)]
+      else ep
+    },
+    "weeks" = {
+      #as.integer(c(0, which(diff( (.index(x) + (3L * 86400L)) %/% 604800L %/% k + 1) != 0), NR) )
+      .Call("endpoints", .index(x)+3L*86400L, 604800L, k, addlast, PACKAGE='xts')
+    },
+    "days" = {
+      #as.integer(c(0, which(diff(.index(x) %/% 86400L %/% k + 1) != 0), NR))
+      #as.integer(c(0, which(diff(posixltindex$yday %/% k + 1) != 0), NR))
+      .Call("endpoints", posixltindex$yday, 1L, k, addlast, PACKAGE='xts')
+    },
+    # non-date slicing should be indifferent to TZ and DST, so use math instead
+    "hours" = {
+      #c(0, which(diff(as.POSIXlt(index(x))$hour %/% k + 1) != 0), NR) 
+      #as.integer(c(0, which(diff(.index(x) %/% 3600L %/% k + 1) != 0), NR))
+      #as.integer(c(0, which(diff(posixltindex$hour %/% k + 1) != 0), NR))
+      .Call("endpoints", .index(x), 3600L, k, addlast, PACKAGE='xts')
+    },
+    "minutes" = {
+      #c(0, which(diff(as.POSIXlt(index(x))$min %/% k + 1) != 0), NR) 
+      #as.integer(c(0, which(diff(.index(x) %/% 60L %/% k + 1) != 0), NR))
+      #as.integer(c(0, which(diff(posixltindex$min %/% k + 1) != 0), NR))
+      .Call("endpoints", .index(x), 60L, k, addlast, PACKAGE='xts')
+    },
+    "seconds" = {
+      #c(0, which(diff(as.POSIXlt(index(x))$sec %/% k + 1) != 0), NR) 
+      #as.integer(c(0, which(diff(.index(x) %/%  k + 1) != 0), NR))
+      .Call("endpoints", .index(x), 1L, k, addlast, PACKAGE='xts')
+    },
+    "ms" = ,
+    "milliseconds" = {
+      #as.integer(c(0, which(diff(.index(x)%/%.001%/%k + 1) != 0), NR))
+      .Call("endpoints", .index(x)%/%.001, 1L, k, addlast, PACKAGE='xts')
+    },
+    "us" = ,
+    "microseconds" = {
+      #as.integer(c(0, which(diff(.index(x)%/%.000001%/%k + 1) != 0), NR))
+      .Call("endpoints", .index(x)%/%.000001, 1L, k, addlast, PACKAGE='xts')
+    }
+  )
 }
 
 `startof` <-
