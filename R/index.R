@@ -83,8 +83,12 @@ function(x, ...) {
 
   # set the .indexCLASS/tclass attribute to the end-user specified class
   attr(x, '.indexCLASS') <- class(value)
+  if(any(class(value) %in% .classesWithoutTZ)) {
+    attr(.index(x), 'tzone') <- 'UTC'
+  } else {
+    attr(.index(x), 'tzone') <- attr(value, 'tzone')
+  }
   attr(.index(x), 'tclass') <- class(value)
-  attr(.index(x), 'tzone') <- attr(value,"tzone")
   return(x)
 }
 

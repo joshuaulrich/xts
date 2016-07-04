@@ -2,6 +2,12 @@ data(sample_matrix)
 
 convert_xts <- as.xts(sample_matrix) # indexClass defaults to POSIXct
 
+checkUTCindexTZ <- function(x) {
+  if(any(indexClass(x) %in% xts:::.classesWithoutTZ)) {
+    checkIdentical("UTC", attr(.index(x),'tzone'))
+  }
+}
+
 # convert from 'POSIXct'
 test.convert_POSIXct2Date <- function() {
   x <- convert_xts
@@ -217,6 +223,33 @@ test.convert_timeDate2POSIXct <- function() {
   x <- convert_xts
   indexClass(x) <- 'POSIXct'
   checkTrue(inherits(index(x),'POSIXct'))
+}
+
+# set index and ensure TZ = "UTC"
+test.checkUTC_set_index2Date <- function() {
+  x <- .xts(1:2, 1:2)
+  d <- c("2007-01-02", "2007-01-03")
+  index(x) <- as.Date(d)
+  checkUTCindexTZ(x)
+}
+test.checkUTC_set_index2chron <- function() {
+  x <- .xts(1:2, 1:2)
+  d <- c("2007-01-02", "2007-01-03")
+  stopifnot(requireNamespace("chron"))
+  index(x) <- chron::dates(d, format="Y-m-d")
+  checkUTCindexTZ(x)
+}
+test.checkUTC_set_index2yearmon <- function() {
+  x <- .xts(1:2, 1:2)
+  d <- c("2007-01-02", "2007-01-03")
+  index(x) <- as.yearmon(d)
+  checkUTCindexTZ(x)
+}
+test.checkUTC_set_index2yearqtr <- function() {
+  x <- .xts(1:2, 1:2)
+  d <- c("2007-01-02", "2007-01-03")
+  index(x) <- as.yearqtr(d)
+  checkUTCindexTZ(x)
 }
 
 # error checking
