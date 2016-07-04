@@ -13,36 +13,40 @@ test.convert_POSIXct2Date <- function() {
   x <- convert_xts
   indexClass(x) <- 'Date'
   checkTrue(inherits(index(x),'Date'))
+  checkUTCindexTZ(x)
 }
 test.convert_POSIXct2chron <- function() {
   library(chron)
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
+  checkUTCindexTZ(x)
   detach('package:chron')
 }
 test.convert_POSIXct2yearmon <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearmon'
   checkTrue(inherits(index(x),'yearmon'))
-
+  checkUTCindexTZ(x)
 }
 test.convert_POSIXct2yearqtr <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearqtr'
   checkTrue(inherits(index(x),'yearqtr'))
-
+  checkUTCindexTZ(x)
 }
 test.convert_POSIXct2timeDate <- function() {
   library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
+  checkUTCindexTZ(x)
 }
 test.convert_POSIXct2POSIXct <- function() {
   x <- convert_xts
   indexClass(x) <- 'POSIXct'
   checkTrue(inherits(index(x),'POSIXct'))
+  checkUTCindexTZ(x)
 }
 
 # Convert from 'Date'
@@ -52,33 +56,39 @@ test.convert_Date2Date <- function() {
   x <- convert_xts
   indexClass(x) <- 'Date'
   checkTrue(inherits(index(x),'Date'))
+  checkUTCindexTZ(x)
 }
 test.convert_Date2chron <- function() {
   library(chron)
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
+  checkUTCindexTZ(x)
 }
 test.convert_Date2yearmon <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearmon'
   checkTrue(inherits(index(x),'yearmon'))
+  checkUTCindexTZ(x)
 }
 test.convert_Date2yearqtr <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearqtr'
   checkTrue(inherits(index(x),'yearqtr'))
+  checkUTCindexTZ(x)
 }
 test.convert_Date2timeDate <- function() {
   library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
+  checkUTCindexTZ(x)
 }
 test.convert_Date2POSIXct <- function() {
   x <- convert_xts
   indexClass(x) <- 'POSIXct'
   checkTrue(inherits(index(x),'POSIXct'))
+  checkUTCindexTZ(x)
 }
 
 # Convert from 'chron'
@@ -88,33 +98,39 @@ test.convert_chron2Date <- function() {
   x <- convert_xts
   indexClass(x) <- 'Date'
   checkTrue(inherits(index(x),'Date'))
+  checkUTCindexTZ(x)
 }
 test.convert_chron2chron <- function() {
   library(chron)
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
+  checkUTCindexTZ(x)
 }
 test.convert_chron2yearmon <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearmon'
   checkTrue(inherits(index(x),'yearmon'))
+  checkUTCindexTZ(x)
 }
 test.convert_chron2yearqtr <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearqtr'
   checkTrue(inherits(index(x),'yearqtr'))
+  checkUTCindexTZ(x)
 }
 test.convert_chron2timeDate <- function() {
   library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
+  checkUTCindexTZ(x)
 }
 test.convert_chron2POSIXct <- function() {
   x <- convert_xts
   indexClass(x) <- 'POSIXct'
   checkTrue(inherits(index(x),'POSIXct'))
+  checkUTCindexTZ(x)
 }
 
 # Convert from 'yearmon'
@@ -124,33 +140,39 @@ test.convert_yearmon2Date <- function() {
   x <- convert_xts
   indexClass(x) <- 'Date'
   checkTrue(inherits(index(x),'Date'))
+  checkUTCindexTZ(x)
 }
 test.convert_yearmon2chron <- function() {
   library(chron)
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
+  checkUTCindexTZ(x)
 }
 test.convert_yearmon2yearmon <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearmon'
   checkTrue(inherits(index(x),'yearmon'))
+  checkUTCindexTZ(x)
 }
 test.convert_yearmon2yearqtr <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearqtr'
   checkTrue(inherits(index(x),'yearqtr'))
+  checkUTCindexTZ(x)
 }
 test.convert_yearmon2timeDate <- function() {
   library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
+  checkUTCindexTZ(x)
 }
 test.convert_yearmon2POSIXct <- function() {
   x <- convert_xts
   indexClass(x) <- 'POSIXct'
   checkTrue(inherits(index(x),'POSIXct'))
+  checkUTCindexTZ(x)
 }
 
 # Convert from 'yearqtr'
@@ -160,33 +182,39 @@ test.convert_yearqtr2Date <- function() {
   x <- convert_xts
   indexClass(x) <- 'Date'
   checkTrue(inherits(index(x),'Date'))
+  checkUTCindexTZ(x)
 }
 test.convert_yearqtr2chron <- function() {
   library(chron)
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
+  checkUTCindexTZ(x)
 }
 test.convert_yearqtr2yearmon <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearmon'
   checkTrue(inherits(index(x),'yearmon'))
+  checkUTCindexTZ(x)
 }
 test.convert_yearqtr2yearqtr <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearqtr'
   checkTrue(inherits(index(x),'yearqtr'))
+  checkUTCindexTZ(x)
 }
 test.convert_yearqtr2timeDate <- function() {
   library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
+  checkUTCindexTZ(x)
 }
 test.convert_yearqtr2POSIXct <- function() {
   x <- convert_xts
   indexClass(x) <- 'POSIXct'
   checkTrue(inherits(index(x),'POSIXct'))
+  checkUTCindexTZ(x)
 }
 
 # Convert from 'timeDate'
@@ -196,33 +224,39 @@ test.convert_timeDate2Date <- function() {
   x <- convert_xts
   indexClass(x) <- 'Date'
   checkTrue(inherits(index(x),'Date'))
+  checkUTCindexTZ(x)
 }
 test.convert_timeDate2chron <- function() {
   library(chron)
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
+  checkUTCindexTZ(x)
 }
 test.convert_timeDate2yearmon <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearmon'
   checkTrue(inherits(index(x),'yearmon'))
+  checkUTCindexTZ(x)
 }
 test.convert_timeDate2yearqtr <- function() {
   x <- convert_xts
   indexClass(x) <- 'yearqtr'
   checkTrue(inherits(index(x),'yearqtr'))
+  checkUTCindexTZ(x)
 }
 test.convert_timeDate2timeDate <- function() {
   library(timeDate)
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
+  checkUTCindexTZ(x)
 }
 test.convert_timeDate2POSIXct <- function() {
   x <- convert_xts
   indexClass(x) <- 'POSIXct'
   checkTrue(inherits(index(x),'POSIXct'))
+  checkUTCindexTZ(x)
 }
 
 # set index and ensure TZ = "UTC"
