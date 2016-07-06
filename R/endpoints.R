@@ -32,6 +32,9 @@ function(x,on='months',k=1) {
   if(!is.xts(x)) 
     x <- try.xts(x, error='must be either xts-coercible or timeBased')
 
+  # special-case "secs" and "mins" for back-compatibility
+  if(on == "secs" || on == "mins")
+    on <- substr(on, 1L, 3L)
   on <- match.arg(on, c("years", "quarters", "months", "weeks", "days", "hours",
     "minutes", "seconds", "milliseconds", "microseconds", "ms", "us"))
 

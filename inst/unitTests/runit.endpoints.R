@@ -83,6 +83,12 @@ test.seconds_integer_index <- function() {
   ep <- endpoints(xSecIntIdx, "seconds", 3600)
   checkIdentical(ep, seq(0L, nrow(xSecIntIdx), 120L))
 }
+test.seconds_secs <- function() {
+  x <- .xts(1:10, 1:10/6)
+  ep1 <- endpoints(x, "seconds")
+  ep2 <- endpoints(x, "secs")
+  checkIdentical(ep1, ep2)
+}
 
 test.minutes_double_index <- function() {
   ep <- endpoints(xSecDblIdx, "minutes", 60)
@@ -91,6 +97,12 @@ test.minutes_double_index <- function() {
 test.minutes_integer_index <- function() {
   ep <- endpoints(xSecIntIdx, "minutes", 60)
   checkIdentical(ep, seq(0L, nrow(xSecIntIdx), 120L))
+}
+test.minutes_mins <- function() {
+  x <- .xts(1:10, 1:10*10)
+  ep1 <- endpoints(x, "minutes")
+  ep2 <- endpoints(x, "mins")
+  checkIdentical(ep1, ep2)
 }
 
 test.hours_double_index <- function() {
