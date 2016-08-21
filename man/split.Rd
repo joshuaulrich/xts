@@ -32,7 +32,7 @@ further args to non-xts method
 }
 \details{
 A quick way to break up a large xts
-object by standard time periods; e.g. 'months', 'qaurters', etc.
+object by standard time periods; e.g. 'months', 'quarters', etc.
 
 \code{endpoints} is used to find the start and end of
 each period (or k-periods).  See that function for valid
