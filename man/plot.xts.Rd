@@ -62,11 +62,20 @@ separate panel.}
 
 \item{yaxis.right}{if TRUE, draws the y axis on the right}
 
-\item{major.ticks}{period to draw the ticks and labels on the x-axis}
+\item{major.ticks}{period to draw the ticks and labels on the x-axis. Values
+  are from \code{periodicity} and include \sQuote{minute}, \sQuote{hourly},
+  \sQuote{daily}, \sQuote{weekly}, \sQuote{monthly}, \sQuote{quarterly},
+  and \sQuote{yearly}.}
 
-\item{minor.ticks}{period to draw minor ticks on the x-axis. If \code{NULL}, minor ticks are not drawn.}
+\item{minor.ticks}{period to draw minor ticks on the x-axis. If \code{NULL},
+  minor ticks are not drawn. Values are from \code{periodicity} and include
+  \sQuote{minute}, \sQuote{hourly}, \sQuote{daily}, \sQuote{weekly},
+  \sQuote{monthly}, \sQuote{quarterly}, and \sQuote{yearly}.}
 
-\item{grid.ticks.on}{period to draw the vertical grid lines on}
+\item{grid.ticks.on}{period to draw the vertical grid lines on. Values are
+  from \code{periodicity} and include \sQuote{minute}, \sQuote{hourly},
+  \sQuote{daily}, \sQuote{weekly}, \sQuote{monthly}, \sQuote{quarterly},
+  and \sQuote{yearly}.}
 
 \item{grid.ticks.lwd}{line width of the grid}
 
