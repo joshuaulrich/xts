@@ -1139,9 +1139,9 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                           retside,
                           env,
                           coerce_to_double);
-      nc = ncols(xtmp);
-      ncs += nc;
       nr = nrows(xtmp);
+      nc = (0 == nr) ? 0 : ncols(xtmp);  // ncols(numeric(0)) == 1
+      ncs += nc;
       PROTECT(ColNames = getAttrib(CAR(args),R_DimNamesSymbol));
       switch(TYPEOF(xtmp)) { // by type, insert merged data into result object
         case LGLSXP:
@@ -1180,26 +1180,28 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
       UNPROTECT(1); /* ColNames */
     }
 
-    SEXP dim;
-    PROTECT(dim = allocVector(INTSXP, 2)); P++;
-    INTEGER(dim)[0] = index_len;
-    INTEGER(dim)[1] = ncs;
-    setAttrib(result, R_DimSymbol, dim);
+    if(ncs > 0) {
+      SEXP dim;
+      PROTECT(dim = allocVector(INTSXP, 2)); P++;
+      INTEGER(dim)[0] = index_len;
+      INTEGER(dim)[1] = ncs;
+      setAttrib(result, R_DimSymbol, dim);
 
-    SEXP dimnames;
-    PROTECT(dimnames = allocVector(VECSXP, 2)); P++;
-    SET_VECTOR_ELT(dimnames, 0, R_NilValue); // rownames are always NULL in xts
+      SEXP dimnames;
+      PROTECT(dimnames = allocVector(VECSXP, 2)); P++;
+      SET_VECTOR_ELT(dimnames, 0, R_NilValue); // rownames are always NULL in xts
 
-    /* colnames, assure they are unique before returning */
-    SEXP s, t, unique;
-    PROTECT(s = t = allocList(3)); P++;
-    SET_TYPEOF(s, LANGSXP);
-    SETCAR(t, install("make.names")); t = CDR(t);
-    SETCAR(t, NewColNames); t = CDR(t);
-    PROTECT(unique = allocVector(LGLSXP, 1)); P++;  LOGICAL(unique)[0] = 1;
-    SETCAR(t, unique);  SET_TAG(t, install("unique"));
-    SET_VECTOR_ELT(dimnames, 1, eval(s, env));
-    setAttrib(result, R_DimNamesSymbol, dimnames);
+      /* colnames, assure they are unique before returning */
+      SEXP s, t, unique;
+      PROTECT(s = t = allocList(3)); P++;
+      SET_TYPEOF(s, LANGSXP);
+      SETCAR(t, install("make.names")); t = CDR(t);
+      SETCAR(t, NewColNames); t = CDR(t);
+      PROTECT(unique = allocVector(LGLSXP, 1)); P++;  LOGICAL(unique)[0] = 1;
+      SETCAR(t, unique);  SET_TAG(t, install("unique"));
+      SET_VECTOR_ELT(dimnames, 1, eval(s, env));
+      setAttrib(result, R_DimNamesSymbol, dimnames);
+    }
 
     SET_xtsIndex(result, GET_xtsIndex(_INDEX));
     SET_xtsIndexTZ(result, GET_xtsIndexTZ(_INDEX));
