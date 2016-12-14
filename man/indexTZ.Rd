@@ -65,7 +65,7 @@ of the series internally.
 Problems may arise when an object that had been created under
 one TZ (time zone) are used in a session using another TZ. This
 isn't usually a issue, but when it is a warning is given upon printing
-or subsetting. This warning may be controlled with \code{option("xts_check_TZ")}.
+or subsetting. This warning may be controlled with \code{options("xts_check_TZ")}.
 }
 \value{
 A named vector of length one, giving the objects TZ at creation.
