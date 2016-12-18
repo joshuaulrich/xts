@@ -599,12 +599,9 @@ plot.xts <- function(x,
   # Plot the panels or default to a simple line chart
   if(!is.null(panels) && nchar(panels) > 0) {
     panels <- parse(text=panels, srcfile=NULL)
-    for( p in 1:length(panels)) {
-      if(length(panels[p][[1]][-1]) > 0) {
-        cs <- eval(panels[p])
-      } else {
-        cs <- eval(panels[p])
-      }
+    for(p in seq_along(panels)) {
+      # evaluate panel in environment from which plot.xts was called
+      cs <- eval(panels[p], envir = parent.frame())
     }
   }
   assign(".xts_chob", cs, .plotxtsEnv)
