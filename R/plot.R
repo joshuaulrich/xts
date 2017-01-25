@@ -699,6 +699,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
     ylim <- lenv$ylim  # lenv$ylim assigned via mapply above
   } else {
     ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
+    if(all(ylim == 0)) ylim <- c(-1, 1)
     lenv$ylim <- ylim
   }
   
