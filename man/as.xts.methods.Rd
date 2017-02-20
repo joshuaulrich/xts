@@ -2,7 +2,6 @@
 \alias{as.xts.methods}
 \alias{as.xts.timeSeries}
 \alias{as.timeSeries.xts}
-\alias{as.xts.its}
 \alias{as.xts.xts}
 \alias{as.xts.zoo}
 \alias{as.xts.ts}
@@ -23,9 +22,7 @@ losing any attributes of the original format.
 \method{as.xts}{timeSeries}(x, dateFormat="POSIXct", FinCenter, recordIDs,
     title, documentation, ..., .RECLASS=FALSE)
 
-\method{as.xts}{its}(x,...,.RECLASS=FALSE)
-
-\method{as.xts}{zoo}(x, order.by=index(x), frequency=NULL, ..., .RECLASS=FALSE) 
+\method{as.xts}{zoo}(x, order.by=index(x), frequency=NULL, ..., .RECLASS=FALSE)
 
 \method{as.xts}{ts}(x, dateFormat,...,.RECLASS=FALSE)
 
@@ -56,7 +53,7 @@ objects into a uniform format for use within \R.
 
 It is possible with a call to \code{as.xts} to
 convert objects of class \code{timeSeries}, \code{ts},
-\code{its}, \code{matrix}, \code{data.frame}, and \code{zoo}.
+\code{matrix}, \code{data.frame}, and \code{zoo}.
 
 Additional name=value pairs may be passed to the function
 to be added to the new object. A special print.xts method

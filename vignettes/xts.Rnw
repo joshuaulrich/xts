@@ -27,7 +27,7 @@ in contributed packages to
 handle some of the domain-specific shortcomings of the native {\tt R} classes.
 These include {\tt irts} from the {\tt tseries} package\cite{tseries},
 {\tt timeSeries} from the {\tt Rmetrics} bundle\cite{rmetrics}, and
-{\tt its}~\cite{its} and {\tt zoo}~\cite{zoo} from their 
+{\tt zoo}~\cite{zoo} from their 
 respective packages. Each of these contributed classes provides unique solution
 to many of the issues
 related to working with time-series in R.
@@ -187,7 +187,7 @@ current objects.
 Presently it is possible to convert all the major
 time-series like classes in {\tt R} to {\tt xts}. This list
 includes objects of class:
-matrix, data.frame, ts, zoo, irts, its, and timeSeries.
+matrix, data.frame, ts, zoo, irts, and timeSeries.
 The new object will maintain all the necessary information
 needed to {\tt reclass} this object back to its
 original class if that is desired. Most classes
@@ -784,9 +784,6 @@ Journal of Statistical Software, 14(6), 1-27. URL http://www.jstatsoft.org/v14/i
 \bibitem{rmetrics} Diethelm Wuertz, many others and see the SOURCE file (2007):
 \emph{Rmetrics: Rmetrics - Financial Engineering and Computational Finance.}
 R package version 260.72. http://www.rmetrics.org
-
-\bibitem{its} Portfolio \& Risk Advisory Group and Commerzbank Securities (2006):
-\emph{its: Irregular Time Series.} R package version 1.1.5.
 
 \bibitem{ISO} International Organization for Standardization (2004):
 \emph{ISO 8601: Data elements and interchage formats ---

@@ -292,10 +292,6 @@ S3method(as.environment,xts)
 export(as.timeSeries.xts)
 S3method(as.xts,timeSeries)
 
-# its (package:its) specific methods
-#export(xts.as.its)
-S3method(as.xts,its)
-
 # irts (package:tseries) specific methods
 S3method(as.xts,irts)
 

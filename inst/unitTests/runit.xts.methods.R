@@ -24,8 +24,6 @@
 #xtsDF <- as.xts( data.frame(sample_matrix) )
 ## create 'zoo' object
 #xtsZ <- as.xts( zoo(sample_matrix, date.index) )
-## create 'its' object
-#xtsI <- as.xts( its(sample_matrix) )
 ## create 'irts' object
 #require(tseries)
 #xtsIR <- as.xts( irts(as.POSIXct(date.index), sample_matrix) )
@@ -156,29 +154,6 @@
 #               xts.ts[s3,],
 #               xts.ts[s4,] )
 #  checkIdentical( rr, xts.ts )
-#}
-#
-##################################################
-## its
-#test.cbind_its <- function() {
-#  cc <- cbind( xtsI[,1],
-#               xtsI[,2],
-#               xtsI[,3],
-#               xtsI[,4] )
-#  xts.I <- xtsI
-#  colnames(xts.I) <- colnames(cc) <- NULL
-#  checkIdentical( cc, xts.I )
-#}
-#
-#test.rbind_its <- function() {
-#  rr <- rbind( xtsI[s1,],
-#               xtsI[s2,],
-#               xtsI[s3,],
-#               xtsI[s4,] )
-#  xts.I <- xtsI
-#  # Remove time-zone attribute of POSIXct index
-#  attr(attr(xts.I, "index"), "tzone") <- NULL
-#  checkIdentical( rr, xts.I )
 #}
 #
 ##################################################

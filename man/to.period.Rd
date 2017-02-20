@@ -112,7 +112,7 @@ such as \code{aggregate} and \code{period.apply}.
 
 This method should work on almost all time-series-like
 objects. Including \sQuote{timeSeries}, \sQuote{zoo},
-\sQuote{ts}, \sQuote{its}, and \sQuote{irts}. It is even likely
+\sQuote{ts}, and \sQuote{irts}. It is even likely
 to work well for other data structures - including \sQuote{data.frames}
 and \sQuote{matrix} objects.
 

@@ -56,7 +56,7 @@
   to check on xts class persistence
   Tests to incorporate:
   
-    for all data classes: 'zoo','ts','timeSeries','its','irts','matrix','data.frame'
+    for all data classes: 'zoo','ts','timeSeries','irts','matrix','data.frame'
       as.xts
       reclass
     
@@ -84,7 +84,7 @@
   [done implemented via timeBasedSeq()]
 
 * as.data.frame.xts, as.matrix.xts
-  as.zoo.xts, as.its.xts,
+  as.zoo.xts,
   as.timeSeries.xts, as.irts.xts
 
   above should handle clean coercion to the requested classes,
