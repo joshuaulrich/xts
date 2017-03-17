@@ -158,6 +158,12 @@ function(x, INDEX, FUN, ...)
 {
     x <- try.xts(x, error = FALSE)
     FUN <- match.fun(FUN)
+
+    if(!isOrdered(INDEX)) {
+      # isOrdered returns FALSE if there are duplicates
+      INDEX <- sort(unique(INDEX))
+    }
+
     xx <- sapply(1:(length(INDEX) - 1), function(y) {
                    FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
                 })  
