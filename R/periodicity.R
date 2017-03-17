@@ -163,6 +163,12 @@ function(x, INDEX, FUN, ...)
       # isOrdered returns FALSE if there are duplicates
       INDEX <- sort(unique(INDEX))
     }
+    if(INDEX[1] != 0) {
+      INDEX <- c(0, INDEX)
+    }
+    if(last(INDEX) != NROW(x)) {
+      INDEX <- c(INDEX, NROW(x))
+    }
 
     xx <- sapply(1:(length(INDEX) - 1), function(y) {
                    FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)

@@ -40,3 +40,34 @@ test.unsorted_INDEX_vector <- function() {
   checkIdentical(s, u)
 }
 
+test.INDEX_starts_with_zero <- function() {
+  x <- .xts(1:10, 1:10)
+  ep <- c(2, 4, 6, 8, 10)
+  a <- period.apply(x, ep, mean)
+  z <- period.apply(x, c(0, ep), mean)
+  checkIdentical(a, z)
+}
+
+test.INDEX_starts_with_zero_vector <- function() {
+  x <- 1:10
+  ep <- c(2, 4, 6, 8, 10)
+  a <- period.apply(x, ep, mean)
+  z <- period.apply(x, c(0, ep), mean)
+  checkIdentical(a, z)
+}
+
+test.INDEX_ends_with_lengthX <- function() {
+  x <- .xts(1:10, 1:10)
+  ep <- c(0, 2, 4, 6, 8)
+  a <- period.apply(x, ep, mean)
+  z <- period.apply(x, c(ep, 10), mean)
+  checkIdentical(a, z)
+}
+
+test.INDEX_ends_with_lengthX_vector <- function() {
+  x <- 1:10
+  ep <- c(0, 2, 4, 6, 8)
+  a <- period.apply(x, ep, mean)
+  z <- period.apply(x, c(ep, 10), mean)
+  checkIdentical(a, z)
+}
