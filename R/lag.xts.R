@@ -77,7 +77,7 @@ lag.xts <- function(x, k=1, na.pad=TRUE, ...) {
       names(k) <- paste("lag",k,sep="")
     return(do.call("merge.xts", lapply(k, lag.xts, x=x, na.pad=na.pad,...)))
   }
-  .Call('lag_xts', x, as.integer(k), as.logical(na.pad), PACKAGE='xts')
+  .Call('lag_xts', x, k, na.pad, PACKAGE='xts')
 }
 
 lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
@@ -86,11 +86,18 @@ lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
       names(k) <- paste("lag",k,sep="")
     return(do.call("merge.xts", lapply(k, lag.xts, x=x, na.pad=na.pad,...)))
   }
-  .Call('lag_xts', x, as.integer(k), as.logical(na.pad), PACKAGE='xts')
+  .Call('lag_xts', x, k, na.pad, PACKAGE='xts')
 }
 
 diff.xts <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad=TRUE, ...)
 {
+  if(!is.integer(lag) && any(is.na(as.integer(lag))))
+    stop("'lag' must be integer")
+
+  differences <- as.integer(differences[1L])
+  if(is.na(differences))
+    stop("'differences' must be integer")
+
   if(is.logical(x))
     x <- .xts(matrix(as.integer(x),ncol=NCOL(x)), .index(x), indexClass(x))
 

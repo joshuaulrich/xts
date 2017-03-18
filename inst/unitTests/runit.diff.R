@@ -33,3 +33,20 @@ test.diff_logical_Date <- function() {
   checkIdentical(diff(x), dx)
 }
 
+# Type-check failure errors
+test.diff_differences_NA <- function() {
+  x <- .xts(1:5, 1:5)
+  checkException(diff(x, 1L, "a"), "'differences' must be integer")
+}
+test.diff_lag_NA <- function() {
+  x <- .xts(1:5, 1:5)
+  checkException(diff(x, "a", 1L), "'lag' must be integer")
+}
+test.diff_differences_LT1 <- function() {
+  x <- .xts(1:5, 1:5)
+  checkException(diff(x, 1L, -1L), "'diff.xts' defined only for positive lag and differences arguments")
+}
+test.diff_lag_LT1 <- function() {
+  x <- .xts(1:5, 1:5)
+  checkException(diff(x, -1L, 1L), "'diff.xts' defined only for positive lag and differences arguments")
+}
