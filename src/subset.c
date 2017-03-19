@@ -136,6 +136,10 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
       real_nindex = REAL(nindex);
       real_oindex = REAL(oindex);
       for(i=0; i<nr; i++) {
+        if(int_sr[i] == NA_INTEGER)
+          error("'i' contains NA");
+        if(int_sr[i] > nrs || int_sc[j] > ncs)
+          error("'i' or 'j' out of range");
         real_nindex[i] = real_oindex[int_sr[i]-1];
         if(int_sc[j] == NA_INTEGER)
           int_result[i+j*nr] = NA_INTEGER;
