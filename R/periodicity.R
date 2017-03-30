@@ -35,7 +35,7 @@ periodicity <- function(x, ...) {
   if( timeBased(x) || !is.xts(x) )
     x <- try.xts(x, error='\'x\' needs to be timeBased or xtsible')
 
-  p <- median(diff( .index(x) ))
+  p <- median(diff( .index(x) ),na.rm=TRUE)
 
   if( is.na(p) ) stop("can not calculate periodicity of 1 observation")
 
