@@ -62,6 +62,8 @@ function(x=NULL,
     order.by <- .POSIXct(unclass(order.by)*86400, tz=tzone)
   }
 
+  if(any(!is.finite(order.by)))
+    stop("'order.by' cannot contain 'NA', 'NaN', or 'Inf'")
 
   if(!isOrdered(order.by, strictly=!unique)) {
     indx <- order(order.by)
@@ -112,6 +114,8 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
     index <- as.numeric(as.POSIXct(index))
   if(!is.null(x) && NROW(x) != length(index))
     stop("index length must match number of observations")
+  if(any(!is.finite(index)))
+    stop("'index' cannot contain 'NA', 'NaN', or 'Inf'")
 
   if(!is.null(x)) {
     if(!is.matrix(x))
