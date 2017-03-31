@@ -156,6 +156,9 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   real_xindex = REAL(xindex);
   real_yindex = REAL(yindex);
   while( (xp + yp) <= (len + 1) ) {
+    if(!R_FINITE(real_xindex[ xp-1 ]) || !R_FINITE(real_yindex[ yp-1 ])) {
+      error("'index' cannot contain 'NA', 'NaN', or 'Inf'");
+    } else
     if( xp > nrx ) {
       yp++;
       if(right_join) i++;
@@ -179,10 +182,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       /* RIGHT JOIN */
       yp++;
       if(right_join) i++;
-    } else
-    if(ISNA(real_xindex[ xp-1 ]) || ISNA(real_yindex[ yp-1 ])) {
-Rprintf("%f, %f\n",real_xindex[xp-1],real_yindex[yp-1]);
-      error("'NA' not allowed in 'index'");
     }
   } 
   } else
@@ -190,6 +189,10 @@ Rprintf("%f, %f\n",real_xindex[xp-1],real_yindex[yp-1]);
   int_xindex = INTEGER(xindex);
   int_yindex = INTEGER(yindex);
   while( (xp + yp) <= (len + 1) ) {
+    /* Check for NA first; logical ops on them may yield surprising results */
+    if(int_xindex[ xp-1 ]==NA_INTEGER || int_yindex[ yp-1 ]==NA_INTEGER) {
+       error("'index' cannot contain 'NA'");
+    } else
     if( xp > nrx ) {
       yp++;
       if(right_join) i++;
@@ -210,10 +213,6 @@ Rprintf("%f, %f\n",real_xindex[xp-1],real_yindex[yp-1]);
     if( int_xindex[ xp-1 ] > int_yindex[ yp-1 ] ) {
       yp++;
       if(right_join) i++;
-    } else
-    if(real_xindex[ xp-1 ]==NA_INTEGER ||
-       real_yindex[ yp-1 ]==NA_INTEGER) {
-       error("'NA' not allowed in 'index'");
     }
   } 
   }
