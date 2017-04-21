@@ -151,7 +151,11 @@ Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
       if(!isNull(VECTOR_ELT(currentnames,1))) {
         /* if colnames isn't NULL set */
         for(i=0; i<length(j); i++) {
-          SET_STRING_ELT(newnames, i, STRING_ELT(VECTOR_ELT(currentnames,1), INTEGER(j)[i]-1));
+          if(INTEGER(j)[i] == NA_INTEGER) {
+            SET_STRING_ELT(newnames, i, NA_STRING);
+          } else {
+            SET_STRING_ELT(newnames, i, STRING_ELT(VECTOR_ELT(currentnames,1), INTEGER(j)[i]-1));
+          }
         }
         SET_VECTOR_ELT(dimnames, 1, newnames);
       } else {
