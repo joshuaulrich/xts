@@ -8,11 +8,12 @@ dist: trusty
 
 before_install:
   - curl -OLs https://eddelbuettel.github.io/r-travis/run.sh && chmod 0755 run.sh
+  # add our launchpad repo which has (inter alia) the newest QuantLib
+  - sudo add-apt-repository -y ppa:edd/misc
   - ./run.sh bootstrap
 
 install:
-  - ./run.sh install_aptget r-cran-runit r-cran-zoo r-cran-timedate r-cran-timeseries r-cran-tseries r-cran-chron
-  - ./run.sh install_r fts tis
+  - ./run.sh install_aptget r-cran-runit r-cran-zoo r-cran-timedate r-cran-timeseries r-cran-tseries r-cran-chron r-cran-fts r-cran-tis
 
 script:
   - ./run.sh run_tests
