@@ -94,7 +94,7 @@ chart.lines <- function(x,
   switch(type,
          h={
            colors <- ifelse(x[,1] < 0, dn.col, up.col)
-           lines(xx$Env$xycoords$x,x[,1],lwd=2,col=colors,lend=lend,lty=1,type="h",...)
+           lines(xx$Env$xycoords$x[match(index(x), index(xx$Env$xdata))],x[,1],lwd=2,col=colors,lend=lend,lty=1,type="h",...)
          },
          p=, l=, b=, c=, o=, s=, S=, n={
            if(length(lty) < NCOL(x)) lty <- rep(lty, length.out = NCOL(x))
@@ -102,7 +102,7 @@ chart.lines <- function(x,
            if(length(col) < NCOL(x)) col <- rep(col, length.out = NCOL(x))
            for(i in NCOL(x):1){
              # non-equally spaced x-axis
-             lines(xx$Env$xycoords$x, x[,i], type=type, lend=lend, col=col[i], lty=lty[i], lwd=lwd[i], ...)
+             lines(xx$Env$xycoords$x[match(index(x), index(xx$Env$xdata))], x[,i], type=type, lend=lend, col=col[i], lty=lty[i], lwd=lwd[i], ...)
            }
          },
          {
@@ -1323,7 +1323,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   # subset function
   subset <- function(x="") {
     Env$xsubset <<- x
-    set_xlim(range(Env$xycoords$x, na.rm=TRUE))
+    set_xlim(range(Env$xycoords$x[match(index(Env$xdata[x]), index(Env$xdata))], na.rm=TRUE))
     ylim <- get_ylim()
     for(y in seq(2,length(ylim),by=2)) {
       if(!attr(ylim[[y]],'fixed'))
