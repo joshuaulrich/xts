@@ -50,13 +50,14 @@ function(x,on='months',k=1) {
       as.integer(c(0, which(diff(posixltindex$year %/% k + 1) != 0), NR))
     },
     "quarters" = {
-      xi <- (posixltindex$mon%/%3) + 1
-      as.integer(c(0,which(diff(xi) != 0),NR))
+      ixqtr <- posixltindex$year * 100L + 190000L + posixltindex$mon %/% 3 + 1
+      as.integer(c(0,which(diff(ixqtr) != 0),NR))
     },
     "months" = {
       #as.integer(c(0, which(diff(posixltindex$mon %/% k + 1) != 0), NR) )
       # x[which(diff(as.POSIXlt(index(x))$mon) != 0)[seq(0,328,12)]]
-      ep <- .Call("endpoints", posixltindex$mon, 1L, 1L, addlast, PACKAGE='xts')
+      ixmon <- posixltindex$year * 100L + 190000L + posixltindex$mon
+      ep <- .Call("endpoints", ixmon, 1L, 1L, addlast, PACKAGE='xts')
       if(k > 1)
         ep[seq(1,length(ep),k)]
       else ep
@@ -68,7 +69,8 @@ function(x,on='months',k=1) {
     "days" = {
       #as.integer(c(0, which(diff(.index(x) %/% 86400L %/% k + 1) != 0), NR))
       #as.integer(c(0, which(diff(posixltindex$yday %/% k + 1) != 0), NR))
-      .Call("endpoints", posixltindex$yday, 1L, k, addlast, PACKAGE='xts')
+      ixyday <- posixltindex$year * 1000L + 1900000L + posixltindex$yday
+      .Call("endpoints", ixyday, 1L, k, addlast, PACKAGE='xts')
     },
     # non-date slicing should be indifferent to TZ and DST, so use math instead
     "hours" = {

@@ -170,3 +170,30 @@ test.years_integer_index <- function() {
 }
 #}}}
 
+# sparse endpoints could be a problem with POSIXlt elements (#169)
+# TODO: sparse intraday endpoints
+test.sparse_years <- function() {
+  x <- xts(2:6, as.Date(sprintf("199%d-06-01", 2:6)))
+  ep <- endpoints(x, "years")
+  checkIdentical(ep, 0:5)
+}
+test.sparse_quarters <- function() {
+  x <- xts(2:6, as.Date(sprintf("199%d-06-01", 2:6)))
+  ep <- endpoints(x, "quarters")
+  checkIdentical(ep, 0:5)
+}
+test.sparse_months <- function() {
+  x <- xts(2:6, as.Date(sprintf("199%d-06-01", 2:6)))
+  ep <- endpoints(x, "months")
+  checkIdentical(ep, 0:5)
+}
+test.sparse_weeks <- function() {
+  x <- xts(2:6, as.Date(sprintf("199%d-06-01", 2:6)))
+  ep <- endpoints(x, "weeks")
+  checkIdentical(ep, 0:5)
+}
+test.sparse_days <- function() {
+  x <- xts(2:6, as.Date(sprintf("199%d-06-01", 2:6)))
+  ep <- endpoints(x, "days")
+  checkIdentical(ep, 0:5)
+}
