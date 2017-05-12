@@ -3,7 +3,7 @@
 #include "xts.h"
 
 
-static SEXP ExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
+static SEXP xts_ExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
 {
     /* ExtractSubset is currently copied/inspired by subset.c from GNU-R
        This is slated to be reimplemented using the previous method
@@ -409,18 +409,18 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         PROTECT(newdimnames = allocVector(VECSXP, 2));
         if (TYPEOF(dimnames) == VECSXP) {
           SET_VECTOR_ELT(newdimnames, 0,
-            ExtractSubset(VECTOR_ELT(dimnames, 0),
+            xts_ExtractSubset(VECTOR_ELT(dimnames, 0),
                   allocVector(STRSXP, nr), sr));
           SET_VECTOR_ELT(newdimnames, 1,
-            ExtractSubset(VECTOR_ELT(dimnames, 1),
+            xts_ExtractSubset(VECTOR_ELT(dimnames, 1),
                   allocVector(STRSXP, nc), sc));
         }
         else {
           SET_VECTOR_ELT(newdimnames, 0,
-            ExtractSubset(CAR(dimnames),
+            xts_ExtractSubset(CAR(dimnames),
                   allocVector(STRSXP, nr), sr));
           SET_VECTOR_ELT(newdimnames, 1,
-            ExtractSubset(CADR(dimnames),
+            xts_ExtractSubset(CADR(dimnames),
                   allocVector(STRSXP, nc), sc));
         }
         setAttrib(newdimnames, R_NamesSymbol, dimnamesnames);
