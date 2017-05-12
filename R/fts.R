@@ -22,8 +22,8 @@
 `as.xts.fts` <-
 function(x, ..., .RECLASS=FALSE)
 {
-  dates <- as.numeric(dates(x)) # fts uses POSIXct
-  attr(x,'dates') <- NULL
+  dates <- .index(x) # fts uses POSIXct
+  attributes(dates) <- NULL
   if(.RECLASS) {
   .xts(unclass(x), dates, .CLASS="fts", ...)
   } else {
@@ -37,7 +37,9 @@ function(x)
   if(!requireNamespace('fts', quietly=TRUE))
     fts <- function(...) message("package 'fts' is required")
 
-  fts::fts(coredata(x), structure(.index(x), class=c("POSIXct","POSIXt")))
+  ix <- .index(x)
+  attributes(ix) <- NULL
+  fts::fts(ix, coredata(x))
 }
 
 re.fts <- function(x, ...) 
@@ -45,5 +47,7 @@ re.fts <- function(x, ...)
   if(!requireNamespace('fts', quietly=TRUE))
     fts <- function(...) message("package 'fts' is required")
 
-  fts::fts(coredata(x), structure(.index(x), class=c("POSIXct","POSIXt")))
+  ix <- .index(x)
+  attributes(ix) <- NULL
+  fts::fts(ix, coredata(x))
 }
