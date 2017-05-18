@@ -70,7 +70,7 @@ axTicksByTime <- function(x, ticks.on='auto', k=1,
                       if (unix) '%n%b%n%Y' else '%b %Y')
 
         # special case yearqtr index
-        if(indexClass(x)[1] == "yearqtr")
+        if(inherits(index(x), "yearqtr"))
           fmt <- '%Y-Q%q'
 
         if(is.character(format.labels)) fmt <- format.labels
