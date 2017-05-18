@@ -1,7 +1,7 @@
 data(sample_matrix)
-stopifnot(require(fts))
+stopifnot(requireNamespace("fts"))
 sample.fts1 <- ts(sample_matrix,start=as.Date(rownames(sample_matrix)[1]))
-sample.fts1 <- fts(index(sample.fts1), sample_matrix)
+sample.fts1 <- fts::fts(index(sample.fts1), sample_matrix)
 sample.xts.fts1 <- as.xts(sample.fts1)
 
 
@@ -34,7 +34,7 @@ test.fts_reclass_subset_fts_j1 <- function() {
 
 # quarterly series
 sample.fts4 <- ts(sample_matrix,start=1960,frequency=4)
-sample.fts4 <- fts(index(sample.fts4), sample_matrix)
+sample.fts4 <- fts::fts(index(sample.fts4), sample_matrix)
 sample.xts.fts4 <- as.xts(sample.fts4)
 
 
@@ -67,7 +67,7 @@ test.fts4_reclass_subset_fts_j1 <- function() {
 
 # monthly series
 sample.fts12 <- ts(sample_matrix,start=1990,frequency=12)
-sample.fts12 <- fts(index(sample.fts12), sample_matrix)
+sample.fts12 <- fts::fts(index(sample.fts12), sample_matrix)
 sample.xts.fts12 <- as.xts(sample.fts12)
 
 
