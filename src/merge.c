@@ -155,10 +155,15 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   if( TYPEOF(xindex) == REALSXP ) { 
   real_xindex = REAL(xindex);
   real_yindex = REAL(yindex);
+
+  /* Check for illegal values before looping. Due to ordered index,
+   * -Inf must be first, while NA, Inf, and NaN must be last. */
+  if (!R_FINITE(real_xindex[0]) || !R_FINITE(real_xindex[nrx-1])
+   || !R_FINITE(real_yindex[0]) || !R_FINITE(real_yindex[nry-1])) {
+    error("'index' cannot contain 'NA', 'NaN', or '+/-Inf'");
+  }
+
   while( (xp + yp) <= (len + 1) ) {
-    if(!R_FINITE(real_xindex[ xp-1 ]) || !R_FINITE(real_yindex[ yp-1 ])) {
-      error("'index' cannot contain 'NA', 'NaN', or 'Inf'");
-    } else
     if( xp > nrx ) {
       yp++;
       if(right_join) i++;
@@ -182,17 +187,23 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       /* RIGHT JOIN */
       yp++;
       if(right_join) i++;
-    }
+    } else
+      error("Invalid index element comparison (should never happen)");
   } 
   } else
   if( TYPEOF(xindex) == INTSXP ) {
   int_xindex = INTEGER(xindex);
   int_yindex = INTEGER(yindex);
+
+  /* Check for NA before looping; logical ops on NA may yield surprising
+   * results. Note that the NA_integer_ will appear in the last value of
+   * the index because of sorting at the R level, even though NA_INTEGER
+   * equals INT_MIN at the C level. */
+  if (int_xindex[nrx-1] == NA_INTEGER || int_yindex[nry-1] == NA_INTEGER) {
+     error("'index' cannot contain 'NA'");
+  }
+
   while( (xp + yp) <= (len + 1) ) {
-    /* Check for NA first; logical ops on them may yield surprising results */
-    if(int_xindex[ xp-1 ]==NA_INTEGER || int_yindex[ yp-1 ]==NA_INTEGER) {
-       error("'index' cannot contain 'NA'");
-    } else
     if( xp > nrx ) {
       yp++;
       if(right_join) i++;
@@ -213,7 +224,8 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     if( int_xindex[ xp-1 ] > int_yindex[ yp-1 ] ) {
       yp++;
       if(right_join) i++;
-    }
+    } else
+      error("Invalid index element comparison (should never happen)");
   } 
   }
 
