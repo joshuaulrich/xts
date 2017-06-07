@@ -39,6 +39,72 @@
   Copyright Jeffrey A. Ryan 2008
 
 */
+
+int nrow_dbl_index(double* x, double* y, int nx, int ny, int ljoin, int rjoin);
+int nrow_dbl_index(double* x, double* y, int nx, int ny, int ljoin, int rjoin)
+{
+  int i = 0, xi = 1, yi = 1;
+  int max_length = nx + ny + 1;
+
+  /* Special-case the inner join, since it is the default */
+  if (rjoin && ljoin) {
+    while ((xi + yi) <= max_length) {
+      if (xi > nx) {
+        i += (ny - yi);
+        break;
+      }
+      if (yi > ny) {
+        i += (nx - xi);
+        break;
+      }
+      double xxi = x[xi-1];
+      double yyi = y[yi-1];
+      i++;
+      if (xxi == yyi) {
+        /* INNER JOIN */
+        yi++;
+        xi++;
+      } else if (xxi < yyi) {
+        /* LEFT JOIN */
+        xi++;
+      } else if (xxi > yyi) {
+        /* RIGHT JOIN */
+        yi++;
+      } else
+        error("nope");
+    }
+  } else
+  /* Run the generic algorithm */
+  while ((xi + yi) <= (max_length + 1)) {
+    if (xi > nx) {
+      yi++;
+      if (rjoin) i++;
+      continue;
+    } else if (yi > ny) {
+      xi++;
+      if(ljoin) i++;
+      continue;
+    }
+    double xxi = x[xi-1];
+    double yyi = y[yi-1];
+    if (xxi == yyi) {
+      /* INNER JOIN  --- only result if all=FALSE */
+      yi++;
+      xi++;
+      i++;
+    } else if (xxi < yyi) {
+      /* LEFT JOIN */
+      xi++;
+      if (ljoin) i++;
+    } else if (xxi > yyi) {
+      /* RIGHT JOIN */
+      yi++;
+      if (rjoin) i++;
+    }
+  }
+  return i;
+}
+
 /* do_merge_xts {{{ */
 SEXP do_merge_xts (SEXP x, SEXP y,
                    SEXP all,
@@ -163,33 +229,8 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     error("'index' cannot contain 'NA', 'NaN', or '+/-Inf'");
   }
 
-  while( (xp + yp) <= (len + 1) ) {
-    if( xp > nrx ) {
-      yp++;
-      if(right_join) i++;
-    } else
-    if( yp > nry ) {
-      xp++;
-      if(left_join) i++;
-    } else
-    if( real_xindex[ xp-1 ] == real_yindex[ yp-1 ] ) {
-      /* INNER JOIN  --- only result if all=FALSE */
-      yp++;
-      xp++;
-      i++;
-    } else
-    if( real_xindex[ xp-1 ] < real_yindex[ yp-1 ] ) {
-      /* LEFT JOIN */
-      xp++;
-      if(left_join) i++;
-    } else
-    if( real_xindex[ xp-1 ] > real_yindex[ yp-1 ] ) {
-      /* RIGHT JOIN */
-      yp++;
-      if(right_join) i++;
-    } else
-      error("Invalid index element comparison (should never happen)");
-  } 
+  i = nrow_dbl_index(real_xindex, real_yindex, nrx, nry, left_join, right_join);
+
   } else
   if( TYPEOF(xindex) == INTSXP ) {
   int_xindex = INTEGER(xindex);
