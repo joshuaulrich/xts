@@ -62,9 +62,6 @@ function(x=NULL,
     order.by <- .POSIXct(unclass(order.by)*86400, tz=tzone)
   }
 
-  if(any(!is.finite(order.by)))
-    stop("'order.by' cannot contain 'NA', 'NaN', or 'Inf'")
-
   if(!isOrdered(order.by, strictly=!unique)) {
     indx <- order(order.by)
     if(!is.null(x)) {
@@ -88,6 +85,10 @@ function(x=NULL,
     index <- as.numeric(as.POSIXct(strptime(as.character(order.by),"(%m/%d/%y %H:%M:%S)"))) #$format
   else
   index <- as.numeric(as.POSIXct(order.by))
+
+  if(any(!is.finite(index)))
+    stop("'order.by' cannot contain 'NA', 'NaN', or 'Inf'")
+
   x <- structure(.Data=x,
             index=structure(index,tzone=tzone,tclass=orderBy),
             class=c('xts','zoo'),

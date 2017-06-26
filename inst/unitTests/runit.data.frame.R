@@ -1,10 +1,15 @@
 data(sample_matrix)
 
-sysTZ <- Sys.getenv('TZ')
-Sys.setenv(TZ='GMT')
+.setUp <- function() {
+  sysTZ <<- Sys.getenv("TZ")
+  Sys.setenv(TZ = "GMT")
 
-sample.data.frame <- data.frame(sample_matrix)
-sample.xts <- as.xts(sample.data.frame)
+  sample.data.frame <<- data.frame(sample_matrix)
+  sample.xts <<- as.xts(sample.data.frame)
+}
+.tearDown <- function() {
+  Sys.setenv(TZ = sysTZ)
+}
 
 test.convert_data.frame_to_xts <- function() {
   checkIdentical(sample.xts,as.xts(sample.data.frame))
@@ -36,4 +41,21 @@ test.data.frame_reclass_subset_data.frame_j1 <- function() {
   checkException(try.xts(sample.data.frame[,1]))
 }
 
-Sys.setenv(TZ=sysTZ)
+# check for as.xts.data.frame when order.by is specified
+test.convert_data.frame_to_xts_order.by_POSIXlt <- function() {
+  orderby = as.POSIXlt(rownames(sample.data.frame))
+  x <- as.xts(sample.data.frame, order.by = orderby)
+  y <- xts(coredata(sample.xts), as.POSIXlt(index(sample.xts)))
+  checkIdentical(y, x)
+}
+test.convert_data.frame_to_xts_order.by_POSIXct <- function() {
+  orderby = as.POSIXct(rownames(sample.data.frame))
+  x <- as.xts(sample.data.frame, order.by = orderby)
+  checkIdentical(sample.xts, x)
+}
+test.convert_data.frame_to_xts_order.by_Date <- function() {
+  orderby = as.Date(rownames(sample.data.frame))
+  x <- as.xts(sample.data.frame, order.by = orderby)
+  y <- xts(coredata(sample.xts), as.Date(index(sample.xts)))
+  checkIdentical(y, x)
+}
