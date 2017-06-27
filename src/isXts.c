@@ -23,13 +23,14 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <Rdefines.h>
+#include "xts.h"
 
 int isXts(SEXP x) 
 {
   int i;
   SEXP attr, index;
 
-  index = getAttrib(x, install("index"));
+  index = getAttrib(x, xts_IndexSymbol);
   PROTECT( attr = coerceVector(getAttrib(x, R_ClassSymbol),STRSXP) );
   if(length(attr) <= 1) {
     UNPROTECT(1);

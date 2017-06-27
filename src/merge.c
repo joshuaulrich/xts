@@ -80,7 +80,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     return(y);
   }
 
-  PROTECT( xindex = getAttrib(x, install("index")) );
+  PROTECT( xindex = getAttrib(x, xts_IndexSymbol) );
 
   /* convert to xts object if needed */
   if( !isXts(y) ) {
@@ -1233,17 +1233,17 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                     coerce_to_double)); P++;
   }
 
-  SEXP index_tmp = getAttrib(result, install("index"));
+  SEXP index_tmp = getAttrib(result, xts_IndexSymbol);
   PROTECT(index_tmp);
   if(isNull(tzone)) {
-    setAttrib(index_tmp, install("tzone"), 
-              getAttrib(getAttrib(_x,install("index")), install("tzone")));
+    setAttrib(index_tmp, xts_IndexTzoneSymbol,
+              getAttrib(getAttrib(_x,xts_IndexSymbol), xts_IndexTzoneSymbol));
   } else {
-    setAttrib(index_tmp, install("tzone"), tzone);
+    setAttrib(index_tmp, xts_IndexTzoneSymbol, tzone);
   }
-  copyMostAttrib(getAttrib(_x,install("index")), index_tmp);
-  setAttrib(result, install("index"), index_tmp);
-  setAttrib(result, install(".indexTZ"), getAttrib(index_tmp, install("tzone")));
+  copyMostAttrib(getAttrib(_x,xts_IndexSymbol), index_tmp);
+  setAttrib(result, xts_IndexSymbol, index_tmp);
+  setAttrib(result, xts_IndexTZSymbol, getAttrib(index_tmp, xts_IndexTzoneSymbol));
   UNPROTECT(1);
 
   if(P > 0) UNPROTECT(P); 

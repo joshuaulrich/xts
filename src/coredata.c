@@ -72,9 +72,9 @@ SEXP coredata (SEXP x, SEXP copyAttr)
   }
   if( asLogical(copyAttr)) {
     copyMostAttrib(x,result);
-    setAttrib(result, install("class"), getAttrib(x, install("oclass")));
+    setAttrib(result, R_ClassSymbol, getAttrib(x, install("oclass")));
   }
-  setAttrib(result, install("index"),     R_NilValue);
+  setAttrib(result, xts_IndexSymbol,     R_NilValue);
   setAttrib(result, install("oclass"),    R_NilValue);
   setAttrib(result, install("frequency"), R_NilValue);
 

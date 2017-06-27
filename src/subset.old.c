@@ -158,7 +158,7 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop) //SEXP s, SEXP call, int
     SEXP index, newindex;
     int indx;
 
-    index = getAttrib(x, install("index"));
+    index = getAttrib(x, xts_IndexSymbol);
     PROTECT(index);
 
     if(TYPEOF(index) == INTSXP) {
@@ -170,7 +170,7 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop) //SEXP s, SEXP call, int
         int_newindex[indx] = int_index[ (int_sr[indx])-1];
       }
       copyAttributes(index, newindex);
-      setAttrib(result, install("index"), newindex);
+      setAttrib(result, xts_IndexSymbol, newindex);
       UNPROTECT(1);
     }
     if(TYPEOF(index) == REALSXP) {
@@ -182,7 +182,7 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop) //SEXP s, SEXP call, int
         real_newindex[indx] = real_index[ (int_sr[indx])-1 ];
       }
       copyAttributes(index, newindex);
-      setAttrib(result, install("index"), newindex);
+      setAttrib(result, xts_IndexSymbol, newindex);
       UNPROTECT(1);
     }
 

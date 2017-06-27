@@ -124,7 +124,7 @@ void copyAttributes(SEXP x, SEXP y)
   if(length(attr) > 0 || y != R_NilValue) {
     PROTECT(attr); P++;
     for( ; attr != R_NilValue; attr = CDR(attr) ) {
-      if( (TAG(attr) != install("index")) &&
+      if( (TAG(attr) != xts_IndexSymbol) &&
           (TAG(attr) != R_DimSymbol)      &&
           (TAG(attr) != R_DimNamesSymbol) &&
           (TAG(attr) != R_NamesSymbol) ) {
@@ -186,8 +186,8 @@ SEXP add_xtsCoreAttributes(SEXP _x, SEXP _index, SEXP _indexClass, SEXP _tzone,
     PROTECT(_index = duplicate(_index)); P++;
   }
   /* add tzone and tclass to index */
-  setAttrib(_index, install("tclass"), _tclass);
-  setAttrib(_index, install("tzone"), _tzone);
+  setAttrib(_index, xts_IndexTclassSymbol, _tclass);
+  setAttrib(_index, xts_IndexTzoneSymbol, _tzone);
 
   if(NAMED(_x) == 2) {
     PROTECT(_x = duplicate(_x)); P++;
@@ -196,8 +196,8 @@ SEXP add_xtsCoreAttributes(SEXP _x, SEXP _index, SEXP _indexClass, SEXP _tzone,
   setAttrib(_x, xts_IndexSymbol, _index);              /* index */
   setAttrib(_x, xts_IndexClassSymbol, _indexClass);    /* .indexClass */
   setAttrib(_x, xts_IndexTZSymbol, _tzone);            /* .indexTZ */
-  setAttrib(_x, install("tclass"), _tclass);           /* tclass */
-  setAttrib(_x, install("tzone"), _tzone);             /* tzone */
+  setAttrib(_x, xts_IndexTclassSymbol, _tclass);       /* tclass */
+  setAttrib(_x, xts_IndexTzoneSymbol, _tzone);         /* tzone */
   setAttrib(_x, R_ClassSymbol, _class);                /* class */
 
   /* .indexFormat is only here because it's set in Ops.xts

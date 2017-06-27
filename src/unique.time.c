@@ -36,7 +36,7 @@ SEXP make_index_unique (SEXP x_, SEXP eps_) {
   SEXP result;
   PROTECT(result = coredata_xts(x_));
   copyAttributes(x_, result); /* copy all attrib except index, and dim-related */
-  setAttrib(result, install("index"), make_unique(getAttrib(x_, install("index")), eps_));
+  setAttrib(result, xts_IndexSymbol, make_unique(getAttrib(x_, xts_IndexSymbol), eps_));
   UNPROTECT(1);
   return(result);
 }

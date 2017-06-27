@@ -119,7 +119,7 @@ Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
   if(nrs != nrows(x)) {
     copyAttributes(x, result);
     /* subset index */
-    index = getAttrib(x, install("index"));
+    index = getAttrib(x, xts_IndexSymbol);
     PROTECT(new_index = allocVector(TYPEOF(index), nrs)); 
     if(TYPEOF(index) == REALSXP) {
       memcpy(REAL(new_index), &(REAL(index)[first]), nrs*sizeof(double)); 
@@ -127,7 +127,7 @@ Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
       memcpy(INTEGER(new_index), &(INTEGER(index)[first]), nrs*sizeof(int)); 
     }
     copyMostAttrib(index, new_index);
-    setAttrib(result, install("index"), new_index);
+    setAttrib(result, xts_IndexSymbol, new_index);
     UNPROTECT(1);
   } else {
     copyMostAttrib(x, result); /* need an xts/zoo equal that skips 'index' */

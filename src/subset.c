@@ -101,7 +101,7 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
   nr = length(sr); nc = length(sc);
 
   SEXP oindex, nindex;
-  oindex = getAttrib(x, install("index"));
+  oindex = getAttrib(x, xts_IndexSymbol);
   PROTECT(nindex = allocVector(TYPEOF(oindex), nr)); P++;
   PROTECT(result = allocVector(TYPEOF(x), nr*nc)); P++;
   j = 0;
@@ -148,7 +148,7 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
       }
     }
     copyAttributes(oindex, nindex);
-    setAttrib(result, install("index"), nindex);
+    setAttrib(result, xts_IndexSymbol, nindex);
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
         if(int_sc[j] == NA_INTEGER)
@@ -195,7 +195,7 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
       }
     }
     copyAttributes(oindex, nindex);
-    setAttrib(result, install("index"), nindex);
+    setAttrib(result, xts_IndexSymbol, nindex);
 
     /* loop through remaining columns */
     for(j=1; j<nc; j++) {
@@ -241,7 +241,7 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
       }
     }
     copyAttributes(oindex, nindex);
-    setAttrib(result, install("index"), nindex);
+    setAttrib(result, xts_IndexSymbol, nindex);
 
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
@@ -290,7 +290,7 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
       }
     }
     copyAttributes(oindex, nindex);
-    setAttrib(result, install("index"), nindex);
+    setAttrib(result, xts_IndexSymbol, nindex);
 
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
@@ -334,7 +334,7 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
       }
     }
     copyAttributes(oindex, nindex);
-    setAttrib(result, install("index"), nindex);
+    setAttrib(result, xts_IndexSymbol, nindex);
 
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
@@ -381,7 +381,7 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
       }
     }
     copyAttributes(oindex, nindex);
-    setAttrib(result, install("index"), nindex);
+    setAttrib(result, xts_IndexSymbol, nindex);
 
     for(j=1; j<nc; j++) {
       for(i=0; i<nr; i++) {
