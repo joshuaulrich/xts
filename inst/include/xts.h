@@ -81,7 +81,6 @@ SEXP do_rbind_xts(SEXP x, SEXP y, SEXP dup);
 SEXP rbindXts(SEXP args);
 SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop);
 SEXP number_of_cols(SEXP args);
-SEXP col_names(SEXP args);
 SEXP naCheck(SEXP x, SEXP check);
 
 SEXP make_index_unique(SEXP x, SEXP eps);
