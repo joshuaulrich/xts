@@ -50,8 +50,27 @@ R_ExternalMethodDef externalMethods[] = {
   {NULL,                    NULL,                               0}
 };
 
+/*
+ * Taken from R/src/main/names.c
+ *   "Set up a set of globals so that a symbol table search can be
+ *    avoided when matching something like dim or dimnames."
+ *
+ * This also prevents flags from rchk's maacheck (Multiple-Allocating-
+ * Arguments) tool for calls like:
+ *   setAttrib(result, xts_IndexSymbol, getAttrib(x, xts_IndexSymbol));
+ */
+static void SymbolShortcuts(void)
+{
+  xts_IndexSymbol = install("index");
+  xts_ClassSymbol = install(".CLASS");
+  xts_IndexFormatSymbol = install(".indexFORMAT");
+  xts_IndexClassSymbol = install(".indexCLASS");
+  xts_IndexTZSymbol = install(".indexTZ");
+}
+
 void R_init_xts(DllInfo *info)
 {
+  SymbolShortcuts();
   R_registerRoutines(info,
                      NULL,
                      callMethods,

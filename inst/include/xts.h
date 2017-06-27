@@ -25,11 +25,11 @@ extern "C" {
 /*
 INTERNAL SYMBOLS
 */
-#define  xts_IndexSymbol                install("index")
-#define  xts_ClassSymbol                install(".CLASS")
-#define  xts_IndexFormatSymbol          install(".indexFORMAT")
-#define  xts_IndexClassSymbol           install(".indexCLASS")
-#define  xts_IndexTZSymbol              install(".indexTZ")
+SEXP xts_IndexSymbol;
+SEXP xts_ClassSymbol;
+SEXP xts_IndexFormatSymbol;
+SEXP xts_IndexClassSymbol;
+SEXP xts_IndexTZSymbol;
 
 /*
 DATA TOOLS

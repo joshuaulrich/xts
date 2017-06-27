@@ -25,13 +25,6 @@
 #include <Rdefines.h>
 #include "xts.h"
 
-/*
-#define  xts_IndexSymbol        install("index")
-#define  xts_ClassSymbol        install(".CLASS")
-#define  xts_IndexFormatSymbol  install(".indexFORMAT")
-#define  xts_IndexClassSymbol   install(".indexCLASS")
-#define  xts_ATTRIB(x)          coerceVector(do_xtsAttributes(x),LISTSXP)
-*/
 SEXP do_xtsAttributes(SEXP x)
 {
   SEXP a, values, names;
