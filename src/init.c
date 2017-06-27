@@ -66,6 +66,8 @@ static void SymbolShortcuts(void)
   xts_IndexFormatSymbol = install(".indexFORMAT");
   xts_IndexClassSymbol = install(".indexCLASS");
   xts_IndexTZSymbol = install(".indexTZ");
+  xts_IndexTClassSymbol = install("tclass");
+  xts_IndexTzoneSymbol = install("tzone");
 }
 
 void R_init_xts(DllInfo *info)

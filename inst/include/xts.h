@@ -30,6 +30,8 @@ SEXP xts_ClassSymbol;
 SEXP xts_IndexFormatSymbol;
 SEXP xts_IndexClassSymbol;
 SEXP xts_IndexTZSymbol;
+SEXP xts_IndexTclassSymbol;
+SEXP xts_IndexTzoneSymbol;
 
 /*
 DATA TOOLS
