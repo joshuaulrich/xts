@@ -29,8 +29,10 @@ SEXP binsearch (SEXP key, SEXP vec, SEXP start)
 
   while(hi >= lo) {
     mid = (int)((lo+hi)/2);
-    if(mid == 0)
+    if(mid == 0) {
+      UNPROTECT(1);
       return ScalarInteger(NA_INTEGER);
+    }
     //if(mid != 0 && INTEGER(key)[0] < INTEGER(vec)[mid]) {
     if(mid != 0 && int_key[0] < int_vec[mid-1]) {
       hi = mid-1;
@@ -86,8 +88,10 @@ SEXP binsearch (SEXP key, SEXP vec, SEXP start)
 
   while(hi >= lo) {
     mid = (int)((lo+hi)/2);
-    if(mid == 0)
+    if(mid == 0) {
+      UNPROTECT(1);
       return ScalarInteger(NA_INTEGER);
+    }
     //if(mid != 0 && REAL(key)[0] < REAL(vec)[mid]) {
     if(mid != 0 && real_key[0] < real_vec[mid-1]) {
       hi = mid-1;
