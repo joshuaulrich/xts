@@ -12,8 +12,8 @@ like zoo.
 \tabular{ll}{
 Package: \tab xts\cr
 Type: \tab Package\cr
-Version: \tab 0.8-0\cr
-Date: \tab 2011-02-22\cr
+Version: \tab 0.10-0\cr
+Date: \tab 2017-07-03\cr
 License: \tab GPL (>= 2)\cr
 }
 Easily convert one of \R's many time-series (and non-time-series)
@@ -25,9 +25,9 @@ can contain arbitrary attributes named during creation as name=value
 pairs.
 }
 \author{
-Jeffrey A. Ryan and Josh M. Ulrich
+Jeffrey A. Ryan and Joshua M. Ulrich
 
-Maintainer: Jeffrey A. Ryan <jeff.a.ryan@gmail.com>
+Maintainer: Joshua M. Ulrich <josh.m.ulrich@gmail.com>
 }
 \keyword{ package }
 \seealso{

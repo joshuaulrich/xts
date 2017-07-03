@@ -5,4 +5,5 @@ WISHLIST
 \.git
 \.gitignore
 \.orig$
+\.md$
 .travis.yml

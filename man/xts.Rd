@@ -90,7 +90,7 @@ attributes may be assigned and extracted via
 \code{xtsAttributes}.
 }
 \references{ \pkg{zoo}: }
-\author{ Jeffrey A. Ryan and Josh M. Ulrich }
+\author{ Jeffrey A. Ryan and Joshua M. Ulrich }
 \note{ 
 Most users will benefit the most by using the
 \code{as.xts} and \code{reclass} functions to
