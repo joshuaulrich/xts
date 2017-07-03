@@ -17,6 +17,10 @@
 #  }
 }
 
+.onUnload <- function(libpath) {
+  library.dynam.unload("xts", libpath)
+}
+
 if(getRversion() < "2.11.0") {
     .POSIXct <- function(xx, tz = NULL)
     structure(xx, class = c("POSIXct", "POSIXt"), tzone = tz)
