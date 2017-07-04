@@ -76,7 +76,6 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP whichVolume, SEXP has
   } else {
     Hi=Lo=Cl=0;
   }
-  Vo = INTEGER(whichVolume)[0]-1;
 
   if(INTEGER(hasVolume)[0]) ncr++; /* Volume */
   if(INTEGER(hasAdjusted)[0]) ncr++; /* Adjusted (Yahoo) */
@@ -115,6 +114,9 @@ SEXP toPeriod(SEXP x, SEXP endpoints, SEXP hasVolume, SEXP whichVolume, SEXP has
   int *_endpoints  = INTEGER(endpoints);
   int _hasAdjusted = INTEGER(hasAdjusted)[0]; 
   int _hasVolume   = INTEGER(hasVolume)[0]; 
+
+  /* volume column number */
+  Vo = _hasVolume ? asInteger(whichVolume)-1 : 0;
 
   for(i = 0; i < n; i++) {
     j = _endpoints[i];
