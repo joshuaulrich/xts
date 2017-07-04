@@ -82,7 +82,7 @@ If \code{retclass} is \code{NULL}, the result is a named
 list of from, to, by and length.out.
 }
 \references{ International Organization for Standardization: ISO 8601
-             \url{http://www.iso.org}}
+             \url{https://www.iso.org}}
 \author{ Jeffrey A. Ryan }
 \seealso{ \code{\link{timeBased}}, \code{\link{xts}} }
 \examples{

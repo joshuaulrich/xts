@@ -71,8 +71,8 @@ one describing the ISO-style format for a given
 time-based object.
 }
 \references{
-\url{http://en.wikipedia.org/wiki/ISO_8601}\cr
-\url{http://www.iso.org/iso/support/faqs/faqs_widely_used_standards/widely_used_standards_other/iso8601}
+\url{https://en.wikipedia.org/wiki/ISO_8601}\cr
+\url{https://www.iso.org/iso-8601-date-and-time-format.html}
 }
 \author{
 Jeffrey A. Ryan

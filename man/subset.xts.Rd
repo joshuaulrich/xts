@@ -103,7 +103,7 @@ be required when performing certain matrix operations.
 \references{
 ISO 8601: Date elements and interchange formats -
 Information interchange - Representation of dates and time
-\url{http://www.iso.org}
+\url{https://www.iso.org}
 }
 \author{
 Jeffrey A. Ryan

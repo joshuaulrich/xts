@@ -75,7 +75,7 @@ its class attribute.  This is for internal use.
 A new \code{xts} object containing the appropriate
 elements of the objects passed in to be merged.
 }
-\references{ Merge Join Discussion: \url{http://blogs.msdn.com/craigfr/archive/2006/08/03/687584.aspx} }
+\references{ Merge Join Discussion: \url{https://blogs.msdn.microsoft.com/craigfr/2006/08/03/merge-join/} }
 \author{ Jeffrey A. Ryan }
 \note{
 This is a highly optimized merge, specifically designed for ordered data. The
