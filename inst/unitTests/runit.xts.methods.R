@@ -3,6 +3,24 @@
 # rbind
 # cbind
 #
+test.rbind_zero_length_non_zero_length_POSIXct_errors <- function() {
+  xpz <- xts( , as.POSIXct("2017-01-01"))
+  xp1 <- xts(1, as.POSIXct("2017-01-02"))
+  zpz <- as.zoo(xpz)
+  zp1 <- as.zoo(xp1)
+  zpe <- tryCatch(rbind(zpz, zp1), error = identity)
+  xpe <- tryCatch(rbind(xpz, xp1), error = identity)
+  checkIdentical(zpe$message, xpe$message)
+}
+test.rbind_zero_length_non_zero_length_Date_errors <- function() {
+  xpz <- xts( , as.Date("2017-01-01"))
+  xp1 <- xts(1, as.Date("2017-01-02"))
+  zpz <- as.zoo(xpz)
+  zp1 <- as.zoo(xp1)
+  zpe <- tryCatch(rbind(zpz, zp1), error = identity)
+  xpe <- tryCatch(rbind(xpz, xp1), error = identity)
+  checkIdentical(zpe$message, xpe$message)
+}
 
 ## test reclass works and throws error
 ## test xtsAttributes, both CLASS and USER

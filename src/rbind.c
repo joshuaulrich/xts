@@ -102,6 +102,9 @@ if(TYPEOF(xindex)==INTSXP) {
 }
 #endif
 
+  if(nrx != length(xindex) || nry != length(yindex))
+    error("zero-length vectors with non-zero-length index are not allowed");
+
   PROTECT(newindex = allocVector(TYPEOF(xindex), len)); P++;
   PROTECT(result   = allocVector(TYPEOF(x), len * ncx)); P++;
 
