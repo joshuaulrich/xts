@@ -92,7 +92,7 @@ SEXP na_omit_xts(SEXP x);
 SEXP na_locf(SEXP x, SEXP fromlast, SEXP maxgap, SEXP limit);
 
 SEXP tryXts(SEXP x);
-
+SEXP xts_ExtractScalar(SEXP _x, SEXP _i, SEXP _j);
 
 void copyAttributes(SEXP x, SEXP y);    // internal only
 void copy_xtsAttributes(SEXP x, SEXP y);    // internal only

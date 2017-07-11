@@ -39,6 +39,7 @@ R_CallMethodDef callMethods[] = {
   {"do_rbind_xts",          (DL_FUNC) &do_rbind_xts,            3},
   {"do_subset_xts",         (DL_FUNC) &do_subset_xts,           4},
   {"naCheck",               (DL_FUNC) &naCheck,                 2},
+  {"xts_ExtractScalar",     (DL_FUNC) &xts_ExtractScalar,       3},
   {NULL,                    NULL,                               0}
 };
 
@@ -96,6 +97,7 @@ void R_init_xts(DllInfo *info)
   R_RegisterCCallable("xts","do_merge_xts",      (DL_FUNC) &do_merge_xts);
   R_RegisterCCallable("xts","na_omit_xts",       (DL_FUNC) &na_omit_xts);
   R_RegisterCCallable("xts","na_locf",           (DL_FUNC) &na_locf);
+  R_RegisterCCallable("xts","xts_ExtractScalar", (DL_FUNC) &xts_ExtractScalar);
 
   /* used by xts (functions moved from xts to zoo) */
   zoo_lag      = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("zoo","zoo_lag");

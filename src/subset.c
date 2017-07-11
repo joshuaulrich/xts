@@ -2,6 +2,37 @@
 #include <Rinternals.h>
 #include "xts.h"
 
+SEXP xts_ExtractScalar(SEXP _x, SEXP _i, SEXP _j)
+{
+  //.Call("xts_ExtractScalar", x, 1L, 1L, PACKAGE = "xts")
+  int i = asInteger(_i) - 1;
+  int j = asInteger(_j) - 1;
+  SEXP _result;
+  switch (TYPEOF(_x)) {
+    case LGLSXP:
+      _result = ScalarLogical(LOGICAL(_x)[i*j]);
+      break;
+    case INTSXP:
+      _result = ScalarInteger(INTEGER(_x)[i*j]);
+      break;
+    case REALSXP:
+      _result = ScalarReal(REAL(_x)[i*j]);
+      break;
+  }
+  SEXP _nIndex, _xIndex = getAttrib(_x, xts_IndexSymbol);
+  switch (TYPEOF(_xIndex)) {
+    case INTSXP:
+      _nIndex = ScalarInteger(INTEGER(_xIndex)[i]);
+      break;
+    case REALSXP:
+      _nIndex = ScalarReal(REAL(_xIndex)[i]);
+      break;
+  }
+  copyAttributes(_xIndex, _nIndex);
+  setAttrib(_result, xts_IndexSymbol, _nIndex);
+  setAttrib(_result, R_ClassSymbol, getAttrib(_x, R_ClassSymbol));
+  return _result;
+}
 
 static SEXP xts_ExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
 {
