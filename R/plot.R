@@ -435,19 +435,17 @@ plot.xts <- function(x,
   if(yaxis.left){
     exp <- c(exp, 
              # left y-axis labels
-             expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(get_ylim()[[2]]))), 
-                             y_grid_lines(get_ylim()[[2]]),
+             expression(text(xlim[1], y_grid_lines(get_ylim()[[2]]),
                              noquote(format(y_grid_lines(get_ylim()[[2]]), justify="right")),
-                             col=theme$labels, srt=theme$srt, offset=0, pos=4, 
+                             col=theme$labels, srt=theme$srt, offset=1, pos=2,
                              cex=theme$cex.axis, xpd=TRUE)))
   }
   if(yaxis.right){
     exp <- c(exp, 
              # right y-axis labels
-             expression(text(xlim[2]+xstep*2/3,
-                             y_grid_lines(get_ylim()[[2]]),
+             expression(text(xlim[2], y_grid_lines(get_ylim()[[2]]),
                              noquote(format(y_grid_lines(get_ylim()[[2]]), justify="right")),
-                             col=theme$labels, srt=theme$srt, offset=0, pos=4, 
+                             col=theme$labels, srt=theme$srt, offset=1, pos=4,
                              cex=theme$cex.axis, xpd=TRUE)))
   }
   cs$add(exp, env=cs$Env, expr=TRUE)
@@ -555,17 +553,16 @@ plot.xts <- function(x,
         if(yaxis.left){
           exp <- c(exp, 
                    # y-axis labels/boxes
-                   expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim))), 
-                                   y_grid_lines(ylim),
+                   expression(text(xlim[1], y_grid_lines(ylim),
                                    noquote(format(y_grid_lines(ylim),justify="right")),
-                                   col=theme$labels, srt=theme$srt, offset=0, 
-                                   pos=4, cex=theme$cex.axis, xpd=TRUE)))
+                                   col=theme$labels, srt=theme$srt, offset=1,
+                                   pos=2, cex=theme$cex.axis, xpd=TRUE)))
         }
         if(yaxis.right){
           exp <- c(exp, 
-                   expression(text(xlim[2]+xstep*2/3, y_grid_lines(ylim),
+                   expression(text(xlim[2], y_grid_lines(ylim),
                                    noquote(format(y_grid_lines(ylim),justify="right")),
-                                   col=theme$labels, srt=theme$srt, offset=0,
+                                   col=theme$labels, srt=theme$srt, offset=1,
                                    pos=4, cex=theme$cex.axis, xpd=TRUE)))
         }
         cs$add(exp,env=c(lenv, cs$Env),expr=TRUE,no.update=TRUE)
@@ -1126,18 +1123,16 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     if(plot_object$Env$theme$lylab){
       exp <- c(exp, 
                # y-axis labels/boxes
-               expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim))), 
-                               y_grid_lines(ylim),
+               expression(text(xlim[1], y_grid_lines(ylim),
                                noquote(format(y_grid_lines(ylim),justify="right")),
-                               col=theme$labels, srt=theme$srt, offset=0, 
-                               pos=4, cex=theme$cex.axis, xpd=TRUE)))
+                               col=theme$labels, srt=theme$srt, offset=1,
+                               pos=2, cex=theme$cex.axis, xpd=TRUE)))
     }
     if(plot_object$Env$theme$rylab){
       exp <- c(exp, 
-               expression(text(xlim[2]+xstep*2/3, 
-                               y_grid_lines(ylim),
+               expression(text(xlim[2], y_grid_lines(ylim),
                                noquote(format(y_grid_lines(ylim),justify="right")),
-                               col=theme$labels, srt=theme$srt, offset=0,
+                               col=theme$labels, srt=theme$srt, offset=1,
                                pos=4, cex=theme$cex.axis, xpd=TRUE)))
     }
     plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
