@@ -349,20 +349,22 @@ plot.xts <- function(x,
       if(yaxis.same){
         # set the ylim for the first panel based on all the data
         yrange <- range(cs$Env$xdata[subset], na.rm=TRUE)
-        if(all(yrange == 0)) yrange <- yrange + c(-1,1)
-        cs$set_ylim(list(structure(yrange,fixed=TRUE)))
       } else {
         # set the ylim for the first panel based on the first column
         yrange <- range(cs$Env$xdata[,1][subset], na.rm=TRUE)
-        if(all(yrange == 0)) yrange <- yrange + c(-1,1)
-        cs$set_ylim(list(structure(yrange,fixed=TRUE))) 
       }
     } else {
       # set the ylim based on all the data if this is not a multi.panel plot
       yrange <- range(cs$Env$xdata[subset], na.rm=TRUE)
-      if(all(yrange == 0)) yrange <- yrange + c(-1,1)
-      cs$set_ylim(list(structure(yrange,fixed=TRUE)))
     }
+    if(yrange[1L] == yrange[2L]) {
+      if(yrange[1L] == 0) {
+        yrange <- yrange + c(-1, 1)
+      } else {
+        yrange <- c(0.8, 1.2) * yrange[1L]
+      }
+    }
+    cs$set_ylim(list(structure(yrange, fixed=TRUE)))
     cs$Env$constant_ylim <- range(cs$Env$xdata[subset], na.rm=TRUE)
   } else {
     # use the ylim arg passed in
