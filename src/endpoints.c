@@ -39,32 +39,32 @@ SEXP endpoints (SEXP _x, SEXP _on, SEXP _k, SEXP _addlast /* TRUE */)
       ep[0] = 0;
       /* special handling if index values < 1970-01-01 00:00:00 UTC */
       if(int_index[0] < 0) {
+          int_tmp[1] = (int_index[0] + 1) / on / k;
           for(i=1,j=1; i<nr; i++) {
             int idx_i0 = int_index[i];
-            int idx_i1 = int_index[i-1];
 
             // if index equals epoch
             int epoch_adj = (idx_i0 == 0);
             // cast truncates toward zero
             // (i.e. *forward* in time if index < 0)
             if(idx_i0 < 0) idx_i0++;
-            if(idx_i1 < 0) idx_i1++;
 
             int_tmp[0] = idx_i0 / on / k + epoch_adj;
-            int_tmp[1] = idx_i1 / on / k;
-            if( (int_tmp[0] - int_tmp[1]) != 0 ) {
+            if( int_tmp[0] != int_tmp[1] ) {
               ep[j] = i;
               j++;
             }
+            int_tmp[1] = int_tmp[0] - epoch_adj;
           }
       } else {
+          int_tmp[1] = int_index[0] / on / k;
           for(i=1,j=1; i<nr; i++) {
-            int_tmp[0] = int_index[i] / on / k +1;
-            int_tmp[1] = int_index[i-1] / on / k +1;
-            if( (int_tmp[0] - int_tmp[1]) != 0 ) {
+            int_tmp[0] = int_index[i] / on / k;
+            if( int_tmp[0] != int_tmp[1] ) {
               ep[j] = i;
               j++;
             }
+            int_tmp[1] = int_tmp[0];
           }
       }
       break;
@@ -74,32 +74,32 @@ SEXP endpoints (SEXP _x, SEXP _on, SEXP _k, SEXP _addlast /* TRUE */)
       ep[0] = 0;
       /* special handling if index values < 1970-01-01 00:00:00 UTC */
       if(real_index[0] < 0) {
+          int64_tmp[1] = (int64_t)(real_index[0] + 1) / on / k;
           for(i=1,j=1; i<nr; i++) {
             double idx_i0 = real_index[i];
-            double idx_i1 = real_index[i-1];
 
             // if index equals epoch
             int epoch_adj = (idx_i0 == 0);
             // cast truncates toward zero
             // (i.e. *forward* in time if index < 0)
             if(idx_i0 < 0) idx_i0 += 1.0;
-            if(idx_i1 < 0) idx_i1 += 1.0;
 
-            int64_tmp[0] = (int64_t)(idx_i0 / on / k + epoch_adj);
-            int64_tmp[1] = (int64_t)(idx_i1 / on / k);
+            int64_tmp[0] = (int64_t)idx_i0 / on / k + epoch_adj;
             if( int64_tmp[0] != int64_tmp[1] ) {
               ep[j] = i;
               j++;
             }
+            int64_tmp[1] = int64_tmp[0] - epoch_adj;
           }
       } else {
+          int64_tmp[1] = (int64_t)real_index[0] / on / k;
           for(i=1,j=1; i<nr; i++) {
-            int64_tmp[0] = (int64_t)real_index[i] / on / k +1;
-            int64_tmp[1] = (int64_t)real_index[i-1] / on / k +1;
+            int64_tmp[0] = (int64_t)real_index[i] / on / k;
             if( int64_tmp[0] != int64_tmp[1] ) {
               ep[j] = i;
               j++;
             }
+            int64_tmp[1] = int64_tmp[0];
           }
       }
       break;
