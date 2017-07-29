@@ -75,11 +75,13 @@ function(x,on='months',k=1) {
     },
     "ms" = ,
     "milliseconds" = {
-      .Call("endpoints", .index(x)%/%.001, 1L, k, addlast, PACKAGE='xts')
+      sec2ms <- .index(x) * 1e3
+      .Call("endpoints", sec2ms, 1L, k, addlast, PACKAGE='xts')
     },
     "us" = ,
     "microseconds" = {
-      .Call("endpoints", .index(x)%/%.000001, 1L, k, addlast, PACKAGE='xts')
+      sec2us <- .index(x) * 1e6
+      .Call("endpoints", sec2us, 1L, k, addlast, PACKAGE='xts')
     }
   )
 }
