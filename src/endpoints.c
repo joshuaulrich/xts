@@ -1,6 +1,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <Rdefines.h>
+#include <stdint.h>
 
 SEXP endpoints (SEXP _x, SEXP _on, SEXP _k, SEXP _addlast /* TRUE */)
 {
@@ -13,7 +14,7 @@ SEXP endpoints (SEXP _x, SEXP _on, SEXP _k, SEXP _addlast /* TRUE */)
   double *real_index = NULL;
   int i=1,j=1, nr, P=0;
   int int_tmp[2];
-  double real_tmp[2];
+  int64_t int64_tmp[2];
 
   /* shouldn't force to INTSXP, as this now excludes
      microsecond and millisecond calculations  FIXME */
@@ -84,18 +85,18 @@ SEXP endpoints (SEXP _x, SEXP _on, SEXP _k, SEXP _addlast /* TRUE */)
             if(idx_i0 < 0) idx_i0 += 1.0;
             if(idx_i1 < 0) idx_i1 += 1.0;
 
-            real_tmp[0] = (long)(idx_i0 / on / k + epoch_adj);
-            real_tmp[1] = (long)(idx_i1 / on / k);
-            if( (real_tmp[0] - real_tmp[1]) != 0) {
+            int64_tmp[0] = (int64_t)(idx_i0 / on / k + epoch_adj);
+            int64_tmp[1] = (int64_t)(idx_i1 / on / k);
+            if( int64_tmp[0] != int64_tmp[1] ) {
               ep[j] = i;
               j++;
             }
           }
       } else {
           for(i=1,j=1; i<nr; i++) {
-            real_tmp[0] = (long)real_index[i] / on / k +1;
-            real_tmp[1] = (long)real_index[i-1] / on / k +1;
-            if( (real_tmp[0] - real_tmp[1]) != 0 ) {
+            int64_tmp[0] = (int64_t)real_index[i] / on / k +1;
+            int64_tmp[1] = (int64_t)real_index[i-1] / on / k +1;
+            if( int64_tmp[0] != int64_tmp[1] ) {
               ep[j] = i;
               j++;
             }
