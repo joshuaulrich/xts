@@ -22,10 +22,34 @@
 # functions for matrix <--> xts conversions
 `as.matrix.xts` <-
 function(x, ...) {
+  # This function follows the pattern of as.matrix.zoo()
   cd <- coredata(x)
-  dimnames(cd) <- list( as.character(index(x)),  colnames(x) )
-  cd
-#  structure(coredata(x), dimnames=list(as.character(index(x)), colnames(x)))
+  y <- as.matrix(cd, ...)
+
+  if (length(cd) == 0) {
+    dim(y) <- c(0, 0)
+  }
+  # colnames
+  if (length(y) > 0) {
+    cnx <- colnames(x)
+    if (length(cnx) > 0) {
+      colnames(y) <- cnx
+    } else {
+      cn <- deparse(substitute(x), width.cutoff = 100, nlines = 1)
+      if (ncol(x) == 1) {
+        colnames(y) <- cn
+      } else {
+        colnames(y) <- paste(cn, 1:ncol(x), sep = ".")
+      }
+    }
+  } else if (nrow(y) != length(.index(x))) {
+    dim(y) <- c(length(.index(x)), 0)
+  }
+  # rownames
+  if (!is.null(y) && nrow(y) > 0 && is.null(rownames(y))) {
+    rownames(y) <- as.character(index(x))
+  }
+  y
 }
 
 `re.matrix` <-

@@ -27,3 +27,11 @@ test.matrix_reclass_subset_as.xts_j1 <- function() {
 test.matrix_reclass_subset_matrix_j1 <- function() {
   checkIdentical(sample.matrix[,1,drop=FALSE],reclass(try.xts(sample.matrix[,1,drop=FALSE])))
 }
+
+# zero-width to matrix
+test.zero_width_xts_to_matrix <- function() {
+  x <- .xts(,1)
+  xm <- as.matrix(x)
+  zm <- as.matrix(as.zoo(x))
+  checkIdentical(xm, zm)
+}
