@@ -254,6 +254,10 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   }
   PROTECT( result = allocVector(TYPEOF(x), (ncx + ncy) * num_rows) ); p++;
 
+  /* Ensure fill is the correct length and type */
+  if( length(fill) < 1 ) {
+    PROTECT( fill = ScalarLogical(NA_LOGICAL) ); p++;
+  }
   if( TYPEOF(fill) != TYPEOF(x) ) {
     PROTECT( fill = coerceVector(fill, TYPEOF(x)) ); p++;
   } 
