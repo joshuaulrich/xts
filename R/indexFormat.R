@@ -21,12 +21,28 @@
 
 `indexFormat` <-
 function(x) {
-  attr(x, '.indexFORMAT')
+  UseMethod('indexFormat')
 }
 
 `indexFormat<-` <-
 function(x, value) {
   UseMethod('indexFormat<-')
+}
+
+`indexFormat.default` <-
+function(x) {
+  attr(x, '.indexFORMAT')
+}
+
+`indexFormat<-.default` <-
+function(x, value) {
+  attr(x, '.indexFORMAT') <- value
+  x
+}
+
+`indexFormat.xts` <-
+function(x) {
+  attr(x, '.indexFORMAT')
 }
 
 `indexFormat<-.xts` <-
