@@ -31,17 +31,27 @@ of a known time-based class. See details. }
 An \code{xts} object extends the S3 class \code{zoo} from the package of the
 same name.
 
-The first difference in this extension provides for a requirement
-that the index values not only be unique and ordered, but also must be of
-a time-based class. Currently acceptable classes include: \sQuote{Date},
-\sQuote{POSIXct}, \sQuote{timeDate}, as well as \sQuote{yearmon} and
-\sQuote{yearqtr} where the index values remain unique.
+Similar to zoo objects, xts objects must have an ordered index.  While zoo
+indexes cannot contain duplicate values, xts objects have optionally supported
+duplicate index elements since version 0.5-0.  The \code{xts} class has one
+additional requirement, the index must be a time-based class.  Currently
+supported classes include: \sQuote{Date}, \sQuote{POSIXct}, \sQuote{timeDate},
+as well as \sQuote{yearmon} and \sQuote{yearqtr} where the index values
+remain unique.
 
-This last uniqueness requirement has been relaxed as of version 0.5-0.
-By setting unique=FALSE, only a check that the index is
-not decreasing is carried out via the \code{isOrdered} function.
+The uniqueness requirement was relaxed in version 0.5-0, but is still enforced
+by default.  Setting \code{unique = FALSE} skips the uniqueness check and only
+ensures that the index is ordered via the \code{isOrdered} function.
 
-The second difference is that the object may now carry additional
+As of version 0.10-0, xts no longer allows missing values in the index.  This
+is because many xts functions expect all index values to be finite.  The most
+important of these is \code{merge.xts}, which is used ubiquitously.  Missing
+values in the index are usually the result of a date-time conversion error (e.g.
+incorrect format, non-existent time due to daylight saving time, etc).  Because
+of how non-finite numbers are represented, a missing timestamp will always be
+at the end of the index (except if it is \code{-Inf}, which will be first).
+
+Another difference is that the object may now carry additional
 attributes that may be desired in individual time-series handling.
 This includes the ability to augment the objects data with
 meta-data otherwise not cleanly attachable to a standard zoo object.
@@ -94,7 +104,7 @@ attributes may be assigned and extracted via
 \note{ 
 Most users will benefit the most by using the
 \code{as.xts} and \code{reclass} functions to
-automagically handle \emph{all} data abjects
+automagically handle \emph{all} data objects
 as one would handle a \code{zoo} object.
 
 }
