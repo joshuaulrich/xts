@@ -271,15 +271,15 @@ plot.xts <- function(x,
   } else {
     cs$set_asp(3)
   }
-  cs$Env$cex <- if (hasArg("cex")) eval(plot.call$cex) else 0.6
-  cs$Env$mar <- if (hasArg("mar")) eval(plot.call$mar) else c(3,2,0,2)
+  cs$Env$cex <- if (hasArg("cex")) eval.parent(plot.call$cex) else 0.6
+  cs$Env$mar <- if (hasArg("mar")) eval.parent(plot.call$mar) else c(3,2,0,2)
   cs$Env$theme$up.col <- up.col
   cs$Env$theme$dn.col <- dn.col
   
   # check for colorset or col argument
   # if col has a length of 1, replicate to NCOL(x) so we can keep it simple
   # and color each line by its index in col
-  if(hasArg("colorset")) col <- eval(plot.call$colorset)
+  if(hasArg("colorset")) col <- eval.parent(plot.call$colorset)
   if(length(col) < ncol(x)) col <- rep(col, length.out = ncol(x))
   cs$Env$theme$col <- col
   
@@ -289,9 +289,9 @@ plot.xts <- function(x,
   cs$Env$theme$grid <- grid.col
   cs$Env$theme$grid2 <- grid2
   cs$Env$theme$labels <- labels.col
-  cs$Env$theme$srt <- if (hasArg("srt")) eval(plot.call$srt) else 0
-  cs$Env$theme$las <- if (hasArg("las")) eval(plot.call$las) else 0
-  cs$Env$theme$cex.axis <- if (hasArg("cex.axis")) eval(plot.call$cex.axis) else 0.9
+  cs$Env$theme$srt <- if (hasArg("srt")) eval.parent(plot.call$srt) else 0
+  cs$Env$theme$las <- if (hasArg("las")) eval.parent(plot.call$las) else 0
+  cs$Env$theme$cex.axis <- if (hasArg("cex.axis")) eval.parent(plot.call$cex.axis) else 0.9
   cs$Env$format.labels <- format.labels
   cs$Env$major.ticks <- major.ticks
   cs$Env$minor.ticks <- minor.ticks
