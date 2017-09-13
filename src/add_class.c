@@ -26,7 +26,7 @@
 
 SEXP add_class (SEXP x, SEXP class)
 {
-  if(NAMED(x) == 2)
+  if(MAYBE_SHARED(x))
     x = duplicate(x);
 
   setAttrib(x, R_ClassSymbol, class);

@@ -182,14 +182,14 @@ SEXP add_xtsCoreAttributes(SEXP _x, SEXP _index, SEXP _indexClass, SEXP _tzone,
         SEXP _tclass, SEXP _class, SEXP _indexFormat)
 {
   int P=0;
-  if(NAMED(_index) == 2) {
+  if(MAYBE_SHARED(_index)) {
     PROTECT(_index = duplicate(_index)); P++;
   }
   /* add tzone and tclass to index */
   setAttrib(_index, xts_IndexTclassSymbol, _tclass);
   setAttrib(_index, xts_IndexTzoneSymbol, _tzone);
 
-  if(NAMED(_x) == 2) {
+  if(MAYBE_SHARED(_x)) {
     PROTECT(_x = duplicate(_x)); P++;
     //_x = duplicate(_x);
   }
