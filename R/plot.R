@@ -457,7 +457,7 @@ plot.xts <- function(x,
   if(isTRUE(multi.panel)){
     # We need to plot the first "panel" here because the plot area is
     # set up based on the code above
-    lenv <- new.env()
+    lenv <- cs$new_environment()
     lenv$xdata <- cs$Env$xdata[,1][subset]
     lenv$label <- colnames(cs$Env$xdata[,1])
     lenv$type <- cs$Env$type
@@ -479,18 +479,18 @@ plot.xts <- function(x,
     exp <- as.expression(add.par.from.dots(exp, ...))
 
     # Add expression for the main plot
-    cs$add(exp, env=c(lenv,cs$Env), expr=TRUE)
+    cs$add(exp, env=lenv, expr=TRUE)
     text.exp <- expression(text(x=xycoords$x[2],
                                 y=ylim[2]*0.9,
                                 labels=label,
                                 col=theme$labels,
                                 adj=c(0,0),cex=1,offset=0,pos=4))
-    cs$add(text.exp,env=c(lenv, cs$Env),expr=TRUE)
+    cs$add(text.exp,env=lenv,expr=TRUE)
     
     if(NCOL(cs$Env$xdata) > 1){
       for(i in 2:NCOL(cs$Env$xdata)){
         # create a local environment
-        lenv <- new.env()
+        lenv <- cs$new_environment()
         lenv$xdata <- cs$Env$xdata[,i][subset]
         lenv$label <- cs$Env$column_names[i]
         if(yaxis.same){
@@ -514,7 +514,7 @@ plot.xts <- function(x,
                                     y=0.5,
                                     labels="",
                                     adj=c(0,0),cex=0.9,offset=0,pos=4))
-        cs$add(text.exp, env=c(lenv,cs$Env), expr=TRUE)
+        cs$add(text.exp, env=lenv, expr=TRUE)
         
         # Add the frame for the sub-plots
         cs$add_frame(ylim=lenv$ylim, asp=NCOL(cs$Env$xdata), fixed=TRUE)
@@ -567,13 +567,13 @@ plot.xts <- function(x,
                                    col=theme$labels, srt=theme$srt, offset=1,
                                    pos=4, cex=theme$cex.axis, xpd=TRUE)))
         }
-        cs$add(exp,env=c(lenv, cs$Env),expr=TRUE,no.update=TRUE)
+        cs$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
         text.exp <- expression(text(x=xycoords$x[2],
                                     y=ylim[2]*0.9,
                                     labels=label,
                                     col=theme$labels,
                                     adj=c(0,0),cex=1,offset=0,pos=4))
-        cs$add(text.exp,env=c(lenv, cs$Env),expr=TRUE)
+        cs$add(text.exp,env=lenv,expr=TRUE)
       }
     }
   } else {
@@ -644,7 +644,8 @@ addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=
 # Add a time series to an existing xts plot
 # author: Ross Bennett
 addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0, ...){
-  lenv <- new.env()
+  plot_object <- current.xts_chob()
+  lenv <- plot_object$new_environment()
   lenv$main <- main
   lenv$plot_lines <- function(x, ta, on, type, col, lty, lwd, pch, ...){
     xdata <- x$Env$xdata
@@ -686,7 +687,6 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
                                                        ...)))),
                srcfile=NULL)
   
-  plot_object <- current.xts_chob()
   ncalls <- length(plot_object$Env$call_list)
   plot_object$Env$call_list[[ncalls+1]] <- match.call()
   
@@ -708,7 +708,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
     plot_object$next_frame()
     text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
                                 col=1,adj=c(0,0),cex=0.9,offset=0,pos=4))
-    plot_object$add(text.exp, env=c(lenv,plot_object$Env), expr=TRUE)
+    plot_object$add(text.exp, env=lenv, expr=TRUE)
     
     # add frame for the data
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
@@ -745,11 +745,11 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
                                col=theme$labels, srt=theme$srt, offset=0,
                                pos=4, cex=theme$cex.axis, xpd=TRUE)))
     }
-    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
+    plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
   } else {
     for(i in 1:length(on)) {
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=no.update)
+      plot_object$add(exp,env=lenv,expr=TRUE,no.update=no.update)
     }
   }
   plot_object
@@ -786,7 +786,8 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     if(length(col) == 1) col <- rep(col, nrow(events))
   }
   
-  lenv <- new.env()
+  plot_object <- current.xts_chob()
+  lenv <- plot_object$new_environment()
   lenv$main <- main
   lenv$plot_event_lines <- function(x, events, on, lty, lwd, col, ...){
     xdata <- x$Env$xdata
@@ -821,7 +822,6 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
          col=x$Env$theme$labels, ...)
   }
   
-  plot_object <- current.xts_chob()
   ncalls <- length(plot_object$Env$call_list)
   plot_object$Env$call_list[[ncalls+1]] <- match.call()
   
@@ -852,7 +852,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     plot_object$next_frame()
     text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
                                 col=1,adj=c(0,0),cex=0.9,offset=0,pos=4))
-    plot_object$add(text.exp, env=c(lenv,plot_object$Env), expr=TRUE)
+    plot_object$add(text.exp, env=lenv, expr=TRUE)
     
     # add frame for the data
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
@@ -889,7 +889,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
                                col=theme$labels, srt=theme$srt, offset=0,
                                pos=4, cex=theme$cex.axis, xpd=TRUE)))
     }
-    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
+    plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
   } else {
     for(i in 1:length(on)) {
       ind <- on[i]
@@ -909,7 +909,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
                    srcfile=NULL)
       
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=no.update)
+      plot_object$add(exp,env=lenv,expr=TRUE,no.update=no.update)
     }
   }
   plot_object
@@ -921,7 +921,8 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
   if(!is.na(on[1]))
     if(on[1] == 0) on[1] <- current_panel()
   
-  lenv <- new.env()
+  plot_object <- current.xts_chob()
+  lenv <- plot_object$new_environment()
   lenv$plot_legend <- function(x, legend.loc, legend.names, col, ncol, on, bty, text.col, ...){
     if(is.na(on[1])){
       yrange <- c(0, 1)
@@ -951,7 +952,6 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
   }
   
   # store the call
-  plot_object <- current.xts_chob()
   ncalls <- length(plot_object$Env$call_list)
   plot_object$Env$call_list[[ncalls+1]] <- match.call()
   
@@ -976,14 +976,14 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     plot_object$next_frame()
     text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
                                 col=theme$labels,adj=c(0,0),cex=0.9,offset=0,pos=4))
-    plot_object$add(text.exp, env=c(lenv,plot_object$Env), expr=TRUE)
+    plot_object$add(text.exp, env=lenv, expr=TRUE)
     
     # add frame for the legend panel
     plot_object$add_frame(ylim=c(0,1),asp=0.8,fixed=TRUE)
     plot_object$next_frame()
     
     # add plot_legend expression
-    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
+    plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
   } else {
     for(i in 1:length(on)) {
       ind <- on[i]
@@ -1002,7 +1002,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
                                                            ...)))),
                    srcfile=NULL)
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=no.update)
+      plot_object$add(exp,env=lenv,expr=TRUE,no.update=no.update)
     }
   }
   plot_object
@@ -1034,7 +1034,8 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   if(!is.null(y)) stop("y is not null")
   if(ncol(x) > 2) warning("more than 2 columns detected in x, only the first 2 will be used")
   
-  lenv <- new.env()
+  plot_object <- current.xts_chob()
+  lenv <- plot_object$new_environment()
   lenv$main <- main
   lenv$plot_lines <- function(x, ta, on, col, ...){
     xdata <- x$Env$xdata
@@ -1082,7 +1083,6 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
                                                        ...)))),
                srcfile=NULL)
   
-  plot_object <- current.xts_chob()
   ncalls <- length(plot_object$Env$call_list)
   plot_object$Env$call_list[[ncalls+1]] <- match.call()
   
@@ -1102,7 +1102,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     plot_object$next_frame()
     text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
                                 col=1,adj=c(0,0),cex=0.9,offset=0,pos=4))
-    plot_object$add(text.exp, env=c(lenv,plot_object$Env), expr=TRUE)
+    plot_object$add(text.exp, env=lenv, expr=TRUE)
     
     # add frame for the data
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
@@ -1137,11 +1137,11 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
                                col=theme$labels, srt=theme$srt, offset=1,
                                pos=4, cex=theme$cex.axis, xpd=TRUE)))
     }
-    plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=TRUE)
+    plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
   } else {
     for(i in 1:length(on)) {
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add(exp,env=c(lenv, plot_object$Env),expr=TRUE,no.update=no.update)
+      plot_object$add(exp,env=lenv,expr=TRUE,no.update=no.update)
     }
   }
   plot_object
@@ -1368,6 +1368,8 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$set_ylim <- set_ylim
   replot_env$get_ylim <- get_ylim
   replot_env$set_pad <- set_pad
+
+  replot_env$new_environment <- function() { new.env(TRUE, Env) }
   return(replot_env)
 }
 
