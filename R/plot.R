@@ -458,13 +458,13 @@ plot.xts <- function(x,
     # We need to plot the first "panel" here because the plot area is
     # set up based on the code above
     lenv <- cs$new_environment()
-    lenv$xdata <- cs$Env$xdata[,1][subset]
+    lenv$xdata <- cs$Env$xdata[subset,1]
     lenv$label <- colnames(cs$Env$xdata[,1])
     lenv$type <- cs$Env$type
     if(yaxis.same){
       lenv$ylim <- cs$Env$constant_ylim
     } else {
-      lenv$ylim <- range(cs$Env$xdata[,1][subset], na.rm=TRUE)
+      lenv$ylim <- range(cs$Env$xdata[subset,1], na.rm=TRUE)
     }
     
     exp <- quote(chart.lines(xdata,
@@ -491,12 +491,12 @@ plot.xts <- function(x,
       for(i in 2:NCOL(cs$Env$xdata)){
         # create a local environment
         lenv <- cs$new_environment()
-        lenv$xdata <- cs$Env$xdata[,i][subset]
+        lenv$xdata <- cs$Env$xdata[subset,i]
         lenv$label <- cs$Env$column_names[i]
         if(yaxis.same){
           lenv$ylim <- cs$Env$constant_ylim
         } else {
-          yrange <- range(cs$Env$xdata[,i][subset], na.rm=TRUE)
+          yrange <- range(cs$Env$xdata[subset,i], na.rm=TRUE)
           if(all(yrange == 0)) yrange <- yrange + c(-1,1)
           lenv$ylim <- yrange
         }
@@ -650,10 +650,11 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
   lenv$plot_lines <- function(x, ta, on, type, col, lty, lwd, pch, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
+    xDataSubset <- xdata[xsubset]
     if(is.null(col)) col <- x$Env$theme$col
     if(all(is.na(on))){
       # Add x-axis grid lines
-      atbt <- axTicksByTime2(xdata[xsubset], ticks.on=x$Env$grid.ticks.on)
+      atbt <- axTicksByTime2(xDataSubset, ticks.on=x$Env$grid.ticks.on)
       segments(x$Env$xycoords$x[atbt],
                par("usr")[3],
                x$Env$xycoords$x[atbt],
