@@ -671,22 +671,21 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
     ta.y <- ta.adj[,-1]
     chart.lines(ta.y, type=type, col=col, lty=lty, lwd=lwd, pch=pch, ...)
   }
-  # map all passed args (if any) to 'lenv' environment
-  mapply(function(name,value) { assign(name,value,envir=lenv) }, 
-         names(list(x=x,on=on,type=type,col=col,lty=lty,lwd=lwd,pch=pch,...)),
-         list(x=x,on=on,type=type,col=col,lty=lty,lwd=lwd,pch=pch,...))
-  exp <- parse(text=gsub("list","plot_lines",
-                         as.expression(substitute(list(x=current.xts_chob(),
-                                                       ta=get("x"),
-                                                       on=on,
-                                                       type=type,
-                                                       col=col,
-                                                       lty=lty,
-                                                       lwd=lwd,
-                                                       pch=pch,
-                                                       ...)))),
-               srcfile=NULL)
-  
+
+  # get tag/value from dots
+  exp <- substitute(plot_lines(x=current.xts_chob(),
+                               ta=x,
+                               on=on,
+                               type=type,
+                               col=col,
+                               lty=lty,
+                               lwd=lwd,
+                               pch=pch,
+                               ...))
+  # capture values from caller, so we don't need to copy objects to lenv,
+  # since this gives us evaluated versions of all the object values
+  exp <- do.call("substitute", list(exp, parent.frame()))
+
   plot_object$add_call(match.call())
   
   xdata <- plot_object$Env$xdata
@@ -694,7 +693,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
   no.update <- FALSE
   lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
   if(hasArg("ylim")) {
-    ylim <- lenv$ylim  # lenv$ylim assigned via mapply above
+    ylim <- lenv$ylim  # lenv$ylim assigned above
   } else {
     ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
     if(all(ylim == 0)) ylim <- c(-1, 1)
@@ -820,24 +819,22 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
          labels=as.character(events[,1]), 
          col=x$Env$theme$labels, ...)
   }
-  
+
+  # get tag/value from dots
+  exp <- substitute(plot_event_lines(x=current.xts_chob(),
+                                     legend.loc=legend.loc,
+                                     legend.names=legend.names,
+                                     col=col,
+                                     ncol=ncol,
+                                     on=on,
+                                     ...))
+  # capture values from caller, so we don't need to copy objects to lenv,
+  # since this gives us evaluated versions of all the object values
+  exp <- do.call("substitute", list(exp, parent.frame()))
+
   plot_object$add_call(match.call())
   
   if(is.na(on[1])){
-    # map all passed args (if any) to 'lenv' environment
-    mapply(function(name,value) { assign(name,value,envir=lenv) }, 
-           names(list(events=events,on=on,lty=lty,lwd=lwd,col=col,...)),
-           list(events=events,on=on,lty=lty,lwd=lwd,col=col,...))
-    exp <- parse(text=gsub("list","plot_event_lines",
-                           as.expression(substitute(list(x=current.xts_chob(),
-                                                         events=get("events"),
-                                                         on=on,
-                                                         lty=lty,
-                                                         lwd=lwd,
-                                                         col=col,
-                                                         ...)))),
-                 srcfile=NULL)
-    
     xdata <- plot_object$Env$xdata
     xsubset <- plot_object$Env$xsubset
     no.update <- FALSE
@@ -892,20 +889,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     for(i in 1:length(on)) {
       ind <- on[i]
       no.update <- FALSE
-      # map all passed args (if any) to 'lenv' environment
-      mapply(function(name,value) { assign(name,value,envir=lenv) }, 
-             names(list(events=events,on=ind,lty=lty,lwd=lwd,col=col,...)),
-             list(events=events,on=ind,lty=lty,lwd=lwd,col=col,...))
-      exp <- parse(text=gsub("list","plot_event_lines",
-                             as.expression(substitute(list(x=current.xts_chob(),
-                                                           events=get("events"),
-                                                           on=ind,
-                                                           lty=lty,
-                                                           lwd=lwd,
-                                                           col=col,
-                                                           ...)))),
-                   srcfile=NULL)
-      
+
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
       plot_object$add(exp,env=lenv,expr=TRUE,no.update=no.update)
     }
@@ -952,22 +936,20 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
   # store the call
   plot_object$add_call(match.call())
   
+  # get tag/value from dots
+  exp <- substitute(plot_legend(x=current.xts_chob(),
+                                legend.loc=legend.loc,
+                                legend.names=legend.names,
+                                col=col,
+                                ncol=ncol,
+                                on=on,
+                                ...))
+  # capture values from caller, so we don't need to copy objects to lenv,
+  # since this gives us evaluated versions of all the object values
+  exp <- do.call("substitute", list(exp, parent.frame()))
+
   # if on[1] is NA, then add a new frame for the legend
   if(is.na(on[1])){
-    # map all passed args (if any) to 'lenv' environment
-    mapply(function(name,value) { assign(name,value,envir=lenv) }, 
-           names(list(legend.loc=legend.loc, legend.names=legend.names, col=col, ncol=ncol, on=on,...)),
-           list(legend.loc=legend.loc, legend.names=legend.names, col=col, ncol=ncol, on=on,...))
-    exp <- parse(text=gsub("list","plot_legend",
-                           as.expression(substitute(list(x=current.xts_chob(),
-                                                         legend.loc=legend.loc,
-                                                         legend.names=legend.names,
-                                                         col=col,
-                                                         ncol=ncol,
-                                                         on=on,
-                                                         ...)))),
-                 srcfile=NULL)
-    
     # add frame for spacing
     plot_object$add_frame(ylim=c(0,1),asp=0.25)
     plot_object$next_frame()
@@ -985,19 +967,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     for(i in 1:length(on)) {
       ind <- on[i]
       no.update <- FALSE
-      # map all passed args (if any) to 'lenv' environment
-      mapply(function(name,value) { assign(name,value,envir=lenv) }, 
-             names(list(legend.loc=legend.loc, legend.names=legend.names, col=col, ncol=ncol, on=on,...)),
-             list(legend.loc=legend.loc, legend.names=legend.names, col=col, ncol=ncol, on=on,...))
-      exp <- parse(text=gsub("list","plot_legend",
-                             as.expression(substitute(list(x=current.xts_chob(),
-                                                           legend.loc=legend.loc,
-                                                           legend.names=legend.names,
-                                                           col=col,
-                                                           ncol=ncol,
-                                                           on=on,
-                                                           ...)))),
-                   srcfile=NULL)
+
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
       plot_object$add(exp,env=lenv,expr=TRUE,no.update=no.update)
     }
@@ -1068,18 +1038,17 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     yl <- as.vector(coredata(ta.y[,2]))
     polygon(x=xx, y=c(yl[1], yu, rev(yl)), border=NA, col=col, ...)
   }
-  # map all passed args (if any) to 'lenv' environment
-  mapply(function(name,value) { assign(name,value,envir=lenv) }, 
-         names(list(x=x,on=on,col=col,...)),
-         list(x=x,on=on,col=col,...))
-  exp <- parse(text=gsub("list","plot_lines",
-                         as.expression(substitute(list(x=current.xts_chob(),
-                                                       ta=get("x"),
-                                                       on=on,
-                                                       col=col,
-                                                       ...)))),
-               srcfile=NULL)
-  
+
+  # get tag/value from dots
+  exp <- substitute(plot_lines(x=current.xts_chob(),
+                               ta=x,
+                               col=col,
+                               on=on,
+                               ...))
+  # capture values from caller, so we don't need to copy objects to lenv,
+  # since this gives us evaluated versions of all the object values
+  exp <- do.call("substitute", list(exp, parent.frame()))
+
   plot_object$add_call(match.call())
   
   xdata <- plot_object$Env$xdata
@@ -1087,7 +1056,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   no.update <- FALSE
   lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
   if(hasArg("ylim")) {
-    ylim <- lenv$ylim  # lenv$ylim assigned via mapply above
+    ylim <- lenv$ylim  # lenv$ylim assigned above
   } else {
     ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
     lenv$ylim <- ylim
