@@ -663,13 +663,12 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
     }
     # we can add points that are not necessarily at the points
     # on the main series
-    subset.range <- paste(start(xdata[xsubset]),
-                          end(xdata[xsubset]),sep="/")
-    ta.adj <- merge(n=.xts(1:NROW(xdata[xsubset]),
-                           .index(xdata[xsubset]), 
-                           tzone=indexTZ(xdata)),ta)[subset.range]
-    ta.x <- as.numeric(na.approx(ta.adj[,1], rule=2) )
-    ta.y <- ta.adj[,-1]
+    if(xsubset == "") {
+      subset.range <- xsubset
+    } else {
+      subset.range <- paste(start(xDataSubset), end(xDataSubset),sep="/")
+    }
+    ta.y <- merge(ta, .xts(,.index(xDataSubset), tzone=indexTZ(xdata)))[subset.range]
     chart.lines(ta.y, type=type, col=col, lty=lty, lwd=lwd, pch=pch, ...)
   }
 
