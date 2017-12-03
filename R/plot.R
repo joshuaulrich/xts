@@ -93,7 +93,11 @@ chart.lines <- function(x,
   xx <- current.xts_chob()
   switch(type,
          h={
-           colors <- ifelse(x[,1] < 0, dn.col, up.col)
+           if (hasArg("col")) {
+             colors <- col
+           } else {
+             colors <- ifelse(x[,1] < 0, dn.col, up.col)
+           }
            lines(xx$Env$xycoords$x,x[,1],lwd=2,col=colors,lend=lend,lty=1,type="h",...)
          },
          p=, l=, b=, c=, o=, s=, S=, n={
