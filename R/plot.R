@@ -1357,15 +1357,16 @@ str.replot_xts <- function(x, ...) {
 print.replot_xts <- function(x, ...) plot(x,...)
 plot.replot_xts <- function(x, ...) {
   # must set the background color before calling plot.new
-  par(bg=x$Env$theme$bg)
+  obg <- par(bg = x$Env$theme$bg)
   plot.new()
   assign(".xts_chob",x,.plotxtsEnv)
-  cex <- par(cex=x$Env$cex)
-  mar <- par(mar=x$Env$mar)
-  if(.Device=="X11") # only reasonable way to fix X11/quartz issue
-    par(cex=x$Env$cex * 1.5)
-  oxpd <- par(xpd=FALSE)
+
+  # only reasonable way to fix X11/quartz issue
+  ocex <- par(cex = if(.Device == "X11") x$Env$cex else x$Env$cex * 1.5)
+  omar <- par(mar = x$Env$mar)
+  oxpd <- par(xpd = FALSE)
   usr <- par("usr")
+
   # plot negative (underlay) actions
   last.frame <- x$get_frame()
   x$update_frames()
@@ -1397,8 +1398,9 @@ plot.replot_xts <- function(x, ...) {
   )
 
   x$set_frame(abs(last.frame),clip=FALSE)
-  do.call("clip",as.list(usr))
-  par(xpd=oxpd,cex=cex$cex,mar=mar$mar, bg=x$Env$theme$bg)
+  do.call("clip", as.list(usr))  # reset clipping region
+  # reset par
+  par(xpd = oxpd$xpd, cex = ocex$cex, mar = omar$mar, bg = obg$bg)
   invisible(x$Env$actions)
 }
 
