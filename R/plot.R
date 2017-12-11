@@ -104,9 +104,15 @@ chart.lines <- function(x,
            if(length(lty) < NCOL(x)) lty <- rep(lty, length.out = NCOL(x))
            if(length(lwd) < NCOL(x)) lwd <- rep(lwd, length.out = NCOL(x))
            if(length(col) < NCOL(x)) col <- rep(col, length.out = NCOL(x))
-           for(i in NCOL(x):1){
-             # non-equally spaced x-axis
-             lines(xx$Env$xycoords$x, x[,i], type=type, lend=lend, col=col[i], lty=lty[i], lwd=lwd[i], ...)
+
+           # ensure series only has index values in xdata subset
+           xdataSubset <- xx$Env$xdata[xx$Env$xsubset]
+           y <- merge(x, .xts(,.index(xdataSubset)), join = "right")
+           xcoords <- xx$Env$xycoords$x
+
+           for(i in NCOL(y):1) {
+             lines(xcoords, y[,i], type=type, lend=lend, col=col[i],
+                   lty=lty[i], lwd=lwd[i], ...)
            }
          },
          {
