@@ -314,6 +314,3 @@ S3method(as.xts,timeDate)
 ## currently unexported functions that _may_ be exported at some point
 
 #export(startof,endof,firstof,lastof)
-
-# as.Date.numeric fix
-S3method('as.Date', 'numeric')

@@ -22,6 +22,23 @@ test.rbind_zero_length_non_zero_length_Date_errors <- function() {
   checkIdentical(zpe$message, xpe$message)
 }
 
+# Test that as.Date.numeric() works at the top level (via zoo::as.Date()),
+# and for functions defined in the xts namespace even if xts::as.Date.numeric()
+# is not formally registered as an S3 method.
+test.as.Date.numeric <- function() {
+  # Define function that calls as.Date.numeric() ...
+  f <- function(d) {
+    as.Date(d)
+  }
+  # ... in xts' namespace
+  environment(f) <- as.environment("package:xts")
+
+  dd <- as.Date("2017-12-13")
+  dn <- unclass(dd)
+  checkIdentical(dd, as.Date(dn))  # via zoo::as.Date()
+  checkIdentical(dd, f(dn))
+}
+
 ## test reclass works and throws error
 ## test xtsAttributes, both CLASS and USER
 ## test all.equal(CLASS) and !all.equal(CLASS) cases
