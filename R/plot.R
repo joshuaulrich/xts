@@ -83,7 +83,7 @@ chart.lines <- function(x,
                         lty=1,
                         lwd=2,
                         lend=1,
-                        col=1:10, 
+                        col=NULL,
                         up.col=NULL, 
                         dn.col=NULL,
                         legend.loc=NULL,
@@ -94,13 +94,16 @@ chart.lines <- function(x,
   switch(type,
          h={
            if (hasArg("col")) {
-             colors <- col
+             colors <- if (is.null(col)) 1 else col
            } else {
              colors <- ifelse(x[,1] < 0, dn.col, up.col)
            }
            lines(xx$Env$xycoords$x,x[,1],lwd=2,col=colors,lend=lend,lty=1,type="h",...)
          },
          p=, l=, b=, c=, o=, s=, S=, n={
+           if(is.null(col))
+             col <- xx$Env$theme$col
+
            if(length(lty) < NCOL(x)) lty <- rep(lty, length.out = NCOL(x))
            if(length(lwd) < NCOL(x)) lwd <- rep(lwd, length.out = NCOL(x))
            if(length(col) < NCOL(x)) col <- rep(col, length.out = NCOL(x))
@@ -661,7 +664,6 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
     xDataSubset <- xdata[xsubset]
-    if(is.null(col)) col <- x$Env$theme$col
     if(all(is.na(on))){
       # Add x-axis grid lines
       atbt <- axTicksByTime2(xDataSubset, ticks.on=x$Env$grid.ticks.on)
