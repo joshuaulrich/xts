@@ -1069,6 +1069,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     ylim <- lenv$ylim  # lenv$ylim assigned above
   } else {
     ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
+    if(all(ylim == 0)) ylim <- c(-1, 1)
     lenv$ylim <- ylim
   }
   
