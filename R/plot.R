@@ -703,12 +703,12 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
   no.update <- FALSE
   lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
   if(hasArg("ylim")) {
-    ylim <- lenv$ylim  # lenv$ylim assigned above
+    ylim <- eval.parent(substitute(alist(...))$ylim)
   } else {
     ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
     if(all(ylim == 0)) ylim <- c(-1, 1)
-    lenv$ylim <- ylim
   }
+  lenv$ylim <- ylim
   
   if(is.na(on[1])){
     # add the frame for drawdowns info
@@ -1066,12 +1066,12 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   no.update <- FALSE
   lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
   if(hasArg("ylim")) {
-    ylim <- lenv$ylim  # lenv$ylim assigned above
+    ylim <- eval.parent(substitute(alist(...))$ylim)
   } else {
     ylim <- range(lenv$xdata[xsubset], na.rm=TRUE)
     if(all(ylim == 0)) ylim <- c(-1, 1)
-    lenv$ylim <- ylim
   }
+  lenv$ylim <- ylim
   
   if(is.na(on[1])){
     plot_object$add_frame(ylim=c(0,1),asp=0.25)
