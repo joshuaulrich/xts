@@ -835,11 +835,11 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
   }
 
   # get tag/value from dots
-  expargs <- substitute(alist(legend.loc=legend.loc,
-                              legend.names=legend.names,
-                              col=col,
-                              ncol=ncol,
+  expargs <- substitute(alist(events=events,
                               on=on,
+                              lty=lty,
+                              lwd=lwd,
+                              col=col,
                               ...))
   # capture values from caller, so we don't need to copy objects to lenv,
   # since this gives us evaluated versions of all the object values
