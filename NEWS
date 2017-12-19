@@ -1,5 +1,27 @@
 Changed in xts 0.10-1:
 
+o  'ylim' values passed to 'addSeries' and 'addPolygon' via '...' are now
+   captured and honored (#220).
+
+o  'addPolygon' now checks for ylim of zeros, as 'addSeries' does (#164).
+
+o  The 'base::as.Date.numeric' method is no longer over-ridden. The exported,
+   but not registered, method in zoo should prevent any change in behavior.
+
+o  Series added to an existing plot are now given the same index values as
+   the main panel (#216). There still may be some weird behavior if the new
+   data does not have observations within the timespan of the main panel data,
+   but no observations on the same timestamps.
+
+o  Existing 'par' values are now captured and reset before returning from
+   plotting functions (#217).
+
+o  User-defined 'col' values are now honored when 'type="h"' (#210).
+
+o  Values passed to plotting functions are now copied from the calling
+   environment. This enables plotting arguments to be objects passed
+   through multiple layers of function calls.
+
 o  indexFormat is now generic, consistent with indexFormat<- (#188).
 
 o  Calling as.matrix() on a zero-width xts object now behaves consistently
