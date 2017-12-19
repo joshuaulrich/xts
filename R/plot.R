@@ -685,18 +685,20 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
   }
 
   # get tag/value from dots
-  exp <- substitute(plot_lines(x=current.xts_chob(),
-                               ta=x,
-                               on=on,
-                               type=type,
-                               col=col,
-                               lty=lty,
-                               lwd=lwd,
-                               pch=pch,
-                               ...))
+  expargs <- substitute(alist(ta=x,
+                              on=on,
+                              type=type,
+                              col=col,
+                              lty=lty,
+                              lwd=lwd,
+                              pch=pch,
+                              ...))
   # capture values from caller, so we don't need to copy objects to lenv,
   # since this gives us evaluated versions of all the object values
-  exp <- do.call("substitute", list(exp, parent.frame()))
+  expargs <- lapply(expargs[-1L], eval, parent.frame())
+  exp <- as.call(c(quote(plot_lines),
+                   x = quote(current.xts_chob()),
+                   expargs))
 
   plot_object$add_call(match.call())
   
@@ -833,16 +835,18 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
   }
 
   # get tag/value from dots
-  exp <- substitute(plot_event_lines(x=current.xts_chob(),
-                                     legend.loc=legend.loc,
-                                     legend.names=legend.names,
-                                     col=col,
-                                     ncol=ncol,
-                                     on=on,
-                                     ...))
+  expargs <- substitute(alist(legend.loc=legend.loc,
+                              legend.names=legend.names,
+                              col=col,
+                              ncol=ncol,
+                              on=on,
+                              ...))
   # capture values from caller, so we don't need to copy objects to lenv,
   # since this gives us evaluated versions of all the object values
-  exp <- do.call("substitute", list(exp, parent.frame()))
+  expargs <- lapply(expargs[-1L], eval, parent.frame())
+  exp <- as.call(c(quote(plot_event_lines),
+                   x = quote(current.xts_chob()),
+                   expargs))
 
   plot_object$add_call(match.call())
   
@@ -949,16 +953,19 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
   plot_object$add_call(match.call())
   
   # get tag/value from dots
-  exp <- substitute(plot_legend(x=current.xts_chob(),
-                                legend.loc=legend.loc,
-                                legend.names=legend.names,
-                                col=col,
-                                ncol=ncol,
-                                on=on,
-                                ...))
+  expargs <- substitute(alist(legend.loc=legend.loc,
+                              legend.names=legend.names,
+                              col=col,
+                              ncol=ncol,
+                              on=on,
+                              ...))
   # capture values from caller, so we don't need to copy objects to lenv,
   # since this gives us evaluated versions of all the object values
-  exp <- do.call("substitute", list(exp, parent.frame()))
+  expargs <- lapply(expargs[-1L], eval, parent.frame())
+  exp <- as.call(c(quote(plot_legend),
+                   x = quote(current.xts_chob()),
+                   expargs))
+
 
   # if on[1] is NA, then add a new frame for the legend
   if(is.na(on[1])){
@@ -1052,14 +1059,16 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   }
 
   # get tag/value from dots
-  exp <- substitute(plot_lines(x=current.xts_chob(),
-                               ta=x,
-                               col=col,
-                               on=on,
-                               ...))
+  expargs <- substitute(alist(ta=x,
+                              col=col,
+                              on=on,
+                              ...))
   # capture values from caller, so we don't need to copy objects to lenv,
   # since this gives us evaluated versions of all the object values
-  exp <- do.call("substitute", list(exp, parent.frame()))
+  expargs <- lapply(expargs[-1L], eval, parent.frame())
+  exp <- as.call(c(quote(plot_lines),
+                   x = quote(current.xts_chob()),
+                   expargs))
 
   plot_object$add_call(match.call())
   
