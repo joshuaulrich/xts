@@ -26,14 +26,10 @@
 
 SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
 {
-  int i, P=0;
+  int i;
   int nx = LENGTH(x) - 1;
-  SEXP res;
   double *real_x;
   int *int_x;
-
-  PROTECT( res = allocVector(LGLSXP, 1) ); P++;
-  LOGICAL(res)[ 0 ] = 1; /* default to true */
 
   if(TYPEOF(x) == REALSXP) {
   /*
@@ -44,15 +40,13 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
     if(LOGICAL(strictly)[ 0 ] == 1) { /* STRICTLY INCREASING ( > 0 ) */
       for(i = 0; i < nx; i++) {
         if( real_x[i+1] - real_x[i] <= 0.0 ) {
-          LOGICAL(res)[ 0 ] = 0;
-          break;
+          return ScalarLogical(0);
         } 
       }
     } else { /* NOT-STRICTLY ( 0 || > 0 ) */
       for(i = 0; i < nx; i++) {
         if( real_x[i+1] - real_x[i] < 0.0 ) {
-          LOGICAL(res)[ 0 ] = 0;
-          break;
+          return ScalarLogical(0);
         } 
       }
     }
@@ -64,15 +58,13 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
     if(LOGICAL(strictly)[ 0 ] == 1) { /* STRICTLY DECREASING ( < 0 ) */
       for(i = 0; i < nx; i++) {
         if( real_x[i+1] - real_x[i] >= 0.0 ) {
-          LOGICAL(res)[ 0 ] = 0;
-          break;
+          return ScalarLogical(0);
         } 
       }
     } else { /* NOT-STRICTLY ( 0 || < 0 ) */
       for(i = 0; i < nx; i++) {
         if( real_x[i+1] - real_x[i] > 0.0 ) {
-          LOGICAL(res)[ 0 ] = 0;
-          break;
+          return ScalarLogical(0);
         } 
       }
     }
@@ -88,15 +80,13 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
     if(LOGICAL(strictly)[ 0 ] == 1) { /* STRICTLY INCREASING ( > 0 ) */
       for(i = 0; i < nx; i++) {
         if( int_x[i+1] - int_x[i] <= 0 ) {
-          LOGICAL(res)[ 0 ] = 0;
-          break;
+          return ScalarLogical(0);
         } 
       }
     } else { /* NOT-STRICTLY ( 0 || > 0 ) */
       for(i = 0; i < nx; i++) {
         if( int_x[i+1] - int_x[i] < 0 ) {
-          LOGICAL(res)[ 0 ] = 0;
-          break;
+          return ScalarLogical(0);
         } 
       }
     }
@@ -108,15 +98,13 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
     if(LOGICAL(strictly)[ 0 ] == 1) { /* STRICTLY DECREASING ( < 0 ) */
       for(i = 0; i < nx; i++) {
         if( int_x[i+1] - int_x[i] >= 0 ) {
-          LOGICAL(res)[ 0 ] = 0;
-          break;
+          return ScalarLogical(0);
         } 
       }
     } else { /* NOT-STRICTLY ( 0 || < 0 ) */
       for(i = 0; i < nx; i++) {
         if( int_x[i+1] - int_x[i] > 0 ) {
-          LOGICAL(res)[ 0 ] = 0;
-          break;
+          return ScalarLogical(0);
         } 
       }
     }
@@ -125,6 +113,6 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
   } else {
     error("'x' must be of type double or integer");
   }
-  UNPROTECT(P);
-  return res;
+
+  return ScalarLogical(1);  /* default to true */
 }
