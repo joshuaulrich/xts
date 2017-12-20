@@ -217,13 +217,14 @@ SEXP lag_xts (SEXP x, SEXP _k, SEXP _pad) {
   /* this will eventually revert to NOT changing R default behaviors 
      for now it uses the 'standard' convention adopted by xts        */
 
-  int k = asInteger(_k)*-1; /* change zoo default negative handling */
+  int k = asInteger(_k);
   /* ensure args are correct types; error if conversion fails */
   if(k == NA_INTEGER)
     error("'k' must be integer");
   if(asLogical(_pad) == NA_LOGICAL)
     error("'na.pad' must be logical");
 
+  k = k * -1; /* change zoo default negative handling */
   return zoo_lag (x, ScalarInteger(k), _pad);
 }
 
