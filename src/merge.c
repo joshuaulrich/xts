@@ -503,6 +503,22 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     /* matching index values copy all column values from x and y to results */
     if (comp == 0) {
       set_index_from_x(idx, i, xp-1);
+      if (mode == REALSXP) {
+        /* copy x-values to result */
+        for(j = 0; j < ncx; j++) { /* x-values */
+          ij_result = i + j * num_rows;
+          ij_original = (xp-1) + j * nrx;
+          real_result[ij_result] = real_x[ij_original];
+        }
+        /* copy y-values to result */
+        for(j = 0; j < ncy; j++) { /* y-values */
+          ij_result = i + (j+ncx) * num_rows;
+          ij_original = (yp-1) + j * nry;
+          real_result[ij_result] = real_y[ij_original];
+        }
+      } else {
+
+
       /* copy x-values to result */
       for(j = 0; j < ncx; j++) { /* x-values */
         ij_result = i + j * num_rows;
@@ -553,6 +569,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
               error("unsupported data type");
               break;
           }
+      }
       }
       xp++;
       yp++;
