@@ -44,6 +44,12 @@ typedef struct xts_indices {
   xts_index y;
 } xts_indices;
 
+typedef struct xts_node {
+  int beg;
+  int num;
+  int out;
+} xts_node;
+
 /* Functions to set the result observation to either x or y */
 typedef void (*set_index_func)(xts_indices *, int, int);
 void set_index_from_x_double(xts_indices *idx, int rp, int xp) {
@@ -107,9 +113,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   SEXP s, t, unique;
 
   int *int_result=NULL, *int_x=NULL, *int_y=NULL, int_fill=0;
-  int *int_index=NULL, *int_xindex=NULL, *int_yindex=NULL;
-  double *real_result=NULL, *real_x=NULL, *real_y=NULL;
-  double *real_index=NULL, *real_xindex=NULL, *real_yindex=NULL;
+  double *real_result=NULL, *real_x=NULL, *real_y=NULL, real_fill=0;
 
   /* we do not check that 'x' is an xts object.  Dispatch and mergeXts
     (should) make this unecessary.  So we just get the index value 
@@ -199,9 +203,15 @@ SEXP do_merge_xts (SEXP x, SEXP y,
      We also check the index type and use the appropriate macros
    */
   
+  int nxnodes = 0;
+  int nynodes = 0;
+  // FIXME: use dynamic arrays
+  xts_node xnodes[2048];
+  xts_node ynodes[2048];
+
   if( TYPEOF(xindex) == REALSXP ) { 
-  real_xindex = REAL(xindex);
-  real_yindex = REAL(yindex);
+  double *real_xindex = REAL(xindex);
+  double *real_yindex = REAL(yindex);
 
   /* Check for illegal values before looping. Due to ordered index,
    * -Inf must be first, while NA, Inf, and NaN must be last. */
@@ -210,37 +220,146 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     error("'index' cannot contain 'NA', 'NaN', or '+/-Inf'");
   }
 
-  while( (xp + yp) <= (len + 1) ) {
-    if( xp > nrx ) {
-      yp++;
-      if(right_join) i++;
+  int yrun = 0;
+  int xrun = 0;
+
+  xts_node xnode = {0, 0, 0};
+  xts_node ynode = {0, 0, 0};
+  xp = 0; yp = 0;
+  while (xp < nrx || yp < nry) {
+//Rprintf("%d %d %d\n", i, xp, yp);
+//{{{ end of arrays
+    if (xp >= nrx) {
+      // determine if run for X needs to terminate (set result)
+      if (xrun) {
+        xrun = 0;
+        xnode.num = xp - xnode.beg;
+        xnodes[nxnodes++] = xnode;
+//Rprintf("xp > nrx; xrun TRUE->FALSE; xnode %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+      }
+      // ensure first values are set for Y
+      if (!yrun) {
+        yrun = 1;
+        ynode = (xts_node){yp, 0, i};
+//Rprintf("xp > nrx; yrun FALSE->TRUE; ynode %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+      }
+
+      yp = yp+1;
+      if (right_join) i = i+1;
     } else
-    if( yp > nry ) {
-      xp++;
-      if(left_join) i++;
+
+    if (yp >= nry) {
+      // determine if run for Y needs to terminate (set result)
+      if (yrun) {
+        yrun = 0;
+        ynode.num = yp - ynode.beg;
+        ynodes[nynodes++] = ynode;
+//Rprintf("yp > nry; yrun TRUE->FALSE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
+      }
+      // ensure first values are set for X
+      if (!xrun) {
+        xrun = 1;
+        xnode = (xts_node){xp, 0, i};
+//Rprintf("yp > nry; xrun FALSE->TRUE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+      }
+
+      xp = xp+1;
+      if (left_join) i = i+1;
     } else
-    if( real_xindex[ xp-1 ] == real_yindex[ yp-1 ] ) {
-      /* INNER JOIN  --- only result if all=FALSE */
-      yp++;
-      xp++;
-      i++;
+//}}} end of arrays
+
+//{{{ equal indexes
+    if (real_xindex[xp] == real_yindex[yp]) {
+      // ensure first values are set for X
+      if (!xrun) {
+        xrun = 1;
+        xnode = (xts_node){xp, 0, i};
+//Rprintf("xp = yp; xrun FALSE->TRUE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+      }
+      // ensure first values are set for Y
+      if (!yrun) {
+        yrun = 1;
+        ynode = (xts_node){yp, 0, i};
+//Rprintf("xp = yp; yrun FALSE->TRUE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
+      }
+
+      // increment all values; none terminate
+      yp = yp+1;
+      xp = xp+1;
+      i = i+1;
     } else
-    if( real_xindex[ xp-1 ] < real_yindex[ yp-1 ] ) {
-      /* LEFT JOIN */
-      xp++;
-      if(left_join) i++;
+//}}} equal indexes
+//{{{ x < y
+    if (real_xindex[xp] < real_yindex[yp]) {
+      // ensure first values are set for X
+      if (!xrun) {
+        xrun = 1;
+        xnode = (xts_node){xp, 0, i};
+//Rprintf("xp < yp; xrun FALSE->TRUE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+      }
+      // determine if run for Y needs to terminate (set result)
+      if (yrun) {
+        yrun = 0;
+        ynode.num = yp - ynode.beg;
+        ynodes[nynodes++] = ynode;
+//Rprintf("xp < yp; yrun TRUE->FALSE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
+      }
+      xp = xp+1;
+      if (left_join) i = i+1;
     } else
-    if( real_xindex[ xp-1 ] > real_yindex[ yp-1 ] ) {
-      /* RIGHT JOIN */
-      yp++;
-      if(right_join) i++;
+//}}} x < y
+//{{{ x > y
+    if (real_xindex[xp] > real_yindex[yp]) {
+      // ensure first values are set for Y
+      if (!yrun) {
+        yrun = 1;
+        ynode = (xts_node){yp, 0, i};
+//Rprintf("xp > yp; yrun FALSE->TRUE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
+      }
+      // determine if run for X needs to terminate (set result)
+      if (xrun) {
+        xrun = 0;
+        xnode.num = xp - xnode.beg;
+        xnodes[nxnodes++] = xnode;
+//Rprintf("xp > yp; xrun TRUE->FALSE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+      }
+      yp = yp+1;
+      if(right_join) i = i+1;
     } else
       error("Invalid index element comparison (should never happen)");
-  } 
+  }
+//}}} x > y
+  // determine if run for X needs to terminate (set result)
+  if (xrun) {
+    xrun = 0;
+    xnode.num = xp - xnode.beg;
+    xnodes[nxnodes++] = xnode;
+//Rprintf("loop end; xrun TRUE->FALSE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+  }
+  // determine if run for Y needs to terminate (set result)
+  if (yrun) {
+    yrun = 0;
+    ynode.num = yp - ynode.beg;
+    ynodes[nynodes++] = ynode;
+//Rprintf("loop end; yrun TRUE->FALSE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
+  }
+
+/*
+  int m;
+  xts_node mnode;
+  for (m = 0; m < nxnodes; m++) {
+    mnode = xnodes[m];
+    Rprintf("xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+  }
+  for (m = 0; m < nynodes; m++) {
+    mnode = ynodes[m];
+    Rprintf("ynode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+  }
+*/
   } else
   if( TYPEOF(xindex) == INTSXP ) {
-  int_xindex = INTEGER(xindex);
-  int_yindex = INTEGER(yindex);
+  int *int_xindex = INTEGER(xindex);
+  int *int_yindex = INTEGER(yindex);
 
   /* Check for NA before looping; logical ops on NA may yield surprising
    * results. Note that the NA_integer_ will appear in the last value of
@@ -318,23 +437,14 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         int_y = INTEGER(y);
         int_fill = INTEGER(fill)[0];
         int_result = INTEGER(result);
+        for (i = 0; i < LENGTH(result); i++) int_result[i] = int_fill;
         break;
     case REALSXP:
         real_x = REAL(x);
         real_y = REAL(y);
-        /*real_fill = REAL(fill)[0];*/
+        real_fill = REAL(fill)[0];
         real_result = REAL(result);
-        break;
-    default:
-        break;
-  }
-
-  switch(TYPEOF(xindex)) {
-    case INTSXP:
-        int_index = INTEGER(index);
-        break;
-    case REALSXP:
-        real_index = REAL(index);
+        for (i = 0; i < LENGTH(result); i++) real_result[i] = real_fill;
         break;
     default:
         break;
@@ -373,6 +483,110 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       break;
   }
 
+  for(i = 0; i < num_rows; i++) {
+    /* past the last row of x */
+    if (xp > nrx) {
+      if (right_join)
+        set_index_from_y(idx, i, yp-1);  /* record new index value */
+      else
+        i--; /* if all=FALSE, we must decrement i for each non-match */
+      yp++;
+    } else
+    /* past the last row of y */
+    if (yp > nry) {
+      if (left_join)
+        set_index_from_x(idx, i, xp-1);  /* record new index value */
+      else
+        i--; /* if all=FALSE, we must decrement i for each non-match */
+      xp++;
+    } else {
+      int comp = compare_indexes(idx, xp-1, yp-1);
+      /* matching index values copy all column values from x and y to results */
+      if (comp == 0) {
+        set_index_from_x(idx, i, xp-1);
+        xp++;
+        yp++;
+      } else
+      if (comp < 0) {
+        if (left_join)
+          set_index_from_x(idx, i, xp-1);
+        else
+          i--;
+        xp++;
+      } else
+      if (comp > 0) {
+        if(right_join)
+          set_index_from_y(idx, i, yp-1);
+        else
+          i--;
+        yp++;
+      }
+    }
+  }
+
+  int m;
+  xts_node mnode;
+  switch (mode) {
+    case REALSXP:
+      for (m = 0; m < nxnodes; m++) {
+        mnode = xnodes[m];
+//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        for(j = 0; j < ncx; j++) { /* x-values */
+          ij_result = j * num_rows;
+          ij_original = j * nrx;
+//Rprintf(" pre-memcpy xnode = %f %f %d\n", real_result[mnode.out + ij_result], real_x[mnode.beg + ij_original], mnode.num);
+          memcpy(real_result + mnode.out + ij_result,
+              real_x + mnode.beg + ij_original,
+              mnode.num * sizeof(double));
+//Rprintf("post-memcpy xnode = %f %f %d\n", real_result[mnode.out + ij_result], real_x[mnode.beg + ij_original], mnode.num);
+        }
+      }
+      for (m = 0; m < nynodes; m++) {
+        mnode = ynodes[m];
+//Rprintf(" pre-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
+        for(j = 0; j < ncy; j++) { /* y-values */
+          ij_result = (j+ncx) * num_rows;
+          ij_original = j * nry;
+//Rprintf("post-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
+          memcpy(real_result + mnode.out + ij_result,
+              real_y + mnode.beg + ij_original,
+              mnode.num * sizeof(double));
+        }
+      }
+      break;
+    case INTSXP:
+      for (m = 0; m < nxnodes; m++) {
+        mnode = xnodes[m];
+//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        for(j = 0; j < ncx; j++) { /* x-values */
+          ij_result = j * num_rows;
+          ij_original = j * nrx;
+//Rprintf(" pre-memcpy xnode = %f %f %d\n", int_result[mnode.out + ij_result], int_x[mnode.beg + ij_original], mnode.num);
+          memcpy(int_result + mnode.out + ij_result,
+              int_x + mnode.beg + ij_original,
+              mnode.num * sizeof(int));
+//Rprintf("post-memcpy xnode = %f %f %d\n", int_result[mnode.out + ij_result], int_x[mnode.beg + ij_original], mnode.num);
+        }
+      }
+      for (m = 0; m < nynodes; m++) {
+        mnode = ynodes[m];
+//Rprintf("memcpy ynode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        for(j = 0; j < ncy; j++) { /* y-values */
+          ij_result = (j+ncx) * num_rows;
+          ij_original = j * nry;
+//Rprintf(" pre-memcpy ynode = %f %f %d\n", int_result[mnode.out + ij_result], int_y[mnode.beg + ij_original], mnode.num);
+          memcpy(int_result + mnode.out + ij_result,
+              int_y + mnode.beg + ij_original,
+              mnode.num * sizeof(int));
+//Rprintf("post-memcpy ynode = %f %f %d\n", int_result[mnode.out + ij_result], int_y[mnode.beg + ij_original], mnode.num);
+        }
+      }
+      break;
+  }
+
+
+//{{{ Never more...
+if (0) {
   /* INDEXING */
   for(i = 0; i < num_rows; i++) {
     /* If we are past the last row in x, assign NA to merged data 
@@ -690,6 +904,8 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     }
     }
   }
+}
+//}}}
 
   /* following logic to allow for 
      dimensionless xts objects (unsupported)
