@@ -431,20 +431,21 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   mode = TYPEOF(x);
 
   /* use pointers instead of function calls */
+  int result_obs = LENGTH(result);
   switch(TYPEOF(x)) {
     case INTSXP:
         int_x = INTEGER(x);
         int_y = INTEGER(y);
         int_fill = INTEGER(fill)[0];
         int_result = INTEGER(result);
-        for (i = 0; i < LENGTH(result); i++) int_result[i] = int_fill;
+        for (i = 0; i < result_obs; i++) int_result[i] = int_fill;
         break;
     case REALSXP:
         real_x = REAL(x);
         real_y = REAL(y);
         real_fill = REAL(fill)[0];
         real_result = REAL(result);
-        for (i = 0; i < LENGTH(result); i++) real_result[i] = real_fill;
+        for (i = 0; i < result_obs; i++) real_result[i] = real_fill;
         break;
     default:
         break;
