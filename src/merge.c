@@ -442,6 +442,9 @@ SEXP do_merge_xts (SEXP x, SEXP y,
 //Rprintf("post-memcpy ynode = %f %f %d\n", int_index[mnode.out], int_yindex[mnode.beg], mnode.num);
       }
       break;
+    default:
+      error("unsupported index type");
+      break;
   }
 
   /* Ensure fill is the correct length and type */
@@ -458,52 +461,12 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   int result_obs = LENGTH(result);
   switch(TYPEOF(x)) {
     case INTSXP:
-        int_x = INTEGER(x);
-        int_y = INTEGER(y);
-        int_fill = INTEGER(fill)[0];
-        int_result = INTEGER(result);
-        for (i = 0; i < result_obs; i++) int_result[i] = int_fill;
-        break;
-    case REALSXP:
-        real_x = REAL(x);
-        real_y = REAL(y);
-        real_fill = REAL(fill)[0];
-        real_result = REAL(result);
-        for (i = 0; i < result_obs; i++) real_result[i] = real_fill;
-        break;
-    default:
-        break;
-  }
+      int_x = INTEGER(x);
+      int_y = INTEGER(y);
+      int_fill = INTEGER(fill)[0];
+      int_result = INTEGER(result);
+      for (i = 0; i < result_obs; i++) int_result[i] = int_fill;
 
-  switch (mode) {
-    case REALSXP:
-      for (m = 0; m < nxnodes; m++) {
-        mnode = xnodes[m];
-//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
-        for(j = 0; j < ncx; j++) { /* x-values */
-          ij_result = j * num_rows;
-          ij_original = j * nrx;
-//Rprintf(" pre-memcpy xnode = %f %f %d\n", real_result[mnode.out + ij_result], real_x[mnode.beg + ij_original], mnode.num);
-          memcpy(real_result + mnode.out + ij_result,
-              real_x + mnode.beg + ij_original,
-              mnode.num * sizeof(double));
-//Rprintf("post-memcpy xnode = %f %f %d\n", real_result[mnode.out + ij_result], real_x[mnode.beg + ij_original], mnode.num);
-        }
-      }
-      for (m = 0; m < nynodes; m++) {
-        mnode = ynodes[m];
-//Rprintf(" pre-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
-        for(j = 0; j < ncy; j++) { /* y-values */
-          ij_result = (j+ncx) * num_rows;
-          ij_original = j * nry;
-//Rprintf("post-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
-          memcpy(real_result + mnode.out + ij_result,
-              real_y + mnode.beg + ij_original,
-              mnode.num * sizeof(double));
-        }
-      }
-      break;
-    case INTSXP:
       for (m = 0; m < nxnodes; m++) {
         mnode = xnodes[m];
 //Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
@@ -530,6 +493,42 @@ SEXP do_merge_xts (SEXP x, SEXP y,
 //Rprintf("post-memcpy ynode = %f %f %d\n", int_result[mnode.out + ij_result], int_y[mnode.beg + ij_original], mnode.num);
         }
       }
+      break;
+    case REALSXP:
+      real_x = REAL(x);
+      real_y = REAL(y);
+      real_fill = REAL(fill)[0];
+      real_result = REAL(result);
+      for (i = 0; i < result_obs; i++) real_result[i] = real_fill;
+
+      for (m = 0; m < nxnodes; m++) {
+        mnode = xnodes[m];
+//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        for(j = 0; j < ncx; j++) { /* x-values */
+          ij_result = j * num_rows;
+          ij_original = j * nrx;
+//Rprintf(" pre-memcpy xnode = %f %f %d\n", real_result[mnode.out + ij_result], real_x[mnode.beg + ij_original], mnode.num);
+          memcpy(real_result + mnode.out + ij_result,
+              real_x + mnode.beg + ij_original,
+              mnode.num * sizeof(double));
+//Rprintf("post-memcpy xnode = %f %f %d\n", real_result[mnode.out + ij_result], real_x[mnode.beg + ij_original], mnode.num);
+        }
+      }
+      for (m = 0; m < nynodes; m++) {
+        mnode = ynodes[m];
+//Rprintf(" pre-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
+        for(j = 0; j < ncy; j++) { /* y-values */
+          ij_result = (j+ncx) * num_rows;
+          ij_original = j * nry;
+//Rprintf("post-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
+          memcpy(real_result + mnode.out + ij_result,
+              real_y + mnode.beg + ij_original,
+              mnode.num * sizeof(double));
+        }
+      }
+      break;
+    default:
+      error("unsupported data type");
       break;
   }
 
