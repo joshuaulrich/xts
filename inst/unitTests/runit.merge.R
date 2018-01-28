@@ -120,6 +120,138 @@ test.basic_2way_inner <- function() {
   checkEqualsNumeric(md$out, x, md$msg)
 }
 
+test.basic_2way_left <- function() {
+  merge.data <-
+  function(data.type, index.type)
+  {
+    x <- .xts(rep(1, 5), 1:5)
+    y <- .xts(rep(2, 5), 4:8)
+    o <- .xts(matrix(c(rep(1, 5), rep(NA, 3), rep(2, 2)), 5, 2), 1:5)
+    colnames(o) <- c("x", "y")
+
+    storage.mode(x) <- data.type
+    storage.mode(y) <- data.type
+    storage.mode(o) <- data.type
+    storage.mode(.index(x)) <- index.type
+    storage.mode(.index(y)) <- index.type
+    storage.mode(.index(o)) <- index.type
+
+    list(x = x, y = y, out = o,
+         msg = paste(data.type, "data,", index.type, "index"))
+  }
+
+  # numeric coredata
+  md <- merge.data("numeric", "numeric")
+  x <- merge(x = md$x, y = md$y, join = "left")
+  checkIdentical(md$out, x, md$msg)
+
+  md <- merge.data("numeric", "integer")
+  x <- merge(x = md$x, y = md$y, join = "left")
+  checkIdentical(md$out, x, md$msg)
+
+  # integer coredata
+  md <- merge.data("integer", "numeric")
+  x <- merge(x = md$x, y = md$y, join = "left")
+  checkIdentical(md$out, x, md$msg)
+
+  md <- merge.data("integer", "integer")
+  x <- merge(x = md$x, y = md$y, join = "left")
+  checkIdentical(md$out, x, md$msg)
+
+  # logical coredata
+  md <- merge.data("logical", "numeric")
+  x <- merge(x = md$x, y = md$y, join = "left")
+  checkIdentical(md$out, x, md$msg)
+
+  md <- merge.data("logical", "integer")
+  x <- merge(x = md$x, y = md$y, join = "left")
+  checkIdentical(md$out, x, md$msg)
+
+  # character coredata
+  md <- merge.data("character", "numeric")
+  x <- merge(x = md$x, y = md$y, join = "left")
+  checkIdentical(md$out, x, md$msg)
+
+  md <- merge.data("character", "integer")
+  x <- merge(x = md$x, y = md$y, join = "left")
+  checkIdentical(md$out, x, md$msg)
+
+  # complex coredata
+  md <- merge.data("complex", "numeric")
+  x <- merge(x = md$x, y = md$y, join = "left")
+  checkEqualsNumeric(md$out, x, md$msg)
+
+  md <- merge.data("complex", "integer")
+  x <- merge(x = md$x, y = md$y, join = "left")
+  checkEqualsNumeric(md$out, x, md$msg)
+}
+
+test.basic_2way_right <- function() {
+  merge.data <-
+  function(data.type, index.type)
+  {
+    x <- .xts(rep(1, 5), 1:5)
+    y <- .xts(rep(2, 5), 4:8)
+    o <- .xts(matrix(c(rep(1, 2), rep(NA, 3), rep(2, 5)), 5, 2), 4:8)
+    colnames(o) <- c("x", "y")
+
+    storage.mode(x) <- data.type
+    storage.mode(y) <- data.type
+    storage.mode(o) <- data.type
+    storage.mode(.index(x)) <- index.type
+    storage.mode(.index(y)) <- index.type
+    storage.mode(.index(o)) <- index.type
+
+    list(x = x, y = y, out = o,
+         msg = paste(data.type, "data,", index.type, "index"))
+  }
+
+  # numeric coredata
+  md <- merge.data("numeric", "numeric")
+  x <- merge(x = md$x, y = md$y, join = "right")
+  checkIdentical(md$out, x, md$msg)
+
+  md <- merge.data("numeric", "integer")
+  x <- merge(x = md$x, y = md$y, join = "right")
+  checkIdentical(md$out, x, md$msg)
+
+  # integer coredata
+  md <- merge.data("integer", "numeric")
+  x <- merge(x = md$x, y = md$y, join = "right")
+  checkIdentical(md$out, x, md$msg)
+
+  md <- merge.data("integer", "integer")
+  x <- merge(x = md$x, y = md$y, join = "right")
+  checkIdentical(md$out, x, md$msg)
+
+  # logical coredata
+  md <- merge.data("logical", "numeric")
+  x <- merge(x = md$x, y = md$y, join = "right")
+  checkIdentical(md$out, x, md$msg)
+
+  md <- merge.data("logical", "integer")
+  x <- merge(x = md$x, y = md$y, join = "right")
+  checkIdentical(md$out, x, md$msg)
+
+  # character coredata
+  md <- merge.data("character", "numeric")
+  x <- merge(x = md$x, y = md$y, join = "right")
+  checkIdentical(md$out, x, md$msg)
+
+  md <- merge.data("character", "integer")
+  x <- merge(x = md$x, y = md$y, join = "right")
+  checkIdentical(md$out, x, md$msg)
+
+  # complex coredata
+  md <- merge.data("complex", "numeric")
+  x <- merge(x = md$x, y = md$y, join = "right")
+  checkEqualsNumeric(md$out, x, md$msg)
+
+  md <- merge.data("complex", "integer")
+  x <- merge(x = md$x, y = md$y, join = "right")
+  checkEqualsNumeric(md$out, x, md$msg)
+}
+
 test.merge_empty_xts_with_2_scalars <- function() {
   m1 <- merge(xts(), 1, 1)
   m2 <- merge(merge(xts(), 1), 1)
