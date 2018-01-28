@@ -96,9 +96,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   SEXP xindex, yindex, index, result, attr, len_xindex;
   SEXP s, t, unique;
 
-  int *int_result=NULL, *int_x=NULL, *int_y=NULL, int_fill=0;
-  double *real_result=NULL, *real_x=NULL, *real_y=NULL, real_fill=0;
-
   /* we do not check that 'x' is an xts object.  Dispatch and mergeXts
     (should) make this unecessary.  So we just get the index value 
 
@@ -453,16 +450,15 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     PROTECT( fill = coerceVector(fill, TYPEOF(x)) ); p++;
   } 
 
-  mode = TYPEOF(x);
-
-  /* use pointers instead of function calls */
+  /* Copy data values from x and y to result */
   int result_obs = LENGTH(result);
   switch(TYPEOF(x)) {
     case INTSXP:
-      int_x = INTEGER(x);
-      int_y = INTEGER(y);
-      int_fill = INTEGER(fill)[0];
-      int_result = INTEGER(result);
+      ;
+      int *int_x = INTEGER(x);
+      int *int_y = INTEGER(y);
+      int int_fill = INTEGER(fill)[0];
+      int *int_result = INTEGER(result);
       for (i = 0; i < result_obs; i++) int_result[i] = int_fill;
 
       for (m = 0; m < nxnodes; m++) {
@@ -493,10 +489,11 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       }
       break;
     case REALSXP:
-      real_x = REAL(x);
-      real_y = REAL(y);
-      real_fill = REAL(fill)[0];
-      real_result = REAL(result);
+      ;
+      double *real_x = REAL(x);
+      double *real_y = REAL(y);
+      double real_fill = REAL(fill)[0];
+      double *real_result = REAL(result);
       for (i = 0; i < result_obs; i++) real_result[i] = real_fill;
 
       for (m = 0; m < nxnodes; m++) {
@@ -514,14 +511,115 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       }
       for (m = 0; m < nynodes; m++) {
         mnode = ynodes[m];
-//Rprintf(" pre-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
+//Rprintf("memcpy ynode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
         for(j = 0; j < ncy; j++) { /* y-values */
           ij_result = (j+ncx) * num_rows;
           ij_original = j * nry;
-//Rprintf("post-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
+//Rprintf(" pre-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
           memcpy(real_result + mnode.out + ij_result,
               real_y + mnode.beg + ij_original,
               mnode.num * sizeof(double));
+//Rprintf("post-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
+        }
+      }
+      break;
+    case LGLSXP:
+      ;
+      int *lgl_x = LOGICAL(x);
+      int *lgl_y = LOGICAL(y);
+      int lgl_fill = LOGICAL(fill)[0];
+      int *lgl_result = LOGICAL(result);
+      for (i = 0; i < result_obs; i++) lgl_result[i] = lgl_fill;
+
+      for (m = 0; m < nxnodes; m++) {
+        mnode = xnodes[m];
+//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        for(j = 0; j < ncx; j++) { /* x-values */
+          ij_result = j * num_rows;
+          ij_original = j * nrx;
+//Rprintf(" pre-memcpy xnode = %f %f %d\n", lgl_result[mnode.out + ij_result], lgl_x[mnode.beg + ij_original], mnode.num);
+          memcpy(lgl_result + mnode.out + ij_result,
+              lgl_x + mnode.beg + ij_original,
+              mnode.num * sizeof(int));
+//Rprintf("post-memcpy xnode = %f %f %d\n", lgl_result[mnode.out + ij_result], lgl_x[mnode.beg + ij_original], mnode.num);
+        }
+      }
+      for (m = 0; m < nynodes; m++) {
+        mnode = ynodes[m];
+//Rprintf("memcpy ynode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        for(j = 0; j < ncy; j++) { /* y-values */
+          ij_result = (j+ncx) * num_rows;
+          ij_original = j * nry;
+//Rprintf(" pre-memcpy ynode = %f %f %d\n", lgl_result[mnode.out + ij_result], lgl_y[mnode.beg + ij_original], mnode.num);
+          memcpy(lgl_result + mnode.out + ij_result,
+              lgl_y + mnode.beg + ij_original,
+              mnode.num * sizeof(int));
+//Rprintf("post-memcpy ynode = %f %f %d\n", lgl_result[mnode.out + ij_result], lgl_y[mnode.beg + ij_original], mnode.num);
+        }
+      }
+      break;
+    case CPLXSXP:
+      ;
+      Rcomplex *clpx_x = COMPLEX(x);
+      Rcomplex *clpx_y = COMPLEX(y);
+      Rcomplex clpx_fill = COMPLEX(fill)[0];
+      Rcomplex *clpx_result = COMPLEX(result);
+      for (i = 0; i < result_obs; i++) clpx_result[i] = clpx_fill;
+
+      for (m = 0; m < nxnodes; m++) {
+        mnode = xnodes[m];
+//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        for(j = 0; j < ncx; j++) { /* x-values */
+          ij_result = j * num_rows;
+          ij_original = j * nrx;
+//Rprintf(" pre-memcpy xnode = %f %f %d\n", clpx_result[mnode.out + ij_result], clpx_x[mnode.beg + ij_original], mnode.num);
+          memcpy(clpx_result + mnode.out + ij_result,
+              clpx_x + mnode.beg + ij_original,
+              mnode.num * 2 * sizeof(double));
+//Rprintf("post-memcpy xnode = %f %f %d\n", clpx_result[mnode.out + ij_result], clpx_x[mnode.beg + ij_original], mnode.num);
+        }
+      }
+      for (m = 0; m < nynodes; m++) {
+        mnode = ynodes[m];
+//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        for(j = 0; j < ncy; j++) { /* y-values */
+          ij_result = (j+ncx) * num_rows;
+          ij_original = j * nry;
+//Rprintf(" pre-memcpy ynode = %f %f %d\n", clpx_result[mnode.out + ij_result], clpx_y[mnode.beg + ij_original], mnode.num);
+          memcpy(clpx_result + mnode.out + ij_result,
+              clpx_y + mnode.beg + ij_original,
+              mnode.num * 2 * sizeof(double));
+//Rprintf("post-memcpy ynode = %f %f %d\n", clpx_result[mnode.out + ij_result], clpx_y[mnode.beg + ij_original], mnode.num);
+        }
+      }
+      break;
+    case STRSXP:
+      for (i = 0; i < result_obs; i++) {
+        SET_STRING_ELT(result, i, STRING_ELT(fill, 0));
+      }
+      int n, result_n, original_n;
+      for (m = 0; m < nxnodes; m++) {
+        mnode = xnodes[m];
+        for (j = 0; j < ncx; j++) { /* x-values */
+          ij_result = mnode.out + j * num_rows;
+          ij_original = mnode.beg + j * nrx;
+          for (n = 0; n < mnode.num; n++) {
+            result_n = ij_result + n;
+            original_n = ij_original + n;
+            SET_STRING_ELT(result, result_n, STRING_ELT(x, original_n));
+          }
+        }
+      }
+      for (m = 0; m < nynodes; m++) {
+        mnode = ynodes[m];
+        for (j = 0; j < ncy; j++) { /* y-values */
+          ij_result = mnode.out + (j+ncx) * num_rows;
+          ij_original = mnode.beg + j * nry;
+          for (n = 0; n < mnode.num; n++) {
+            result_n = ij_result + n;
+            original_n = ij_original + n;
+            SET_STRING_ELT(result, result_n, STRING_ELT(y, original_n));
+          }
         }
       }
       break;
