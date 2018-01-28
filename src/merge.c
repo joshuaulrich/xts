@@ -243,15 +243,18 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         xnodes[nxnodes++] = xnode;
 //Rprintf("xp > nrx; xrun TRUE->FALSE; xnode %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
       }
-      // ensure first values are set for Y
-      if (!yrun) {
-        yrun = 1;
-        ynode = (xts_node){yp, 0, i};
+      if (right_join) {
+        // ensure first values are set for Y
+        if (!yrun) {
+          yrun = 1;
+          ynode = (xts_node){yp, 0, i};
 //Rprintf("xp > nrx; yrun FALSE->TRUE; ynode %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+        }
+        yp++;
+        i++;
+      } else {
+        break;
       }
-
-      yp = yp+1;
-      if (right_join) i = i+1;
     } else
 
     if (yp >= nry) {
@@ -262,15 +265,18 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         ynodes[nynodes++] = ynode;
 //Rprintf("yp > nry; yrun TRUE->FALSE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
       }
-      // ensure first values are set for X
-      if (!xrun) {
-        xrun = 1;
-        xnode = (xts_node){xp, 0, i};
+      if (left_join) {
+        // ensure first values are set for X
+        if (!xrun) {
+          xrun = 1;
+          xnode = (xts_node){xp, 0, i};
 //Rprintf("yp > nry; xrun FALSE->TRUE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+        }
+        xp++;
+        i++;
+      } else {
+        break;
       }
-
-      xp = xp+1;
-      if (left_join) i = i+1;
     } else {
 //}}} end of arrays
 
@@ -292,19 +298,13 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         }
 
         // increment all values; none terminate
-        yp = yp+1;
-        xp = xp+1;
-        i = i+1;
+        yp++;
+        xp++;
+        i++;
       } else
   //}}} equal indexes
   //{{{ x < y
       if (comp < 0) {
-        // ensure first values are set for X
-        if (!xrun) {
-          xrun = 1;
-          xnode = (xts_node){xp, 0, i};
-//Rprintf("xp < yp; xrun FALSE->TRUE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
-        }
         // determine if run for Y needs to terminate (set result)
         if (yrun) {
           yrun = 0;
@@ -312,18 +312,20 @@ SEXP do_merge_xts (SEXP x, SEXP y,
           ynodes[nynodes++] = ynode;
 //Rprintf("xp < yp; yrun TRUE->FALSE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
         }
-        xp = xp+1;
-        if (left_join) i = i+1;
+        if (left_join) {
+          // ensure first values are set for X
+          if (!xrun) {
+            xrun = 1;
+            xnode = (xts_node){xp, 0, i};
+//Rprintf("xp < yp; xrun FALSE->TRUE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+          }
+          i++;
+        }
+        xp++;
       } else
 //}}} x < y
 //{{{ x > y
       if (comp > 0) {
-        // ensure first values are set for Y
-        if (!yrun) {
-          yrun = 1;
-          ynode = (xts_node){yp, 0, i};
-//Rprintf("xp > yp; yrun FALSE->TRUE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
-        }
         // determine if run for X needs to terminate (set result)
         if (xrun) {
           xrun = 0;
@@ -331,8 +333,16 @@ SEXP do_merge_xts (SEXP x, SEXP y,
           xnodes[nxnodes++] = xnode;
 //Rprintf("xp > yp; xrun TRUE->FALSE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
         }
-        yp = yp+1;
-        if(right_join) i = i+1;
+        if (right_join) {
+          // ensure first values are set for Y
+          if (!yrun) {
+            yrun = 1;
+            ynode = (xts_node){yp, 0, i};
+//Rprintf("xp > yp; yrun FALSE->TRUE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
+          }
+          i++;
+        }
+        yp++;
       } else
         error("Invalid index element comparison (should never happen)");
     }
