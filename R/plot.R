@@ -97,6 +97,8 @@ chart.lines <- function(x,
            } else {
              colors <- if (is.null(col)) 1 else col
            }
+           if (length(colors) < nrow(x[,1]))
+               colors <- colors[1]
            lines(xx$Env$xycoords$x,x[,1],lwd=2,col=colors,lend=lend,lty=1,type="h",...)
          },
          p=, l=, b=, c=, o=, s=, S=, n={
