@@ -88,15 +88,14 @@ chart.lines <- function(x,
                         dn.col=NULL,
                         legend.loc=NULL,
                         ...){
-  if(is.null(up.col)) up.col <- "green"
-  if(is.null(dn.col)) dn.col <- "red"
   xx <- current.xts_chob()
   switch(type,
          h={
-           if (hasArg("col")) {
-             colors <- if (is.null(col)) 1 else col
-           } else {
+           # use up.col and dn.col if specified
+           if (!is.null(up.col) && !is.null(dn.col)){
              colors <- ifelse(x[,1] < 0, dn.col, up.col)
+           } else {
+             colors <- if (is.null(col)) 1 else col
            }
            lines(xx$Env$xycoords$x,x[,1],lwd=2,col=colors,lend=lend,lty=1,type="h",...)
          },
@@ -173,8 +172,8 @@ plot.xts <- function(x,
                      panels=NULL,
                      multi.panel=FALSE,
                      col=1:8,
-                     up.col="green",
-                     dn.col="red",
+                     up.col=NULL,
+                     dn.col=NULL,
                      bg="#FFFFFF",
                      type="l",
                      lty=1,
