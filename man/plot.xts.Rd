@@ -5,8 +5,8 @@
 \title{Plotting xts Objects}
 \usage{
 \method{plot}{xts}(x, y = NULL, ..., subset = "",
-  panels = NULL, multi.panel = FALSE, col = 1:8, up.col = "green",
-  dn.col = "red", bg = "#FFFFFF", type = "l", lty = 1, lwd = 2, lend = 1,
+  panels = NULL, multi.panel = FALSE, col = 1:8, up.col = NULL,
+  dn.col = NULL, bg = "#FFFFFF", type = "l", lty = 1, lwd = 2, lend = 1,
   main = deparse(substitute(x)), observation.based = FALSE,
   ylim = NULL, yaxis.same = TRUE, yaxis.left = TRUE, yaxis.right = TRUE,
   major.ticks = "months", minor.ticks = NULL,
