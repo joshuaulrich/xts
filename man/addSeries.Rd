@@ -3,7 +3,7 @@
 \title{Add a time series to an existing xts plot}
 \usage{
 addSeries(x, main = "", on = NA, type = "l", col = NULL, lty = 1,
-  lwd = 1, pch = 0, ...)
+  lwd = 1, pch = 1, ...)
 }
 \arguments{
 \item{x}{an xts object to plot.}

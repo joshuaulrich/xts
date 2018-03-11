@@ -14,8 +14,8 @@
   grid.col = "darkgray", labels.col = "#333333", format.labels = TRUE,
   grid2 = "#F5F5F5", legend.loc = NULL)
 \method{lines}{xts}(x, ..., main = "", on = 0, col = NULL, type = "l",
-  lty = 1, lwd = 1, pch = 0)
-\method{points}{xts}(x, ..., main = "", on = 0, col = NULL, pch = 0)
+  lty = 1, lwd = 1, pch = 1)
+\method{points}{xts}(x, ..., main = "", on = 0, col = NULL, pch = 1)
 }
 \arguments{
 \item{x}{xts object}

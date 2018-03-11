@@ -3,7 +3,7 @@
 \title{Add a panel to an existing xts plot}
 \usage{
 addPanel(FUN, main = "", on = NA, type = "l", col = NULL, lty = 1,
-  lwd = 1, pch = 0, ...)
+  lwd = 1, pch = 1, ...)
 }
 \arguments{
 \item{FUN}{an xts object to plot.}

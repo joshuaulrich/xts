@@ -625,7 +625,7 @@ plot.xts <- function(x,
 }
 
 # apply a function to the xdata in the xts chob and add a panel with the result
-addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0, ...){
+addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1, ...){
   # get the chob and the raw data (i.e. xdata)
   chob <- current.xts_chob()
   # xdata will be passed as first argument to FUN
@@ -657,7 +657,7 @@ addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=
 
 # Add a time series to an existing xts plot
 # author: Ross Bennett
-addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0, ...){
+addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1, ...){
   plot_object <- current.xts_chob()
   lenv <- plot_object$new_environment()
   lenv$main <- main
@@ -770,7 +770,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=0
 
 # Add time series of lines to an existing xts plot
 # author: Ross Bennett
-lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, pch=0){
+lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, pch=1){
   if(!is.na(on[1]))
     if(on[1] == 0) on[1] <- current_panel()
   
@@ -779,7 +779,7 @@ lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, p
 
 # Add time series of points to an existing xts plot
 # author: Ross Bennett
-points.xts <- function(x, ..., main="", on=0, col=NULL, pch=0){
+points.xts <- function(x, ..., main="", on=0, col=NULL, pch=1){
   if(!is.na(on[1]))
     if(on[1] == 0) on[1] <- current_panel()
   
