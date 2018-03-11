@@ -97,6 +97,8 @@ na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE, maxgap=Inf, ...) {
     maxgap <- min(maxgap, NROW(object))
     if(length(object) == 0)
       return(object)
+    if(hasArg("x") || hasArg("xout"))
+      return(NextMethod())
     if(dim(object)[2] > 1) {
       x <- object
       for(n in 1:NCOL(object))

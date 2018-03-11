@@ -34,3 +34,18 @@ test.nalocf_fromLast <- function() {
   z <- na.locf(zdat, fromLast = TRUE)
   checkEquals(x, as.xts(z), check.attributes = TRUE)
 }
+
+test.nalocf_x <- function() {
+  xidx <- rbind(xidx, .xts(0, 30))
+  zidx <- as.zoo(xidx)
+
+  x <- na.locf(xdat, x = index(xidx))
+  z <- na.locf(zdat, x = index(zidx))
+  checkEquals(x, as.xts(z), check.attributes = TRUE)
+}
+
+test.nalocf_xout <- function() {
+  x <- na.locf(xdat, xout = index(xidx))
+  z <- na.locf(zdat, xout = index(zidx))
+  checkEquals(x, as.xts(z), check.attributes = TRUE)
+}
