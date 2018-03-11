@@ -50,7 +50,12 @@ coredata.xts <- function(x, fmt=FALSE, ...) {
   }
 
   if(length(x) == 0) {
-    return(vector(storage.mode(x)))
+    xx <- NextMethod(x)
+    attr(xx, ".indexCLASS") <- NULL
+    attr(xx, "tclass") <- NULL
+    attr(xx, ".indexTZ") <- NULL
+    attr(xx, "tzone") <- NULL
+    return(xx)
   } else 
   return(.Call("coredata_xts", x, PACKAGE="xts"))
 

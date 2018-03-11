@@ -129,3 +129,11 @@ test.i_integer_j_NA_no_colnames <- function() {
   checkIdentical(dd[i, NA], ddna[i,])
   checkIdentical(dd[i, 1][, NA], ddna[i, 1])
 }
+
+test.i_0 <- function() {
+  x <- .xts(matrix(1:10, 5, 2), 1:5)
+  z <- as.zoo(x)
+  xz0 <- as.xts(z[0,])
+
+  checkEquals(x[0,], xz0, check.attributes = TRUE)
+}
