@@ -73,3 +73,14 @@ test.merge_fill_zero_length <- function() {
   colnames(out) <- c("x1", "x2")
   checkIdentical(x, out)
 }
+
+test.merge_with_zero_width_returns_original_type <- function() {
+  M1 <- .xts(1:3, 1:3, dimnames = list(NULL, "m1"))
+  for (m in c("double", "integer", "logical", "character")) {
+    m1 <- M1
+    storage.mode(m1) <- m
+    e1 <- .xts(,1:3)
+    m2 <- merge(m1, e1)
+    checkIdentical(m1, m2)
+  }
+}

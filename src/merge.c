@@ -114,6 +114,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   if( LENGTH(x)==0 || INTEGER(retside)[0]==0 ) {
     nrx = nrows(xindex);
     ncx = 0;
+    PROTECT(x = coerceVector(x, TYPEOF(y))); p++;
   }
   
   nry = nrows(y);
@@ -122,6 +123,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   if( LENGTH(y)==0 || INTEGER(retside)[1]==0) {
     nry = nrows(yindex);
     ncy = 0;
+    PROTECT(y = coerceVector(y, TYPEOF(x))); p++;
   }
 
   len = nrx + nry;
@@ -1023,10 +1025,13 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   int coerce_to_double=0;
   if(args != R_NilValue) type_of = TYPEOF(CAR(args));
   while(args != R_NilValue) {
-    if( length(CAR(args)) > 0 )
+    if(length(CAR(args)) > 0) {
       ncs += ncols(CAR(args));
-    if(TYPEOF(CAR(args)) != type_of)
-      coerce_to_double = 1;  /* need to convert all objects if one needs to be converted */
+      /* need to convert all objects if one non-zero-width needs to be converted */
+      if(TYPEOF(CAR(args)) != type_of) {
+        coerce_to_double = 1;
+      }
+    }
     args = CDR(args);
     n++;
   }

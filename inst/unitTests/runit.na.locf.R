@@ -84,9 +84,6 @@ test.nalocf_x <- function() {
 }
 
 test.nalocf_xout <- function() {
-  # FIXME: character currently breaks because merge(.xts("1",1), .xts(,1))
-  # returns a numeric xts, unlike zoo. This merge happens in na.approx.zoo()
-  MODES <- setdiff(MODES, "character")
   for (m in MODES) {
     xdat <- XDAT
     xidx <- XIDX
