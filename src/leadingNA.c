@@ -61,6 +61,13 @@ int firstNonNA (SEXP x)
         }
       }
       break;
+    case STRSXP:
+      for(i=0; i<nr; i++) {
+        if(STRING_ELT(x, i)!=NA_STRING) {
+          break;
+        }
+      }
+      break;
     default:
       error("unsupported type");
       break;
@@ -338,6 +345,55 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
         }
       }
       break;
+    case STRSXP:
+      if(!LOGICAL(fromLast)[0]) {   /* fromLast=FALSE */
+        for(i=0; i < (_first+1); i++) {
+          SET_STRING_ELT(result, i, STRING_ELT(x, i));
+        }
+        for(i=_first+1; i<nr; i++) {
+          SET_STRING_ELT(result, i, STRING_ELT(x, i));
+          if(STRING_ELT(x, i) == NA_STRING) {
+            if(limit > gap)
+              SET_STRING_ELT(result, i, STRING_ELT(result, i-1));
+            gap++;
+          } else {
+            if((int)gap > (int)maxgap) {
+              for(ii = i-1; ii > i-gap-1; ii--) {
+                SET_STRING_ELT(result, ii, NA_STRING);
+              }
+            }
+            gap=0;
+          }
+        }
+        if((int)gap > (int)maxgap) {  /* check that we don't have excessive trailing gap */
+          for(ii = i-1; ii > i-gap-1; ii--) {
+            SET_STRING_ELT(result, ii, NA_STRING);
+          }
+        }
+      } else {                      /* fromLast=TRUE */
+        SET_STRING_ELT(result, nr-1, STRING_ELT(x, nr-1));
+        for(i=nr-2; i>=0; i--) {
+          SET_STRING_ELT(result, i, STRING_ELT(x, i));
+          if(STRING_ELT(result, i) == NA_STRING) {
+            if(limit > gap)
+              SET_STRING_ELT(result, i, STRING_ELT(result, i+1));
+            gap++;
+          } else {
+            if((int)gap > (int)maxgap) {
+              for(ii = i+1; ii < i+gap+1; ii++) {
+                SET_STRING_ELT(result, ii, NA_STRING);
+              }
+            }
+            gap=0;
+          }
+        }
+        if((int)gap > (int)maxgap) {  /* check that we don't have leading trailing gap */
+          for(ii = i+1; ii < i+gap+1; ii++) {
+            SET_STRING_ELT(result, ii, NA_STRING);
+          }
+        }
+      }
+      break;
     default:
       error("unsupported type");
       break;
@@ -600,6 +656,17 @@ SEXP na_omit_xts (SEXP x)
         }   
       }
       break;
+    case STRSXP:
+      for(i=0; i<nr; i++) {
+        for(j=0; j<nc; j++) {
+          ij = i + j*nr;
+          if(STRING_ELT(x, ij) == NA_STRING) {
+            not_NA--;
+            break;
+          }
+        }
+      }
+      break;
     default:
       error("unsupported type");
       break;
@@ -670,6 +737,23 @@ SEXP na_omit_xts (SEXP x)
             not_NA++;
           }   
         }   
+      }
+      break;
+    case STRSXP:
+      for(i=0; i<nr; i++) {
+        for(j=0; j<nc; j++) {
+          ij = i + j*nr;
+          if(STRING_ELT(x, ij) == NA_STRING) {
+            int_na_index[NA] = i+1;
+            NA++;
+            break;
+          }
+          if(j==(nc-1)) {
+            /* make it to end of column, OK*/
+            int_not_na_index[not_NA] = i+1;
+            not_NA++;
+          }
+        }
       }
       break;
     default:
