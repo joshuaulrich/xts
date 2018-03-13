@@ -1,3 +1,19 @@
+Changed in xts 0.10-2:
+
+o  na.locf.xts() and na.omit.xts() now support character xts objects. Thanks to
+   Ken Williams and Samo Pahor for the reports (#42).
+
+o  na.locf.xts() now honors 'x' and 'xout' arguments by dispatching to the next
+   method (#215). Thanks to Morten Grum for the report.
+
+o  coredata.xts() now functions the same as coredata.zoo() on zero-length
+   objects, and only removes xts-related attributes (#223). Thanks to Vincent
+   Guyader for the report.
+
+o  plot.xts() no longer ignores 'col.up' and 'col.dn' when 'type="h"' (#224).
+   Thanks to Charlie Friedemann for the report. This was inadvertently broken
+   as part of the fix for #210.
+
 Changed in xts 0.10-1:
 
 o  'ylim' values passed to 'addSeries' and 'addPolygon' via '...' are now
