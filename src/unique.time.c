@@ -51,7 +51,9 @@ SEXP non_duplicates (SEXP x_, SEXP fromLast_) {
 
   SEXP duplicates;
   int *duplicates_int;
-  PROTECT(duplicates = allocVector(INTSXP, len)); /* possibly resize this */
+  /* need to reprotect lengthgets() result before returning */
+  PROTECT_INDEX idx;
+  PROTECT_WITH_INDEX(duplicates = allocVector(INTSXP, len), &idx);
   duplicates_int = INTEGER(duplicates);
 
   if(!fromLast) { /* keep first observation */
@@ -105,6 +107,7 @@ SEXP non_duplicates (SEXP x_, SEXP fromLast_) {
     }
     duplicates_int[d++] = len;
   }
+  REPROTECT(duplicates = lengthgets(duplicates, d), idx);
   UNPROTECT(1);
-  return(lengthgets(duplicates, d));
+  return(duplicates);
 }

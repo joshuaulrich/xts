@@ -1134,8 +1134,9 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
     PROTECT(NewColNames = allocVector(STRSXP, ncs)); P++;
     ncs = 0;
     // REPROTECT xtmp inside for loop
-    PROTECT_INDEX idxtmp;
+    PROTECT_INDEX idxtmp, cnmtmp;
     PROTECT_WITH_INDEX(xtmp = NULL, &idxtmp); P++;
+    PROTECT_WITH_INDEX(ColNames = NULL, &cnmtmp); P++;
 
     for(i = 0, nc=0; args != R_NilValue; i = i+nc, args = CDR(args)) { // merge each object with index
       // i is object current being merged/copied
@@ -1159,7 +1160,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
       nr = nrows(xtmp);
       nc = (0 == nr) ? 0 : ncols(xtmp);  // ncols(numeric(0)) == 1
       ncs += nc;
-      PROTECT(ColNames = getAttrib(CAR(args),R_DimNamesSymbol)); P++;
+      REPROTECT(ColNames = getAttrib(CAR(args),R_DimNamesSymbol), cnmtmp);
       switch(TYPEOF(xtmp)) { // by type, insert merged data into result object
         case LGLSXP:
         case INTSXP:

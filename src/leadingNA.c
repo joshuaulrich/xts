@@ -200,8 +200,8 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
     error("na.locf.xts only handles univariate, dimensioned data");
 
   nr = nrows(x);
-  maxgap = asReal(coerceVector(_maxgap,REALSXP));
-  limit  = asReal(coerceVector(_limit ,REALSXP));
+  maxgap = asReal(_maxgap);
+  limit  = asReal(_limit);
   gap = 0;
 
   PROTECT(result = allocVector(TYPEOF(x), nrows(x))); P++;

@@ -140,30 +140,30 @@ void copy_xtsAttributes(SEXP x, SEXP y)
 {
   SEXP attr;
   int P=0;
-  attr = xts_ATTRIB(x);
+  attr = PROTECT(do_xtsAttributes(x)); P++;
+  attr = PROTECT(coerceVector(attr, LISTSXP)); P++;
 
   if(length(attr) > 0 || y != R_NilValue) {
-    PROTECT(attr); P++;
     for( ; attr != R_NilValue; attr = CDR(attr) ) {
       setAttrib(y, TAG(attr), CAR(attr));
     }
-    UNPROTECT(P);
   }
+  UNPROTECT(P);
 }
 
 void copy_xtsCoreAttributes(SEXP x, SEXP y)
 {
   SEXP attr;
   int P=0;
-  attr = xts_COREATTRIB(x);
+  attr = PROTECT(do_xtsCoreAttributes(x)); P++;
+  attr = PROTECT(coerceVector(attr, LISTSXP)); P++;
 
   if(length(attr) > 0 || y != R_NilValue) {
-    PROTECT(attr); P++;
     for( ; attr != R_NilValue; attr = CDR(attr) ) {
       setAttrib(y, TAG(attr), CAR(attr));
     }
-    UNPROTECT(P);
   }
+  UNPROTECT(P);
 }
 
 
