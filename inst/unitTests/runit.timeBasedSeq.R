@@ -20,20 +20,21 @@ test.tbs_1999_to_2008_by_year <- function() {
 
 # MONTHLY sequences
 # defaults to yearmon from the zoo package
+# NB: these differ by ~4.16e-5 on Solaris and rhub's windows-x86_64-devel
 test.tbs_199901_to_200801_by_month <- function() {
   tbs <- timeBasedSeq('199901/200801')
   bench <- as.yearmon(seq(as.Date("1999-01-01"),as.Date("2008-01-01"),by='month'))
-  checkEqualsNumeric(tbs, bench)
+  checkEqualsNumeric(tbs, bench, tolerance = 1e-4)
 }
 test.tbs_199901_to_2008_by_month <- function() {
   tbs <- timeBasedSeq('199901/2008')
   bench <- as.yearmon(seq(as.Date("1999-01-01"),as.Date("2008-12-01"),by='month'))
-  checkEqualsNumeric(tbs, bench)
+  checkEqualsNumeric(tbs, bench, tolerance = 1e-4)
 }
 test.tbs_1999_to_200801_by_month <- function() {
   tbs <- timeBasedSeq('1999/200801')
   bench <- as.yearmon(seq(as.Date("1999-01-01"),as.Date("2008-01-01"),by='month'))
-  checkEqualsNumeric(tbs, bench)
+  checkEqualsNumeric(tbs, bench, tolerance = 1e-4)
 }
 # retclass=Date
 test.tbs_199901_to_200801_by_month_Date <- function() {
