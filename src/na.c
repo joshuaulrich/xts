@@ -24,63 +24,11 @@
 #include <Rinternals.h>
 #include "xts.h"
 
-int firstNonNA (SEXP x)
+/* Internal use only
+ * called by: firstNonNA, naCheck, na_locf
+ */
+static int firstNonNACol (SEXP x, int col)
 {
-  /*
-    Internal use only; called by naCheck below.
-  */
-
-  int i=0, nr;
-  int *int_x=NULL;
-  double *real_x=NULL;
-
-  nr = nrows(x);
-
-  switch(TYPEOF(x)) {
-    case LGLSXP:
-      int_x = LOGICAL(x);
-      for(i=0; i<nr; i++) {
-        if(int_x[i]!=NA_LOGICAL) {
-          break;
-        }
-      }
-      break;
-    case INTSXP:
-      int_x = INTEGER(x);
-      for(i=0; i<nr; i++) {
-        if(int_x[i]!=NA_INTEGER) {
-          break;
-        }
-      }
-      break;
-    case REALSXP:
-      real_x = REAL(x);
-      for(i=0; i<nr; i++) {
-        if(!ISNA(real_x[i]) && !ISNAN(real_x[i])) {
-          break;
-        }
-      }
-      break;
-    case STRSXP:
-      for(i=0; i<nr; i++) {
-        if(STRING_ELT(x, i)!=NA_STRING) {
-          break;
-        }
-      }
-      break;
-    default:
-      error("unsupported type");
-      break;
-  }
-  return(i);
-}
-
-int firstNonNACol (SEXP x, int col)
-{
-  /*
-    Internal use only; called by naCheck below.
-  */
-
   int i=0, nr;
   int *int_x=NULL;
   double *real_x=NULL;
@@ -126,6 +74,13 @@ int firstNonNACol (SEXP x, int col)
       break;
   }
   return(i);
+}
+
+/* Should be internal use only (static), but is in xts.h
+ */
+int firstNonNA (SEXP x)
+{
+  return firstNonNACol(x, 0);
 }
 
 SEXP naCheck (SEXP x, SEXP check)
