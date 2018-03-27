@@ -5,10 +5,8 @@ MODES <- c("double", "integer", "character", "logical")
 test.nalocf <- function() {
   for (m in MODES) {
     xdat <- XDAT
-    xidx <- XIDX
-    storage.mode(xdat) <- storage.mode(xidx) <- m
+    storage.mode(xdat) <- m
     zdat <- as.zoo(xdat)
-    zidx <- as.zoo(xidx)
 
     x <- na.locf(xdat)
     z <- na.locf(zdat)
@@ -17,27 +15,11 @@ test.nalocf <- function() {
   }
 }
 
-test.nalocf_by_column <- function() {
-  for (m in MODES) {
-    xdat <- XDAT
-    xidx <- XIDX
-    storage.mode(xdat) <- storage.mode(xidx) <- m
-    zdat <- as.zoo(xdat)
-    zidx <- as.zoo(xidx)
-
-    x <- na.locf(merge(one = xdat, two = xdat))
-    z <- na.locf(merge(one = zdat, two = zdat))
-    checkEquals(x, as.xts(z), check.attributes = TRUE)
-  }
-}
-
 test.nalocf_leading_NA <- function() {
   for (m in MODES) {
     xdat <- XDAT
-    xidx <- XIDX
-    storage.mode(xdat) <- storage.mode(xidx) <- m
+    storage.mode(xdat) <- m
     zdat <- as.zoo(xdat)
-    zidx <- as.zoo(xidx)
 
     xdat[1] <- NA
     zdat[1] <- NA
@@ -55,10 +37,8 @@ test.nalocf_leading_NA <- function() {
 test.nalocf_fromLast <- function() {
   for (m in MODES) {
     xdat <- XDAT
-    xidx <- XIDX
-    storage.mode(xdat) <- storage.mode(xidx) <- m
+    storage.mode(xdat) <- m
     zdat <- as.zoo(xdat)
-    zidx <- as.zoo(xidx)
 
     x <- na.locf(xdat, fromLast = TRUE)
     z <- na.locf(zdat, fromLast = TRUE)
@@ -93,6 +73,18 @@ test.nalocf_xout <- function() {
 
     x <- na.locf(xdat, xout = index(xidx))
     z <- na.locf(zdat, xout = index(zidx))
+    checkEquals(x, as.xts(z), check.attributes = TRUE)
+  }
+}
+
+test.nalocf_by_column <- function() {
+  for (m in MODES) {
+    xdat <- XDAT
+    storage.mode(xdat) <- m
+    zdat <- as.zoo(xdat)
+
+    x <- na.locf(merge(one = xdat, two = xdat))
+    z <- na.locf(merge(one = zdat, two = zdat))
     checkEquals(x, as.xts(z), check.attributes = TRUE)
   }
 }
