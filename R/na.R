@@ -99,26 +99,7 @@ na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE, maxgap=Inf, ...) {
       return(object)
     if(hasArg("x") || hasArg("xout"))
       return(NextMethod())
-    if(dim(object)[2] > 1) {
-      x <- object
-      for(n in 1:NCOL(object))
-        x[,n] <- .Call('na_locf', object[,n], fromLast, maxgap, Inf, PACKAGE='xts')
-      #.xts(apply(object, 2, function(x) .Call('na_locf', x, fromLast, maxgap, PACKAGE='xts')),
-      #     .index(object), tzone=indexTZ(object), .indexCLASS=indexClass(object))
-    } else {
-      x <- .Call("na_locf", object, fromLast, maxgap, Inf, PACKAGE="xts")
-    }
-    if(na.rm) {
-      return(structure(na.omit(x),na.action=NULL))
-    } else x
-}
-
-.na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE, maxgap=Inf, ...) {
-    stopifnot(is.xts(object))
-    maxgap <- min(maxgap, NROW(object))
-    if(length(object) == 0)
-      return(object)
-    x <- .Call("na_locf_col", object, fromLast, maxgap, Inf, PACKAGE="xts")
+    x <- .Call("na_locf", object, fromLast, maxgap, Inf, PACKAGE="xts")
     if(na.rm) {
       return(structure(na.omit(x),na.action=NULL))
     } else x
