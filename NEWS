@@ -49,7 +49,7 @@ o  Fix weird result in merge.xts() when 'fill' argument is NULL or a zero-
 o  Fixed bug in endpoints() due to sub-second representation error via using
    integer division (%/%) with non- integer arguments (#202).
 
-o  endpoints() gained sub-second accuracy on Windows (#282).
+o  endpoints() gained sub-second accuracy on Windows (#202).
 
 o  plot.xts() no longer errors when called on an object containing a constant
    value. It chooses ylim values +/-20% from the series value (#156).
