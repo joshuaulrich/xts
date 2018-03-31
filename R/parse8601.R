@@ -95,7 +95,7 @@
    # return as list
    c(as.list(c(
      year=as_numeric(YYYY),
-     mon=as_numeric(MM),
+     month=as_numeric(MM),
      day=as_numeric(DD),
      hour=as_numeric(H),
      min=as_numeric(M),
