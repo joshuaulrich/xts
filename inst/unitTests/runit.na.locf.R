@@ -158,3 +158,33 @@ test.nalocf_by_column_xout <- function() {
     checkEquals(x, as.xts(z), check.attributes = TRUE)
   }
 }
+
+test.nalocf_by_column_1NA <- function() {
+  narow <- 1L
+  for (m in MODES) {
+    xdrow <- XDAT2[narow,]
+    xdat <- XDAT2 * NA
+    xdat[narow,] <- xdrow
+    storage.mode(xdat) <- m
+    zdat <- as.zoo(xdat)
+
+    x <- na.locf(xdat)
+    z <- na.locf(zdat)
+    checkEquals(x, as.xts(z), check.attributes = TRUE)
+  }
+}
+
+test.nalocf_by_column_1NA_fromLast <- function() {
+  narow <- nrow(XDAT2)
+  for (m in MODES) {
+    xdrow <- XDAT2[narow,]
+    xdat <- XDAT2 * NA
+    xdat[narow,] <- xdrow
+    storage.mode(xdat) <- m
+    zdat <- as.zoo(xdat)
+
+    x <- na.locf(xdat, fromLast = TRUE)
+    z <- na.locf(zdat, fromLast = TRUE)
+    checkEquals(x, as.xts(z), check.attributes = TRUE)
+  }
+}

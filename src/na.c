@@ -175,6 +175,7 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
             int_result[i] = int_x[i];
           }
           /* result[_first] now has first value fromLast=FALSE */
+          gap = 0;
           for(i=_first+1; i<nr+j*nr; i++) {
             int_result[i] = int_x[i];
             if(int_result[i] == NA_LOGICAL && gap < maxgap) {
@@ -192,6 +193,7 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
         /* nr-2 is first position to fill fromLast=TRUE */
         for(j=0; j < nc; j++) {
           int_result[nr-1+j*nr] = int_x[nr-1+j*nr];
+          gap = 0;
           for(i=nr-2 + j*nr; i>=0+j*nr; i--) {
             int_result[i] = int_x[i];
             if(int_result[i] == NA_LOGICAL && gap < maxgap) {
@@ -213,6 +215,7 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
             int_result[i] = int_x[i];
           }
           /* result[_first] now has first value fromLast=FALSE */
+          gap = 0;
           for(i=_first+1; i<nr+j*nr; i++) {
             int_result[i] = int_x[i];
             if(int_result[i] == NA_INTEGER) {
@@ -238,6 +241,7 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
         /* nr-2 is first position to fill fromLast=TRUE */
         for(j=0; j < nc; j++) {
           int_result[nr-1+j*nr] = int_x[nr-1+j*nr];
+          gap = 0;
           for(i=nr-2 + j*nr; i>=0+j*nr; i--) {
             int_result[i] = int_x[i];
             if(int_result[i] == NA_INTEGER) {
@@ -272,6 +276,7 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
             real_result[i] = real_x[i];
           }
           /* result[_first] now has first value fromLast=FALSE */
+          gap = 0;
           for(i=_first+1; i<nr+j*nr; i++) {
             real_result[i] = real_x[i];
             if( ISNA(real_result[i]) || ISNAN(real_result[i])) {
@@ -296,6 +301,7 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
       } else {                      /* fromLast=TRUE */
         for(j=0; j < nc; j++) {
           real_result[nr-1+j*nr] = real_x[nr-1+j*nr];
+          gap = 0;
           for(i=nr-2 + j*nr; i>=0+j*nr; i--) {
             real_result[i] = real_x[i];
             if(ISNA(real_result[i]) || ISNAN(real_result[i])) {
@@ -328,6 +334,7 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
             SET_STRING_ELT(result, i, STRING_ELT(x, i));
           }
           /* result[_first] now has first value fromLast=FALSE */
+          gap = 0;
           for(i=_first+1; i<nr+j*nr; i++) {
             SET_STRING_ELT(result, i, STRING_ELT(x, i));
             if(STRING_ELT(x, i) == NA_STRING) {
@@ -352,6 +359,7 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
       } else {                      /* fromLast=TRUE */
         for(j=0; j < nc; j++) {
           SET_STRING_ELT(result, nr-1+j*nr, STRING_ELT(x, nr-1+j*nr));
+          gap = 0;
           for(i=nr-2 + j*nr; i>=0+j*nr; i--) {
             SET_STRING_ELT(result, i, STRING_ELT(x, i));
             if(STRING_ELT(result, i) == NA_STRING) {
