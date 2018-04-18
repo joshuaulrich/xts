@@ -188,3 +188,17 @@ test.nalocf_by_column_1NA_fromLast <- function() {
     checkEquals(x, as.xts(z), check.attributes = TRUE)
   }
 }
+
+test.nalocf_first_column_all_NA <- function() {
+  nacol <- 1L
+  for (m in MODES) {
+    xdat <- XDAT2
+    xdat[,nacol] <- xdat[,nacol] * NA
+    storage.mode(xdat) <- m
+    zdat <- as.zoo(xdat)
+
+    x <- na.locf(xdat)
+    z <- na.locf(zdat)
+    checkEquals(x, as.xts(z), check.attributes = TRUE)
+  }
+}

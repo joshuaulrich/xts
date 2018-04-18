@@ -158,9 +158,6 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
   limit  = asReal(_limit);
   gap = 0;
 
-  if(firstNonNA(x) == nr)
-    return(x);
-
   PROTECT(result = allocMatrix(TYPEOF(x), nr, nc)); P++;
 
   switch(TYPEOF(x)) {
