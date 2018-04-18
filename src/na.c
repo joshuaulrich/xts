@@ -63,7 +63,7 @@ static int firstNonNACol (SEXP x, int col)
       }
       break;
     case STRSXP:
-      for(i=0; i<nr; i++) {
+      for(i=0+col*nr; i<(nr+col*nr); i++) {
         if(STRING_ELT(x, i)!=NA_STRING) {
           break;
         }
