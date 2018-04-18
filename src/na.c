@@ -168,6 +168,8 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
         for(j=0; j < nc; j++) {
           /* copy leading NAs */
           _first = firstNonNACol(x, j);
+          if (_first == nr + j*nr)
+            _first--;
           for(i=0+j*nr; i < (_first+1); i++) {
             int_result[i] = int_x[i];
           }
@@ -208,6 +210,8 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
         for(j=0; j < nc; j++) {
           /* copy leading NAs */
           _first = firstNonNACol(x, j);
+          if (_first == nr + j*nr)
+            _first--;
           for(i=0+j*nr; i < (_first+1); i++) {
             int_result[i] = int_x[i];
           }
@@ -269,6 +273,8 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
         for(j=0; j < nc; j++) {
           /* copy leading NAs */
           _first = firstNonNACol(x, j);
+          if (_first == nr + j*nr)
+            _first--;
           for(i=0+j*nr; i < (_first+1); i++) {
             real_result[i] = real_x[i];
           }
@@ -327,6 +333,8 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
         for(j=0; j < nc; j++) {
           /* copy leading NAs */
           _first = firstNonNACol(x, j);
+          if (_first == nr + j*nr)
+            _first--;
           for(i=0+j*nr; i < (_first+1); i++) {
             SET_STRING_ELT(result, i, STRING_ELT(x, i));
           }
