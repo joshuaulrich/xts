@@ -113,36 +113,35 @@ function(x, ...) {
 }
 
 `.indexsec` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$sec
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$sec
 }
 `.indexmin` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$min
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$min
 }
 `.indexhour` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$hour
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$hour
 }
 `.indexmday` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$mday
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$mday
 }
 `.indexmon` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$mon
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$mon
 }
 `.indexyear` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$year
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$year
 }
 `.indexwday` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$wday
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$wday
 }
 `.indexbday` <- function(x) {
   # is business day T/F
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$wday %% 6 > 0
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$wday %% 6 > 0
 }
 `.indexyday` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$yday
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$yday
 }
 `.indexisdst` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$isdst
-}
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$isdst }
 `.indexDate` <- `.indexday` <- function(x) {
   .index(x) %/% 86400L
 }

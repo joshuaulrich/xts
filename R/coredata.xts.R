@@ -53,6 +53,7 @@ coredata.xts <- function(x, fmt=FALSE, ...) {
     xx <- NextMethod(x)
     attr(xx, ".indexCLASS") <- NULL
     attr(xx, "tclass") <- NULL
+    # Remove tz attrs (object created before 0.10-3)
     attr(xx, ".indexTZ") <- NULL
     attr(xx, "tzone") <- NULL
     return(xx)
@@ -106,7 +107,7 @@ function(x, user=NULL) {
   else
   if(user) {
   # Only user attributes
-    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT','.indexTZ','tzone','tclass', 
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT','.indexTZ','tzone','tclass',
                  x.attr$.CLASSnames)
     xa <- x.attr[!names(x.attr) %in% rm.attr]
   } else {
@@ -132,8 +133,11 @@ function(x,value) {
   } else
   for(nv in names(value)) {
     if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES','.CLASSnames',
-                  '.indexCLASS','.indexFORMAT','.indexTZ'))
+                  '.indexCLASS','.indexFORMAT'))
       attr(x,nv) <- value[[nv]]
   }
+  # Remove tz attrs (object created before 0.10-3)
+  attr(x, ".indexTZ") <- NULL
+  attr(x, "tzone") <- NULL
   x
 }

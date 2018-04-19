@@ -97,8 +97,6 @@ function(x=NULL,
             class=c('xts','zoo'),
             .indexCLASS=orderBy,
             tclass=orderBy,
-            .indexTZ=tzone,
-            tzone=tzone,
             ...)
   if(!is.null(attributes(x)$dimnames[[1]]))
     # this is very slow if user adds rownames, but maybe that is deserved :)
@@ -148,8 +146,8 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   tclass <- .indexCLASS
   xx <- .Call("add_xtsCoreAttributes", x, index, .indexCLASS, tzone, tclass,
               c('xts','zoo'), .indexFORMAT, PACKAGE='xts')
-  # remove .indexFORMAT and .indexTZ that come through Ops.xts
-  dots.names$.indexFORMAT <- dots.names$.indexTZ <- NULL
+  # remove .indexFORMAT that come through Ops.xts
+  dots.names$.indexFORMAT <- NULL
   # set any user attributes
   if(length(dots.names))
     attributes(xx) <- c(attributes(xx), list(...))
@@ -164,7 +162,7 @@ function(x, match.to, error=FALSE, ...) {
         stop('incompatible match.to attibutes')
       } else return(x)
 
-    if(!is.xts(x)) x <- .xts(coredata(x),.index(match.to), .indexCLASS=indexClass(match.to), tzone=indexTZ(match.to))
+    if(!is.xts(x)) x <- .xts(coredata(x),.index(match.to), .indexCLASS=indexClass(match.to), tzone=tzone(match.to))
     attr(x, ".CLASS") <- CLASS(match.to)
     xtsAttributes(x) <- xtsAttributes(match.to)
   }

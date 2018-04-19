@@ -79,8 +79,7 @@ is not needed, it is often best to set the system TZ to "GMT" or
 \seealso{ \code{\link{POSIXt}} }
 \examples{
 x <- xts(1:10, Sys.Date()+1:10)
-indexTZ(x)
-
+#indexTZ(x)  # Deprecated(?)
 # same, preferred as of 0.9-1
 tzone(x)
 str(x)

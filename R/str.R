@@ -32,7 +32,7 @@ function(object,...) {
   str(coredata(object))
   cat(paste("  Indexed by objects of class: "))
   cat(paste('[',paste(indexClass(object),collapse=','),'] ',sep=''))
-  cat(paste("TZ: ", indexTZ(object), "\n", sep=""))
+  cat(paste("TZ: ", tzone(object), "\n", sep=""))
   if(!is.null(CLASS(object)))
     cat(paste("  Original class: '",CLASS(object),"' ",sep=""),"\n")
   cat(paste("  xts Attributes: "),"\n")

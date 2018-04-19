@@ -39,7 +39,7 @@ function(x,on='months',k=1) {
   # posixltindex is costly in memory (9x length of time)
   # make sure we really need it
   if(on %in% c('years','quarters','months','weeks','days'))
-    posixltindex <- as.POSIXlt(.POSIXct(.index(x)),tz=indexTZ(x))
+    posixltindex <- as.POSIXlt(.POSIXct(.index(x)),tz=tzone(x))
 
   switch(on,
     "years" = {
