@@ -500,7 +500,6 @@ return(result);
   }
   setAttrib(result, xts_IndexSymbol, newindex);
   setAttrib(result, xts_IndexClassSymbol, getAttrib(x, xts_IndexClassSymbol));
-  setAttrib(result, xts_IndexTZSymbol, getAttrib(x, xts_IndexTZSymbol));
   setAttrib(result, xts_IndexFormatSymbol, getAttrib(x, xts_IndexFormatSymbol));
   setAttrib(result, xts_ClassSymbol, getAttrib(x, xts_ClassSymbol));
   copy_xtsAttributes(x, result);

@@ -47,7 +47,6 @@ SEXP do_xtsAttributes(SEXP x)
        TAG(a) != xts_ClassSymbol &&
        TAG(a) != xts_IndexFormatSymbol &&
        TAG(a) != xts_IndexClassSymbol &&
-       TAG(a) != xts_IndexTZSymbol &&
        TAG(a) != R_ClassSymbol &&
        TAG(a) != R_DimSymbol &&
        TAG(a) != R_DimNamesSymbol &&
@@ -92,7 +91,6 @@ SEXP do_xtsCoreAttributes(SEXP x)
     if(TAG(a) == xts_ClassSymbol ||
        TAG(a) == xts_IndexFormatSymbol ||
        TAG(a) == xts_IndexClassSymbol ||
-       TAG(a) == xts_IndexTZSymbol ||
        TAG(a) == R_ClassSymbol)
     {
       SET_VECTOR_ELT(values, i, CAR(a));
@@ -195,7 +193,6 @@ SEXP add_xtsCoreAttributes(SEXP _x, SEXP _index, SEXP _indexClass, SEXP _tzone,
   }
   setAttrib(_x, xts_IndexSymbol, _index);              /* index */
   setAttrib(_x, xts_IndexClassSymbol, _indexClass);    /* .indexClass */
-  setAttrib(_x, xts_IndexTZSymbol, _tzone);            /* .indexTZ */
   setAttrib(_x, xts_IndexTclassSymbol, _tclass);       /* tclass */
   setAttrib(_x, xts_IndexTzoneSymbol, _tzone);         /* tzone */
   setAttrib(_x, R_ClassSymbol, _class);                /* class */

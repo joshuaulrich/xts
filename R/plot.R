@@ -681,7 +681,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     } else {
       subset.range <- paste(start(xDataSubset), end(xDataSubset),sep="/")
     }
-    ta.y <- merge(ta, .xts(,.index(xDataSubset), tzone=indexTZ(xdata)))[subset.range]
+    ta.y <- merge(ta, .xts(,.index(xDataSubset), tzone=tzone(xdata)))[subset.range]
     chart.lines(ta.y, type=type, col=col, lty=lty, lwd=lwd, pch=pch, ...)
   }
 
@@ -821,7 +821,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
                           end(xdata[xsubset]),sep="/")
     ta.adj <- merge(n=.xts(1:NROW(xdata[xsubset]),
                            .index(xdata[xsubset]), 
-                           tzone=indexTZ(xdata)),
+                           tzone=tzone(xdata)),
                     .xts(rep(1, NROW(events)),# use numeric for the merge
                          .index(events)))[subset.range]
     # should we not merge and only add events that are in index(xdata)?
@@ -1043,7 +1043,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
                           end(xdata[xsubset]),sep="/")
     ta.adj <- merge(n=.xts(1:NROW(xdata[xsubset]),
                            .index(xdata[xsubset]), 
-                           tzone=indexTZ(xdata)),ta)[subset.range]
+                           tzone=tzone(xdata)),ta)[subset.range]
     ta.x <- as.numeric(na.approx(ta.adj[,1], rule=2) )
     # NAs in the coordinates break the polygon which is not the behavior we want
     ta.y <- na.omit(ta.adj[,-1])

@@ -65,7 +65,6 @@ static void SymbolShortcuts(void)
   xts_ClassSymbol = install(".CLASS");
   xts_IndexFormatSymbol = install(".indexFORMAT");
   xts_IndexClassSymbol = install(".indexCLASS");
-  xts_IndexTZSymbol = install(".indexTZ");
   xts_IndexTclassSymbol = install("tclass");
   xts_IndexTzoneSymbol = install("tzone");
 }

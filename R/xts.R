@@ -94,7 +94,6 @@ function(x=NULL,
             class=c('xts','zoo'),
             .indexCLASS=orderBy,
             tclass=orderBy,
-            .indexTZ=tzone,
             tzone=tzone,
             ...)
   if(!is.null(attributes(x)$dimnames[[1]]))
@@ -134,7 +133,7 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
 
   structure(.Data=x,
             index=structure(index,tzone=tzone,tclass=.indexCLASS),
-            .indexCLASS=.indexCLASS,.indexTZ=tzone,
+            .indexCLASS=.indexCLASS,
             tclass=.indexCLASS,tzone=tzone,
             class=c('xts','zoo'), ...)
 }
@@ -174,8 +173,8 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
     .indexFORMAT <- NULL
   xx <- .Call("add_xtsCoreAttributes", x, index, .indexCLASS, tzone, tclass,
               c('xts','zoo'), .indexFORMAT, PACKAGE='xts')
-  # remove .indexFORMAT and .indexTZ that come through Ops.xts
-  dots.names$.indexFORMAT <- dots.names$.indexTZ <- NULL
+  # remove .indexFORMAT that come through Ops.xts
+  dots.names$.indexFORMAT <- NULL
   # set any user attributes
   if(length(dots.names))
     attributes(xx) <- c(attributes(xx), ...)
@@ -190,7 +189,7 @@ function(x, match.to, error=FALSE, ...) {
         stop('incompatible match.to attibutes')
       } else return(x)
 
-    if(!is.xts(x)) x <- .xts(coredata(x),.index(match.to), .indexCLASS=indexClass(match.to), tzone=indexTZ(match.to))
+    if(!is.xts(x)) x <- .xts(coredata(x),.index(match.to), .indexCLASS=indexClass(match.to), tzone=tzone(match.to))
     CLASS(x) <- CLASS(match.to)
     xtsAttributes(x) <- xtsAttributes(match.to)
   }

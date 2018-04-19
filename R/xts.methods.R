@@ -66,10 +66,10 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       if(inherits(i, "POSIXct")) {
         i <- which(!is.na(match(.index(x), i)))
       } else if(inherits(i, "Date")) {
-        i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i),tz=indexTZ(x)))))
+        i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i),tz=tzone(x)))))
       } else {
         # force all other time classes to be POSIXct
-        i <- which(!is.na(match(.index(x), as.POSIXct(i,tz=indexTZ(x)))))
+        i <- which(!is.na(match(.index(x), as.POSIXct(i,tz=tzone(x)))))
       }
       i[is.na(i)] <- 0
     } else 
@@ -88,7 +88,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       # must be able to process - and then allow for operations???
 
       i.tmp <- NULL
-      tz <- as.character(indexTZ(x)) # ideally this moves to attr(index,"tzone")
+      tz <- as.character(tzone(x))
       i_len <- length(i)
 
       for(ii in i) {
@@ -176,7 +176,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       if(missing(i))
         i <- seq_len(nr)
       return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i],
-                  .indexCLASS=indexClass(x), .indexTZ=indexTZ(x)))
+                  .indexCLASS=indexClass(x)))
     } 
     if(missing(i))
       return(.Call("extract_col", x, as.integer(j), drop, 1, nr, PACKAGE='xts'))

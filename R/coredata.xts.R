@@ -53,7 +53,6 @@ coredata.xts <- function(x, fmt=FALSE, ...) {
     xx <- NextMethod(x)
     attr(xx, ".indexCLASS") <- NULL
     attr(xx, "tclass") <- NULL
-    attr(xx, ".indexTZ") <- NULL
     attr(xx, "tzone") <- NULL
     return(xx)
   } else 
@@ -100,13 +99,13 @@ function(x, user=NULL) {
 
   if(is.null(user)) {
   # Both xts and user attributes
-    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT', '.indexTZ', 'tzone', 'tclass')
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT', 'tzone', 'tclass')
     xa <- x.attr[!names(x.attr) %in% rm.attr]
   }
   else
   if(user) {
   # Only user attributes
-    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT','.indexTZ','tzone','tclass', 
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT','tzone','tclass',
                  x.attr$.CLASSnames)
     xa <- x.attr[!names(x.attr) %in% rm.attr]
   } else {
@@ -132,7 +131,7 @@ function(x,value) {
   } else
   for(nv in names(value)) {
     if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES','.CLASSnames',
-                  '.indexCLASS','.indexFORMAT','.indexTZ'))
+                  '.indexCLASS','.indexFORMAT'))
       attr(x,nv) <- value[[nv]]
   }
   x

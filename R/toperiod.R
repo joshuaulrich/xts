@@ -80,7 +80,7 @@ to.period <- to_period <- function(x, period='months', k=1, indexAt=NULL, name=N
     if(indexAt=="yearmon" || indexAt=="yearqtr")
       indexClass(xx) <- indexAt
     if(indexAt=="firstof") {
-      ix <- as.POSIXlt(c(.index(xx)), tz=indexTZ(xx))
+      ix <- as.POSIXlt(c(.index(xx)), tz=tzone(xx))
       if(period %in% c("years","months","quarters","days"))
         index(xx) <- firstof(ix$year + 1900, ix$mon + 1)
       else
@@ -88,7 +88,7 @@ to.period <- to_period <- function(x, period='months', k=1, indexAt=NULL, name=N
                              ix$hour, ix$min, ix$sec)
     }
     if(indexAt=="lastof") {
-      ix <- as.POSIXlt(c(.index(xx)), tz=indexTZ(xx))
+      ix <- as.POSIXlt(c(.index(xx)), tz=tzone(xx))
       if(period %in% c("years","months","quarters","days"))
         index(xx) <- as.Date(lastof(ix$year + 1900, ix$mon + 1))
       else
@@ -195,7 +195,7 @@ function(x) {
       indexClass(x) <- "Date"  # set indexClass to Date
     }
     if(any(indexClass(x) %in% .classesWithoutTZ)) {
-      indexTZ(x) <- "UTC"  # set indexTZ to UTC
+      tzone(x) <- "UTC"  # set tzone to UTC
     }
     # force conversion, even if we didn't set indexClass to Date
     # because indexAt yearmon/yearqtr won't drop time from index

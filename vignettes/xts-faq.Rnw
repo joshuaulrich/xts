@@ -222,7 +222,7 @@ sample.xts <- as.xts(transform(sample.xts, ABC=1))
 
 You might also have to reset the index timezone:
 <<eval=FALSE>>=
-indexTZ(sample.xts) <- Sys.getenv("TZ")
+tzone(sample.xts) <- Sys.getenv("TZ")
 @
 
 \q{Why can't I use the \code{\&} operator in \pkg{xts} objects when querying

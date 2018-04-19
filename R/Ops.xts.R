@@ -54,13 +54,12 @@ function(e1, e2)
     if(is.xts(e1)) {
       .xts(e, .index(e1), 
               .indexCLASS=indexClass(e1), 
-              .indexFORMAT=indexFormat(e1), 
-              .indexTZ=indexTZ(e1))
+              .indexFORMAT=indexFormat(e1)
+          )
     } else {
       .xts(e, .index(e2),
               .indexCLASS=indexClass(e2), 
-              .indexFORMAT=indexFormat(e2), 
-              .indexTZ=indexTZ(e2)
+              .indexFORMAT=indexFormat(e2)
           )
     }
   } else {

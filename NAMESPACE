@@ -232,8 +232,6 @@ S3method('tclass<-',xts)
 S3method('indexFormat',xts)
 S3method('indexFormat<-',xts)
 
-S3method(indexTZ,xts)
-S3method('indexTZ<-',xts)
 S3method(tzone,xts)
 S3method('tzone<-',xts)
 
