@@ -1036,6 +1036,16 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
     n++;
   }
 
+  /* return empty xts if all objects have no columns */
+  if(ncs < 1) {
+    SEXP s, t;
+    PROTECT(s = t = allocList(1)); P++;
+    SET_TYPEOF(s, LANGSXP);
+    SETCAR(t, install("xts"));
+    SEXP out = PROTECT(eval(s, env)); P++;
+    UNPROTECT(P);
+    return out;
+  }
 
   /* build an index to be used in all subsequent calls */
   args = argstart;

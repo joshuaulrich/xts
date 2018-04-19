@@ -4,6 +4,14 @@ test.merge_empty_xts_with_2_scalars <- function() {
   checkIdentical(m1, m2)
 }
 
+test.merge_more_than_2_zero_width_objects <- function() {
+  zw1 <- xts()
+  zw2 <- xts()
+  zw3 <- xts()
+  m1 <- merge(zw1, zw2, zw3)
+  checkIdentical(m1, zw1)
+}
+
 # Tests for NA in index. Construct xts object using structure() because
 # xts constructors should not allow users to create objects with NA in
 # the index
