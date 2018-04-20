@@ -142,7 +142,6 @@ SEXP runSum (SEXP x, SEXP n)
   setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
   setAttrib(result, xts_IndexSymbol, getAttrib(x, xts_IndexSymbol));
   setAttrib(result, xts_IndexFormatSymbol, getAttrib(x, xts_IndexFormatSymbol));
-  setAttrib(result, xts_IndexClassSymbol, getAttrib(x, xts_IndexClassSymbol));
 
   UNPROTECT(P);
   return result;

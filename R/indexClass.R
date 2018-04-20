@@ -21,15 +21,20 @@
 
 `convertIndex` <-
 function(x,value) {
-  indexClass(x) <- value
+  tclass(x) <- value
   x
 }
 
-tclass <- indexClass <-
-function(x) {
+tclass <-
+function(x, ...) {
+  UseMethod('tclass')
+}
+
+tclass.xts <-
+function(x, ...) {
   class <- attr(attr(x, "index"), "tclass")
   if(is.null(class))
-    attr(x, '.indexCLASS')
+    attr(x, '.indexCLASS')  # for objects created before 0.10-3
   else
     class
 }
@@ -39,23 +44,30 @@ function(x,value) {
   UseMethod('tclass<-')
 }
 
-`indexClass<-` <-
-function(x,value) {
-  UseMethod('indexClass<-')
+indexClass <-
+function(x) {
+  .Deprecated("tclass", "xts")
+  tclass(x)
 }
 
-`tclass<-.xts` <- `indexClass<-.xts` <-
+`indexClass<-` <-
+function(x, value) {
+  .Deprecated("tclass<-", "xts")
+  `tclass<-`(x, value)
+}
+
+`tclass<-.xts` <-
 function(x, value) {
   if(!is.character(value) && length(value) != 1)
-    stop('improperly specified value for indexClass')
+    stop('improperly specified value for tclass')
 
-  # remove 'POSIXt' from value, to prevent indexClass(x) <- 'POSIXt'
+  # remove 'POSIXt' from value, to prevent tclass(x) <- 'POSIXt'
   value <- value[!value %in% "POSIXt"]
   if(length(value)==0L)
-    stop(paste('unsupported',sQuote('indexClass'),'indexing type: POSIXt'))
+    stop(paste('unsupported',sQuote('tclass'),'indexing type: POSIXt'))
 
   if(!value[1] %in% c('dates','chron','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr','xtime') )
-       stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
+       stop(paste('unsupported',sQuote('tclass'),'indexing type:',as.character(value[[1]])))
 
   # Add 'POSIXt' virtual class
   if(value %in% c('POSIXlt','POSIXct'))
@@ -70,4 +82,3 @@ function(x, value) {
   attr(attr(x,'index'), 'tclass') <- value
   x
 }
-

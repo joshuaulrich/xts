@@ -37,7 +37,7 @@ of an xts object.
 indexClass(x)
 indexClass(x) <- value
 
-tclass(x)
+tclass(x, ...)
 tclass(x) <- value
 
 indexFormat(x)

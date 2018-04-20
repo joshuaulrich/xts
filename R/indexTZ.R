@@ -77,7 +77,7 @@ check.TZ <- function(x, ...)
   if( !is.null(check) && !check)
     return()
   STZ <- as.character(Sys.getenv("TZ"))
-  if(any(indexClass(x) %in% .classesWithoutTZ)) {
+  if(any(tclass(x) %in% .classesWithoutTZ)) {
     # warn if tzone is not UTC or GMT (GMT is not technically correct, since
     # it *is* a timezone, but it should work for all practical purposes)
     if (!(tzone(x) %in% c("UTC","GMT")))

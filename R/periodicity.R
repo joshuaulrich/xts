@@ -96,7 +96,7 @@ function (x, ...)
     if(!is.xts(x)) x <- as.xts(x)
 
     # convert if necessary to usable format
-    if(!indexClass(x)[[1]] %in% c('Date','POSIXt')) indexClass(x) <- "POSIXct"
+    if(!tclass(x)[[1]] %in% c('Date','POSIXt')) tclass(x) <- "POSIXct"
 
     # this takes a long time on big data - possibly use some sort of sampling instead???
     p <- median(diff(time(x)))

@@ -40,8 +40,6 @@ function(x,...) {
 
 `re.ts` <-
 function(x,...) {
-  #if(periodicity(x)$units == 'days' & !inherits(indexClass(x),"Date"))
-  #  indexClass(x) <- "Date"
   # major issue with quick reclass.  Basically fails on data < 1970...
   #tsp.attr <- attr(x,'.tsp')
   #freq.attr <- attr(x,'.frequency')

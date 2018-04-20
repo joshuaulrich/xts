@@ -226,7 +226,7 @@ S3method('CLASS<-',xts)
 S3method(dimnames, xts)
 S3method('dimnames<-', xts)
 
-S3method('indexClass<-',xts)
+S3method(tclass,xts)
 S3method('tclass<-',xts)
 
 S3method('indexFormat',xts)
