@@ -1,6 +1,6 @@
 #include <R.h>
 #include <R.h>
-#include "xts.h" /* for coredata_xts */
+#include "xts.h" /* for xts_coredata */
 
 SEXP make_unique (SEXP index, SEXP eps_) {
   SEXP newindex;
@@ -34,7 +34,7 @@ SEXP make_unique (SEXP index, SEXP eps_) {
 
 SEXP make_index_unique (SEXP x_, SEXP eps_) {
   SEXP result;
-  PROTECT(result = coredata_xts(x_));
+  PROTECT(result = xts_coredata(x_));
   copyAttributes(x_, result); /* copy all attrib except index, and dim-related */
   setAttrib(result, xts_IndexSymbol, make_unique(getAttrib(x_, xts_IndexSymbol), eps_));
   UNPROTECT(1);

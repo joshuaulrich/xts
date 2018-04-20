@@ -76,7 +76,7 @@ SEXP attribute_hidden xtsRbind(SEXP x, SEXP y, SEXP dup) {
 
 SEXP attribute_hidden xtsCoredata(SEXP x) {
     static SEXP(*fun)(SEXP) = NULL;
-    if (fun == NULL) fun = (SEXP(*)(SEXP)) R_GetCCallable("xts","coredata_xts");
+    if (fun == NULL) fun = (SEXP(*)(SEXP)) R_GetCCallable("xts","xts_coredata");
     return fun(x);
 }
 

@@ -29,7 +29,7 @@ static const
 R_CallMethodDef callMethods[] = {
   {"add_class",             (DL_FUNC) &add_class,               2},
   {"coredata",              (DL_FUNC) &coredata,                2},
-  {"coredata_xts",          (DL_FUNC) &coredata_xts,            1},
+  {"xts_coredata",          (DL_FUNC) &xts_coredata,            1},
   {"do_xtsAttributes",      (DL_FUNC) &do_xtsAttributes,        1},
   {"do_xtsCoreAttributes",  (DL_FUNC) &do_xtsCoreAttributes,    1},
   {"lagXts",                (DL_FUNC) &lagXts,                  3},
@@ -81,7 +81,7 @@ void R_init_xts(DllInfo *info)
 
   /* used by external packages linking to internal xts code from C */
   R_RegisterCCallable("xts","do_is_ordered",(DL_FUNC) &do_is_ordered);
-  R_RegisterCCallable("xts","coredata_xts", (DL_FUNC) &coredata_xts);
+  R_RegisterCCallable("xts","xts_coredata", (DL_FUNC) &xts_coredata);
   R_RegisterCCallable("xts","isXts",        (DL_FUNC) &isXts);
   R_RegisterCCallable("xts","tryXts",       (DL_FUNC) &tryXts);
   R_RegisterCCallable("xts","do_rbind_xts", (DL_FUNC) &do_rbind_xts);

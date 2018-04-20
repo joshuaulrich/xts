@@ -82,7 +82,7 @@ SEXP coredata (SEXP x, SEXP copyAttr)
   return result;
 }
 
-SEXP coredata_xts(SEXP x) {
+SEXP xts_coredata(SEXP x) {
   return zoo_coredata(x, ScalarLogical(0));
 }
 
