@@ -25,7 +25,7 @@
   if(missing(j)) {
     j <- 1:NCOL(x)
   }
-  .Call('_do_subset_xts', x, i, j, FALSE, PACKAGE='xts')
+  .Call('xts_do_subset', x, i, j, FALSE, PACKAGE='xts')
 }
 
 `.subset.xts` <- `[.xts` <-
@@ -137,7 +137,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
                        drop,
                        as.integer(i[1]), as.integer(i[length(i)]), PACKAGE="xts"))
         } else {
-          return(.Call('_do_subset_xts', 
+          return(.Call('xts_do_subset',
                        x, as.integer(i),
                        as.integer(1:nc), 
                        drop, PACKAGE='xts'))
@@ -185,7 +185,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
                        drop,
                        as.integer(i[1]), as.integer(i[length(i)]), PACKAGE='xts'))
     } else
-    return(.Call('_do_subset_xts', x, as.integer(i), as.integer(j), drop, PACKAGE='xts'))
+    return(.Call('xts_do_subset', x, as.integer(i), as.integer(j), drop, PACKAGE='xts'))
 }
 
 # Replacement method for xts objects

@@ -36,7 +36,7 @@ R_CallMethodDef callMethods[] = {
   {"isXts",                 (DL_FUNC) &isXts,                   1},
   {"tryXts",                (DL_FUNC) &tryXts,                  1},
   {"do_rbind_xts",          (DL_FUNC) &do_rbind_xts,            3},
-  {"do_subset_xts",         (DL_FUNC) &do_subset_xts,           4},
+  {"xts_do_subset",         (DL_FUNC) &xts_do_subset,           4},
   {"naCheck",               (DL_FUNC) &naCheck,                 2},
   {NULL,                    NULL,                               0}
 };

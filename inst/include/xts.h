@@ -69,7 +69,8 @@ SEXP do_is_ordered(SEXP x, SEXP increasing, SEXP strictly);
 SEXP mergeXts(SEXP args);
 SEXP do_rbind_xts(SEXP x, SEXP y, SEXP dup);
 SEXP rbindXts(SEXP args);
-SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop);
+#define do_subset_xts(x, sr, sc, drop) xts_do_subset(x, sr, sc, drop)
+SEXP xts_do_subset(SEXP x, SEXP sr, SEXP sc, SEXP drop);
 SEXP number_of_cols(SEXP args);
 SEXP naCheck(SEXP x, SEXP check);
 

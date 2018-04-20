@@ -91,7 +91,7 @@ static SEXP xts_ExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
     return result;
 }
 
-SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
+SEXP xts_do_subset (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
   SEXP result;
   int i, j, nr, nc, nrs, ncs;
   int P=0;
