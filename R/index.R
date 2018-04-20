@@ -21,10 +21,10 @@
 
 index.xts <- time.xts <-
 function(x, ...) {
-  value <- indexClass(x)
+  value <- tclass(x)
   if(is.null(value))
     return(.index(x))
-  #  if indexClass is Date, POSIXct time is set to 00:00:00 GMT. Convert here
+  #  if tclass is Date, POSIXct time is set to 00:00:00 GMT. Convert here
   #  to avoid ugly and hard to debug TZ conversion.  What will this break? 
   if(value[[1]] == "Date")
     #return( as.Date(.index(x)/86400) )
@@ -61,7 +61,7 @@ function(x, ...) {
     #Date = as.Date(as.character(x.index)),  # handled above
     yearmon = as.yearmon(x.index),
     yearqtr = as.yearqtr(x.index),
-    stop(paste('unsupported',sQuote('indexClass'),'indexing type:',value[[1]]))
+    stop(paste('unsupported',sQuote('tclass'),'indexing type:',value[[1]]))
   )
 }
 
@@ -81,13 +81,13 @@ function(x, ...) {
   if(!isOrdered(.index(x), strictly=FALSE))
     stop("new index needs to be sorted")
 
-  # set the .indexCLASS/tclass attribute to the end-user specified class
-  attr(x, '.indexCLASS') <- class(value)
+  # set tzone attribute
   if(any(class(value) %in% .classesWithoutTZ)) {
     attr(.index(x), 'tzone') <- 'UTC'
   } else {
     attr(.index(x), 'tzone') <- attr(value, 'tzone')
   }
+  # set tclass attribute to the end-user specified class
   attr(.index(x), 'tclass') <- class(value)
   return(x)
 }

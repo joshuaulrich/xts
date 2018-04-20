@@ -1,6 +1,6 @@
-\name{indexClass}
-\alias{indexClass}
+\name{tclass}
 \alias{tclass}
+\alias{indexClass}
 \alias{indexFormat}
 \alias{convertIndex}
 \alias{indexClass<-}
@@ -37,7 +37,7 @@ of an xts object.
 indexClass(x)
 indexClass(x) <- value
 
-tclass(x)
+tclass(x, ...)
 tclass(x) <- value
 
 indexFormat(x)
@@ -80,20 +80,20 @@ xts object.  Upon a standard \code{index} call, this is used
 to convert the numeric value to the desired class.
 
 It is possible to view and set the class of the time-index
-of a given \code{xts} object via the \code{indexClass} function.
+of a given \code{xts} object via the \code{tclass} function.
 
 To retrieve the raw numeric data a new accessor function (and replacement) has been
 added \code{.index}. This is primarily for internal use, but may be useful for
 end-users.
 
 \code{.indexXXX} functions are useful to extract time
-components of the underlying time index.  The \sQuote{indexClass}
+components of the underlying time index.  The \sQuote{tclass}
 is virtual, and as such suitable conversions are made depending
 on the component requested.
 
 
 The specified value for 
-\code{indexClass<-} must be a character string containing
+\code{tclass<-} must be a character string containing
 one of the following: \code{Date}, \code{POSIXct},
 \code{chron}, \code{yearmon}, \code{yearqtr} or \code{timeDate}.
 

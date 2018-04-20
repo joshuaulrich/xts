@@ -31,7 +31,7 @@ function(object,...) {
   cat(paste("  Data:"))
   str(coredata(object))
   cat(paste("  Indexed by objects of class: "))
-  cat(paste('[',paste(indexClass(object),collapse=','),'] ',sep=''))
+  cat(paste('[',paste(tclass(object),collapse=','),'] ',sep=''))
   cat(paste("TZ: ", tzone(object), "\n", sep=""))
   if(!is.null(CLASS(object)))
     cat(paste("  Original class: '",CLASS(object),"' ",sep=""),"\n")

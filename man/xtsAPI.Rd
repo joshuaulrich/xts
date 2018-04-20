@@ -5,11 +5,12 @@
 This help file is to help in development of xts, as well
 as provide some clarity and insight into its purpose and implementation.
 
-Last modified: 2013-01-16 by Jeffrey A. Ryan and Dirk Eddelbuettel
-Version: 0.9-2 and above
+By Jeffrey A. Ryan, Dirk Eddelbuettel, and Joshua M. Ulrich
+Last modified: 2018-05-02
+Version: 0.10-3 and above
 
-At present the \pkg{xts} API has publically available
-interfaces to the following functions (as defined in \code{xtsAPI.h}:
+At present the \pkg{xts} API has publicly available
+interfaces to the following functions (as defined in \code{xtsAPI.h}):
 
 \preformatted{
 Callable from other R packages:
@@ -30,8 +31,6 @@ Internal use macros:
   xts_COREATTRIB(x)
   GET_xtsIndex(x)
   SET_xtsIndex(x,value)
-  GET_xtsIndexClass(x)
-  SET_xtsIndexClass(x,value)
   GET_xtsIndexFormat(x)
   SET_xtsIndexFormat(x,value)
   GET_xtsCLASS(x)
@@ -41,7 +40,6 @@ Internal use SYMBOLS:
   xts_IndexSymbol
   xts_ClassSymbol
   xts_IndexFormatSymbol
-  xts_IndexClassSymbol
 
 Callable from R:
   SEXP mergeXts(SEXP args)

@@ -54,9 +54,9 @@ where the index was stored in its native format (i.e. class).
 The ability to create an index using any of the supported
 timeBased classes (POSIXct, Date, dates, chron, timeDate,
 yearmon, yearqtr) is managed at the user-interaction point,
-and the class is merely stored in another hidden attribute
-names \code{.indexCLASS}.  This is accessible via
-the \code{indexClass} and \code{indexClass(x)<-} functions.
+and the class is merely stored in another index attribute,
+which is named \sQuote{tclass}.  This is accessible and changeable
+via the \code{tclass} and \code{tclass(x)<-} functions.
 
 In most cases, all of this makes the subsetting by time strings
 possible, and also allows for consistent and fast manipulation

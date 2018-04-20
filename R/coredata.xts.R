@@ -133,11 +133,14 @@ function(x,value) {
   } else
   for(nv in names(value)) {
     if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES','.CLASSnames',
-                  '.indexCLASS','.indexFORMAT'))
+                  '.indexFORMAT'))
       attr(x,nv) <- value[[nv]]
   }
   # Remove tz attrs (object created before 0.10-3)
   attr(x, ".indexTZ") <- NULL
   attr(x, "tzone") <- NULL
+  # Remove index class attrs (object created before 0.10-3)
+  attr(x, ".indexCLASS") <- NULL
+  attr(x, "tclass") <- NULL
   x
 }

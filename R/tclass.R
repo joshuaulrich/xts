@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -21,17 +21,35 @@
 
 `convertIndex` <-
 function(x,value) {
-  indexClass(x) <- value
+  tclass(x) <- value
   x
 }
 
-tclass <- indexClass <-
-function(x) {
-  class <- attr(attr(x, "index"), "tclass")
-  if(is.null(class))
-    attr(x, '.indexCLASS')
-  else
-    class
+tclass <-
+function(x, ...) {
+  UseMethod('tclass')
+}
+
+tclass.xts <-
+function(x, ...) {
+  tclass <- attr(attr(x, "index"), "tclass")
+
+  # For xts objects created pre-0.10.3
+  if (is.null(tclass)) {
+    warning("index does not have a ", sQuote("tclass"), " attribute")
+
+    tclass <- attr(x, "tclass")
+    if (is.null(tclass)) {
+      tclass <- attr(x, ".indexCLASS")
+    }
+    if (is.null(tclass)) {
+      warning("object does not have a ", sQuote("tclass"), " or ",
+              sQuote(".indexCLASS"), " attribute")
+      tclass <- ""
+    }
+    tclass
+  }
+  return(tclass)
 }
 
 `tclass<-` <-
@@ -39,35 +57,45 @@ function(x,value) {
   UseMethod('tclass<-')
 }
 
-`indexClass<-` <-
-function(x,value) {
-  UseMethod('indexClass<-')
+indexClass <-
+function(x) {
+  .Deprecated("tclass", "xts")
+  tclass(x)
 }
 
-`tclass<-.xts` <- `indexClass<-.xts` <-
+`indexClass<-` <-
+function(x, value) {
+  .Deprecated("tclass<-", "xts")
+  `tclass<-`(x, value)
+}
+
+`tclass<-.xts` <-
 function(x, value) {
   if(!is.character(value) && length(value) != 1)
-    stop('improperly specified value for indexClass')
+    stop('improperly specified value for tclass')
 
-  # remove 'POSIXt' from value, to prevent indexClass(x) <- 'POSIXt'
+  # remove 'POSIXt' from value, to prevent tclass(x) <- 'POSIXt'
   value <- value[!value %in% "POSIXt"]
   if(length(value)==0L)
-    stop(paste('unsupported',sQuote('indexClass'),'indexing type: POSIXt'))
+    stop(paste('unsupported',sQuote('tclass'),'indexing type: POSIXt'))
 
   if(!value[1] %in% c('dates','chron','POSIXlt','POSIXct','Date','timeDate','yearmon','yearqtr','xtime') )
-       stop(paste('unsupported',sQuote('indexClass'),'indexing type:',as.character(value[[1]])))
+       stop(paste('unsupported',sQuote('tclass'),'indexing type:',as.character(value[[1]])))
 
   # Add 'POSIXt' virtual class
   if(value %in% c('POSIXlt','POSIXct'))
     value <- c(value,'POSIXt')
 
-  attr(x, '.indexCLASS') <- value
   # all index related meta-data will be stored in the index
   # as attributes
   if(any(value %in% .classesWithoutTZ)) {
     attr(attr(x,'index'), 'tzone') <- 'UTC'
   }
   attr(attr(x,'index'), 'tclass') <- value
+
+  # Remove class attrs (object created before 0.10-3)
+  attr(x, ".indexCLASS") <- NULL
+  attr(x, "tclass") <- NULL
+
   x
 }
-

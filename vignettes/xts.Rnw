@@ -236,7 +236,7 @@ zoo or matrix objects will simply work as expected.
 
 A quick tour of some of the methods leveraged by {\tt xts}
 will be presented here, including subsetting via ``{\tt [}'',
-indexing objects with {\tt indexClass} and {\tt convertIndex},
+indexing objects with {\tt tclass} and {\tt convertIndex},
 and a quick look at plotting {\tt xts} objects with the {\tt plot}
 function.
 
@@ -329,13 +329,13 @@ the replacement function {\tt index<-}.
 
 It is also possible to directly query and set the
 index class of an {\tt xts} object by using the respective functions
-{\tt indexClass} and {\tt indexClass<-}.
+{\tt tclass} and {\tt tclass<-}.
 Temporary conversion, resulting in a new object with the requested
 index class, can be accomplished via the {\tt convertIndex} function.
 
-<<indexClass>>=
-indexClass(matrix_xts)
-indexClass(convertIndex(matrix_xts,'POSIXct'))
+<<tclass>>=
+tclass(matrix_xts)
+tclass(convertIndex(matrix_xts,'POSIXct'))
 @
 \pagebreak
 \subsubsection*{Plotting}

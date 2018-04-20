@@ -25,7 +25,7 @@ align.time <- function(x, ...) {
 
 align.time.xts <- function(x, n=60, ...) {
   if(n <= 0) stop("'n' must be positive")
-  .xts(x, .index(x) + (n-.index(x) %% n), tzone=tzone(x), tclass=indexClass(x))
+  .xts(x, .index(x) + (n-.index(x) %% n), tzone=tzone(x), tclass=tclass(x))
 }
 
 align.time.POSIXct <- function(x, n=60, ...) {
@@ -43,7 +43,7 @@ shift.time <- function(x, n=60, ...) {
 }
 
 shift.time.xts <- function(x, n=60, ...) {
-  .xts(x, .index(x) + n, tzone=tzone(x), tclass=indexClass(x))
+  .xts(x, .index(x) + n, tzone=tzone(x), tclass=tclass(x))
 }
 
 is.index.unique <- is.time.unique <- function(x) {

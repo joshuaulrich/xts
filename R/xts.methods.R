@@ -164,8 +164,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     if(length(j) == 0 || (length(j)==1 && (is.na(j) || j==0))) {
       if(missing(i))
         i <- seq_len(nr)
-      return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i],
-                  .indexCLASS=indexClass(x)))
+      return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i]))
     } 
     if(missing(i))
       return(.Call("extract_col", x, as.integer(j), drop, 1, nr, PACKAGE='xts'))

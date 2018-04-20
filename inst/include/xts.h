@@ -28,7 +28,6 @@ INTERNAL SYMBOLS
 SEXP xts_IndexSymbol;
 SEXP xts_ClassSymbol;
 SEXP xts_IndexFormatSymbol;
-SEXP xts_IndexClassSymbol;
 SEXP xts_IndexTclassSymbol;
 SEXP xts_IndexTzoneSymbol;
 
@@ -41,10 +40,6 @@ DATA TOOLS
 // attr(x, 'index') or .index(x)
 #define  GET_xtsIndex(x)                getAttrib(x, xts_IndexSymbol)
 #define  SET_xtsIndex(x,value)          setAttrib(x, xts_IndexSymbol, value)
-
-// attr(x, '.indexCLASS') or indexClass(x)
-#define  GET_xtsIndexClass(x)           getAttrib(x, xts_IndexClassSymbol)
-#define  SET_xtsIndexClass(x,value)     setAttrib(x, xts_IndexvalueSymbol, value)
 
 // attr(x, '.indexFORMAT') or indexFormat(x)
 #define  GET_xtsIndexFormat(x)          getAttrib(x, xts_IndexFormatSymbol)
@@ -65,7 +60,7 @@ FUNCTIONS
 */
 SEXP do_xtsAttributes(SEXP x);              // xtsAttributes i.e. user-added attributes
 SEXP do_xtsCoreAttributes(SEXP x);          /* xtsCoreAttributes xts-specific attributes
-                                               CLASS, .indexFORMAT, .indexCLASS & class */
+                                               CLASS, .indexFORMAT, tclass, & class */
 SEXP coredata(SEXP x, SEXP copyAttr);
 SEXP coredata_xts(SEXP x);
 SEXP add_class(SEXP x, SEXP klass);
