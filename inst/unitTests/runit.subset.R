@@ -64,7 +64,7 @@ test.i_missing_j_NA_no_colnames <- function() {
 
 # i = integer, j = NA, object has column names
 # See #97
-test.i_missing_j_NA_has_colnames <- function() {
+test.i_integer_j_NA_has_colnames <- function() {
   iina <- .xts(matrix(NA_integer_, 5, 2), 1:5)
   idna <- .xts(matrix(NA_integer_, 5, 2), 1.0 * 1:5)
   dina <- .xts(matrix(NA_real_, 5, 2), 1:5)
