@@ -12,6 +12,7 @@ importFrom(stats,
   na.pass,
   start,
   end,
+  window,
   ts,
   as.ts,
   frequency,
@@ -66,7 +67,6 @@ export(isOrdered)
 
 export(.subset.xts)
 export(.subset_xts)
-export(window.xts)
 
 # user visible core xts functions
 export(xts, .xts)
@@ -223,6 +223,7 @@ S3method(na.locf,xts)
 S3method(print,xts)
 S3method(print,CLASS)
 S3method('CLASS<-',xts)
+S3method(window,xts)
 
 S3method(dimnames, xts)
 S3method('dimnames<-', xts)
