@@ -137,3 +137,58 @@ test.i_0 <- function() {
 
   checkEquals(x[0,], xz0, check.attributes = TRUE)
 }
+
+# Subset by non-numeric classes
+X <- xts(1:5, as.Date("2018-04-21") - 5:1)
+
+test.i_character <- function() {
+  x <- X
+
+  for (r in c(1L, 3L, 5L)) {
+    y <- x[r,]
+    i <- as.character(index(y))
+    checkIdentical(y, x[i, ])
+  }
+}
+
+test.i_asis_character <- function() {
+  x <- X
+
+  for (r in c(1L, 3L, 5L)) {
+    y <- x[r,]
+    i <- as.character(index(y))
+    checkIdentical(y, x[I(i), ])
+  }
+}
+
+test.i_Date <- function() {
+  x <- X
+
+  for (r in c(1L, 3L, 5L)) {
+    y <- x[r,]
+    i <- index(y)
+    checkIdentical(y, x[i, ])
+  }
+}
+
+test.i_POSIXct <- function() {
+  x <- X
+  index(x) <- as.POSIXct(index(x), tz = "UTC")
+
+  for (r in c(1L, 3L, 5L)) {
+    y <- x[r,]
+    i <- index(y)
+    checkIdentical(y, x[i, ])
+  }
+}
+
+test.i_POSIXlt <- function() {
+  x <- X
+  index(x) <- as.POSIXlt(index(x), tz = "UTC")
+
+  for (r in c(1L, 3L, 5L)) {
+    y <- x[r,]
+    i <- index(y)
+    checkIdentical(y, x[i, ])
+  }
+}
