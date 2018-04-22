@@ -18,66 +18,6 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-binsearch <- function(key, vec, start=TRUE) {
-  .Call("binsearch", as.double(key),vec, start, PACKAGE='xts')
-}
-`.binsearch` <-
-function(key,  vec, start=TRUE) {
-  # vec is a numeric vector to search
-  # key is the numeric key we are looking for
-  # start is a logical indicating
-  # TRUE return the _next_ observation (e.g. 20070801 if
-  # missing would return 20070802 if available
-  # FALSE would return the _previous_ obs.
-  found <- FALSE
-  lo <- 1; hi <- length(vec);
-  rec <- NULL
-
-  while(hi >= lo) {
-    mid <- round((lo + hi) / 2)
-    if(mid == 0)
-      return(NA)
-    if(mid != 0 && key < vec[mid]) {
-      hi <- mid - 1
-    } else 
-    if(mid != 0 && key > vec[mid]) {
-      lo <- mid + 1
-    } else {
-      found <- TRUE
-      i <- 0
-      if(!is.null(start)) {
-      if(!start) {
-        while(1) {
-          if(mid==length(vec) || vec[mid+1] != key) break
-          mid <- mid+1
-        }
-      } else {
-        while(1) {
-          if(mid==1 || vec[mid-1] != key) break
-          mid <- mid-1
-        }
-      }
-      }
-      rec <- mid
-      break
-    }
-  }
-
-  # force only exact matches to return a value other than NA
-  if(is.null(start) && is.null(rec))
-    return(NA)
-
-  # if not found return the appropriate bound
-  if(is.null(rec)) {
-    if(start) {
-      lo
-    } else {
-      hi
-    }
-  # if found - return the exact match location
-  } else rec
-}
-
 naCheck <- function(x, n=0) {
   if(is.null(dim(x)[2])) {
     NAs <- .Call("naCheck", x, TRUE, PACKAGE='xts')

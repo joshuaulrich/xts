@@ -4,6 +4,7 @@
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
 #   Contributions from Joshua M. Ulrich
+#   window.xts contributed by Corwin Joy
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -59,19 +60,9 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
         stop('subscript out of bounds')
       #i <- i[-which(i == 0)]
     } else
-    if(inherits(i, "AsIs") && is.character(i)) {
-      i <- MATCH(i, format(index(x)))
-    } else
-    if (timeBased(i)) { # || (inherits(i, "AsIs") && is.character(i))) {
-      if(inherits(i, "POSIXct")) {
-        i <- which(!is.na(match(.index(x), i)))
-      } else if(inherits(i, "Date")) {
-        i <- which(!is.na(match(.index(x), as.POSIXct(as.character(i),tz=indexTZ(x)))))
-      } else {
-        # force all other time classes to be POSIXct
-        i <- which(!is.na(match(.index(x), as.POSIXct(i,tz=indexTZ(x)))))
-      }
-      i[is.na(i)] <- 0
+    if (timeBased(i) || (inherits(i, "AsIs") && is.character(i)) ) {
+      # Fast binary search on set of dates
+      i <- window_idx(x, index. = i)
     } else 
     if(is.logical(i)) {
       i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]
@@ -94,11 +85,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       for(ii in i) {
         adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[nr], tz=tz)
         if(length(adjusted.times) > 1) {
-          firstlast <- c(seq.int(binsearch(adjusted.times$first.time, .index(x),  TRUE),
-                                 binsearch(adjusted.times$last.time,  .index(x), FALSE))
-                     )
-          if(isOrdered(firstlast, strictly=FALSE)) # fixed non-match within range bug
-            i.tmp <- c(i.tmp, firstlast)
+          i.tmp <- c(i.tmp, index_bsearch(.index(x), adjusted.times$first.time, adjusted.times$last.time))
         }
       }
       i <- i.tmp
@@ -111,9 +98,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       i <- sort(i)
     }
     # subset is picky, 0's in the 'i' position cause failures
-    zero.index <- binsearch(0, i, NULL)
-    if(!is.na(zero.index))
-      i <- i[i!=0]  # at least one 0; remove them all
+    i <- i[i!=0]
 
     if(length(i) <= 0 && USE_EXTRACT) 
       USE_EXTRACT <- FALSE
@@ -205,3 +190,132 @@ function(x, i, j, value)
     .Class <- "matrix"
     NextMethod(.Generic)
 }
+
+# Convert a character or time type to POSIXct for use by subsetting and window
+# We make this an explicit function so that subset and window will convert dates consistently.
+.toPOSIXct <-
+function(i, tz) {
+  if(inherits(i, "POSIXct")) {
+    dts <- i
+  } else if(is.character(i)) {
+    dts <- as.POSIXct(as.character(i),tz=tz)  # Need as.character because i could be AsIs from I(dates)
+  } else if (timeBased(i)) {
+    if(inherits(i, "Date")) {
+      dts <- as.POSIXct(as.character(i),tz=tz)
+    } else {
+      # force all other time classes to be POSIXct
+      dts <- as.POSIXct(i,tz=tz)
+    }
+  } else {
+    stop("invalid time / time based class")
+  }
+  dts
+}
+
+# find the rows of index. where the date is in [start, end].
+# use binary search.
+# convention is that NA start or end returns empty
+index_bsearch <- function(index., start, end)
+{
+  if(!is.null(start) && is.na(start)) return(NULL)
+  if(!is.null(end) && is.na(end)) return(NULL)
+
+  if(is.null(start)) {
+    si <- 1
+  } else {
+    si <- binsearch(start, index., TRUE)
+  }
+  if(is.null(end)) {
+    ei <- length(index.)
+  } else {
+    ei <- binsearch(end, index., FALSE)
+  }
+  if(is.na(si) || is.na(ei) || si > ei) return(NULL)
+  firstlast <- seq.int(si, ei)
+  firstlast
+}
+
+# window function for xts series
+# return indexes in x matching dates
+window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
+{
+  if(is.null(index.)) {
+    usr_idx <- FALSE
+    index. <- .index(x)
+  } else {
+    # Translate the user index to the xts index
+    usr_idx <- TRUE
+    idx <- .index(x)
+
+    index. <- .toPOSIXct(index., indexTZ(x))
+    index. <- index.[!is.na(index.)]
+    if(is.unsorted(index.)) {
+      # index. must be sorted for index_bsearch
+      # N.B!! This forces the returned values to be in ascending time order, regardless of the ordering in index, as is done in subset.xts.
+      index. <- sort(index.)
+    }
+    # Fast search on index., faster than binsearch if index. is sorted (see findInterval)
+    base_idx <- findInterval(index., idx)
+    base_idx <- pmax(base_idx, 1)
+    # Only include indexes where we have an exact match in the xts series
+    match <- idx[base_idx] == index.
+    base_idx <- base_idx[match]
+    index. <- index.[match]
+    if(length(base_idx) < 1) return(x[NULL,])
+  }
+
+  if(!is.null(start)) {
+    start <- .toPOSIXct(start, indexTZ(x))
+  }
+
+  if(!is.null(end)) {
+    end <- .toPOSIXct(end, indexTZ(x))
+  }
+
+  firstlast <- index_bsearch(index., start, end)
+
+  if(usr_idx && !is.null(firstlast)) {
+    # Translate from user .index to xts index
+    # We get back upper bound of index as per findInterval
+    tmp <- base_idx[firstlast]
+
+    # Iterate in reverse to grab all matches
+    # We have to do this to handle duplicate dates in the xts index.
+    tmp <- rev(tmp)
+    res <- NULL
+    for(i in tmp) {
+      dt <- idx[i]
+      j <- i
+      repeat {
+        res <- c(res, j)
+        j <- j -1
+        if(j < 1 || idx[j] != dt) break
+      }
+    }
+    firstlast <- rev(res)
+  }
+
+  firstlast
+}
+
+# window function for xts series, use binary search to be faster than base zoo function
+# index. defaults to the xts time index.  If you use something else, it must conform to the standard for order.by in the xts constructor.
+# that is, index. must be time based,
+window.xts <- function(x, index. = NULL, start = NULL, end = NULL, ...)
+{
+  if(is.null(start) && is.null(end) && is.null(index.)) return(x)
+
+  firstlast <- window_idx(x, index., start, end) # firstlast may be NULL
+
+  .Call('_do_subset_xts',
+     x, as.integer(firstlast),
+     seq.int(1, ncol(x)),
+     drop = FALSE, PACKAGE='xts')
+}
+
+# Declare binsearch to call the routine in binsearch.c
+binsearch <- function(key, vec, start=TRUE) {
+  .Call("binsearch", as.double(key), as.double(vec), start, PACKAGE='xts')
+}
+
+# Unit tests for the above code may be found in runit.xts.methods.R

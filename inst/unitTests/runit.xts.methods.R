@@ -39,200 +39,241 @@ test.as.Date.numeric <- function() {
   checkIdentical(dd, f(dn))
 }
 
-## test reclass works and throws error
-## test xtsAttributes, both CLASS and USER
-## test all.equal(CLASS) and !all.equal(CLASS) cases
-#
-## Create datums :)
-#data(sample_matrix)
-#date.index <- as.Date(rownames(sample_matrix))
-#s1 <- 1:45
-#s2 <- 46:90
-#s3 <- 91:135
-#s4 <- 136:180
-#
-## create raw 'xts' object
-#xtsX <- xts( sample_matrix, order.by=date.index )
-## create 'matrix' object
-#xtsM <- as.xts( sample_matrix )
-## create 'data.frame' object
-#xtsDF <- as.xts( data.frame(sample_matrix) )
-## create 'zoo' object
-#xtsZ <- as.xts( zoo(sample_matrix, date.index) )
-## create 'irts' object
-#require(tseries)
-#xtsIR <- as.xts( irts(as.POSIXct(date.index), sample_matrix) )
-## create 'ts' object
-#xts.ts <- as.xts( ts(sample_matrix, start=as.numeric(date.index)[1]) )
-## create 'timeSeries' object
-#xts.TS <- as.xts( timeSeries(sample_matrix, charvec=date.index) )
-#
-##################################################
-## everything :)
-#test.cbind_xts <- function() {
-#  # Separate 'Date' and 'POSIXt' index
-#  ccD <- cbind( xtsZ[,1:2],
-#                xts.ts[,3:4] )
-#  ccP1 <- cbind( xtsM[,1],
-#                 xtsDF[,2],
-#                 xtsI[,3],
-#                 xtsIR[,4] )
-#  ccP2 <- cbind( xtsM[,1],
-#                 xtsDF[,2],
-#                 xtsIR[,3],
-#                 xts.TS[,4] )
-#  colnames(xtsX) <- colnames(ccD) <- colnames(ccP1) <- colnames(ccP2) <- NULL
-#  checkIdentical(ccP1, ccP2)
-##  checkIdentical(ccD, xtsX)
-#}
-#
-#test.rbind_xts <- function() {
-#  # Separate 'Date' and 'POSIXt' index
-#  rrD <- rbind( xtsZ[c(s1,s2),],
-#                xts.ts[c(s3,s4),] )
-#  rrP1 <- rbind( xtsM[s1,],
-#                 xtsDF[s2,],
-#                 xtsI[s3,],
-#                 xtsIR[s4,] )
-#  rrP2 <- rbind( xtsM[s1,],
-#                 xtsDF[s2,],
-#                 xtsIR[s3,],
-#                 xts.TS[s4,] )
-#  checkIdentical(rrP1, rrP2)
-##  checkIdentical(rrD, xtsX)
-#}
-#
-##################################################
-## matrix
-#test.cbind_matrix <- function() {
-#  cc <- cbind( xtsM[,1],
-#               xtsM[,2],
-#               xtsM[,3],
-#               xtsM[,4] )
-#  xts.M <- xtsM
-#  # Remove time-zone attribute of POSIXct index
-#  #attr(attr(xts.M, "index"), "tzone") <- NULL
-#  colnames(xts.M) <- colnames(cc) <- NULL
-#  checkIdentical( cc, xts.M )
-#}
-#
-#test.rbind_matrix <- function() {
-#  rr <- rbind( xtsM[s1,],
-#               xtsM[s2,],
-#               xtsM[s3,],
-#               xtsM[s4,] )
-#  xts.M <- xtsM
-#  # Remove time-zone attribute of POSIXct index
-#  #attr(attr(xts.M, "index"), "tzone") <- NULL
-#  checkIdentical( rr, xts.M )
-#}
-#
-##################################################
-## zoo
-#test.cbind_zoo <- function() {
-#  cc <- cbind( xtsZ[,1],
-#               xtsZ[,2],
-#               xtsZ[,3],
-#               xtsZ[,4] )
-#  xzoo <- xtsZ
-#  #rownames(xzoo) <- NULL
-#  colnames(xzoo) <- colnames(cc) <- NULL
-#  checkIdentical( cc, xzoo )
-#}
-#
-#test.rbind_zoo <- function() {
-#  rr <- rbind( xtsZ[s1,],
-#               xtsZ[s2,],
-#               xtsZ[s3,],
-#               xtsZ[s4,] )
-#  checkIdentical( rr, xtsZ )
-#}
-#
-##################################################
-## data.frame
-#test.cbind_data.frame <- function() {
-#  cc <- cbind( xtsDF[,1],
-#               xtsDF[,2],
-#               xtsDF[,3],
-#               xtsDF[,4] )
-#  xts.DF <- xtsDF
-#  colnames(xts.DF) <- colnames(cc) <- NULL
-#  checkIdentical( cc, xts.DF )
-#}
-#
-#test.rbind_data.frame <- function() {
-#  rr <- rbind( xtsDF[s1,],
-#               xtsDF[s2,],
-#               xtsDF[s3,],
-#               xtsDF[s4,] )
-#  xts.DF <- xtsDF
-#  # Remove time-zone attribute of POSIXct index
-#  attr(attr(xts.DF, "index"), "tzone") <- NULL
-#  checkIdentical( rr, xts.DF )
-#}
-#
-##################################################
-## tseries
-#test.cbind_ts <- function() {
-#  cc <- cbind( xts.ts[,1],
-#               xts.ts[,2],
-#               xts.ts[,3],
-#               xts.ts[,4] )
-#  #xtsts <- xts.ts
-#  colnames(xts.ts) <- colnames(cc) <- NULL
-#  checkIdentical( cc, xts.ts )
-#}
-#
-#test.rbind_ts <- function() {
-#  rr <- rbind( xts.ts[s1,],
-#               xts.ts[s2,],
-#               xts.ts[s3,],
-#               xts.ts[s4,] )
-#  checkIdentical( rr, xts.ts )
-#}
-#
-##################################################
-## irregular time-series
-#test.cbind_irts <- function() {
-#  cc <- cbind( xtsIR[,1],
-#               xtsIR[,2],
-#               xtsIR[,3],
-#               xtsIR[,4] )
-#  xts.IR <- xtsIR
-#  colnames(xts.IR) <- colnames(cc) <- NULL
-#  checkIdentical( cc, xts.IR )
-#}
-#
-#test.rbind_irts <- function() {
-#  rr <- rbind( xtsIR[s1,],
-#               xtsIR[s2,],
-#               xtsIR[s3,],
-#               xtsIR[s4,] )
-#  xts.IR <- xtsIR
-#  # Remove time-zone attribute of POSIXct index
-#  attr(attr(xts.IR, "index"), "tzone") <- NULL
-#  checkIdentical( rr, xts.IR )
-#}
-#
-##################################################
-## timeSeries
-#test.cbind_timeSeries <- function() {
-#  cc <- cbind( xts.TS[,1],
-#               xts.TS[,2],
-#               xts.TS[,3],
-#               xts.TS[,4] )
-#  xTS <- xts.TS
-#  colnames(xTS) <- colnames(cc) <- NULL
-#  checkIdentical( cc, xTS )
-#}
-#
-#test.rbind_timeSeries <- function() {
-#  rr <- rbind( xts.TS[s1,],
-#               xts.TS[s2,],
-#               xts.TS[s3,],
-#               xts.TS[s4,] )
-#  xTS <- xts.TS
-#  # Remove time-zone attribute of POSIXct index
-#  attr(attr(xTS, "index"), "tzone") <- NULL
-#  checkIdentical( rr, xTS )
-#}
+# .subset.xts
+# window.xts
+# .toPOSIXct (indirectly)
+
+test.window <- function() {
+  # window function for xts series, use basic logic for testing & debugging
+  # null start and end not supported
+  window_dbg <- function(x, index. = index(x), start, end)
+  {
+    start <- xts:::.toPOSIXct(start, indexTZ(x))
+    end <- xts:::.toPOSIXct(end, indexTZ(x))
+    index. <- as.POSIXct(index., tz=indexTZ(x))
+    all.indexes <- .index(x)
+    in.index <- all.indexes %in% index.
+    matches <- (in.index & all.indexes >= start & all.indexes <= end)
+    x[matches,]
+  }
+
+  DAY = 24*3600
+  base <- as.POSIXct("2000-12-31")
+  dts <- base + c(1:10, 12:15, 17:20)*DAY
+  x <- xts(1:length(dts), dts)
+
+  # Range over gap
+  start <- base + 11*DAY
+  end <- base + 16*DAY
+  bin <- window.xts(x, start = start, end = end)
+  reg <- window_dbg(x, start = start, end = end)
+  checkIdentical(bin, reg, "Range over gap")
+
+  # Range over one day
+  start <- base + 12*DAY
+  end <- base + 12*DAY
+  bin <- window.xts(x, start = start, end = end)
+  reg <- window_dbg(x, start = start, end = end)
+  checkIdentical(bin, reg, "Range over one day")
+
+  # Empty Range over one day
+  start <- base + 11*DAY
+  end <- base + 11*DAY
+  bin <- window.xts(x, start = start, end = end)
+  reg <- window_dbg(x, start = start, end = end)
+  checkIdentical(bin, reg, "Empty Range over one day")
+
+  # Range containing all dates
+  start <- base
+  end <- base + 21*DAY
+  bin <- window.xts(x, start = start, end = end)
+  reg <- window_dbg(x, start = start, end = end)
+  checkIdentical(bin, reg, "Range containing all dates")
+
+  # Range past end
+  start <- base + 16*DAY
+  end <- base + 30*DAY
+  bin <- window.xts(x, start = start, end = end)
+  reg <- window_dbg(x, start = start, end = end)
+  checkIdentical(bin, reg, "Range past end")
+
+  # Range before begin
+  start <- base
+  end <- base + 3*DAY
+  bin <- window.xts(x, start = start, end = end)
+  reg <- window_dbg(x, start = start, end = end)
+  checkIdentical(bin, reg, "Range before begin")
+
+  # Test just start, end = NULL
+  start <- base + 13 * DAY
+  end <- base + 30*DAY
+  bin <- window.xts(x, start = start)
+  reg <- window_dbg(x, start = start, end = end)
+  checkIdentical(bin, reg, "Test just start, end = NULL")
+
+  # Test just start, end = NULL, empty range
+  start <- base + 25 * DAY
+  end <- base + 30*DAY
+  bin <- window.xts(x, start = start)
+  reg <- window_dbg(x, start = start, end = end)
+  checkIdentical(bin, reg, "Test just start, end = NULL, empty range")
+
+  # Test just end, start = NULL
+  end <- base + 13 * DAY
+  start <- base
+  bin <- window.xts(x, end = end)
+  reg <- window_dbg(x, start = start, end = end)
+  checkIdentical(bin, reg, "Test just end, start = NULL")
+
+  # Test just end, start = NULL, empty range
+  end <- base
+  start <- base
+  bin <- window.xts(x, end = end)
+  reg <- window_dbg(x, start = start, end = end)
+  checkIdentical(bin, reg, "Test just end, start = NULL, empty range")
+
+  # Test end = NULL, start = NULL
+  start <- base
+  end <- base + 30*DAY
+  bin <- window.xts(x)
+  reg <- window_dbg(x, start = start, end = end)
+  checkIdentical(bin, reg, "Test end = NULL, start = NULL")
+
+  #######################################
+  # Test for index. parameter
+  start <- base
+  end <- base + 30*DAY
+  idx = index(x)[c(2,4,6)]
+  bin <- window.xts(x, index. = idx)
+  reg <- window_dbg(x, index. = idx, start = start, end = end)
+  checkIdentical(bin, reg, "Test for index. parameter")
+
+  # Test index. outside range of dates in xts series
+  start <- base
+  end <- base + 30*DAY
+  idx = c(start, index(x)[c(2,4,6)], end)
+  bin <- window.xts(x, index. = idx)
+  reg <- window_dbg(x, index. = idx, start = start, end = end)
+  checkIdentical(bin, reg, "Test index. outside range of dates in xts series")
+
+  # Test NA in index
+  start <- base
+  end <- base + 30*DAY
+  idx = c(start, index(x)[c(2,4,6)], end, NA)
+  bin <- window.xts(x, index. = idx)
+  reg <- window_dbg(x, index. = idx, start = start, end = end)
+  checkIdentical(bin, reg, "Test NA in index ")
+
+  # Next 3 adapted from window.zoo example
+  # Test basic window.zoo example
+  x.date <- as.Date(paste(2003, rep(1:4, 4:1), seq(1,19,2), sep = "-"))
+  x <- xts(matrix(1:20, ncol = 2), x.date)
+  bin <- window.xts(x, start = as.Date("2003-02-01"), end = as.Date("2003-03-01"))
+  reg <- window_dbg(x, start = as.Date("2003-02-01"), end = as.Date("2003-03-01"))
+  checkIdentical(bin, reg, "Test basic window.zoo example")
+
+  # Test index + start
+  bin <- window.xts(x, index = x.date[1:6], start = as.Date("2003-02-01"))
+  reg <- window_dbg(x, index = x.date[1:6], start = as.Date("2003-02-01"), end = as.Date("2004-01-01"))
+  checkIdentical(bin, reg, "Test index + start")
+
+  # Test just index
+  bin <- window.xts(x, index = x.date[c(4, 8, 10)])
+  reg <- window_dbg(x, index = x.date[c(4, 8, 10)], start = as.Date("2003-01-01"), end = as.Date("2004-01-01"))
+  checkIdentical(bin, reg, "Test just index")
+
+  # Test decreasing index
+  bin <- window.xts(x, index = x.date[c(10, 8, 4)])
+  reg <- window_dbg(x, index = x.date[c(10, 8, 4)], start = as.Date("2003-01-01"), end = as.Date("2004-01-01"))
+  checkIdentical(bin, reg, "Test decreasing index")
+
+  # Test index parameter with repeated dates in xts series
+  idx <- sort(rep(1:5, 5))
+  x <- xts(1:length(idx), as.Date("1999-12-31")+idx)
+  bin <- window.xts(x, index = as.Date("1999-12-31")+c(1,3,5))
+  reg <- window_dbg(x, index = as.Date("1999-12-31")+c(1,3,5), start = as.Date("2000-01-01"), end = as.Date("2000-01-05"))
+  checkIdentical(bin, reg, "Test index parameter with repeated dates in xts series")
+  checkTrue(nrow(bin) == 3*5, "Test index parameter with repeated dates in xts series")
+
+  # Test performance difference
+  DAY = 24*3600
+  base <- as.POSIXct("2000-12-31")
+  dts <- base + c(1:10, 12:15, 17:20)*DAY
+  x <- xts(1:length(dts), dts)
+  start <- base + 14*DAY
+  end <- base + 14*DAY
+  cat("\n")
+  print("performance:")
+  print("binary search")
+  print(system.time(replicate(1000, window.xts(x, start = start, end = end)))) # Binary search is about 2x faster than regular
+  print("regular search")
+  print(system.time(replicate(1000, window_dbg(x, start = start, end = end))))
+}
+
+# test subset.xts for date subsetting by row
+test.subset.xts <- function() {
+  DAY = 24*3600
+  base <- as.POSIXct("2000-12-31")
+  dts <- base + c(1:10, 12:15, 17:20)*DAY
+  x <- xts(1:length(dts), dts)
+
+  # Test character
+  sub <- .subset.xts(x, "2001-01-10")
+  bin <- window.xts(x, start = "2001-01-10", end = "2001-01-10")
+  checkIdentical(bin, sub, "Test character")
+
+  # Test character vector
+  dts <- c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13") # Note that "2001-01-11" is not in the series. Skipped by convention.
+  sub <- .subset.xts(x, dts)
+  bin <- window.xts(x, start = "2001-01-10", end = "2001-01-13")
+  checkIdentical(bin, sub, "Test character vector")
+
+  # Test I() of the same thing
+  dts <- c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13") # Note that "2001-01-11" is not in the series. Skipped by convention.
+  sub <- .subset.xts(x, I(dts))
+  bin <- window.xts(x, start = "2001-01-10", end = "2001-01-13")
+  checkIdentical(bin, sub, "Test character vector")
+
+  # Test POSIXct
+  sub <- .subset.xts(x, as.POSIXct("2001-01-10"))
+  bin <- window.xts(x, start = "2001-01-10", end = "2001-01-10")
+  checkIdentical(bin, sub, "Test POSIXct")
+
+  # Test POSIXct vector
+  sub <- .subset.xts(x, as.POSIXct(c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13")))  # Note that "2001-01-11" is not in the series. Skipped by convention.
+  bin <- window.xts(x, start = "2001-01-10", end = "2001-01-13")
+  checkIdentical(bin, sub, "Test POSIXct vector")
+
+  # Test Date
+  sub <- .subset.xts(x, as.Date(c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13")))  # Note that "2001-01-11" is not in the series. Skipped by convention.
+  bin <- window.xts(x, start = "2001-01-10", end = "2001-01-13")
+  checkIdentical(bin, sub, "Test Date")
+
+  # Test character dates, and single column selection
+  base <- as.POSIXct("2000-12-31")
+  dts <- base + c(1:10, 12:15, 17:20)*DAY
+  x <- xts(1:length(dts), dts)
+  y <- xts(rep(2, length(dts)), dts)
+  z <- xts(rep(3, length(dts)), dts)
+  x2 <- cbind(y, x, z)
+  sub <- .subset.xts(x2, c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13"), 2)  # Note that "2001-01-11" is not in the series. Skipped by convention.
+  bin <- window.xts(x, start = "2001-01-10", end = "2001-01-13")
+  checkTrue(nrow(sub) == nrow(bin), "Test character dates, and single column selection")
+  checkTrue(all(sub == bin), "Test character dates, and single column selection")
+
+  # Test Date Ranges
+  x <- xts(1:1000, as.Date("2000-01-01")+1:1000)
+  sub <- x['200001'] # January 2000
+  bin <- window.xts(x, start = "2000-01-01", end = "2000-01-31")
+  checkIdentical(bin, sub, "Test Date Ranges")
+
+  # Test Date Ranges 2
+  sub <- x['1999/2000'] # All of 2000 (note there is no need to use the exact start)
+  bin <- window.xts(x, start = "2000-01-01", end = "2000-12-31")
+  checkIdentical(bin, sub, "Test Date Ranges 2")
+
+  # Test Date Ranges 3
+  sub <- x['1999/200001'] # January 2000
+  bin <- window.xts(x, start = "2000-01-01", end = "2000-01-31")
+  checkIdentical(bin, sub, "Test Date Ranges 3")
+}
