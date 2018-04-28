@@ -98,7 +98,11 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       i <- sort(i)
     }
     # subset is picky, 0's in the 'i' position cause failures
-    i <- i[i!=0]
+    zero.index <- binsearch(0L, i, FALSE)
+    if(!is.na(zero.index)) {
+      # at least one 0; binsearch returns location of last 0
+      i <- i[-(1L:zero.index)]
+    }
 
     if(length(i) <= 0 && USE_EXTRACT) 
       USE_EXTRACT <- FALSE
