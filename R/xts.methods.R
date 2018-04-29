@@ -319,7 +319,11 @@ window.xts <- function(x, index. = NULL, start = NULL, end = NULL, ...)
 
 # Declare binsearch to call the routine in binsearch.c
 binsearch <- function(key, vec, start=TRUE) {
-  .Call("binsearch", as.double(key), as.double(vec), start, PACKAGE='xts')
+  # Convert to double if both are not integer
+  if (storage.mode(key) != storage.mode(vec)) {
+    storage.mode(key) <- storage.mode(vec) <- "double"
+  }
+  .Call("binsearch", key, vec, start, PACKAGE='xts')
 }
 
 # Unit tests for the above code may be found in runit.xts.methods.R
