@@ -6,7 +6,7 @@
  * contributions by Joshua Ulrich
  */
 
-static struct keyvec {
+struct keyvec {
   double *dvec;
   double dkey;
   int *ivec;
@@ -54,7 +54,7 @@ SEXP binsearch(SEXP key, SEXP vec, SEXP start)
     error("start must be specified as true or false");
   }
 
-  if (length(vec) < 1) {
+  if (length(vec) < 1 || length(key) < 1) {
     return ScalarInteger(NA_INTEGER);
   }
 
@@ -67,11 +67,17 @@ SEXP binsearch(SEXP key, SEXP vec, SEXP start)
       data.dkey = REAL(key)[0];
       data.dvec = REAL(vec);
       cmp_func = (use_start) ? cmp_dbl_lower : cmp_dbl_upper;
+      if (!R_finite(data.dkey)) {
+        return ScalarInteger(NA_INTEGER);
+      }
       break;
     case INTSXP:
       data.ikey = INTEGER(key)[0];
       data.ivec = INTEGER(vec);
       cmp_func = (use_start) ? cmp_int_lower : cmp_int_upper;
+      if (NA_INTEGER == data.ikey) {
+        return ScalarInteger(NA_INTEGER);
+      }
       break;
     default:
       error("unsupported type");
