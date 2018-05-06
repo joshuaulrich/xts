@@ -39,19 +39,17 @@ make.timeBased <- function(x, class='POSIXct', ...)
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
   if(min(INDEX) < 0 || max(INDEX) > NROW(x)) stop("INDEX must be >= 0 and <= nrow(x)")
-  ep <- INDEX
-  if(ep[1] != 0) ep <- c(0,ep)
+  ep <- as.integer(INDEX)
+  if(ep[1L] != 0L) ep <- c(0L,ep)
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
 
   xx <- as.double(as.matrix(x))
-  q <- .Fortran('psumz',ep=as.integer(ep),lep=as.integer(length(ep)),
-                ia=as.double(xx),lia=as.integer(length(xx)),
-                ret=as.double(rep(0,(length(ep)-1)))
-                ,PACKAGE='xts')
+  xa <- .Call("xts_period_sum", xx, ep, PACKAGE = "xts")
+
   if(timeBased(index(x))) {
-    tz <- xts(q$ret,index(x)[ep[-1]])
+    tz <- xts(xa, index(x)[ep[-1]])
   } else {
-    tz <- zoo(q$ret,index(x)[ep[-1]])
+    tz <- zoo(xa, index(x)[ep[-1]])
   }
   tz
 }
@@ -59,19 +57,17 @@ function(x,INDEX) {
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
   if(min(INDEX) < 0 || max(INDEX) > NROW(x)) stop("INDEX must be >= 0 and <= nrow(x)")
-  ep <- INDEX
-  if(ep[1] != 0) ep <- c(0,ep)
+  ep <- as.integer(INDEX)
+  if(ep[1] != 0L) ep <- c(0L,ep)
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
 
   xx <- as.double(as.matrix(x))
-  q <- .Fortran('pprodz',ep=as.integer(ep),lep=as.integer(length(ep)),
-                ia=as.double(xx),lia=as.integer(length(xx)),
-                ret=as.double(rep(0,(length(ep)-1)))
-                ,PACKAGE='xts')
+  xa <- .Call("xts_period_prod", xx, ep, PACKAGE = "xts")
+
   if(timeBased(index(x))) {
-    tz <- xts(q$ret,index(x)[ep[-1]])
+    tz <- xts(xa, index(x)[ep[-1]])
   } else {
-    tz <- zoo(q$ret,index(x)[ep[-1]])
+    tz <- zoo(xa, index(x)[ep[-1]])
   }
   tz
 }
@@ -79,19 +75,17 @@ function(x,INDEX) {
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
   if(min(INDEX) < 0 || max(INDEX) > NROW(x)) stop("INDEX must be >= 0 and <= nrow(x)")
-  ep <- INDEX
-  if(ep[1] != 0) ep <- c(0,ep)
+  ep <- as.integer(INDEX)
+  if(ep[1] != 0L) ep <- c(0L,ep)
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
 
   xx <- as.double(as.matrix(x))
-  q <- .Fortran('pmaxz',ep=as.integer(ep),lep=as.integer(length(ep)),
-                ia=as.double(xx),lia=as.integer(length(xx)),
-                ret=as.double(rep(0,(length(ep)-1)))
-                ,PACKAGE='xts')
+  xa <- .Call("xts_period_max", xx, ep, PACKAGE = "xts")
+
   if(timeBased(index(x))) {
-    tz <- xts(q$ret,index(x)[ep[-1]])
+    tz <- xts(xa, index(x)[ep[-1]])
   } else {
-    tz <- zoo(q$ret,index(x)[ep[-1]])
+    tz <- zoo(xa, index(x)[ep[-1]])
   }
   tz
 }
@@ -99,19 +93,17 @@ function(x,INDEX) {
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
   if(min(INDEX) < 0 || max(INDEX) > NROW(x)) stop("INDEX must be >= 0 and <= nrow(x)")
-  ep <- INDEX
-  if(ep[1] != 0) ep <- c(0,ep)
+  ep <- as.integer(INDEX)
+  if(ep[1] != 0L) ep <- c(0L,ep)
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
 
   xx <- as.double(as.matrix(x))
-  q <- .Fortran('pminz',ep=as.integer(ep),lep=as.integer(length(ep)),
-                ia=as.double(xx),lia=as.integer(length(xx)),
-                ret=as.double(rep(0,(length(ep)-1)))
-                ,PACKAGE='xts')
+  xa <- .Call("xts_period_min", xx, ep, PACKAGE = "xts")
+
   if(timeBased(index(x))) {
-    tz <- xts(q$ret,index(x)[ep[-1]])
+    tz <- xts(xa, index(x)[ep[-1]])
   } else {
-    tz <- zoo(q$ret,index(x)[ep[-1]])
+    tz <- zoo(xa, index(x)[ep[-1]])
   }
   tz
 }

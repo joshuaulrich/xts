@@ -71,3 +71,57 @@ test.INDEX_ends_with_lengthX_vector <- function() {
   z <- period.apply(x, c(ep, 10), mean)
   checkIdentical(a, z)
 }
+
+# check specific period.* functions
+data(sample_matrix)
+x <- as.xts(sample_matrix[,1], dateFormat = "Date")
+e <- endpoints(x, "months")
+
+test.period.min_equals_apply.monthly <- function() {
+  # min
+  am <- apply.monthly(x, min)
+  pm <- period.min(x, e)
+  checkEqualsNumeric(am, pm)
+}
+
+test.period.max_equals_apply.monthly <- function() {
+  # max
+  am <- apply.monthly(x, max)
+  pm <- period.max(x, e)
+  checkEqualsNumeric(am, pm)
+}
+
+test.period.sum_equals_apply.monthly <- function() {
+  # sum
+  am <- apply.monthly(x, sum)
+  pm <- period.sum(x, e)
+  checkEqualsNumeric(am, pm)
+}
+
+test.period.prod_equals_apply.monthly <- function() {
+  # prod
+  am <- apply.monthly(x, prod)
+  pm <- period.prod(x, e)
+  checkEqualsNumeric(am, pm)
+}
+
+# test that non-integer INDEX is converted to integer
+test.period.min_converts_index_to_integer <- function() {
+  storage.mode(e) <- "numeric"
+  pm <- period.min(x, e)
+}
+
+test.period.max_converts_index_to_integer <- function() {
+  storage.mode(e) <- "numeric"
+  pm <- period.max(x, e)
+}
+
+test.period.sum_converts_index_to_integer <- function() {
+  storage.mode(e) <- "numeric"
+  pm <- period.sum(x, e)
+}
+
+test.period.prod_converts_index_to_integer <- function() {
+  storage.mode(e) <- "numeric"
+  pm <- period.prod(x, e)
+}
