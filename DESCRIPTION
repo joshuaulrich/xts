@@ -6,7 +6,8 @@ Date: 2018-03-13
 Authors@R: c(
   person(given=c("Jeffrey","A."), family="Ryan", role=c("aut","cph")),
   person(given=c("Joshua","M."), family="Ulrich", role=c("cre","aut"), email="josh.m.ulrich@gmail.com"),
-  person(given="Ross", family="Bennett", role="ctb")
+  person(given="Ross", family="Bennett", role="ctb"),
+  person(given="Corwin", family="Joy", role="ctb")
   )
 Depends: zoo (>= 1.7-12)
 Imports: methods

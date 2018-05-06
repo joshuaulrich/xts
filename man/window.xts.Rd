@@ -13,12 +13,21 @@ Method for extracting time windows from \code{xts} objects.
 
 \arguments{
   \item{x}{an object.}
-  \item{index.}{a user defined time index.  (This defaults to the \code{xts} index for the series via \code{.index(x)}).  When supplied, this is typically a subset of the dates in the full series.
-  The \code{index.} must be a set of dates that are convertible to  \code{POSIXct}.  If you want fast lookups, then \code{index.} should be sorted and of class \code{POSIXct}.
-  If an unsorted \code{index.} is passed in, \code{window} will sort it.}
-  \item{start}{a start time. Extract \code{xts} rows where \code{index.>=start}.  \code{start} may be any class that is convertible to \code{POSIXct} such as a character variable in the format 'YYYY-MM-DD'.
-   If \code{start} is \code{NULL} then all \code{index.} dates are matched.}
-  \item{end}{an end time. Extract \code{xts} rows where \code{index.<=end}. \code{end} must be convertible to \code{POSIXct}. If \code{end} is \code{NULL} then all \code{index.} dates are matched.}
+  \item{index.}{a user defined time index. This defaults to the \code{xts}
+    index for the series via \code{.index(x)}. When supplied, this is typically
+    a subset of the dates in the full series.\cr
+    The \code{index.} must be a set of dates that are convertible to
+    \code{POSIXct}. If you want fast lookups, then \code{index.} should be
+    sorted and of class \code{POSIXct}.\cr
+    If an unsorted \code{index.} is passed in, \code{window} will sort it.}
+  \item{start}{a start time. Extract \code{xts} rows where \code{index. >=
+    start}. \code{start} may be any class that is convertible to
+    \code{POSIXct} such as a character variable in the format
+    \sQuote{YYYY-MM-DD}.\cr
+    If \code{start} is \code{NULL} then all \code{index.} dates are matched.}
+  \item{end}{an end time. Extract \code{xts} rows where \code{index. <= end}.
+    \code{end} must be convertible to \code{POSIXct}. If \code{end} is
+    \code{NULL} then all \code{index.} dates are matched.}
   \item{\dots}{currently not used.}
 }
 
@@ -27,10 +36,16 @@ The matching time window is extracted.
 }
 
 \details{
-The point of having \code{window} in addition to the regular subset function is to have a fast way of extracting time ranges from an \code{xts} series.  In particular, this method will convert
-\code{start} and \code{end} to \code{POSIXct} then do a binary lookup on the internal \code{xts} index to quickly return a range of matching dates.  With a user supplied \code{index.}, a similarly fast invocation of
-\code{findInterval} is used so that large sets of sorted dates can be retrieved quickly.
+The point of having \code{window} in addition to the regular subset function
+is to have a fast way of extracting time ranges from an \code{xts} series. In
+particular, this method will convert \code{start} and \code{end} to
+\code{POSIXct} then do a binary lookup on the internal \code{xts} index to
+quickly return a range of matching dates. With a user supplied \code{index.},
+a similarly fast invocation of \code{findInterval} is used so that large sets
+of sorted dates can be retrieved quickly.
 }
+
+\author{ Corwin Joy }
 
 \seealso{
 \code{\link{subset.xts}},
@@ -53,4 +68,4 @@ window(x, index = x.date[c(4, 8, 10)])
 window(x, index = x.date[c(4, 8, 10)]) <- matrix(1:6, ncol = 2)
 x
 }
-\keyword{ utilities }
+\keyword{ts}
