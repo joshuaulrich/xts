@@ -82,7 +82,7 @@ SEXP attribute_hidden xtsCoredata(SEXP x) {
 
 SEXP attribute_hidden xtsLag(SEXP x, SEXP k, SEXP pad) {
     static SEXP(*fun)(SEXP,SEXP,SEXP) = NULL;
-    if (fun == NULL) fun = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("xts","lagXts");
+    if (fun == NULL) fun = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("xts","lag_xts");
     return fun(x, k, pad);
 }
 

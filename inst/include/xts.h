@@ -64,7 +64,8 @@ SEXP do_xtsCoreAttributes(SEXP x);          /* xtsCoreAttributes xts-specific at
 #define coredata(x, copyAttr) zoo_coredata(x, copyAttr)
 SEXP xts_coredata(SEXP x);
 SEXP add_class(SEXP x, SEXP klass);
-SEXP lagXts(SEXP x, SEXP k, SEXP pad);
+SEXP lag_xts(SEXP x, SEXP k, SEXP pad);
+#define lagXts(x, k, pad) lag_xts(x, k, pad)
 SEXP do_is_ordered(SEXP x, SEXP increasing, SEXP strictly);
 SEXP mergeXts(SEXP args);
 SEXP do_rbind_xts(SEXP x, SEXP y, SEXP dup);

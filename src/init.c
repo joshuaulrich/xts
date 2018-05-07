@@ -31,7 +31,7 @@ R_CallMethodDef callMethods[] = {
   {"xts_coredata",          (DL_FUNC) &xts_coredata,            1},
   {"do_xtsAttributes",      (DL_FUNC) &do_xtsAttributes,        1},
   {"do_xtsCoreAttributes",  (DL_FUNC) &do_xtsCoreAttributes,    1},
-  {"lagXts",                (DL_FUNC) &lagXts,                  3},
+  {"lag_xts",               (DL_FUNC) &lag_xts,                 3},
   {"do_is_ordered",         (DL_FUNC) &do_is_ordered,           3},
   {"isXts",                 (DL_FUNC) &isXts,                   1},
   {"tryXts",                (DL_FUNC) &tryXts,                  1},
@@ -85,7 +85,7 @@ void R_init_xts(DllInfo *info)
   R_RegisterCCallable("xts","tryXts",       (DL_FUNC) &tryXts);
   R_RegisterCCallable("xts","do_rbind_xts", (DL_FUNC) &do_rbind_xts);
   R_RegisterCCallable("xts","naCheck",      (DL_FUNC) &naCheck);
-  R_RegisterCCallable("xts","lagXts",       (DL_FUNC) &lagXts);
+  R_RegisterCCallable("xts","lag_xts",      (DL_FUNC) &lag_xts);
 
   R_RegisterCCallable("xts","make_index_unique", (DL_FUNC) &make_index_unique);
   R_RegisterCCallable("xts","make_unique",       (DL_FUNC) &make_unique);
