@@ -1,5 +1,5 @@
 /*
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -25,14 +25,8 @@
 #include <Rdefines.h>
 #include "xts.h"
 
-SEXP diffXts(SEXP x, SEXP lag, SEXP diff, SEXP arith, SEXP nap, SEXP dots)
-{
-  return R_NilValue;
-}
-
-
 SEXP lag_xts (SEXP x, SEXP _k, SEXP _pad) {
-  /* this will eventually revert to NOT changing R default behaviors 
+  /* this will eventually revert to NOT changing R default behaviors
      for now it uses the 'standard' convention adopted by xts        */
 
   int k = asInteger(_k);
@@ -48,7 +42,7 @@ SEXP lag_xts (SEXP x, SEXP _k, SEXP _pad) {
 
 SEXP lagts_xts (SEXP x, SEXP _k, SEXP _pad) {
   /* this will use positive values of lag for carrying forward observations
- 
+
      i.e. y = lagts(x, 1) is y(t) = x(t-1)
   */
 
