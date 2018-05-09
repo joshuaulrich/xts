@@ -30,8 +30,7 @@ SEXP make_unique (SEXP index, SEXP eps_) {
   len=length(index);
 
   double eps = asReal(eps_);
-  double *index_real,
-         *newindex_real;
+  double *newindex_real;
 
   if( TYPEOF(index) == INTSXP) {
     PROTECT(index = coerceVector(index,REALSXP)); P++;
@@ -39,15 +38,12 @@ SEXP make_unique (SEXP index, SEXP eps_) {
   
   PROTECT(newindex = allocVector(REALSXP, length(index))); P++;
   copyAttributes(index, newindex);
-  index_real = REAL(index);
   newindex_real = REAL(newindex);
+  memcpy(REAL(newindex), REAL(index), len * sizeof(double));
 
-  newindex_real[0] = index_real[0]; 
   for(i=1; i<len; i++) {
-    if(index_real[i-1] == index_real[i])
+    if(newindex_real[i] <= newindex_real[i-1])
       newindex_real[i] = newindex_real[i-1] + eps;
-    else
-      newindex_real[i] = index_real[i];
   }
 
   UNPROTECT(P);
