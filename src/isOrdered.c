@@ -31,6 +31,10 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
   double *real_x;
   int *int_x;
 
+  if(nx < 2) {
+    return ScalarLogical(1);
+  }
+
   if(TYPEOF(x) == REALSXP) {
   /*
   Check for increasing order, strict or non-strict

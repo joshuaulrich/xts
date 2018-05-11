@@ -91,3 +91,40 @@ test.isOrdered_decr_endNA <- function() {
 }
 ###
 # }}}
+
+# Zero length
+test.isOrdered_zero_length <- function() {
+  check.isOrdered(numeric(0), TTTT)
+  check.isOrdered(integer(0), TTTT)
+}
+
+# Consecutive NA
+# Note that zoo always puts NA at the end of the index. Always.
+
+# From xts/src/merge.c
+#/* Check for illegal values before looping. Due to ordered index,
+# * -Inf must be first, while NA, Inf, and NaN must be last. */
+# if (!R_FINITE(real_xindex[0]) || !R_FINITE(real_xindex[nrx-1])
+
+# From xts/src/merge.c
+#/* Check for NA before looping; logical ops on NA may yield surprising
+# * results. Note that the NA_integer_ will appear in the last value of
+# * the index because of sorting at the R level, even though NA_INTEGER
+# * equals INT_MIN at the C level. */
+# if (int_xindex[nrx-1] == NA_INTEGER || int_yindex[nry-1] == NA_INTEGER)
+
+test.isOrdered_incr_beg_consecNA <- function() {
+  check.isOrdered(c(NA_integer_, NA_integer_, 1L, 2L), c(F,T,F,F))
+  check.isOrdered(c(NA_real_, NA_real_, 1, 2), TTFF)
+  check.isOrdered(c(NaN, NaN, 1, 2), TTFF)
+  check.isOrdered(c(Inf, Inf, 1, 2), FFFF)
+  check.isOrdered(c(-Inf, -Inf, 1, 2), TTFF)
+}
+test.isOrdered_decr_end_consecNA <- function() {
+  check.isOrdered(c(2L, 1L, NA_integer_, NA_integer_), FFFF)
+  check.isOrdered(c(2, 1, NA_real_, NA_real_), FFTT)
+  check.isOrdered(c(2, 1, NaN, NaN), FFTT)
+  check.isOrdered(c(2, 1, Inf, Inf), FFFF)
+  check.isOrdered(c(2, 1, -Inf, -Inf), FFTT)
+}
+
