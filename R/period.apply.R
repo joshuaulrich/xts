@@ -104,3 +104,11 @@ function(x,FUN, ...)
   ep <- endpoints(x,'years')
   period.apply(x,ep,FUN, ...)
 }
+
+period_apply <- function(x, INDEX, FUN, ...) {
+  fun <- substitute(FUN)
+  e <- new.env()
+  pl <- .Call("xts_period_apply", x, INDEX, fun, e, PACKAGE = "xts")
+  # need to copy other attributes to result?
+  .xts(do.call(rbind, pl), .index(x)[INDEX])
+}

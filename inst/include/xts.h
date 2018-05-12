@@ -105,6 +105,7 @@ void copy_xtsCoreAttributes(SEXP x, SEXP y);// internal only
 
 int isXts(SEXP x);                          // is.xts analogue
 int firstNonNA(SEXP x);
+SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_);
 #endif /* _XTS */
 
 #ifdef __cplusplus
