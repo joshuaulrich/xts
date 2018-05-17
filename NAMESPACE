@@ -170,7 +170,7 @@ S3method(plot, replot_xts)
 #S3method(points,xts)
 
 #export(Lag.xts, Next.xts) #, Diff.xts)
-
+export(timelag)
 export(lag.xts)
 export(diff.xts)
 export(merge.xts)
