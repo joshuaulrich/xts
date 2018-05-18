@@ -31,7 +31,8 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
   double *real_x;
   int *int_x;
 
-  if(nx < 2) {
+  if(nx < 1) {
+    /* zero-length vectors and 'scalars' are always sorted */
     return ScalarLogical(1);
   }
 
@@ -45,13 +46,23 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
       for(i = 0; i < nx; i++) {
         if( real_x[i+1] <= real_x[i] ) {
           return ScalarLogical(0);
-        } 
+        } else {
+          if ( ISNAN(real_x[i+1]) ) { // && !ISNAN(real_x[i]) ) {
+            return ScalarLogical(0);
+          }
+          return ScalarLogical(0);
+        }
       }
     } else { /* NOT-STRICTLY ( 0 || > 0 ) */
       for(i = 0; i < nx; i++) {
         if( real_x[i+1] < real_x[i] ) {
           return ScalarLogical(0);
-        } 
+        } else {
+          if ( !ISNAN(real_x[i+1]) && ISNAN(real_x[i]) ) {
+              return ScalarLogical(0);
+          }
+          return ScalarLogical(0);
+        }
       }
     }
   /*
@@ -79,27 +90,32 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
   Check for increasing order, strict or non-strict
   */
   int_x = INTEGER(x);
+  int have_na = 0;
   if(LOGICAL(increasing)[ 0 ] == 1) { /* INCREASING */
-    /* Not increasing order if first element is NA */
-    if( int_x[0] == NA_INTEGER )
-      return ScalarLogical(0);
-
     if(LOGICAL(strictly)[ 0 ] == 1) { /* STRICTLY INCREASING ( > 0 ) */
       for(i = 0; i < nx; i++) {
         if( int_x[i+1] <= int_x[i] ) {
-          if (i == (nx-1) && int_x[i+1] == NA_INTEGER) {
-            continue; /* OK if NA is last element */
+          /* zoo always puts NA last */
+          if( int_x[i+1] == NA_INTEGER ) {
+            if( int_x[i] != NA_INTEGER ) {
+              return ScalarLogical(0);
+            }
+          } else {
+            return ScalarLogical(0);
           }
-          return ScalarLogical(0);
         } 
       }
     } else { /* NOT-STRICTLY ( 0 || > 0 ) */
       for(i = 0; i < nx; i++) {
         if( int_x[i+1] < int_x[i] ) {
-          if (i == (nx-1) && int_x[i+1] == NA_INTEGER) {
-            continue; /* OK if NA is last element */
+          /* zoo always puts NA last */
+          if( int_x[i+1] == NA_INTEGER ) {
+            if( int_x[i] != NA_INTEGER ) {
+              return ScalarLogical(0);
+            }
+          } else {
+            return ScalarLogical(0);
           }
-          return ScalarLogical(0);
         } 
       }
     }
@@ -108,14 +124,14 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
   */
   } else { /* DECREASING */
     /* Not decreasing order if last element is NA */
-    if( int_x[nx] == NA_INTEGER )
-      return ScalarLogical(0);
-
     if(LOGICAL(strictly)[ 0 ] == 1) { /* STRICTLY DECREASING ( < 0 ) */
       for(i = 0; i < nx; i++) {
         if( int_x[i+1] >= int_x[i] ) {
-          if (i == 0 && int_x[i] == NA_INTEGER) {
-            continue; /* OK if NA is first element */
+          /* put NA first, since order is decreasing */
+          if( have_na && int_x[i] != NA_INTEGER ) {
+            return ScalarLogical(0);
+          } else {
+            have_na = 1;
           }
           return ScalarLogical(0);
         } 
@@ -123,8 +139,11 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
     } else { /* NOT-STRICTLY ( 0 || < 0 ) */
       for(i = 0; i < nx; i++) {
         if( int_x[i+1] > int_x[i] ) {
-          if (i == 0 && int_x[i] == NA_INTEGER) {
-            continue; /* OK if NA is first element */
+          /* put NA first, since order is decreasing */
+          if( have_na && int_x[i] != NA_INTEGER ) {
+            return ScalarLogical(0);
+          } else {
+            have_na = 1;
           }
           return ScalarLogical(0);
         } 

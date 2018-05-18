@@ -41,8 +41,8 @@ test.isOrdered_incr_begNA <- function() {
 # mid
 test.isOrdered_incr_midNA <- function() {
   check.isOrdered(c(1L, NA_integer_, 2L), FFFF)
-  check.isOrdered(c(1, NA_real_, 2), TTTT)
-  check.isOrdered(c(1, NaN, 2), TTTT)
+  check.isOrdered(c(1, NA_real_, 2), FFFF)
+  check.isOrdered(c(1, NaN, 2), FFFF)
   check.isOrdered(c(1, Inf, 2), FFFF)
   check.isOrdered(c(1, -Inf, 2), FFFF)
 }
@@ -92,14 +92,36 @@ test.isOrdered_decr_endNA <- function() {
 ###
 # }}}
 
+FTTF <- c(FALSE, TRUE, TRUE, FALSE)
+TFFT <- !FTTF
+
 # Zero length
-test.isOrdered_zero_length <- function() {
+test.isOrdered_length_0 <- function() {
   check.isOrdered(numeric(0), TTTT)
   check.isOrdered(integer(0), TTTT)
 }
 
-# Consecutive NA
-# Note that zoo always puts NA at the end of the index. Always.
+# "Scalar"
+test.isOrdered_length_1 <- function() {
+  check.isOrdered(1.0, TTTT)
+  check.isOrdered(1L, TTTT)
+}
+
+# Two-elements
+test.isOrdered_length_2_dup <- function() {
+  check.isOrdered(c(1.0, 1.0), FTTF)
+  check.isOrdered(c(1L, 1L), FTTF)
+}
+
+test.isOrdered_length_2_incr <- function() {
+  check.isOrdered(c(1.0, 2.0), TTFF)
+  check.isOrdered(c(1L, 2L), TTFF)
+}
+
+test.isOrdered_length_2_decr <- function() {
+  check.isOrdered(c(2.0, 1.0), FFTT)
+  check.isOrdered(c(2L, 1L), FFTT)
+}
 
 # From xts/src/merge.c
 #/* Check for illegal values before looping. Due to ordered index,
@@ -113,13 +135,18 @@ test.isOrdered_zero_length <- function() {
 # * equals INT_MIN at the C level. */
 # if (int_xindex[nrx-1] == NA_INTEGER || int_yindex[nry-1] == NA_INTEGER)
 
+# Consecutive NA
+# Note that zoo always puts NA at the end of the index. Always.
+FTFF <- c(FALSE, TRUE, FALSE, FALSE)
+
 test.isOrdered_incr_beg_consecNA <- function() {
-  check.isOrdered(c(NA_integer_, NA_integer_, 1L, 2L), c(F,T,F,F))
-  check.isOrdered(c(NA_real_, NA_real_, 1, 2), TTFF)
-  check.isOrdered(c(NaN, NaN, 1, 2), TTFF)
+  check.isOrdered(c(NA_integer_, NA_integer_, 1L, 2L), FTFF)
+  check.isOrdered(c(NA_real_, NA_real_, 1, 2), FTFF)
+  check.isOrdered(c(NaN, NaN, 1, 2), FTFF)
   check.isOrdered(c(Inf, Inf, 1, 2), FFFF)
   check.isOrdered(c(-Inf, -Inf, 1, 2), TTFF)
 }
+
 test.isOrdered_decr_end_consecNA <- function() {
   check.isOrdered(c(2L, 1L, NA_integer_, NA_integer_), FFFF)
   check.isOrdered(c(2, 1, NA_real_, NA_real_), FFTT)
@@ -127,4 +154,3 @@ test.isOrdered_decr_end_consecNA <- function() {
   check.isOrdered(c(2, 1, Inf, Inf), FFFF)
   check.isOrdered(c(2, 1, -Inf, -Inf), FFTT)
 }
-
