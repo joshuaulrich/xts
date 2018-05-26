@@ -367,8 +367,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
               break;
             case CPLXSXP:
-              COMPLEX(result)[ ij_result ].r = REAL(fill)[ 0 ];
-              COMPLEX(result)[ ij_result ].i = REAL(fill)[ 0 ];
+              COMPLEX(result)[ ij_result ] = COMPLEX(fill)[ 0 ];
               break;
             case STRSXP:
               SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
@@ -455,8 +454,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
               break;
             case CPLXSXP:
-              COMPLEX(result)[ ij_result ].r = REAL(fill)[ 0 ];
-              COMPLEX(result)[ ij_result ].i = REAL(fill)[ 0 ];
+              COMPLEX(result)[ ij_result ] = COMPLEX(fill)[ 0 ];
               break;
             case STRSXP:
               SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
@@ -571,8 +569,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
               break;
             case CPLXSXP:
-              COMPLEX(result)[ ij_result ].r = REAL(fill)[ 0 ];
-              COMPLEX(result)[ ij_result ].i = REAL(fill)[ 0 ];
+              COMPLEX(result)[ ij_result ] = COMPLEX(fill)[ 0 ];
               break;
             case STRSXP:
               SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
@@ -604,8 +601,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
               REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
               break;
             case CPLXSXP:
-              COMPLEX(result)[ ij_result ].r = REAL(fill)[ 0 ];
-              COMPLEX(result)[ ij_result ].i = REAL(fill)[ 0 ];
+              COMPLEX(result)[ ij_result ] = COMPLEX(fill)[ 0 ];
               break;
             case STRSXP:
               SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
