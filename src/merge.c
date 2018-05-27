@@ -72,6 +72,29 @@ int compare_indexes_int(xts_indices *idx, int xp, int yp) {
   return 0;
 }
 
+/* Set merge result methods */
+typedef void (*set_result_func)(SEXP, SEXP, int, int);
+void set_result_dbl(SEXP _result, SEXP _x, int iresult, int ix)
+{
+  REAL(_result)[iresult] = REAL(_x)[ix];
+}
+void set_result_int(SEXP _result, SEXP _x, int iresult, int ix)
+{
+  INTEGER(_result)[iresult] = INTEGER(_x)[ix];
+}
+void set_result_lgl(SEXP _result, SEXP _x, int iresult, int ix)
+{
+  LOGICAL(_result)[iresult] = LOGICAL(_x)[ix];
+}
+void set_result_cplx(SEXP _result, SEXP _x, int iresult, int ix)
+{
+  COMPLEX(_result)[iresult] = COMPLEX(_x)[ix];
+}
+void set_result_str(SEXP _result, SEXP _x, int iresult, int ix)
+{
+  SET_STRING_ELT(_result, iresult, STRING_ELT(_x, ix));
+}
+
 /* Calculate merge result index length */
 int merge_index_length(xts_indices*, compare_func, int, int, int, int);
 int merge_index_length(xts_indices *idx, compare_func cmpfn,
@@ -355,22 +378,27 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   mode = TYPEOF(x);
 
   /* use pointers instead of function calls */
+  set_result_func set_result = NULL;
   switch(TYPEOF(x)) {
+    case LGLSXP:
+      set_result = set_result_lgl;
+      break;
     case INTSXP:
-        int_x = INTEGER(x);
-        int_y = INTEGER(y);
-        int_fill = INTEGER(fill)[0];
-        int_result = INTEGER(result);
-        break;
+      set_result = set_result_int;
+      break;
     case REALSXP:
-        real_x = REAL(x);
-        real_y = REAL(y);
-        /*real_fill = REAL(fill)[0];*/
-        real_result = REAL(result);
-        break;
+      set_result = set_result_dbl;
+      break;
+    case CPLXSXP:
+      set_result = set_result_cplx;
+      break;
+    case STRSXP:
+      set_result = set_result_str;
+      break;
     default:
-        break;
-  }
+      error("unsupported data type");
+      break;
+   }
 
   switch(TYPEOF(xindex)) {
     case INTSXP:
@@ -394,51 +422,12 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         set_index_from_y(idx, i, yp-1);
         for(j = 0; j < ncx; j++) { /* x-values */
           ij_result = i + j * num_rows;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
-              break;
-            case INTSXP:
-              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];*/
-              int_result[ ij_result ] = int_fill;
-              break;
-            case REALSXP:
-              REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(fill)[ 0 ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
+          set_result(result, fill, ij_result, 0);
         }
         for(j = 0; j < ncy; j++) { /* y-values */
           ij_result = i + (j+ncx) * num_rows;
           ij_original = (yp-1) + j * nry;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
-              break;
-            case INTSXP:
-              int_result[ ij_result ] = int_y[ ij_original ];
-              break;
-            case REALSXP:
-              real_result[ ij_result ] = real_y[ ij_original ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(y, ij_original));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
+          set_result(result, y, ij_result, ij_original);
         }
       }
       yp++;
@@ -456,52 +445,13 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         for(j = 0; j < ncx; j++) { /* x-values */
           ij_result = i + j * num_rows;
           ij_original = (xp-1) + j * nrx; 
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
-              break;
-            case INTSXP:
-              int_result[ ij_result ] = int_x[ ij_original ];
-              break;
-            case REALSXP:
-              real_result[ ij_result ] = real_x[ ij_original ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(x, ij_original));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
+          set_result(result, x, ij_result, ij_original);
         }
 
         /* we are out of y-values, so fill merged result with NAs */
         for(j = 0; j < ncy; j++) { /* y-values */
           ij_result = i + (j+ncx) * num_rows;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
-              break;
-            case INTSXP:
-              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];*/
-              int_result[ ij_result ] = int_fill;
-              break;
-            case REALSXP:
-              REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(fill)[ 0 ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
+          set_result(result, fill, ij_result, 0);
         }
       }
       xp++;
@@ -516,52 +466,14 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       for(j = 0; j < ncx; j++) { /* x-values */
         ij_result = i + j * num_rows;
         ij_original = (xp-1) + j * nrx;
-        switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
-              break;
-            case INTSXP:
-              int_result[ ij_result ] = int_x[ ij_original ];
-              break;
-            case REALSXP:
-              real_result[ ij_result ] = real_x[ ij_original ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(x, ij_original));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
+        set_result(result, x, ij_result, ij_original);
       }
 
       /* copy y-values to result */
       for(j = 0; j < ncy; j++) { /* y-values */
         ij_result = i + (j+ncx) * num_rows;
         ij_original = (yp-1) + j * nry;
-        switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
-              break;
-            case INTSXP:
-              int_result[ ij_result ] = int_y[ ij_original ];
-              break;
-            case REALSXP:
-              real_result[ ij_result ] = real_y[ ij_original ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(y, ij_original));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
+        set_result(result, y, ij_result, ij_original);
       }
       xp++;
       yp++;
@@ -573,50 +485,11 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         for(j = 0; j < ncx; j++) { /* x-values */
           ij_result = i + j * num_rows;
           ij_original = (xp-1) + j * nrx;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
-              break;
-            case INTSXP:
-              int_result[ ij_result ] = int_x[ ij_original ];
-              break;
-            case REALSXP:
-              real_result[ ij_result ] = real_x[ ij_original ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(x, ij_original));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
+          set_result(result, x, ij_result, ij_original);
         }
         for(j = 0; j < ncy; j++) { /* y-values */
           ij_result = i + (j+ncx) * num_rows;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ]; 
-              break;
-            case INTSXP:
-              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ]; */
-              int_result[ ij_result ] = int_fill;
-              break;
-            case REALSXP:
-              REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(fill)[ 0 ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
+          set_result(result, fill, ij_result, 0);
         }
       }
       xp++;
@@ -628,55 +501,18 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         set_index_from_y(idx, i, yp-1);
         for(j = 0; j < ncx; j++) { /* x-values */
           ij_result = i + j * num_rows;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
-              break;
-            case INTSXP:
-              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];*/
-              int_result[ ij_result ] = int_fill;
-              break;
-            case REALSXP:
-              REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(fill)[ 0 ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
+          set_result(result, fill, ij_result, 0);
         }
         for(j = 0; j < ncy; j++) { /* y-values */
           ij_result = i + (j+ncx) * num_rows;
           ij_original = (yp-1) + j * nry;
-          switch( mode ) {
-              case LGLSXP:
-                LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
-                break;
-              case INTSXP:
-                int_result[ ij_result ] = int_y[ ij_original ];
-                break;
-              case REALSXP:
-                real_result[ ij_result ] = real_y[ ij_original ];
-                break;
-              case CPLXSXP:
-                COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];
-                break;
-              case STRSXP:
-                SET_STRING_ELT(result, ij_result, STRING_ELT(y, ij_original));
-                break;
-              default:
-                error("unsupported data type");
-                break;
-          }
+          set_result(result, y, ij_result, ij_original);
         }
       }
       yp++;
       if(!right_join) i--;
+    } else {
+      error("invalid comparison, should never happen");
     }
     }
   }
