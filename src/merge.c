@@ -188,17 +188,13 @@ SEXP do_merge_xts (SEXP x, SEXP y,
                    SEXP env,
                    int coerce)
 {
-  int nrx, ncx, nry, ncy, len;
+  int nrx, ncx, nry, ncy;
   int left_join, right_join;
   int i = 0, j = 0, xp = 1, yp = 1; /* x and y positions in index */
-  int mode;
   int ij_original, ij_result;
   int p = 0;
   SEXP xindex, yindex, index, result, attr, len_xindex;
   SEXP s, t, unique;
-
-  int *int_result=NULL, *int_x=NULL, *int_y=NULL, int_fill=0;
-  double *real_result=NULL, *real_x=NULL, *real_y=NULL;
 
   /* we do not check that 'x' is an xts object.  Dispatch and mergeXts
     (should) make this unecessary.  So we just get the index value 
@@ -233,8 +229,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     PROTECT(y = eval(s, env)); p++;
   } /* end conversion process */
 
-  mode = TYPEOF(x);
-
   if( isXts(y) ) {
     PROTECT( yindex = getAttrib(y, xts_IndexSymbol) ); p++;
   } else {
@@ -261,8 +255,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     ncy = 0;
     PROTECT(y = coerceVector(y, TYPEOF(x))); p++;
   }
-
-  len = nrx + nry;
 
   /* at present we are failing the call if the indexing is of
      mixed type.  This should probably instead simply coerce
@@ -313,11 +305,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       xi.i = INTEGER(xindex);
       yi.i = INTEGER(yindex);
       idx = &(xts_indices){ ri, xi, yi };
-
-      //idx = &(xts_indices){ NULL,
-      //  (xts_index)INTEGER(xindex),
-      //  (xts_index)INTEGER(yindex) };
-
       /* Check for NA before looping; logical ops on NA may yield surprising
        * results. Note that the NA_integer_ will appear in the last value of
        * the index because of sorting at the R level, even though NA_INTEGER
@@ -374,8 +361,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   if( TYPEOF(fill) != TYPEOF(x) ) {
     PROTECT( fill = coerceVector(fill, TYPEOF(x)) ); p++;
   } 
-
-  mode = TYPEOF(x);
 
   /* use pointers instead of function calls */
   set_result_func set_result = NULL;
@@ -458,62 +443,62 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       if(!left_join) i--;
     } else {
 
-    int comp = compare_indexes(idx, xp-1, yp-1);
-    /* matching index values copy all column values from x and y to results */
-    if (comp == 0) {
-      set_index_from_x(idx, i, xp-1);
-      /* copy x-values to result */
-      for(j = 0; j < ncx; j++) { /* x-values */
-        ij_result = i + j * num_rows;
-        ij_original = (xp-1) + j * nrx;
-        set_result(result, x, ij_result, ij_original);
-      }
-
-      /* copy y-values to result */
-      for(j = 0; j < ncy; j++) { /* y-values */
-        ij_result = i + (j+ncx) * num_rows;
-        ij_original = (yp-1) + j * nry;
-        set_result(result, y, ij_result, ij_original);
-      }
-      xp++;
-      yp++;
-    } else
-
-    if (comp < 0) {
-      if(left_join) {
+      int comp = compare_indexes(idx, xp-1, yp-1);
+      /* matching index values copy all column values from x and y to results */
+      if (comp == 0) {
         set_index_from_x(idx, i, xp-1);
+        /* copy x-values to result */
         for(j = 0; j < ncx; j++) { /* x-values */
           ij_result = i + j * num_rows;
           ij_original = (xp-1) + j * nrx;
           set_result(result, x, ij_result, ij_original);
         }
-        for(j = 0; j < ncy; j++) { /* y-values */
-          ij_result = i + (j+ncx) * num_rows;
-          set_result(result, fill, ij_result, 0);
-        }
-      }
-      xp++;
-      if(!left_join) i--;
-    } else
 
-    if (comp > 0) {
-      if(right_join) {
-        set_index_from_y(idx, i, yp-1);
-        for(j = 0; j < ncx; j++) { /* x-values */
-          ij_result = i + j * num_rows;
-          set_result(result, fill, ij_result, 0);
-        }
+        /* copy y-values to result */
         for(j = 0; j < ncy; j++) { /* y-values */
           ij_result = i + (j+ncx) * num_rows;
           ij_original = (yp-1) + j * nry;
           set_result(result, y, ij_result, ij_original);
         }
+        xp++;
+        yp++;
+      } else
+
+      if (comp < 0) {
+        if(left_join) {
+          set_index_from_x(idx, i, xp-1);
+          for(j = 0; j < ncx; j++) { /* x-values */
+            ij_result = i + j * num_rows;
+            ij_original = (xp-1) + j * nrx;
+            set_result(result, x, ij_result, ij_original);
+          }
+          for(j = 0; j < ncy; j++) { /* y-values */
+            ij_result = i + (j+ncx) * num_rows;
+            set_result(result, fill, ij_result, 0);
+          }
+        }
+        xp++;
+        if(!left_join) i--;
+      } else
+
+      if (comp > 0) {
+        if(right_join) {
+          set_index_from_y(idx, i, yp-1);
+          for(j = 0; j < ncx; j++) { /* x-values */
+            ij_result = i + j * num_rows;
+            set_result(result, fill, ij_result, 0);
+          }
+          for(j = 0; j < ncy; j++) { /* y-values */
+            ij_result = i + (j+ncx) * num_rows;
+            ij_original = (yp-1) + j * nry;
+            set_result(result, y, ij_result, ij_original);
+          }
+        }
+        yp++;
+        if(!right_join) i--;
+      } else {
+        error("invalid comparison, should never happen");
       }
-      yp++;
-      if(!right_join) i--;
-    } else {
-      error("invalid comparison, should never happen");
-    }
     }
   }
 
