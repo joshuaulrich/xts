@@ -72,6 +72,74 @@ int compare_indexes_int(xts_indices *idx, int xp, int yp) {
   return 0;
 }
 
+/* Calculate merge result index length */
+int merge_index_length(xts_indices*, compare_func, int, int, int, int);
+int merge_index_length(xts_indices *idx, compare_func cmpfn,
+    int nx, int ny, int ljoin, int rjoin)
+{
+  int i = 0, xi = 1, yi = 1;
+  int max_length = nx + ny + 1;
+
+  /* Special-case the inner join, since it is the default */
+  if (rjoin && ljoin) {
+    while ((xi + yi) <= max_length) {
+      if (xi > nx) {
+        i += (ny - yi + 1);
+        return i;
+      }
+      if (yi > ny) {
+        i += (nx - xi + 1);
+        return i;
+      } else {
+        int comp = cmpfn(idx, xi-1, yi-1);
+        i++;
+        if (comp == 0) {
+          /* INNER JOIN */
+          yi++;
+          xi++;
+        } else if (comp < 0) {
+          /* LEFT JOIN */
+          xi++;
+        } else if (comp > 0) {
+          /* RIGHT JOIN */
+          yi++;
+        } else
+          error("invalid comparison function output; should not happen");
+      }
+    }
+  } else
+  /* Run the generic algorithm */
+  while ((xi + yi) <= max_length) {
+    if (xi > nx) {
+      yi++;
+      if (rjoin) i++;
+    } else if (yi > ny) {
+      xi++;
+      if (ljoin) i++;
+    } else {
+      int comp = cmpfn(idx, xi-1, yi-1);
+      if (comp == 0) {
+        /* INNER JOIN  --- only result if all=FALSE */
+        yi++;
+        xi++;
+        i++;
+      } else
+      if (comp < 0) {
+        /* LEFT JOIN */
+        xi++;
+        if (ljoin) i++;
+      } else
+      if (comp > 0) {
+        /* RIGHT JOIN */
+        yi++;
+        if (rjoin) i++;
+      } else
+        error("invalid comparison function output; should not happen");
+    }
+  }
+  return i;
+}
+
 /* 
 
   This is a merge_join algorithm used to
@@ -249,36 +317,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
 
      We also check the index type and use the appropriate macros
    */
-  while( (xp + yp) <= (len + 1) ) {
-    if( xp > nrx ) {
-      yp++;
-      if(right_join) i++;
-    } else
-    if( yp > nry ) {
-      xp++;
-      if(left_join) i++;
-    } else {
-      int comp = compare_indexes(idx, xp-1, yp-1);
-
-      if( comp == 0 ) {
-        /* INNER JOIN  --- only result if all=FALSE */
-        yp++;
-        xp++;
-        i++;
-      } else
-      if( comp < 0 ) {
-        /* LEFT JOIN */
-        xp++;
-        if(left_join) i++;
-      } else
-      if( comp > 0 ) {
-        /* RIGHT JOIN */
-        yp++;
-        if(right_join) i++;
-      } else
-        error("Invalid index element comparison (should never happen)");
-    }
-  }
+  i = merge_index_length(idx, compare_indexes, nrx, nry, left_join, right_join);
 
   if(i == 0) {
     /* if no rows match, return an empty xts object, similar in style to zoo */
