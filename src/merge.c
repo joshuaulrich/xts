@@ -46,27 +46,27 @@ typedef struct xts_indices {
 
 /* Functions to set the result observation to either x or y */
 typedef void (*set_index_func)(xts_indices *, int, int);
-void set_index_from_x_double(xts_indices *idx, int rp, int xp) {
+static void set_index_from_x_double(xts_indices *idx, int rp, int xp) {
   idx->r.d[rp] = idx->x.d[xp];
 }
-void set_index_from_y_double(xts_indices *idx, int rp, int yp) {
+static void set_index_from_y_double(xts_indices *idx, int rp, int yp) {
   idx->r.d[rp] = idx->y.d[yp];
 }
-void set_index_from_x_int(xts_indices *idx, int rp, int xp) {
+static void set_index_from_x_int(xts_indices *idx, int rp, int xp) {
   idx->r.i[rp] = idx->x.i[xp];
 }
-void set_index_from_y_int(xts_indices *idx, int rp, int yp) {
+static void set_index_from_y_int(xts_indices *idx, int rp, int yp) {
   idx->r.i[rp] = idx->y.i[yp];
 }
 
 /* Functions to compare the indices for x and y */
 typedef int (*compare_func)(xts_indices *, int, int);
-int compare_indexes_double(xts_indices *idx, int xp, int yp) {
+static int compare_indexes_double(xts_indices *idx, int xp, int yp) {
   if (idx->x.d[xp] > idx->y.d[yp]) return  1;
   if (idx->x.d[xp] < idx->y.d[yp]) return -1;
   return 0;
 }
-int compare_indexes_int(xts_indices *idx, int xp, int yp) {
+static int compare_indexes_int(xts_indices *idx, int xp, int yp) {
   if (idx->x.i[xp] > idx->y.i[yp]) return  1;
   if (idx->x.i[xp] < idx->y.i[yp]) return -1;
   return 0;
@@ -74,23 +74,23 @@ int compare_indexes_int(xts_indices *idx, int xp, int yp) {
 
 /* Set merge result methods */
 typedef void (*set_result_func)(SEXP, SEXP, int, int);
-void set_result_dbl(SEXP _result, SEXP _x, int iresult, int ix)
+static void set_result_dbl(SEXP _result, SEXP _x, int iresult, int ix)
 {
   REAL(_result)[iresult] = REAL(_x)[ix];
 }
-void set_result_int(SEXP _result, SEXP _x, int iresult, int ix)
+static void set_result_int(SEXP _result, SEXP _x, int iresult, int ix)
 {
   INTEGER(_result)[iresult] = INTEGER(_x)[ix];
 }
-void set_result_lgl(SEXP _result, SEXP _x, int iresult, int ix)
+static void set_result_lgl(SEXP _result, SEXP _x, int iresult, int ix)
 {
   LOGICAL(_result)[iresult] = LOGICAL(_x)[ix];
 }
-void set_result_cplx(SEXP _result, SEXP _x, int iresult, int ix)
+static void set_result_cplx(SEXP _result, SEXP _x, int iresult, int ix)
 {
   COMPLEX(_result)[iresult] = COMPLEX(_x)[ix];
 }
-void set_result_str(SEXP _result, SEXP _x, int iresult, int ix)
+static void set_result_str(SEXP _result, SEXP _x, int iresult, int ix)
 {
   SET_STRING_ELT(_result, iresult, STRING_ELT(_x, ix));
 }
