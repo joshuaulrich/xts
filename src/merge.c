@@ -49,6 +49,33 @@ typedef struct xts_node {
   int out;
 } xts_node;
 
+/* dynamic array */
+typedef struct xts_node_darray {
+  size_t count;
+  xts_node values[];
+} xts_node_darray;
+
+int darray_insert(xts_node_darray **xnda, xts_node node) {
+  size_t x = *xnda ? xnda[0]->count : 0;
+  size_t y = (x == 0) ? 5 : x + 1;
+Rprintf("%d %d\n", x, y);
+  if ((x & y) == 0) {
+    int new_size = sizeof **xnda + (x + y) * sizeof xnda[0]->values[0];
+    xts_node_darray *temp = (xts_node_darray *)R_alloc(y, new_size);
+    if (!temp) {
+      return 0;
+    }
+    //if (x != 0)
+Rprintf("%d %d %d %d\n", xnda[0]->count, x, y, x * sizeof (*xnda)->values[0]);
+    memcpy((*xnda)->values, temp->values, x * sizeof (*xnda)->values[0]);
+    *xnda = temp;
+  }
+
+  xnda[0]->values[x] = node;
+  xnda[0]->count = y;
+  return 1;
+}
+
 /* Functions to compare the indices for x and y */
 typedef int (*compare_func)(xts_indices *, int, int);
 int compare_indexes_double(xts_indices *idx, int xp, int yp) {
@@ -223,8 +250,10 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   int nxnodes = 0;
   int nynodes = 0;
   // FIXME: use dynamic arrays
-  xts_node xnodes[2048];
-  xts_node ynodes[2048];
+  //xts_node xnodes[2048];
+  //xts_node ynodes[2048];
+  xts_node_darray *xnodes = NULL;
+  xts_node_darray *ynodes = NULL;
 
   int yrun = 0;
   int xrun = 0;
@@ -233,22 +262,20 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   xts_node ynode = {0, 0, 0};
   xp = 0; yp = 0;
   while (xp < nrx || yp < nry) {
-//Rprintf("%d %d %d\n", i, xp, yp);
 //{{{ end of arrays
     if (xp >= nrx) {
       // determine if run for X needs to terminate (set result)
       if (xrun) {
         xrun = 0;
         xnode.num = xp - xnode.beg;
-        xnodes[nxnodes++] = xnode;
-//Rprintf("xp > nrx; xrun TRUE->FALSE; xnode %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+        //xnodes[nxnodes++] = xnode;
+        darray_insert(&xnodes, xnode);
       }
       if (right_join) {
         // ensure first values are set for Y
         if (!yrun) {
           yrun = 1;
           ynode = (xts_node){yp, 0, i};
-//Rprintf("xp > nrx; yrun FALSE->TRUE; ynode %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
         }
         yp++;
         i++;
@@ -262,15 +289,14 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       if (yrun) {
         yrun = 0;
         ynode.num = yp - ynode.beg;
-        ynodes[nynodes++] = ynode;
-//Rprintf("yp > nry; yrun TRUE->FALSE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
+        //ynodes[nynodes++] = ynode;
+        darray_insert(&ynodes, ynode);
       }
       if (left_join) {
         // ensure first values are set for X
         if (!xrun) {
           xrun = 1;
           xnode = (xts_node){xp, 0, i};
-//Rprintf("yp > nry; xrun FALSE->TRUE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
         }
         xp++;
         i++;
@@ -288,13 +314,11 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         if (!xrun) {
           xrun = 1;
           xnode = (xts_node){xp, 0, i};
-//Rprintf("xp = yp; xrun FALSE->TRUE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
         }
         // ensure first values are set for Y
         if (!yrun) {
           yrun = 1;
           ynode = (xts_node){yp, 0, i};
-//Rprintf("xp = yp; yrun FALSE->TRUE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
         }
 
         // increment all values; none terminate
@@ -309,15 +333,14 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         if (yrun) {
           yrun = 0;
           ynode.num = yp - ynode.beg;
-          ynodes[nynodes++] = ynode;
-//Rprintf("xp < yp; yrun TRUE->FALSE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
+          //ynodes[nynodes++] = ynode;
+          darray_insert(&ynodes, ynode);
         }
         if (left_join) {
           // ensure first values are set for X
           if (!xrun) {
             xrun = 1;
             xnode = (xts_node){xp, 0, i};
-//Rprintf("xp < yp; xrun FALSE->TRUE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
           }
           i++;
         }
@@ -330,15 +353,14 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         if (xrun) {
           xrun = 0;
           xnode.num = xp - xnode.beg;
-          xnodes[nxnodes++] = xnode;
-//Rprintf("xp > yp; xrun TRUE->FALSE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+          //xnodes[nxnodes++] = xnode;
+          darray_insert(&xnodes, xnode);
         }
         if (right_join) {
           // ensure first values are set for Y
           if (!yrun) {
             yrun = 1;
             ynode = (xts_node){yp, 0, i};
-//Rprintf("xp > yp; yrun FALSE->TRUE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
           }
           i++;
         }
@@ -352,29 +374,24 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   if (xrun) {
     xrun = 0;
     xnode.num = xp - xnode.beg;
-    xnodes[nxnodes++] = xnode;
-//Rprintf("loop end; xrun TRUE->FALSE; xnode = %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+    //xnodes[nxnodes++] = xnode;
+    if (darray_insert(&xnodes, xnode)) {
+      Rprintf("success\n");
+    } else {
+      error("bad darray insert");
+    }
   }
   // determine if run for Y needs to terminate (set result)
   if (yrun) {
     yrun = 0;
     ynode.num = yp - ynode.beg;
-    ynodes[nynodes++] = ynode;
-//Rprintf("loop end; yrun TRUE->FALSE; ynode = %d %d %d\n", ynode.beg+1, ynode.out+1, ynode.num);
+    //ynodes[nynodes++] = ynode;
+    if (darray_insert(&ynodes, ynode)) {
+      Rprintf("success\n");
+    } else {
+      error("bad darray insert");
+    }
   }
-
-/*
-  int m;
-  xts_node mnode;
-  for (m = 0; m < nxnodes; m++) {
-    mnode = xnodes[m];
-    Rprintf("xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
-  }
-  for (m = 0; m < nynodes; m++) {
-    mnode = ynodes[m];
-    Rprintf("ynode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
-  }
-*/
 
   if(i == 0) {
     /* if no rows match, return an empty xts object, similar in style to zoo */
@@ -405,46 +422,48 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   int m;
   xts_node mnode;
   switch (TYPEOF(index)) {
-    case REALSXP:;
+    case REALSXP:
+      ;
       double *real_index = REAL(index);
       double *real_xindex = REAL(xindex);
       double *real_yindex = REAL(yindex);
+      nxnodes = xnodes->count;
+      nynodes = ynodes->count;
       for (m = 0; m < nxnodes; m++) {
-        mnode = xnodes[m];
-//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = xnodes[m];
+        mnode = xnodes->values[m];
         memcpy(real_index + mnode.out,
             real_xindex + mnode.beg,
             mnode.num * sizeof(double));
-//Rprintf("post-memcpy xnode = %f %f %d\n", real_index[mnode.out], real_xindex[mnode.beg], mnode.num);
       }
       for (m = 0; m < nynodes; m++) {
-        mnode = ynodes[m];
-//Rprintf("memcpy ynode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = ynodes[m];
+        mnode = ynodes->values[m];
         memcpy(real_index + mnode.out,
             real_yindex + mnode.beg,
             mnode.num * sizeof(double));
-//Rprintf("post-memcpy ynode = %f %f %d\n", real_index[mnode.out], real_yindex[mnode.beg], mnode.num);
       }
       break;
-    case INTSXP:;
+    case INTSXP:
+      ;
       int *int_index = INTEGER(index);
       int *int_xindex = INTEGER(xindex);
       int *int_yindex = INTEGER(yindex);
+      nxnodes = xnodes->count;
+      nynodes = ynodes->count;
       for (m = 0; m < nxnodes; m++) {
-        mnode = xnodes[m];
-//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = xnodes[m];
+        mnode = xnodes->values[m];
         memcpy(int_index + mnode.out,
             int_xindex + mnode.beg,
             mnode.num * sizeof(int));
-//Rprintf("post-memcpy xnode = %f %f %d\n", int_index[mnode.out], int_xindex[mnode.beg], mnode.num);
       }
       for (m = 0; m < nynodes; m++) {
-        mnode = ynodes[m];
-//Rprintf("memcpy ynode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = ynodes[m];
+        mnode = ynodes->values[m];
         memcpy(int_index + mnode.out,
             int_yindex + mnode.beg,
             mnode.num * sizeof(int));
-//Rprintf("post-memcpy ynode = %f %f %d\n", int_index[mnode.out], int_yindex[mnode.beg], mnode.num);
       }
       break;
     default:
@@ -471,30 +490,28 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       int *int_result = INTEGER(result);
       for (i = 0; i < result_obs; i++) int_result[i] = int_fill;
 
+      nxnodes = xnodes->count;
+      nynodes = ynodes->count;
       for (m = 0; m < nxnodes; m++) {
-        mnode = xnodes[m];
-//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = xnodes[m];
+        mnode = xnodes->values[m];
         for(j = 0; j < ncx; j++) { /* x-values */
           ij_result = j * num_rows;
           ij_original = j * nrx;
-//Rprintf(" pre-memcpy xnode = %f %f %d\n", int_result[mnode.out + ij_result], int_x[mnode.beg + ij_original], mnode.num);
           memcpy(int_result + mnode.out + ij_result,
               int_x + mnode.beg + ij_original,
               mnode.num * sizeof(int));
-//Rprintf("post-memcpy xnode = %f %f %d\n", int_result[mnode.out + ij_result], int_x[mnode.beg + ij_original], mnode.num);
         }
       }
       for (m = 0; m < nynodes; m++) {
-        mnode = ynodes[m];
-//Rprintf("memcpy ynode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = ynodes[m];
+        mnode = ynodes->values[m];
         for(j = 0; j < ncy; j++) { /* y-values */
           ij_result = (j+ncx) * num_rows;
           ij_original = j * nry;
-//Rprintf(" pre-memcpy ynode = %f %f %d\n", int_result[mnode.out + ij_result], int_y[mnode.beg + ij_original], mnode.num);
           memcpy(int_result + mnode.out + ij_result,
               int_y + mnode.beg + ij_original,
               mnode.num * sizeof(int));
-//Rprintf("post-memcpy ynode = %f %f %d\n", int_result[mnode.out + ij_result], int_y[mnode.beg + ij_original], mnode.num);
         }
       }
       break;
@@ -506,30 +523,28 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       double *real_result = REAL(result);
       for (i = 0; i < result_obs; i++) real_result[i] = real_fill;
 
+      nxnodes = xnodes->count;
+      nynodes = ynodes->count;
       for (m = 0; m < nxnodes; m++) {
-        mnode = xnodes[m];
-//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = xnodes[m];
+        mnode = xnodes->values[m];
         for(j = 0; j < ncx; j++) { /* x-values */
           ij_result = j * num_rows;
           ij_original = j * nrx;
-//Rprintf(" pre-memcpy xnode = %f %f %d\n", real_result[mnode.out + ij_result], real_x[mnode.beg + ij_original], mnode.num);
           memcpy(real_result + mnode.out + ij_result,
               real_x + mnode.beg + ij_original,
               mnode.num * sizeof(double));
-//Rprintf("post-memcpy xnode = %f %f %d\n", real_result[mnode.out + ij_result], real_x[mnode.beg + ij_original], mnode.num);
         }
       }
       for (m = 0; m < nynodes; m++) {
-        mnode = ynodes[m];
-//Rprintf("memcpy ynode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = ynodes[m];
+        mnode = ynodes->values[m];
         for(j = 0; j < ncy; j++) { /* y-values */
           ij_result = (j+ncx) * num_rows;
           ij_original = j * nry;
-//Rprintf(" pre-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
           memcpy(real_result + mnode.out + ij_result,
               real_y + mnode.beg + ij_original,
               mnode.num * sizeof(double));
-//Rprintf("post-memcpy ynode = %f %f %d\n", real_result[mnode.out + ij_result], real_y[mnode.beg + ij_original], mnode.num);
         }
       }
       break;
@@ -541,30 +556,28 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       int *lgl_result = LOGICAL(result);
       for (i = 0; i < result_obs; i++) lgl_result[i] = lgl_fill;
 
+      nxnodes = xnodes->count;
+      nynodes = ynodes->count;
       for (m = 0; m < nxnodes; m++) {
-        mnode = xnodes[m];
-//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = xnodes[m];
+        mnode = xnodes->values[m];
         for(j = 0; j < ncx; j++) { /* x-values */
           ij_result = j * num_rows;
           ij_original = j * nrx;
-//Rprintf(" pre-memcpy xnode = %f %f %d\n", lgl_result[mnode.out + ij_result], lgl_x[mnode.beg + ij_original], mnode.num);
           memcpy(lgl_result + mnode.out + ij_result,
               lgl_x + mnode.beg + ij_original,
               mnode.num * sizeof(int));
-//Rprintf("post-memcpy xnode = %f %f %d\n", lgl_result[mnode.out + ij_result], lgl_x[mnode.beg + ij_original], mnode.num);
         }
       }
       for (m = 0; m < nynodes; m++) {
-        mnode = ynodes[m];
-//Rprintf("memcpy ynode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = ynodes[m];
+        mnode = ynodes->values[m];
         for(j = 0; j < ncy; j++) { /* y-values */
           ij_result = (j+ncx) * num_rows;
           ij_original = j * nry;
-//Rprintf(" pre-memcpy ynode = %f %f %d\n", lgl_result[mnode.out + ij_result], lgl_y[mnode.beg + ij_original], mnode.num);
           memcpy(lgl_result + mnode.out + ij_result,
               lgl_y + mnode.beg + ij_original,
               mnode.num * sizeof(int));
-//Rprintf("post-memcpy ynode = %f %f %d\n", lgl_result[mnode.out + ij_result], lgl_y[mnode.beg + ij_original], mnode.num);
         }
       }
       break;
@@ -576,30 +589,28 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       Rcomplex *clpx_result = COMPLEX(result);
       for (i = 0; i < result_obs; i++) clpx_result[i] = clpx_fill;
 
+      nxnodes = xnodes->count;
+      nynodes = ynodes->count;
       for (m = 0; m < nxnodes; m++) {
-        mnode = xnodes[m];
-//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = xnodes[m];
+        mnode = xnodes->values[m];
         for(j = 0; j < ncx; j++) { /* x-values */
           ij_result = j * num_rows;
           ij_original = j * nrx;
-//Rprintf(" pre-memcpy xnode = %f %f %d\n", clpx_result[mnode.out + ij_result], clpx_x[mnode.beg + ij_original], mnode.num);
           memcpy(clpx_result + mnode.out + ij_result,
               clpx_x + mnode.beg + ij_original,
               mnode.num * 2 * sizeof(double));
-//Rprintf("post-memcpy xnode = %f %f %d\n", clpx_result[mnode.out + ij_result], clpx_x[mnode.beg + ij_original], mnode.num);
         }
       }
       for (m = 0; m < nynodes; m++) {
-        mnode = ynodes[m];
-//Rprintf("memcpy xnode[%d] = {%d %d %d}\n", m, mnode.beg, mnode.out, mnode.num);
+        //mnode = ynodes[m];
+        mnode = ynodes->values[m];
         for(j = 0; j < ncy; j++) { /* y-values */
           ij_result = (j+ncx) * num_rows;
           ij_original = j * nry;
-//Rprintf(" pre-memcpy ynode = %f %f %d\n", clpx_result[mnode.out + ij_result], clpx_y[mnode.beg + ij_original], mnode.num);
           memcpy(clpx_result + mnode.out + ij_result,
               clpx_y + mnode.beg + ij_original,
               mnode.num * 2 * sizeof(double));
-//Rprintf("post-memcpy ynode = %f %f %d\n", clpx_result[mnode.out + ij_result], clpx_y[mnode.beg + ij_original], mnode.num);
         }
       }
       break;
@@ -608,8 +619,11 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         SET_STRING_ELT(result, i, STRING_ELT(fill, 0));
       }
       int n, result_n, original_n;
+      nxnodes = xnodes->count;
+      nynodes = ynodes->count;
       for (m = 0; m < nxnodes; m++) {
-        mnode = xnodes[m];
+        //mnode = xnodes[m];
+        mnode = xnodes->values[m];
         for (j = 0; j < ncx; j++) { /* x-values */
           ij_result = mnode.out + j * num_rows;
           ij_original = mnode.beg + j * nrx;
@@ -621,7 +635,8 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         }
       }
       for (m = 0; m < nynodes; m++) {
-        mnode = ynodes[m];
+        //mnode = ynodes[m];
+        mnode = ynodes->values[m];
         for (j = 0; j < ncy; j++) { /* y-values */
           ij_result = mnode.out + (j+ncx) * num_rows;
           ij_original = mnode.beg + j * nry;
