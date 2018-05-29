@@ -41,9 +41,16 @@ SEXP make_unique (SEXP index, SEXP eps_) {
   newindex_real = REAL(newindex);
   memcpy(REAL(newindex), REAL(index), len * sizeof(double));
 
+  double last_index = newindex_real[0];
+  int warn_once = 1;
   for(i=1; i<len; i++) {
-    if(newindex_real[i] <= newindex_real[i-1])
+    if(newindex_real[i] <= newindex_real[i-1]) {
+      if(warn_once && last_index != newindex_real[i]) {
+        warn_once = 0;
+        warning("index value is unique but will be replaced; it is less than the cumulative epsilon for the preceding duplicate index values");
+      }
       newindex_real[i] = newindex_real[i-1] + eps;
+    }
   }
 
   UNPROTECT(P);
