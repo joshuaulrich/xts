@@ -21,25 +21,21 @@
 
 
 #include <R.h>
-#include <R.h>
 #include "xts.h" /* for coredata_xts */
 
-SEXP make_unique (SEXP index, SEXP eps_) {
-  SEXP newindex;
-  int P=0, len, i;
-  len=length(index);
-
+SEXP make_unique (SEXP index_, SEXP eps_) {
+  int P = 0, i;
+  int len = length(index_);
   double eps = asReal(eps_);
-  double *newindex_real;
 
-  if( TYPEOF(index) == INTSXP) {
-    PROTECT(index = coerceVector(index,REALSXP)); P++;
+  if (TYPEOF(index_) == INTSXP) {
+    PROTECT(index_ = coerceVector(index_, REALSXP)); P++;
   }
   
-  PROTECT(newindex = allocVector(REALSXP, length(index))); P++;
-  copyAttributes(index, newindex);
-  newindex_real = REAL(newindex);
-  memcpy(REAL(newindex), REAL(index), len * sizeof(double));
+  SEXP newindex_ = PROTECT(allocVector(REALSXP, len)); P++;
+  copyAttributes(index_, newindex_);
+  double *newindex_real = REAL(newindex_);
+  memcpy(REAL(newindex_), REAL(index_), len * sizeof(double));
 
   double last_index = newindex_real[0];
   int warn_once = 1;
@@ -54,7 +50,7 @@ SEXP make_unique (SEXP index, SEXP eps_) {
   }
 
   UNPROTECT(P);
-  return(newindex);
+  return newindex_;
 }
 
 SEXP make_index_unique (SEXP x_, SEXP eps_) {
