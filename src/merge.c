@@ -23,6 +23,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <Rdefines.h>
+#include <stdint.h>
 #include "xts.h"
 
 /*
@@ -31,10 +32,11 @@
  * generic algorithm.
  */
 
-/* A single xts index, either double or int */
+/* A single xts index, either double, int32, or int64 */
 typedef union xts_index {
   double *d;
-  int *i;
+  int64_t *l;
+  int32_t *i;
 } xts_index;
 
 /* The two xts indices involved in the merge */
@@ -88,6 +90,45 @@ int compare_indexes_int(xts_indices *idx, int xp, int yp) {
   if (idx->x.i[xp] < idx->y.i[yp]) return -1;
   return 0;
 }
+int compare_indexes_long(xts_indices *idx, int xp, int yp) {
+  if (idx->x.l[xp] > idx->y.l[yp]) return  1;
+  if (idx->x.l[xp] < idx->y.l[yp]) return -1;
+  return 0;
+}
+
+// FIXME: use dynamic arrays: https://stackoverflow.com/a/46351960
+
+struct xts_node_darray {
+   size_t count;
+   size_t nleft;
+   xts_node *values;
+};
+
+static int
+insert(struct xts_node_darray **darray, xts_node value)
+{
+  if (!*darray) {
+    // initialize
+    struct xts_node_darray *temp = NULL;
+    temp->values = (xts_node *)R_alloc(sizeof(xts_node), 1024);
+    temp->nleft = 1023;
+    darray[0] = temp;
+    return 1;
+  } else if (!(*darray)->nleft) {
+    // reallocate
+    size_t n = (*darray)->count;
+    int node_size = sizeof(xts_node);
+    xts_node *new_nodes = (xts_node *)R_alloc(node_size, n * 2);
+    memcpy((*darray)->values, new_nodes, node_size);
+    (*darray)->values = new_nodes;
+  }
+  // insert
+  (*darray)->values[(*darray)->count] = value;
+  (*darray)->count++;
+  (*darray)->nleft--;
+  return 1;
+}
+
 
 /* 
 
@@ -204,6 +245,20 @@ SEXP do_merge_xts (SEXP x, SEXP y,
    */
   compare_func compare_indexes = NULL;
   xts_indices *idx = NULL;
+//  if (getAttrib(xindex, R_ClassSymbol) == mkString("datetime")) {
+//    compare_indexes = compare_indexes_long;
+//    xts_index xd, yd;
+//    xd.l = (int64_t *)REAL(xindex);
+//    yd.l = (int64_t *)REAL(yindex);
+//    idx = &(xts_indices){ xd, yd };
+//    /* Check for illegal values before looping. Due to ordered index,
+//     * -Inf must be first, while NA, Inf, and NaN must be last. */
+//    //if (!R_FINITE(xd.d[0]) || !R_FINITE(xd.d[nrx-1])
+//    // || !R_FINITE(yd.d[0]) || !R_FINITE(yd.d[nry-1])) {
+//    //  error("'index' cannot contain 'NA', 'NaN', or '+/-Inf'");
+//    //}
+//
+//  } else
   switch (TYPEOF(xindex)) {
     case REALSXP:
       compare_indexes = compare_indexes_double;
@@ -249,7 +304,30 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   
   int nxnodes = 0;
   int nynodes = 0;
-  // FIXME: use dynamic arrays
+
+  // FIXME: use dynamic arrays: https://stackoverflow.com/a/46351960
+  /*
+   * struct int_list {
+   *    size_t count;
+   *    int value[];
+   * };
+   * int push_back(struct int_list **fubar, int value) {
+   *    size_t x = *fubar ? fubar[0]->size : 0
+   *         , y = x + 1;
+   *
+   *    if ((x & y) == 0) {
+   *        void *temp = realloc(*fubar, sizeof **fubar
+   *                                   + (x + y) * sizeof fubar[0]->value[0]);
+   *        if (!temp) { return 1; }
+   *        *fubar = temp; // or, if you like, `fubar[0] = temp;`
+   *    }
+   *
+   *    fubar[0]->value[x] = value;
+   *    fubar[0]->count = y;
+   *    return 0;
+   * }
+   * struct int_list *array = NULL;
+   */
   //xts_node xnodes[2048];
   //xts_node ynodes[2048];
   xts_node_darray *xnodes = NULL;
@@ -260,6 +338,12 @@ SEXP do_merge_xts (SEXP x, SEXP y,
 
   xts_node xnode = {0, 0, 0};
   xts_node ynode = {0, 0, 0};
+
+  struct xts_node_darray *xnodesda;
+  struct xts_node_darray *ynodesda;
+  insert(&xnodesda, xnode);
+  insert(&ynodesda, ynode);
+
   xp = 0; yp = 0;
   while (xp < nrx || yp < nry) {
 //{{{ end of arrays
@@ -268,8 +352,15 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       if (xrun) {
         xrun = 0;
         xnode.num = xp - xnode.beg;
-        //xnodes[nxnodes++] = xnode;
-        darray_insert(&xnodes, xnode);
+        xnodes[nxnodes++] = xnode;
+
+insert(&xnodesda, xnode);
+size_t ct = xnodesda->count;
+xts_node nd = xnodesda->values[ct-1];
+Rprintf("%d %d %d %d %d\n", ct, xnodesda->nleft, nd.beg+1, nd.out+1, nd.num);
+        xnodes[nxnodes++] = xnode;
+Rprintf("xp > nrx; xrun TRUE->FALSE; xnode %d %d %d\n", xnode.beg+1, xnode.out+1, xnode.num);
+
       }
       if (right_join) {
         // ensure first values are set for Y
@@ -289,8 +380,8 @@ SEXP do_merge_xts (SEXP x, SEXP y,
       if (yrun) {
         yrun = 0;
         ynode.num = yp - ynode.beg;
-        //ynodes[nynodes++] = ynode;
-        darray_insert(&ynodes, ynode);
+        ynodes[nynodes++] = ynode;
+        //darray_insert(&ynodes, ynode);
       }
       if (left_join) {
         // ensure first values are set for X
@@ -333,8 +424,8 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         if (yrun) {
           yrun = 0;
           ynode.num = yp - ynode.beg;
-          //ynodes[nynodes++] = ynode;
-          darray_insert(&ynodes, ynode);
+          ynodes[nynodes++] = ynode;
+          //darray_insert(&ynodes, ynode);
         }
         if (left_join) {
           // ensure first values are set for X
@@ -353,8 +444,8 @@ SEXP do_merge_xts (SEXP x, SEXP y,
         if (xrun) {
           xrun = 0;
           xnode.num = xp - xnode.beg;
-          //xnodes[nxnodes++] = xnode;
-          darray_insert(&xnodes, xnode);
+          xnodes[nxnodes++] = xnode;
+          //darray_insert(&xnodes, xnode);
         }
         if (right_join) {
           // ensure first values are set for Y
@@ -374,23 +465,23 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   if (xrun) {
     xrun = 0;
     xnode.num = xp - xnode.beg;
-    //xnodes[nxnodes++] = xnode;
-    if (darray_insert(&xnodes, xnode)) {
-      Rprintf("success\n");
-    } else {
-      error("bad darray insert");
-    }
+    xnodes[nxnodes++] = xnode;
+    //if (darray_insert(&xnodes, xnode)) {
+    //  Rprintf("success\n");
+    //} else {
+    //  error("bad darray insert");
+    //}
   }
   // determine if run for Y needs to terminate (set result)
   if (yrun) {
     yrun = 0;
     ynode.num = yp - ynode.beg;
-    //ynodes[nynodes++] = ynode;
-    if (darray_insert(&ynodes, ynode)) {
-      Rprintf("success\n");
-    } else {
-      error("bad darray insert");
-    }
+    ynodes[nynodes++] = ynode;
+    //if (darray_insert(&ynodes, ynode)) {
+    //  Rprintf("success\n");
+    //} else {
+    //  error("bad darray insert");
+    //}
   }
 
   if(i == 0) {
