@@ -1,3 +1,27 @@
+Changed in xts 0.10-3:
+
+o  Fix make.index.unique() to always return a unique and sorted index. Thanks
+   to Chris Katsulis for the report and example (#241).
+
+o  Add window.xts() method and completely refactor the internal binary search
+   function it depends on. Thanks to Corwin Joy for the PR, tests, review, and
+   patience (#100, #240).
+
+o  Add details to plot.xts() parameters that are periodicity, now that RStudio
+   has argument completion. Thanks to Evelyn Mitchell for the PR (#154).
+
+o  Avoid partial name matches from parse.side() (inside .parseISO8601())
+   results that are passed to firstof() and lastof(). Thanks to @gp2x for the
+   report and the patch (#231).
+
+o  na.locf.xts() now loops over columns of multivariate objects in C code,
+   instead of in R. This should improve speed and memory performance. Thanks to
+   Chris Katsulis and Tom Andrews for their reports and patches (#232, #233,
+   #234, #235, #237).
+
+o  Change plot.xts() default 'pch = 0' (rectangles) to 'pch = 1' (circles) so
+   it looks more like base and zoo plots (#203).
+
 Changed in xts 0.10-2:
 
 o  na.locf.xts() and na.omit.xts() now support character xts objects. Thanks to
