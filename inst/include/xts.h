@@ -27,7 +27,7 @@ INTERNAL SYMBOLS
 */
 SEXP xts_IndexSymbol;
 SEXP xts_ClassSymbol;
-SEXP xts_IndexFormatSymbol;
+SEXP xts_IndexTformatSymbol;
 SEXP xts_IndexTclassSymbol;
 SEXP xts_IndexTzoneSymbol;
 

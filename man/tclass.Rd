@@ -1,10 +1,12 @@
 \name{tclass}
 \alias{tclass}
+\alias{tformat}
 \alias{indexClass}
 \alias{indexFormat}
 \alias{convertIndex}
 \alias{indexClass<-}
 \alias{tclass<-}
+\alias{tformat<-}
 \alias{indexFormat<-}
 \alias{index.xts}
 \alias{index<-.xts}
@@ -40,8 +42,8 @@ indexClass(x) <- value
 tclass(x, ...)
 tclass(x) <- value
 
-indexFormat(x)
-indexFormat(x) <- value
+tformat(x)
+tformat(x) <- value
 
 convertIndex(x,value)
 
@@ -97,11 +99,11 @@ The specified value for
 one of the following: \code{Date}, \code{POSIXct},
 \code{chron}, \code{yearmon}, \code{yearqtr} or \code{timeDate}.
 
-\code{indexFormat} only manages the manner in which the object
+\code{tformat} only manages the manner in which the object
 is displayed via \code{print} (also called automatically
 when the object is returned) and in conversion to other
 classes such as \code{matrix}.  The valid values
-for indexFormat are the same for \code{format.POSIXct},
+for \code{tformat} are the same for \code{format.POSIXct},
 as this is the function that does the conversion internally.
 
 \code{convertIndex} returns a modified \code{xts} object, and
@@ -121,7 +123,7 @@ x <- xts(1:length(x), x)
 x[.indexhour(x) \%in\% c(8,15) & .indexmin(x) \%in\% c(0:5,57:59)]
 
 # change the index format
-indexFormat(x) <- "\%Y-\%b-\%d \%H:\%M:\%OS3"
+tformat(x) <- "\%Y-\%b-\%d \%H:\%M:\%OS3"
 head(x)
 
 }

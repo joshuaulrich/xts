@@ -29,7 +29,7 @@ Going forward from 0.7-4, the TZ variable is now
 also stored in the index itself, in the \code{tzone}
 attribute. This is to facilitate the transition to
 removing the xts-specific attributes referenced by
-\code{indexTZ}, \code{indexFormat}, and \code{indexClass}.
+\code{tzone}, \code{indexFormat}, and \code{indexClass}.
 These accessor functions will continue to behave the
 same under the new internals. Additionally, there is a new
 getter/setter method with \code{tzone} and \code{tzone<-}.

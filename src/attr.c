@@ -45,7 +45,6 @@ SEXP do_xtsAttributes(SEXP x)
   for( /* a=ATTRIB(a) */; a != R_NilValue; a = CDR(a) ) {
     if(TAG(a) != xts_IndexSymbol &&
        TAG(a) != xts_ClassSymbol &&
-       TAG(a) != xts_IndexFormatSymbol &&
        TAG(a) != R_ClassSymbol &&
        TAG(a) != R_DimSymbol &&
        TAG(a) != R_DimNamesSymbol &&
@@ -88,7 +87,6 @@ SEXP do_xtsCoreAttributes(SEXP x)
   */
   for( /* a=ATTRIB(a) */; a != R_NilValue; a = CDR(a) ) {
     if(TAG(a) == xts_ClassSymbol ||
-       TAG(a) == xts_IndexFormatSymbol ||
        TAG(a) == R_ClassSymbol)
     {
       SET_VECTOR_ELT(values, i, CAR(a));
@@ -175,7 +173,7 @@ SEXP ca (SEXP x, SEXP y)
 }
 
 SEXP add_xtsCoreAttributes(SEXP _x, SEXP _index, SEXP _tzone,
-        SEXP _tclass, SEXP _class, SEXP _indexFormat)
+        SEXP _tclass, SEXP _class, SEXP _tformat)
 {
   int P=0;
   if(MAYBE_SHARED(_index)) {
@@ -184,6 +182,7 @@ SEXP add_xtsCoreAttributes(SEXP _x, SEXP _index, SEXP _tzone,
   /* add tzone and tclass to index */
   setAttrib(_index, xts_IndexTclassSymbol, _tclass);
   setAttrib(_index, xts_IndexTzoneSymbol, _tzone);
+  setAttrib(_index, xts_IndexTformatSymbol, _tformat);
 
   if(MAYBE_SHARED(_x)) {
     PROTECT(_x = duplicate(_x)); P++;
@@ -191,11 +190,6 @@ SEXP add_xtsCoreAttributes(SEXP _x, SEXP _index, SEXP _tzone,
   }
   setAttrib(_x, xts_IndexSymbol, _index);              /* index */
   setAttrib(_x, R_ClassSymbol, _class);                /* class */
-
-  /* .indexFormat is only here because it's set in Ops.xts
-   * This should go away once this attribute is on the index */
-  if(_indexFormat != R_NilValue)
-    setAttrib(_x, xts_IndexFormatSymbol, _indexFormat);
 
   UNPROTECT(P);
   return(_x);

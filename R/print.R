@@ -23,7 +23,7 @@
 function(x,fmt,...) {
   check.TZ(x)
   if(missing(fmt)) 
-    fmt <- indexFormat(x)
+    fmt <- tformat(x)
   if(is.null(fmt))
     fmt <- TRUE
   

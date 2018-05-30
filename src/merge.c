@@ -984,7 +984,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   setAttrib(result, xts_IndexSymbol, index);
   if(LOGICAL(retclass)[0])
     setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
-  setAttrib(result, xts_IndexFormatSymbol, getAttrib(x, xts_IndexFormatSymbol));
   setAttrib(result, xts_ClassSymbol, getAttrib(x, xts_ClassSymbol));
   copy_xtsAttributes(x, result);
 
