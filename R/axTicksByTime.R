@@ -27,26 +27,23 @@ axTicksByTime <- function(x, ticks.on='auto', k=1,
     
     tick.opts <- c("years", "months", "weeks", "days", "hours", 
         "minutes", "seconds")
-    tick.k.opts <- c(10, 5, 2, 1, 6, 1, 1, 1, 4, 2, 1, 30, 15, 
-        1, 1)
     if (ticks.on %in% tick.opts) {
         cl <- ticks.on[1]
         ck <- k
     }   
     else {
-        tick.opts <- paste(rep(tick.opts, c(4, 2, 1, 1, 3, 3,  
-            1)), tick.k.opts)
+        tick.k.opts <- c(10, 5, 2, 1, 6, 1, 1, 1, 4, 2, 1, 30, 15, 1, 1)
+        tick.opts <- rep(tick.opts, c(4, 2, 1, 1, 3, 3, 1))
         is <- structure(rep(0,length(tick.opts)),.Names=tick.opts)
         for(i in 1:length(tick.opts)) {
-          y <- strsplit(tick.opts[i],' ')[[1]]
-          ep <-endpoints(x,y[1],as.numeric(y[2]))
+          ep <- endpoints(x, tick.opts[i], tick.k.opts[i])
           is[i] <- length(ep) -1
           if(is[i] > lt) 
             break
         }   
-        nms <- rev(names(is)[which(is > gt & is < lt)])[1]
-        cl <- strsplit(nms, " ")[[1]][1]
-        ck <- as.numeric(strsplit(nms, " ")[[1]][2])
+        loc <- rev(which(is > gt & is < lt))[1L]
+        cl <- tick.opts[loc]
+        ck <- tick.k.opts[loc]
     }   
 
     if (is.null(cl) || is.na(cl) || is.na(ck)) {

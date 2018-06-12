@@ -18,61 +18,6 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-axTicksByTime2 <- function (x, ticks.on = "auto", k = 1, labels = TRUE, 
-                            format.labels = TRUE,  ends = TRUE, 
-                            gt = 2, lt = 25){
-  if (timeBased(x)) 
-    x <- xts(rep(1, length(x)), x)
-
-  tick.opts <- c("years", "months", "weeks", "days", "hours", "minutes", 
-                 "seconds", "milliseconds", "microseconds")
-  tick.k.opts <- rep(1, length(tick.opts))
-  if (ticks.on %in% tick.opts) {
-    cl <- ticks.on[1]
-    ck <- k
-  }
-  else {
-    tick.opts <- paste(tick.opts, tick.k.opts)
-    is <- structure(rep(0, length(tick.opts)), .Names = tick.opts)
-    for (i in 1:length(tick.opts)) {
-      y <- strsplit(tick.opts[i], " ")[[1]]
-      ep <- endpoints(x, y[1], as.numeric(y[2]))
-      if(i>1 && is[i-1] == length(ep)-1)
-        break
-      is[i] <- length(ep) - 1
-      if (is[i] > lt)
-        break
-    }
-    nms <- rev(names(is)[which(is > gt & is < lt)])[1]
-    cl <- strsplit(nms, " ")[[1]][1]
-    ck <- as.numeric(strsplit(nms, " ")[[1]][2])
-  }
-  if (is.na(cl) || is.na(ck) || is.null(cl)) {
-    return(c(1,NROW(x)))
-  }
-  else ep <- endpoints(x, cl, ck)
-  if (ends) 
-    ep <- ep + c(rep(1, length(ep) - 1), 0)
-  if (labels) {
-    if (is.logical(format.labels) || is.character(format.labels)) {
-      unix <- ifelse(.Platform$OS.type == "unix", TRUE, FALSE)
-      fmt <- switch(cl,
-                    "years"="%Y",
-                    "months"="%b",
-                    "days"="%d",
-                    "weeks"="W%W",
-                    "hours"="%H:%M",
-                    "minutes"="%H:%M:%S",
-                    "seconds"="%H:%M:%S")
-      if(ndays(x) > 1 && cl %in% c("hours","minutes","seconds")) {
-        fmt <- paste("%b-%d",fmt)
-      }
-      names(ep) <- format(index(x)[ep], fmt)
-    }
-    else names(ep) <- as.character(index(x)[ep])
-  }
-  ep
-}
 
 current.xts_chob <- function() invisible(get(".xts_chob",.plotxtsEnv))
 
@@ -389,7 +334,7 @@ plot.xts <- function(x,
   cs$set_frame(1,FALSE)
   
   # compute the x-axis ticks for the grid
-  cs$add(expression(atbt <- axTicksByTime2(xdata[xsubset], ticks.on=grid.ticks.on),
+  cs$add(expression(atbt <- axTicksByTime(xdata[xsubset], ticks.on=grid.ticks.on),
                     segments(xycoords$x[atbt],
                              get_ylim()[[2]][1],
                              xycoords$x[atbt],
@@ -560,7 +505,7 @@ plot.xts <- function(x,
                                      y_grid_lines(ylim), 
                                      col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)),
                  # x-axis grid lines
-                 expression(atbt <- axTicksByTime2(xdata[xsubset], ticks.on=grid.ticks.on),
+                 expression(atbt <- axTicksByTime(xdata[xsubset], ticks.on=grid.ticks.on),
                             segments(xycoords$x[atbt],
                                      ylim[1],
                                      xycoords$x[atbt],
@@ -667,7 +612,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     xDataSubset <- xdata[xsubset]
     if(all(is.na(on))){
       # Add x-axis grid lines
-      atbt <- axTicksByTime2(xDataSubset, ticks.on=x$Env$grid.ticks.on)
+      atbt <- axTicksByTime(xDataSubset, ticks.on=x$Env$grid.ticks.on)
       segments(x$Env$xycoords$x[atbt],
                par("usr")[3],
                x$Env$xycoords$x[atbt],
@@ -808,7 +753,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
 
     if(all(is.na(on))){
       # Add x-axis grid lines
-      atbt <- axTicksByTime2(xdata[xsubset], ticks.on=x$Env$grid.ticks.on)
+      atbt <- axTicksByTime(xdata[xsubset], ticks.on=x$Env$grid.ticks.on)
       segments(x$Env$xycoords$x[atbt],
                par("usr")[3],
                x$Env$xycoords$x[atbt],
@@ -1030,7 +975,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     if(is.null(col)) col <- x$Env$theme$col
     if(all(is.na(on))){
       # Add x-axis grid lines
-      atbt <- axTicksByTime2(xdata[xsubset], ticks.on=x$Env$grid.ticks.on)
+      atbt <- axTicksByTime(xdata[xsubset], ticks.on=x$Env$grid.ticks.on)
       segments(x$Env$xycoords$x[atbt],
                par("usr")[3],
                x$Env$xycoords$x[atbt],
