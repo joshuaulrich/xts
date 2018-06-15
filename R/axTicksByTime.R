@@ -25,13 +25,16 @@ axTicksByTime <- function(x, ticks.on='auto', k=1,
     # if a vector of times/dates, convert to dummy xts object
     if(timeBased(x)) x <- xts(rep(1,length(x)),x)
     
+    ticks.on <- ticks.on[1L]
+    # special-case for "secs" and "mins"
+    if(ticks.on == "secs" || ticks.on == "mins")
+      ticks.on <- substr(ticks.on, 1L, 3L)
+
     tick.opts <- c("years", "months", "weeks", "days", "hours", 
         "minutes", "seconds")
-    if (ticks.on %in% tick.opts) {
-        cl <- ticks.on[1]
-        ck <- k
-    }   
-    else {
+    ticks.on <- match.arg(ticks.on, c("auto", tick.opts))
+
+    if (ticks.on == "auto") {
         tick.k.opts <- c(10, 5, 2, 1, 6, 1, 1, 1, 4, 2, 1, 30, 15, 1, 1)
         tick.opts <- rep(tick.opts, c(4, 2, 1, 1, 3, 3, 1))
         is <- structure(rep(0,length(tick.opts)),.Names=tick.opts)
@@ -44,7 +47,10 @@ axTicksByTime <- function(x, ticks.on='auto', k=1,
         loc <- rev(which(is > gt & is < lt))[1L]
         cl <- tick.opts[loc]
         ck <- tick.k.opts[loc]
-    }   
+    } else {
+        cl <- ticks.on[1L]
+        ck <- k
+    }
 
     if (is.null(cl) || is.na(cl) || is.na(ck)) {
         ep <- c(0, NROW(x))
