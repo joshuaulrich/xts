@@ -110,6 +110,10 @@ chart.lines.expression <- function(...) {
     as.expression(mc)
 }
 
+isNullOrFalse <- function(x) {
+  is.null(x) || identical(x, FALSE)
+}
+
 # Main plot.xts method.
 # author: Ross Bennett (adapted from Jeffrey Ryan's chart_Series)
 plot.xts <- function(x, 
@@ -334,13 +338,15 @@ plot.xts <- function(x,
   cs$set_frame(1,FALSE)
   
   # compute the x-axis ticks for the grid
-  cs$add(expression(atbt <- axTicksByTime(xdata[xsubset], ticks.on=grid.ticks.on),
-                    segments(xycoords$x[atbt],
-                             get_ylim()[[2]][1],
-                             xycoords$x[atbt],
-                             get_ylim()[[2]][2], 
-                             col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)),
-         clip=FALSE,expr=TRUE)
+  if(!isNullOrFalse(grid.ticks.on)) {
+    cs$add(expression(atbt <- axTicksByTime(xdata[xsubset], ticks.on=grid.ticks.on),
+                      segments(xycoords$x[atbt],
+                               get_ylim()[[2]][1],
+                               xycoords$x[atbt],
+                               get_ylim()[[2]][2],
+                               col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)),
+           clip=FALSE, expr=TRUE)
+  }
   
   # Add frame for the chart "header" to display the name and start/end dates
   cs$add_frame(0,ylim=c(0,1),asp=0.5)
@@ -351,24 +357,26 @@ plot.xts <- function(x,
   {axis(1,at=xycoords$x,labels=FALSE,col=theme$grid2,col.axis=theme$grid2,tcl=0.3)}),expr=TRUE)
   
   # major x-axis ticks and labels
-  cs$add(expression(axt <- axTicksByTime(xdata[xsubset], ticks.on=major.ticks, format.labels=format.labels),
-                    axis(1,
-                         at=xycoords$x[axt],
-                         labels=names(axt),
-                         las=theme$las, lwd.ticks=1.5, mgp=c(3,1.5,0), 
-                         tcl=-0.4, cex.axis=theme$cex.axis, 
-                         col=theme$labels, col.axis=theme$labels)),
-         expr=TRUE)
-  
-  # minor x-axis ticks
-  if(!is.null(minor.ticks)){
-    cs$add(expression(axt <- axTicksByTime(xdata[xsubset], ticks.on=minor.ticks, format.labels=format.labels),
+  if(!isNullOrFalse(major.ticks)) {
+    cs$add(expression(axt <- axTicksByTime(xdata[xsubset], ticks.on=major.ticks, format.labels=format.labels),
                       axis(1,
                            at=xycoords$x[axt],
-                           labels=FALSE,
-                           las=theme$las, lwd.ticks=0.75, mgp=c(3,1.5,0),
+                           labels=names(axt),
+                           las=theme$las, lwd.ticks=1.5, mgp=c(3,1.5,0),
                            tcl=-0.4, cex.axis=theme$cex.axis,
                            col=theme$labels, col.axis=theme$labels)),
+           expr=TRUE)
+  }
+  
+  # minor x-axis ticks
+  if(!isNullOrFalse(minor.ticks)) {
+    cs$add(expression(axt <- axTicksByTime(xdata[xsubset], ticks.on=minor.ticks, format.labels=format.labels),
+                 axis(1,
+                      at=xycoords$x[axt],
+                      labels=FALSE,
+                      las=theme$las, lwd.ticks=0.75, mgp=c(3,1.5,0),
+                      tcl=-0.4, cex.axis=theme$cex.axis,
+                      col=theme$labels, col.axis=theme$labels)),
            expr=TRUE)
   }
   
@@ -505,12 +513,7 @@ plot.xts <- function(x,
                                      y_grid_lines(ylim), 
                                      col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)),
                  # x-axis grid lines
-                 expression(atbt <- axTicksByTime(xdata[xsubset], ticks.on=grid.ticks.on),
-                            segments(xycoords$x[atbt],
-                                     ylim[1],
-                                     xycoords$x[atbt],
-                                     ylim[2], 
-                                     col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)))
+                 expression(x_grid_lines(xdata[xsubset], grid.ticks.on, ylim)))
         if(yaxis.left){
           exp <- c(exp, 
                    # y-axis labels/boxes
@@ -612,12 +615,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     xDataSubset <- xdata[xsubset]
     if(all(is.na(on))){
       # Add x-axis grid lines
-      atbt <- axTicksByTime(xDataSubset, ticks.on=x$Env$grid.ticks.on)
-      segments(x$Env$xycoords$x[atbt],
-               par("usr")[3],
-               x$Env$xycoords$x[atbt],
-               par("usr")[4],
-               col=x$Env$theme$grid)
+      x$Env$x_grid_lines(xDataSubset, x$Env$grid.ticks.on, par("usr")[3:4])
     }
     # we can add points that are not necessarily at the points
     # on the main series
@@ -753,12 +751,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
 
     if(all(is.na(on))){
       # Add x-axis grid lines
-      atbt <- axTicksByTime(xdata[xsubset], ticks.on=x$Env$grid.ticks.on)
-      segments(x$Env$xycoords$x[atbt],
-               par("usr")[3],
-               x$Env$xycoords$x[atbt],
-               par("usr")[4],
-               col=x$Env$theme$grid)
+      x$Env$x_grid_lines(xdata[xsubset], x$Env$grid.ticks.on, par("usr")[3:4])
     }
     ypos <- x$Env$ylim[[2*on]][2]*0.995
     # we can add points that are not necessarily at the points on the main series
@@ -975,12 +968,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     if(is.null(col)) col <- x$Env$theme$col
     if(all(is.na(on))){
       # Add x-axis grid lines
-      atbt <- axTicksByTime(xdata[xsubset], ticks.on=x$Env$grid.ticks.on)
-      segments(x$Env$xycoords$x[atbt],
-               par("usr")[3],
-               x$Env$xycoords$x[atbt],
-               par("usr")[4],
-               col=x$Env$theme$grid)
+      x$Env$x_grid_lines(xdata[xsubset], x$Env$grid.ticks.on, par("usr")[3:4])
     }
     # we can add points that are not necessarily at the points
     # on the main series
@@ -1311,6 +1299,22 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$add_call <- add_call
 
   replot_env$new_environment <- function() { new.env(TRUE, Env) }
+
+  # function to plot the x-axis grid lines
+  replot_env$Env$x_grid_lines <- function(x, ticks.on, ylim)
+  {
+    if (isNullOrFalse(ticks.on)) {
+      invisible()
+    } else {
+      atbt <- axTicksByTime(x, ticks.on = ticks.on)
+      segments(Env$xycoords$x[atbt], ylim[1L],
+               Env$xycoords$x[atbt], ylim[2L],
+               col = Env$theme$grid,
+               lwd = Env$grid.ticks.lwd,
+               lty = Env$grid.ticks.lty)
+    }
+  }
+
   return(replot_env)
 }
 
