@@ -389,12 +389,6 @@ plot.xts <- function(x,
   
   cs$set_frame(2)
   
-  # define function to plot the y-axis grid lines
-  cs$Env$y_grid_lines <- function(ylim) { 
-    p <- pretty(ylim,5)
-    p[p > ylim[1] & p < ylim[2]]
-  }
-  
   # add y-axis grid lines and labels
   exp <- expression(segments(xlim[1], 
                              y_grid_lines(get_ylim()[[2]]), 
@@ -497,12 +491,6 @@ plot.xts <- function(x,
                                  dn.col=theme$dn.col,
                                  legend.loc=legend.loc))
         exp <- as.expression(add.par.from.dots(exp, ...))
-        
-        # define function to plot the y-axis grid lines
-        lenv$y_grid_lines <- function(ylim) { 
-          p <- pretty(ylim,5)
-          p[p > ylim[1] & p < ylim[2]]
-        }
         
         # NOTE 'exp' was defined earlier as chart.lines
         exp <- c(exp, 
@@ -670,12 +658,6 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
     plot_object$next_frame()
     
-    # define function to plot the y-axis grid lines
-    lenv$y_grid_lines <- function(ylim) { 
-      p <- pretty(ylim,5)
-      p[p > ylim[1] & p < ylim[2]]
-    }
-    
     # NOTE 'exp' was defined earlier as chart.lines
     exp <- c(exp, 
              # y-axis grid lines
@@ -807,12 +789,6 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     # add frame for the data
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
     plot_object$next_frame()
-    
-    # define function to plot the y-axis grid lines
-    lenv$y_grid_lines <- function(ylim) { 
-      p <- pretty(ylim,5)
-      p[p > ylim[1] & p < ylim[2]]
-    }
     
     # NOTE 'exp' was defined earlier as chart.lines
     exp <- c(exp, 
@@ -1028,12 +1004,6 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     # add frame for the data
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
     plot_object$next_frame()
-    
-    # define function to plot the y-axis grid lines
-    lenv$y_grid_lines <- function(ylim) { 
-      p <- pretty(ylim,5)
-      p[p > ylim[1] & p < ylim[2]]
-    }
     
     # NOTE 'exp' was defined earlier as plot_lines
     exp <- c(exp, 
@@ -1299,6 +1269,12 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$add_call <- add_call
 
   replot_env$new_environment <- function() { new.env(TRUE, Env) }
+
+  # function to plot the y-axis grid lines
+  replot_env$Env$y_grid_lines <- function(ylim) {
+    p <- pretty(ylim,5)
+    p[p > ylim[1] & p < ylim[2]]
+  }
 
   # function to plot the x-axis grid lines
   replot_env$Env$x_grid_lines <- function(x, ticks.on, ylim)
