@@ -43,3 +43,10 @@ test.xts_order.by_Inf_double <- function() {
   checkException(xts(1:3, .POSIXct(c(-Inf, 2, 3))))
 }
 ### }}}
+
+# .xts()
+test..xts_dimnames_in_dots <- function() {
+  x <- .xts(1:5, 1:5, dimnames = list(NULL, "x"))
+  y <- xts(1:5, index(x), dimnames = list(NULL, "x"))
+  checkEquals(x, y)
+}

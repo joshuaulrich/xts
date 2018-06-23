@@ -144,7 +144,7 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   dots.names$.indexFORMAT <- dots.names$.indexTZ <- NULL
   # set any user attributes
   if(length(dots.names))
-    attributes(xx) <- c(attributes(xx), ...)
+    attributes(xx) <- c(attributes(xx), list(...))
   xx
 }
 
