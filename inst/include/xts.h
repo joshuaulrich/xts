@@ -98,6 +98,8 @@ SEXP xts_period_max(SEXP data, SEXP index);
 SEXP xts_period_sum(SEXP data, SEXP index);
 SEXP xts_period_prod(SEXP data, SEXP index);
 
+SEXP xts_set_dimnames(SEXP x, SEXP value);
+
 
 void copyAttributes(SEXP x, SEXP y);    // internal only
 void copy_xtsAttributes(SEXP x, SEXP y);    // internal only

@@ -43,6 +43,7 @@ R_CallMethodDef callMethods[] = {
   {"xts_period_max",        (DL_FUNC) &xts_period_max,          2},
   {"xts_period_sum",        (DL_FUNC) &xts_period_sum,          2},
   {"xts_period_prod",       (DL_FUNC) &xts_period_prod,         2},
+  {"xts_set_dimnames",      (DL_FUNC) &xts_set_dimnames,        2},
   {NULL,                    NULL,                               0}
 };
 
@@ -105,6 +106,8 @@ void R_init_xts(DllInfo *info)
   R_RegisterCCallable("xts","xts_period_max",  (DL_FUNC) &xts_period_max);
   R_RegisterCCallable("xts","xts_period_sum",  (DL_FUNC) &xts_period_sum);
   R_RegisterCCallable("xts","xts_period_prod", (DL_FUNC) &xts_period_prod);
+
+  R_RegisterCCallable("xts","xts_set_dimnames", (DL_FUNC) &xts_set_dimnames);
 
   /* used by xts (functions moved from xts to zoo) */
   zoo_lag      = (SEXP(*)(SEXP,SEXP,SEXP)) R_GetCCallable("zoo","zoo_lag");

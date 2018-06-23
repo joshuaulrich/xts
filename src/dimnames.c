@@ -24,3 +24,20 @@
 SEXP dimnames_zoo (SEXP x) {
   return(getAttrib(x, R_DimNamesSymbol));
 }
+
+SEXP xts_set_dimnames (SEXP x, SEXP value) {
+  if (R_NilValue == value) {
+    setAttrib(x, R_DimNamesSymbol, R_NilValue);
+  } else {
+    if (TYPEOF(value) != VECSXP || length(value) != 2) {
+      error("invalid 'dimnames' given for xts");
+    }
+    /* xts objects never have row names */
+    if (MAYBE_SHARED(value)) {
+      value = duplicate(value);
+    }
+    SET_VECTOR_ELT(value, 0, R_NilValue);
+    setAttrib(x, R_DimNamesSymbol, value);
+  }
+  return x;
+}
