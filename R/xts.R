@@ -157,7 +157,7 @@ function(x, match.to, error=FALSE, ...) {
       } else return(x)
 
     if(!is.xts(x)) x <- .xts(coredata(x),.index(match.to), .indexCLASS=indexClass(match.to), tzone=indexTZ(match.to))
-    CLASS(x) <- CLASS(match.to)
+    attr(x, ".CLASS") <- CLASS(match.to)
     xtsAttributes(x) <- xtsAttributes(match.to)
   }
   oldCLASS <- CLASS(x)
@@ -189,8 +189,10 @@ function(x, match.to, error=FALSE, ...) {
 function(x) {
   cl <- attr(x,'.CLASS')
 
-  if(!is.null(cl))
-    return(structure(cl,class='CLASS'))
+  if(!is.null(cl)) {
+    attr(cl, 'class') <- 'CLASS'
+    return(cl)
+  }
 
   return(NULL)
 }
