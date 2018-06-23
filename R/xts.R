@@ -132,11 +132,20 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
       tzone <- index.tz
   }
 
-  structure(.Data=x,
-            index=structure(index,tzone=tzone,tclass=.indexCLASS),
-            .indexCLASS=.indexCLASS,.indexTZ=tzone,
-            tclass=.indexCLASS,tzone=tzone,
-            class=c('xts','zoo'), ...)
+  # work-around for Ops.xts
+  dots.names <- eval(substitute(alist(...)))
+  if(hasArg(.indexFORMAT))
+    .indexFORMAT <- eval(dots.names$.indexFORMAT,parent.frame())
+  else
+    .indexFORMAT <- NULL
+  xx <- .Call("add_xtsCoreAttributes", x, index, .indexCLASS, tzone, tclass,
+              c('xts','zoo'), .indexFORMAT, PACKAGE='xts')
+  # remove .indexFORMAT and .indexTZ that come through Ops.xts
+  dots.names$.indexFORMAT <- dots.names$.indexTZ <- NULL
+  # set any user attributes
+  if(length(dots.names))
+    attributes(xx) <- c(attributes(xx), ...)
+  xx
 }
 
 `..xts` <-
