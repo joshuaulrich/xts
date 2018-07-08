@@ -6,18 +6,30 @@ d2 <- data.frame(d1, y = rev(seq_along(dates)))
 test.first_xtsible_data.frame_pos_n <- function() {
   checkIdentical(first(d1, 1), head(d1, 1))
   checkIdentical(first(d2, 1), head(d2, 1))
+
+  checkIdentical(first(d1, "1 day"), head(d1, 1))
+  checkIdentical(first(d2, "1 day"), head(d2, 1))
 }
 test.first_xtsible_data.frame_neg_n <- function() {
   checkIdentical(first(d1, -1), tail(d1, -1))
   checkIdentical(first(d2, -1), tail(d2, -1))
+
+  checkIdentical(first(d1, "-1 day"), tail(d1, -1))
+  checkIdentical(first(d2, "-1 day"), tail(d2, -1))
 }
 test.last_xtsible_data.frame_pos_n <- function() {
   checkIdentical(last(d1, 1), tail(d1, 1))
   checkIdentical(last(d2, 1), tail(d2, 1))
+
+  checkIdentical(last(d1, "1 day"), tail(d1, 1))
+  checkIdentical(last(d2, "1 day"), tail(d2, 1))
 }
 test.last_xtsible_data.frame_neg_n <- function() {
   checkIdentical(last(d1, -1), head(d1, -1))
   checkIdentical(last(d2, -1), head(d2, -1))
+
+  checkIdentical(last(d1, "-1 day"), head(d1, -1))
+  checkIdentical(last(d2, "-1 day"), head(d2, -1))
 }
 test.first_nonxtsible_data.frame_pos_n <- function() {
   rownames(d1) <- rownames(d2) <- NULL
@@ -47,14 +59,23 @@ m2 <- as.matrix(d2)
 test.first_xtsible_matrix_pos_n <- function() {
   checkIdentical(first(m1, 1), head(m1, 1))
   checkIdentical(first(m2, 1), head(m2, 1))
+
+  checkIdentical(first(m1, "1 day"), head(m1, 1))
+  checkIdentical(first(m2, "1 day"), head(m2, 1))
 }
 test.first_xtsible_matrix_neg_n <- function() {
   checkIdentical(first(m1, -1), tail(m1, -1, addrownums = FALSE))
   checkIdentical(first(m2, -1), tail(m2, -1, addrownums = FALSE))
+
+  checkIdentical(first(m1, "-1 day"), tail(m1, -1, addrownums = FALSE))
+  checkIdentical(first(m2, "-1 day"), tail(m2, -1, addrownums = FALSE))
 }
 test.last_xtsible_matrix_pos_n <- function() {
   checkIdentical(last(m1, 1), tail(m1, 1, addrownums = FALSE))
   checkIdentical(last(m2, 1), tail(m2, 1, addrownums = FALSE))
+
+  checkIdentical(last(m1, "1 day"), tail(m1, 1, addrownums = FALSE))
+  checkIdentical(last(m2, "1 day"), tail(m2, 1, addrownums = FALSE))
 }
 test.last_xtsible_matrix_neg_n <- function() {
   checkIdentical(last(m1, -1), head(m1, -1))

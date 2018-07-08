@@ -28,10 +28,12 @@ function(x,...)
 `last.default` <-
 function(x,n=1,keep=FALSE,...)
 {
-  xx <- try.xts(x, error=FALSE)
-  if(is.xts(xx)) {
-    xx <- last.xts(x, n=n, keep=keep, ...)
-    return(reclass(xx))
+  if(is.character(n)) {
+    xx <- try.xts(x, error=FALSE)
+    if(is.xts(xx)) {
+      xx <- last.xts(x, n=n, keep=keep, ...)
+      return(reclass(xx))
+    }
   }
   if(is.null(dim(x))) {
     if(n > 0) {
@@ -99,12 +101,12 @@ function(x,n=1,keep=FALSE,...)
       }
       if(rpf > 0) {
         n <- ep[length(ep)-rpf]+1
-        xx <- x[n:NROW(x)]
+        xx <- x[n:NROW(x),,drop=FALSE]
         if(keep) xx <- structure(xx,keep=x[1:(ep[length(ep)+(-rpf)])])
         return(xx)
       } else {
         n <- ep[length(ep)+rpf]
-        xx <- x[1:n]
+        xx <- x[1:n,,drop=FALSE]
         if(keep) xx <- structure(xx,keep=x[(ep[length(ep)-(-rpf)]+1):NROW(x)])
         return(xx)
       }
@@ -113,13 +115,13 @@ function(x,n=1,keep=FALSE,...)
   if(length(n) != 1) stop("n must be of length 1")
   if(n > 0) {
     n <- min(n, NROW(x))
-    xx <- x[((NROW(x)-n+1):NROW(x))]
+    xx <- x[(NROW(x)-n+1):NROW(x),,drop=FALSE]
     if(keep) xx <- structure(xx,keep=x[1:(NROW(x)+(-n))])
     xx
   } else {
     if(abs(n) >= NROW(x))
       return(x[0])
-    xx <- x[1:(NROW(x)+n)]
+    xx <- x[1:(NROW(x)+n),,drop=FALSE]
     if(keep) xx <- structure(xx,keep=x[((NROW(x)-(-n)+1):NROW(x))])
     xx
   }
