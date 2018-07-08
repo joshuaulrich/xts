@@ -31,7 +31,7 @@ function(x,n=1,keep=FALSE,...)
   if(is.character(n)) {
     xx <- try.xts(x, error=FALSE)
     if(is.xts(xx)) {
-      xx <- first.xts(x, n=n, keep=keep)
+      xx <- first.xts(x, n=n, keep=keep, ...)
       return(reclass(xx))
     }
   }
