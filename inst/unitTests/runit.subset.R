@@ -192,3 +192,10 @@ test.i_POSIXlt <- function() {
     checkIdentical(y, x[i, ])
   }
 }
+
+# invalid date/time
+test.i_invalid_date_string <- function() {
+  x <- xts(1:10, as.Date("2015-02-20")+0:9)
+  y <- x["2012-02-30"]
+  checkIdentical(y, x[NA,])
+}

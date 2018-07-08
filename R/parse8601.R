@@ -133,6 +133,10 @@
    if(is.na(e))
      e <- as.POSIXlt(do.call(lastof,  parse.side(intervals[2])))
  }
+ if(is.na(s) && is.na(e) && !nzchar(DURATION)) {
+   warning("cannot determine first and last time from ", x)
+   return(list(first.time=NA_real_,last.time=NA_real_))
+ }
  if(!missing(start)) {
    start <- as.numeric(start)
    #s <- as.POSIXlt(structure(max(start, as.numeric(s), na.rm=TRUE),
