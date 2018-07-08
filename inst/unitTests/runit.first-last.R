@@ -4,45 +4,37 @@ d2 <- data.frame(d1, y = rev(seq_along(dates)))
 
 # basic functionality on data.frame
 test.first_xtsible_data.frame_pos_n <- function() {
-  DEACTIVATED("data.frame tests fail with current code")
   checkIdentical(first(d1, 1), head(d1, 1))
   checkIdentical(first(d2, 1), head(d2, 1))
 }
 test.first_xtsible_data.frame_neg_n <- function() {
-  DEACTIVATED("data.frame tests fail with current code")
   checkIdentical(first(d1, -1), tail(d1, -1))
   checkIdentical(first(d2, -1), tail(d2, -1))
 }
 test.last_xtsible_data.frame_pos_n <- function() {
-  DEACTIVATED("data.frame tests fail with current code")
   checkIdentical(last(d1, 1), tail(d1, 1))
   checkIdentical(last(d2, 1), tail(d2, 1))
 }
 test.last_xtsible_data.frame_neg_n <- function() {
-  DEACTIVATED("data.frame tests fail with current code")
   checkIdentical(last(d1, -1), head(d1, -1))
   checkIdentical(last(d2, -1), head(d2, -1))
 }
 test.first_nonxtsible_data.frame_pos_n <- function() {
-  DEACTIVATED("data.frame tests fail with current code")
   rownames(d1) <- rownames(d2) <- NULL
   checkIdentical(first(d1, 1), head(d1, 1))
   checkIdentical(first(d2, 1), head(d2, 1))
 }
 test.first_nonxtsible_data.frame_neg_n <- function() {
-  DEACTIVATED("data.frame tests fail with current code")
   rownames(d1) <- rownames(d2) <- NULL
   checkIdentical(first(d1, -1), tail(d1, -1))
   checkIdentical(first(d2, -1), tail(d2, -1))
 }
 test.last_nonxtsible_data.frame_pos_n <- function() {
-  DEACTIVATED("data.frame tests fail with current code")
   rownames(d1) <- rownames(d2) <- NULL
   checkIdentical(last(d1, 1), tail(d1, 1))
   checkIdentical(last(d2, 1), tail(d2, 1))
 }
 test.last_nonxtsible_data.frame_neg_n <- function() {
-  DEACTIVATED("data.frame tests fail with current code")
   rownames(d1) <- rownames(d2) <- NULL
   checkIdentical(last(d1, -1), head(d1, -1))
   checkIdentical(last(d2, -1), head(d2, -1))
@@ -53,45 +45,37 @@ m1 <- as.matrix(d1)
 m2 <- as.matrix(d2)
 
 test.first_xtsible_matrix_pos_n <- function() {
-  DEACTIVATED("matrix tests fail with current code")
   checkIdentical(first(m1, 1), head(m1, 1))
   checkIdentical(first(m2, 1), head(m2, 1))
 }
 test.first_xtsible_matrix_neg_n <- function() {
-  DEACTIVATED("matrix tests fail with current code")
   checkIdentical(first(m1, -1), tail(m1, -1, addrownums = FALSE))
   checkIdentical(first(m2, -1), tail(m2, -1, addrownums = FALSE))
 }
 test.last_xtsible_matrix_pos_n <- function() {
-  DEACTIVATED("matrix tests fail with current code")
   checkIdentical(last(m1, 1), tail(m1, 1, addrownums = FALSE))
   checkIdentical(last(m2, 1), tail(m2, 1, addrownums = FALSE))
 }
 test.last_xtsible_matrix_neg_n <- function() {
-  DEACTIVATED("matrix tests fail with current code")
   checkIdentical(last(m1, -1), head(m1, -1))
   checkIdentical(last(m2, -1), head(m2, -1))
 }
 test.first_nonxtsible_matrix_pos_n <- function() {
-  DEACTIVATED("matrix tests fail with current code")
   rownames(m1) <- rownames(m2) <- NULL
   checkIdentical(first(m1, 1), head(m1, 1))
   checkIdentical(first(m2, 1), head(m2, 1))
 }
 test.first_nonxtsible_matrix_neg_n <- function() {
-  DEACTIVATED("matrix tests fail with current code")
   rownames(m1) <- rownames(m2) <- NULL
   checkIdentical(first(m1, -1), tail(m1, -1, addrownums = FALSE))
   checkIdentical(first(m2, -1), tail(m2, -1, addrownums = FALSE))
 }
 test.last_nonxtsible_matrix_pos_n <- function() {
-  DEACTIVATED("matrix tests fail with current code")
   rownames(m1) <- rownames(m2) <- NULL
   checkIdentical(last(m1, 1), tail(m1, 1, addrownums = FALSE))
   checkIdentical(last(m2, 1), tail(m2, 1, addrownums = FALSE))
 }
 test.last_nonxtsible_matrix_neg_n <- function() {
-  DEACTIVATED("matrix tests fail with current code")
   rownames(m1) <- rownames(m2) <- NULL
   checkIdentical(last(m1, -1), head(m1, -1))
   checkIdentical(last(m2, -1), head(m2, -1))

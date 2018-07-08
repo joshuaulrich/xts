@@ -45,11 +45,11 @@ function(x,n=1,keep=FALSE,...)
     }
   } else {
     if(n > 0) {
-      xx <- x[(NROW(x)-n+1):NROW(x),]
+      xx <- x[(NROW(x)-n+1):NROW(x),,drop=FALSE]
       if(keep) xx <- structure(xx,keep=x[1:(NROW(x)+(-n)),])
       xx
     } else {
-      xx <- x[1:(NROW(x)+n),]
+      xx <- x[1:(NROW(x)+n),,drop=FALSE]
       if(keep) xx <- structure(xx,keep=x[((NROW(x)-(-n)+1):NROW(x)),])
       xx
     }
