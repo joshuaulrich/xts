@@ -39,22 +39,22 @@ function(x,n=1,keep=FALSE,...)
     if(n > 0) {
       xx <- x[1:n]
       if(keep) xx <- structure(xx,keep=x[(-(-n)+1):NROW(x)])
-      xx  
+      xx
     } else {
       xx <- x[(-n+1):NROW(x)]
       if(keep) xx <- structure(xx,keep=x[1:(-n)])
-      xx  
-    }   
+      xx
+    }
   } else {
     if(n > 0) {
       xx <- x[1:n,,drop=FALSE]
       if(keep) xx <- structure(xx,keep=x[(-(-n)+1):NROW(x),])
-      xx  
+      xx
     } else {
       xx <- x[(-n+1):NROW(x),,drop=FALSE]
       if(keep) xx <- structure(xx,keep=x[1:(-n),])
-      xx  
-    }   
+      xx
+    }
   }
 }
 
@@ -65,9 +65,6 @@ function(x,n=1,keep=FALSE,...)
     return(x)
   if(is.character(n)) {
     # n period set
-#    if(!inherits(index(x),'POSIXt') && !inherits(index(x),'Date'))
-#      stop(paste('subsetting by date is only possible with objects having',
-#           'time based indexes'))
     np <- strsplit(n," ",fixed=TRUE)[[1]]
     if(length(np) > 2 || length(np) < 1)
       stop(paste("incorrectly specified",sQuote("n"),sep=" "))

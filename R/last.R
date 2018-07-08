@@ -61,12 +61,9 @@ function(x,n=1,keep=FALSE,...)
 `last.xts` <-
 function(x,n=1,keep=FALSE,...)
 {
-  if(length(x)==0)
+  if(length(x) == 0)
     return(x)
   if(is.character(n)) {
-#    if(!inherits(index(x),'POSIXt') && !inherits(index(x),'Date'))
-#      stop(paste('subsetting by date is only possible with objects having',
-#           'time based indexes'))
     # n period set
     np <- strsplit(n," ",fixed=TRUE)[[1]]
     if(length(np) > 2 || length(np) < 1)
@@ -77,7 +74,7 @@ function(x,n=1,keep=FALSE,...)
     rpu <- np[length(np)]
     rpf <- ifelse(length(np) > 1, as.numeric(np[1]), 1)
     if(rpu == sp$unit) {
-      n <- rpf    
+      n <- rpf
     } else {
       # if singular - add an s to make it work
       if(substr(rpu,length(strsplit(rpu,'')[[1]]),length(strsplit(rpu,'')[[1]])) != 's')
