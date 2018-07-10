@@ -199,3 +199,22 @@ test.i_invalid_date_string <- function() {
   y <- x["2012-02-30"]
   checkIdentical(y, x[NA,])
 }
+test.i_only_range_separator_or_empty_string <- function() {
+  x <- xts(1:10, as.Date("2015-02-20")+0:9)
+  y <- x["/",]
+  checkIdentical(y, x)
+  y <- x["::",]
+  checkIdentical(y, x)
+  y <- x["",]
+  checkIdentical(y, x)
+}
+test.i_date_range_open_end <- function() {
+  x <- xts(1:10, as.Date("2015-02-20")+0:9)
+  y <- x["2015-02-23/",]
+  checkIdentical(y, x[4:10,])
+}
+test.i_date_range_open_start <- function() {
+  x <- xts(1:10, as.Date("2015-02-20")+0:9)
+  y <- x["/2015-02-26",]
+  checkIdentical(y, x[1:7,])
+}
