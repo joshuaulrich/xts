@@ -35,9 +35,28 @@ periodicity <- function(x, ...) {
   if( timeBased(x) || !is.xts(x) )
     x <- try.xts(x, error='\'x\' needs to be timeBased or xtsible')
 
-  p <- median(diff( .index(x) ))
+  n <- length(.index(x))
+  if( n < 2 ) {
+    res <- list(difftime = structure(0, units='secs', class='difftime'),
+                frequency = 0,
+                start = NA,
+                end = NA,
+                units = 'secs',
+                scale = 'seconds',
+                label = 'second')
+    res <- structure(res, class='periodicity')
 
-  if( is.na(p) ) stop("can not calculate periodicity of 1 observation")
+    if( n == 0 ) {
+      warning("can not calculate periodicity of empty object")
+    } else {
+      warning("can not calculate periodicity of 1 observation")
+      res$start <- start(x)
+      res$end <- end(x)
+    }
+    return(res)
+  } else {
+    p <- median(diff( .index(x) ))
+  }
 
   units <- 'days' # the default if p > hourly
   scale <- 'yearly'# the default for p > quarterly
