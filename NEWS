@@ -1,4 +1,4 @@
-Changed in xts 0.10-3:
+Changed in xts 0.11-0:
 
 o  Fix make.index.unique() to always return a unique and sorted index. Thanks
    to Chris Katsulis for the report and example (#241).
@@ -7,8 +7,23 @@ o  Add window.xts() method and completely refactor the internal binary search
    function it depends on. Thanks to Corwin Joy for the PR, tests, review, and
    patience (#100, #240).
 
+o  Better axis tick mark locations for plots. Thanks to Dirk Eddelbuettel for
+   the report (#246). Also incorporate axTicksByTime2() into axTicksByTime() to
+   reduce code duplication from the migration of quantmod::chart_Series() to
+   xts::plot.xts() (#74).
+
 o  Add details to plot.xts() parameters that are periodicity, now that RStudio
    has argument completion. Thanks to Evelyn Mitchell for the PR (#154).
+
+o  periodicity() now warns instead of errors if the xts object contains less
+   than 2 observations (#230).
+
+o  first() and last() now keep dims when they would otherwise be dropped by a
+   regular row subset. This is consistent with head() and tail(). Thanks to
+   Davis Vaughan for the report (#226).
+
+o  Fix subset when ISO8601 string is outside the valid range, so it returns no
+   data instead of all rows (#96).
 
 o  Avoid partial name matches from parse.side() (inside .parseISO8601())
    results that are passed to firstof() and lastof(). Thanks to @gp2x for the
