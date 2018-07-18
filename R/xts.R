@@ -138,6 +138,9 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
     .indexFORMAT <- eval(dots.names$.indexFORMAT,parent.frame())
   else
     .indexFORMAT <- NULL
+
+  ## restore behaviour from v0.10-2
+  tclass <- .indexCLASS
   xx <- .Call("add_xtsCoreAttributes", x, index, .indexCLASS, tzone, tclass,
               c('xts','zoo'), .indexFORMAT, PACKAGE='xts')
   # remove .indexFORMAT and .indexTZ that come through Ops.xts
