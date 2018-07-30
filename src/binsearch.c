@@ -151,3 +151,33 @@ SEXP binsearch(SEXP key, SEXP vec, SEXP start)
 
   return ScalarInteger(lo);
 }
+
+SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
+{
+  /* Translate user index (_x) to xts index (_index). '_x' contains the
+   * upper bound of the location of the user index in the xts index.
+   * This is necessary to handle duplicate dates in the xts index.
+   */
+  int n_x = length(_x);
+  double *x = REAL(_x);
+  double *index = REAL(_index);
+
+  SEXP _out = PROTECT(allocVector(INTSXP, length(_index)));
+  int *out = INTEGER(_out);
+
+  /* Loop over locations in _x in reverse order */
+  int i, xi, j, k = 0;
+  for (i = n_x; i > 0; i--) {
+    xi = x[i-1];
+    j = xi;
+    do {
+      out[k++] = j--;
+    } while (j > 0 && index[xi-1] == index[j-1]);
+  }
+
+  /* truncate so length(_out) = k
+   * NB: output is in reverse order!
+   */
+  UNPROTECT(1);
+  return lengthgets(_out, k);
+}

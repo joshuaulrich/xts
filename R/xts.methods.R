@@ -283,19 +283,7 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
     # We get back upper bound of index as per findInterval
     tmp <- base_idx[firstlast]
 
-    # Iterate in reverse to grab all matches
-    # We have to do this to handle duplicate dates in the xts index.
-    tmp <- rev(tmp)
-    res <- NULL
-    for(i in tmp) {
-      dt <- idx[i]
-      j <- i
-      repeat {
-        res <- c(res, j)
-        j <- j -1
-        if(j < 1 || idx[j] != dt) break
-      }
-    }
+    res <- .Call("fill_window_dups_rev", tmp, .index(x), PACKAGE = "xts")
     firstlast <- rev(res)
   }
 
