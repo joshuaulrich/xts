@@ -218,3 +218,54 @@ test.i_date_range_open_start <- function() {
   y <- x["/2015-02-26",]
   checkIdentical(y, x[1:7,])
 }
+
+# subset empty xts
+test.empty_i_datetime <- function() {
+  d0 <- as.Date(integer())
+  zl <- xts(, d0)
+  empty <- .xts(logical(), d0, dim = 0:1, dimnames = list(NULL, NULL))
+
+  i <- Sys.Date()
+  checkIdentical(zl[i,], empty)
+  checkIdentical(zl[i],  empty)
+
+  i <- Sys.time()
+  checkIdentical(zl[i,], empty)
+  checkIdentical(zl[i],  empty)
+}
+
+test.empty_i_zero <- function() {
+  d0 <- as.Date(integer())
+  zl <- xts(, d0)
+  empty <- .xts(logical(), d0, dim = 0:1, dimnames = list(NULL, NULL))
+
+  checkIdentical(zl[0,], empty)
+  checkIdentical(zl[0],  empty)
+}
+
+test.empty_i_negative <- function() {
+  d0 <- as.Date(integer())
+  zl <- xts(, d0)
+  empty <- .xts(logical(), d0, dim = 0:1, dimnames = list(NULL, NULL))
+
+  checkIdentical(zl[-1,], empty)
+  checkIdentical(zl[-1],  empty)
+}
+
+test.empty_i_NA <- function() {
+  d0 <- as.Date(integer())
+  zl <- xts(, d0)
+  empty <- .xts(logical(), d0, dim = 0:1, dimnames = list(NULL, NULL))
+
+  checkIdentical(zl[NA,], empty)
+  checkIdentical(zl[NA],  empty)
+}
+
+test.empty_i_NULL <- function() {
+  d0 <- as.Date(integer())
+  zl <- xts(, d0)
+  empty <- .xts(logical(), d0, dim = 0:1, dimnames = list(NULL, NULL))
+
+  checkIdentical(zl[NULL,], empty)
+  checkIdentical(zl[NULL],  empty)
+}

@@ -162,6 +162,10 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
   double *x = REAL(_x);
   double *index = REAL(_index);
 
+  if (length(_index) < 1) {
+    return allocVector(INTSXP, 0);
+  }
+
   SEXP _out = PROTECT(allocVector(INTSXP, length(_index)));
   int *out = INTEGER(_out);
 
