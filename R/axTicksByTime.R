@@ -34,13 +34,13 @@ function(x, ticks.on = "auto", k = 1, labels = TRUE, format.labels = TRUE,
     ticks.on <- substr(ticks.on, 1L, 3L)
   }
 
-  tick.opts <- c("years", "months", "weeks", "days", "hours",
+  tick.opts <- c("years", "quarters", "months", "weeks", "days", "hours",
     "minutes", "seconds")
   ticks.on <- match.arg(ticks.on, c("auto", tick.opts))
 
   if (ticks.on == "auto") {
-    tick.k.opts <- c(10, 5, 2, 1, 6, 1, 1, 1, 4, 2, 1, 30, 15, 1, 1)
-    tick.opts <- rep(tick.opts, c(4, 2, 1, 1, 3, 3, 1))
+    tick.k.opts <- c(10, 5, 2, 1, 3, 6, 1, 1, 1, 4, 2, 1, 30, 15, 1, 1)
+    tick.opts <- rep(tick.opts, c(4, 1, 2, 1, 1, 3, 3, 1))
     is <- structure(rep(0, length(tick.opts)), .Names = tick.opts)
     for (i in 1:length(tick.opts)) {
       ep <- endpoints(x, tick.opts[i], tick.k.opts[i])
