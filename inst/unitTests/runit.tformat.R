@@ -44,6 +44,12 @@ test.ctors_dont_add_indexFORMAT_to_object <- function() {
   checkIdentical(NULL, attr(y, ".indexFORMAT"))
 }
 
+test.xts_ctor_warns_for_indexFORMAT_arg <- function() {
+  op <- options(warn = 2)
+  on.exit(options(warn = op$warn))
+  checkException(x <- xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"))
+}
+
 test.get_coredata_drops_xts_indexFORMAT <- function() {
   y <- coredata(x)
   checkIdentical(NULL, attr(y, ".indexFORMAT"))

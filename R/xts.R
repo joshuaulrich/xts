@@ -96,6 +96,27 @@ function(x=NULL,
             index=structure(index,tzone=tzone,tclass=orderBy),
             class=c('xts','zoo'),
             ...)
+
+  ctor.call <- match.call(expand.dots = TRUE)
+  if(hasArg(".indexFORMAT")) {
+    warning(sQuote(".indexFORMAT"), " is deprecated, use tformat instead.")
+    if(missing("tformat")) {
+      attr(attr(x, "index"), "tformat") <- eval.parent(ctor.call$.indexFORMAT)
+    }
+  }
+  if(hasArg(".indexCLASS")) {
+    warning(sQuote(".indexCLASS"), " is deprecated, use tclass instead.")
+    if(missing("tclass")) {
+      attr(attr(x, "index"), "tclass") <- eval.parent(ctor.call$.indexCLASS)
+    }
+  }
+  if(hasArg(".indexTZ")) {
+    warning(sQuote(".indexTZ"), " is deprecated, use tzone instead.")
+    if(missing("tzone")) {
+      attr(attr(x, "index"), "tzone") <- eval.parent(ctor.call$.indexTZ)
+    }
+  }
+
   if(!is.null(attributes(x)$dimnames[[1]]))
     # this is very slow if user adds rownames, but maybe that is deserved :)
     dimnames(x) <- dimnames(x) # removes row.names

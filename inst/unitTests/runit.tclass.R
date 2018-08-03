@@ -45,6 +45,12 @@ test.ctors_dont_add_tclass_indexCLASS_to_object <- function() {
   checkIdentical(NULL, attr(y, ".indexCLASS"))
 }
 
+test.xts_ctor_warns_for_indexCLASS_arg <- function() {
+  op <- options(warn = 2)
+  on.exit(options(warn = op$warn))
+  checkException(x <- xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"))
+}
+
 test.get_coredata_drops_xts_tclass_indexCLASS <- function() {
   y <- coredata(x)
   checkIdentical(NULL, attr(y, "tclass"))
