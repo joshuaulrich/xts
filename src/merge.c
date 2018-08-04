@@ -1124,21 +1124,8 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   
     args = argstart; // reset args
     int ii, jj, iijj, jj_result;
-    int *int_result=NULL, *int_xtmp=NULL;
-    double *real_result=NULL, *real_xtmp=NULL;
 
     PROTECT(result = allocVector(TYPEOF(_INDEX), index_len * ncs)); P++;
-    switch(TYPEOF(result)) {
-      case LGLSXP:
-      case INTSXP:
-        int_result = INTEGER(result);
-        break;
-      case REALSXP:
-        real_result = REAL(result);
-        break;
-      default:
-        error("unsupported data type");
-    }
 
     SEXP ColNames, NewColNames;
     PROTECT(NewColNames = allocVector(STRSXP, ncs)); P++;
@@ -1170,39 +1157,90 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
       nr = nrows(xtmp);
       nc = (0 == nr) ? 0 : ncols(xtmp);  // ncols(numeric(0)) == 1
       ncs += nc;
+
+      /* Use colnames from merged object, if it has them. Otherwise, use
+       * use deparsed names */
       REPROTECT(ColNames = getAttrib(CAR(args),R_DimNamesSymbol), cnmtmp);
+      SEXP colnames = R_NilValue;
+      if(R_NilValue != ColNames) {
+        colnames = VECTOR_ELT(ColNames, 1);
+      }
+      if(R_NilValue == colnames) {
+        for(jj=0; jj < nc; jj++) {
+          SET_STRING_ELT(NewColNames, i+jj, STRING_ELT(symnames,i+jj));
+        }
+      } else {
+        for(jj=0; jj < nc; jj++) {
+          SET_STRING_ELT(NewColNames, i+jj, STRING_ELT(colnames,  jj));
+        }
+      }
+
       switch(TYPEOF(xtmp)) { // by type, insert merged data into result object
         case LGLSXP:
-        case INTSXP:
-          int_xtmp = INTEGER(xtmp);
-          for(jj=0; jj < nc; jj++) {
-            if(!isNull(ColNames) && !isNull(VECTOR_ELT(ColNames,1))) {
-              /* if merged object has colnames, use these, otherwise use deparse names */
-              SET_STRING_ELT(NewColNames, i+jj, STRING_ELT(VECTOR_ELT(ColNames,1),jj));
-            } else {
-              SET_STRING_ELT(NewColNames, i+jj, STRING_ELT(symnames,i+jj));
+          {
+            int *xtmp_ = LOGICAL(xtmp);
+            int *result_ = LOGICAL(result);
+            for(jj=0; jj < nc; jj++) {
+              for(ii=0; ii < nr; ii++) {
+                iijj = ii + jj * nr;
+                jj_result = ii + (i+jj) * nr;
+                result_[jj_result] = xtmp_[iijj];
+              }
             }
-            for(ii=0; ii < nr; ii++) {
-              iijj = ii + jj * nr;
-              jj_result = ii + ( (i+jj) * nr);
-              int_result[ jj_result ] = int_xtmp[ iijj ];
+          }
+          break;
+        case INTSXP:
+          {
+            int *xtmp_ = INTEGER(xtmp);
+            int *result_ = INTEGER(result);
+            for(jj=0; jj < nc; jj++) {
+              for(ii=0; ii < nr; ii++) {
+                iijj = ii + jj * nr;
+                jj_result = ii + (i+jj) * nr;
+                result_[jj_result] = xtmp_[iijj];
+              }
             }
           }
           break;
         case REALSXP:
-          real_xtmp = REAL(xtmp);
-          for(jj=0; jj < nc; jj++) {
-            if(!isNull(ColNames) && !isNull(VECTOR_ELT(ColNames,1))) {
-              SET_STRING_ELT(NewColNames, i+jj, STRING_ELT(VECTOR_ELT(ColNames,1),jj));
-            } else {
-              SET_STRING_ELT(NewColNames, i+jj, STRING_ELT(symnames,i+jj));
-            }
-            for(ii=0; ii < nr; ii++) {
-              iijj = ii + jj * nr;
-              jj_result = ii + ( (i+jj) * nr);
-              real_result[ jj_result ] = real_xtmp[ iijj ];
+          {
+            double *xtmp_ = REAL(xtmp);
+            double *result_ = REAL(result);
+            for(jj=0; jj < nc; jj++) {
+              for(ii=0; ii < nr; ii++) {
+                iijj = ii + jj * nr;
+                jj_result = ii + (i+jj) * nr;
+                result_[jj_result] = xtmp_[iijj];
+              }
             }
           }
+          break;
+        case CPLXSXP:
+          {
+            Rcomplex *xtmp_ = COMPLEX(xtmp);
+            Rcomplex *result_ = COMPLEX(result);
+            for(jj=0; jj < nc; jj++) {
+              for(ii=0; ii < nr; ii++) {
+                iijj = ii + jj * nr;
+                jj_result = ii + (i+jj) * nr;
+                result_[jj_result] = xtmp_[iijj];
+              }
+            }
+          }
+          break;
+        case STRSXP:
+          {
+            for(jj=0; jj < nc; jj++) {
+              for(ii=0; ii < nr; ii++) {
+                iijj = ii + jj * nr;
+                jj_result = ii + (i+jj) * nr;
+                SET_STRING_ELT(result, jj_result, STRING_ELT(xtmp, iijj));
+              }
+            }
+          }
+          break;
+        default:
+          error("unsupported data type");
           break;
       }
     }

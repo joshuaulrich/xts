@@ -92,3 +92,19 @@ test.merge_with_zero_width_returns_original_type <- function() {
     checkIdentical(m1, m2)
   }
 }
+
+test.n_way_merge_on_all_types <- function() {
+  D1 <- as.Date("2018-01-03")-2:0
+  M1 <- xts(1:3, D1, dimnames = list(NULL, "m"))
+  M3 <- xts(cbind(1:3, 1:3, 1:3), D1,
+            dimnames = list(NULL, c("m", "m.1", "m.2")))
+
+  types <- c("double", "integer", "logical", "character", "complex")
+  for (type in types) {
+    m1 <- M1
+    m3 <- M3
+    storage.mode(m1) <- storage.mode(m3) <- type
+    m <- merge(m1, m1, m1)
+    checkIdentical(m, m3)
+  }
+}
