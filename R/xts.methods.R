@@ -262,7 +262,9 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
     base_idx <- findInterval(index., idx)
     base_idx <- pmax(base_idx, 1)
     # Only include indexes where we have an exact match in the xts series
-    match <- idx[base_idx] == index.
+    ### match <- idx[base_idx] == index.
+    ### prevent NAs from creeping in
+    match <- sapply({idx[base_idx] == index.}, function(x) { if(is.na(x)) { FALSE } else { x } } )
     base_idx <- base_idx[match]
     index. <- index.[match]
     if(length(base_idx) < 1) return(x[NULL,])
