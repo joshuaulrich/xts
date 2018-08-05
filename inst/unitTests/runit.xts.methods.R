@@ -211,56 +211,39 @@ test.window <- function() {
 }
 
 # test subset.xts for date subsetting by row
-test.subset.xts <- function() {
-  DAY = 24*3600
+test.subset_i_datetime_or_character <- function() {
   base <- as.POSIXct("2000-12-31")
-  dts <- base + c(1:10, 12:15, 17:20)*DAY
-  x <- xts(1:length(dts), dts)
+  dts <- base + c(1:10, 12:15, 17:20) * 24L * 3600L
+  x <- xts(seq_along(dts), dts)
 
-  # Test character
-  sub <- .subset.xts(x, "2001-01-10")
-  bin <- window(x, start = "2001-01-10", end = "2001-01-10")
-  checkIdentical(bin, sub, "Test character")
+  # Note that "2001-01-11" is not in the series. Skipped by convention.
+  d <- c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13")
 
-  # Test character vector
-  dts <- c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13") # Note that "2001-01-11" is not in the series. Skipped by convention.
-  sub <- .subset.xts(x, dts)
-  bin <- window(x, start = "2001-01-10", end = "2001-01-13")
-  checkIdentical(bin, sub, "Test character vector")
+  # Test scalar
+  bin <- window(x, start = d[1], end = d[1])
+  checkIdentical(bin, x[d[1], ], "character scalar")
+  checkIdentical(bin, x[I(d[1]), ], "as-is character scalar")
+  checkIdentical(bin, x[as.POSIXct(d[1]), ], "POSIXct scalar")
+  checkIdentical(bin, x[as.Date(d[1]), ], "Date scalar")
 
-  # Test I() of the same thing
-  dts <- c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13") # Note that "2001-01-11" is not in the series. Skipped by convention.
-  sub <- .subset.xts(x, I(dts))
-  bin <- window(x, start = "2001-01-10", end = "2001-01-13")
-  checkIdentical(bin, sub, "Test character vector")
-
-  # Test POSIXct
-  sub <- .subset.xts(x, as.POSIXct("2001-01-10"))
-  bin <- window(x, start = "2001-01-10", end = "2001-01-10")
-  checkIdentical(bin, sub, "Test POSIXct")
-
-  # Test POSIXct vector
-  sub <- .subset.xts(x, as.POSIXct(c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13")))  # Note that "2001-01-11" is not in the series. Skipped by convention.
-  bin <- window(x, start = "2001-01-10", end = "2001-01-13")
-  checkIdentical(bin, sub, "Test POSIXct vector")
-
-  # Test Date
-  sub <- .subset.xts(x, as.Date(c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13")))  # Note that "2001-01-11" is not in the series. Skipped by convention.
-  bin <- window(x, start = "2001-01-10", end = "2001-01-13")
-  checkIdentical(bin, sub, "Test Date")
+  # Test vector
+  bin <- window(x, start = d[1], end = d[length(d)])
+  checkIdentical(bin, x[d, ], "character vector")
+  checkIdentical(bin, x[I(d), ], "as-is character vector")
+  checkIdentical(bin, x[as.POSIXct(d), ], "POSIXct vector")
+  checkIdentical(bin, x[as.Date(d), ], "Date vector")
 
   # Test character dates, and single column selection
-  base <- as.POSIXct("2000-12-31")
-  dts <- base + c(1:10, 12:15, 17:20)*DAY
-  x <- xts(1:length(dts), dts)
   y <- xts(rep(2, length(dts)), dts)
   z <- xts(rep(3, length(dts)), dts)
   x2 <- cbind(y, x, z)
-  sub <- .subset.xts(x2, c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13"), 2)  # Note that "2001-01-11" is not in the series. Skipped by convention.
-  bin <- window(x, start = "2001-01-10", end = "2001-01-13")
+  sub <- x2[d, 2]  # Note that "2001-01-11" is not in the series. Skipped by convention.
+  bin <- window(x, start = d[1], end = d[length(d)])
   checkTrue(nrow(sub) == nrow(bin), "Test character dates, and single column selection")
   checkTrue(all(sub == bin), "Test character dates, and single column selection")
+}
 
+test.subset_i_ISO8601 <- function() {
   # Test Date Ranges
   x <- xts(1:1000, as.Date("2000-01-01")+1:1000)
   sub <- x['200001'] # January 2000
