@@ -260,7 +260,7 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
     }
     # Fast search on index., faster than binsearch if index. is sorted (see findInterval)
     base_idx <- findInterval(index., idx)
-    base_idx <- pmax(base_idx, 1)
+    base_idx <- pmax(base_idx, 1L)
     # Only include indexes where we have an exact match in the xts series
     match <- idx[base_idx] == index.
     base_idx <- base_idx[match]

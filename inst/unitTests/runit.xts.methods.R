@@ -219,44 +219,56 @@ test.subset_i_datetime_or_character <- function() {
   # Note that "2001-01-11" is not in the series. Skipped by convention.
   d <- c("2001-01-10", "2001-01-11", "2001-01-12", "2001-01-13")
 
-  # Test scalar
-  bin <- window(x, start = d[1], end = d[1])
-  checkIdentical(bin, x[d[1], ], "character scalar")
-  checkIdentical(bin, x[I(d[1]), ], "as-is character scalar")
-  checkIdentical(bin, x[as.POSIXct(d[1]), ], "POSIXct scalar")
-  checkIdentical(bin, x[as.Date(d[1]), ], "Date scalar")
+  for (type in c("double", "integer")) {
+    storage.mode(.index(x)) <- type
 
-  # Test vector
-  bin <- window(x, start = d[1], end = d[length(d)])
-  checkIdentical(bin, x[d, ], "character vector")
-  checkIdentical(bin, x[I(d), ], "as-is character vector")
-  checkIdentical(bin, x[as.POSIXct(d), ], "POSIXct vector")
-  checkIdentical(bin, x[as.Date(d), ], "Date vector")
+    # Test scalar
+    msg <- paste("scalar,", type, "index")
+    bin <- window(x, start = d[1], end = d[1])
+    checkIdentical(bin, x[d[1], ], paste("character", msg))
+    checkIdentical(bin, x[I(d[1]), ], paste("as-is character", msg))
+    checkIdentical(bin, x[as.POSIXct(d[1]), ], paste("POSIXct", msg))
+    checkIdentical(bin, x[as.Date(d[1]), ], paste("Date", msg))
 
-  # Test character dates, and single column selection
-  y <- xts(rep(2, length(dts)), dts)
-  z <- xts(rep(3, length(dts)), dts)
-  x2 <- cbind(y, x, z)
-  sub <- x2[d, 2]  # Note that "2001-01-11" is not in the series. Skipped by convention.
-  bin <- window(x, start = d[1], end = d[length(d)])
-  checkTrue(nrow(sub) == nrow(bin), "Test character dates, and single column selection")
-  checkTrue(all(sub == bin), "Test character dates, and single column selection")
+    # Test vector
+    msg <- paste("vector,", type, "index")
+    bin <- window(x, start = d[1], end = d[length(d)])
+    checkIdentical(bin, x[d, ], paste("character", msg))
+    checkIdentical(bin, x[I(d), ], paste("as-is character", msg))
+    checkIdentical(bin, x[as.POSIXct(d), ], paste("POSIXct", msg))
+    checkIdentical(bin, x[as.Date(d), ], paste("Date", msg))
+
+    # Test character dates, and single column selection
+    y <- xts(rep(2, length(dts)), dts)
+    z <- xts(rep(3, length(dts)), dts)
+    x2 <- cbind(y, x, z)
+    sub <- x2[d, 2]  # Note that "2001-01-11" is not in the series. Skipped by convention.
+    bin <- window(x, start = d[1], end = d[length(d)])
+    checkTrue(nrow(sub) == nrow(bin), "Test character dates, and single column selection")
+    checkTrue(all(sub == bin), "Test character dates, and single column selection")
+  }
 }
 
 test.subset_i_ISO8601 <- function() {
-  # Test Date Ranges
   x <- xts(1:1000, as.Date("2000-01-01")+1:1000)
-  sub <- x['200001'] # January 2000
-  bin <- window(x, start = "2000-01-01", end = "2000-01-31")
-  checkIdentical(bin, sub, "Test Date Ranges")
 
-  # Test Date Ranges 2
-  sub <- x['1999/2000'] # All of 2000 (note there is no need to use the exact start)
-  bin <- window(x, start = "2000-01-01", end = "2000-12-31")
-  checkIdentical(bin, sub, "Test Date Ranges 2")
+  for (type in c("double", "integer")) {
+    storage.mode(.index(x)) <- type
 
-  # Test Date Ranges 3
-  sub <- x['1999/200001'] # January 2000
-  bin <- window(x, start = "2000-01-01", end = "2000-01-31")
-  checkIdentical(bin, sub, "Test Date Ranges 3")
+    fmt <- paste("Test date range, %s;", type, "index")
+    # Test Date Ranges
+    sub <- x['200001'] # January 2000
+    bin <- window(x, start = "2000-01-01", end = "2000-01-31")
+    checkIdentical(bin, sub, sprintf(fmt, "2000-01"))
+
+    # Test Date Ranges 2
+    sub <- x['1999/2000'] # All of 2000 (note there is no need to use the exact start)
+    bin <- window(x, start = "2000-01-01", end = "2000-12-31")
+    checkIdentical(bin, sub, sprintf(fmt, "1999/2000"))
+
+    # Test Date Ranges 3
+    sub <- x['1999/200001'] # January 2000
+    bin <- window(x, start = "2000-01-01", end = "2000-01-31")
+    checkIdentical(bin, sub, sprintf(fmt, "1999/2000-01"))
+  }
 }

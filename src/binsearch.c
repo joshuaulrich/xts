@@ -159,8 +159,7 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
    * This is necessary to handle duplicate dates in the xts index.
    */
   int n_x = length(_x);
-  double *x = REAL(_x);
-  double *index = REAL(_index);
+  int *x = INTEGER(_x);
 
   if (length(_index) < 1) {
     return allocVector(INTSXP, 0);
@@ -169,14 +168,36 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
   SEXP _out = PROTECT(allocVector(INTSXP, length(_index)));
   int *out = INTEGER(_out);
 
-  /* Loop over locations in _x in reverse order */
   int i, xi, j, k = 0;
-  for (i = n_x; i > 0; i--) {
-    xi = x[i-1];
-    j = xi;
-    do {
-      out[k++] = j--;
-    } while (j > 0 && index[xi-1] == index[j-1]);
+  switch (TYPEOF(_index)) {
+    case REALSXP:
+      {
+        double *index = REAL(_index);
+        /* Loop over locations in _x in reverse order */
+        for (i = n_x; i > 0; i--) {
+          xi = x[i-1];
+          j = xi;
+          do {
+            out[k++] = j--;
+          } while (j > 0 && index[xi-1] == index[j-1]);
+        }
+      }
+      break;
+    case INTSXP:
+      {
+        int *index = INTEGER(_index);
+        /* Loop over locations in _x in reverse order */
+        for (i = n_x; i > 0; i--) {
+          xi = x[i-1];
+          j = xi;
+          do {
+            out[k++] = j--;
+          } while (j > 0 && index[xi-1] == index[j-1]);
+        }
+      }
+      break;
+    default:
+      error("unsupported index type");
   }
 
   /* truncate so length(_out) = k
