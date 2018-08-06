@@ -31,6 +31,12 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
   double *real_x;
   int *int_x;
 
+  /*
+  If length is 0 then it is ordered
+  */
+  if (nx < 0)
+    return ScalarLogical(1);
+
   if(TYPEOF(x) == REALSXP) {
   /*
   Check for increasing order, strict or non-strict
@@ -76,7 +82,7 @@ SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
   */
   int_x = INTEGER(x);
   if(LOGICAL(increasing)[ 0 ] == 1) { /* INCREASING */
-    /* Not increasing order if first element is NA */
+    /* Not increasing order if first element is NA.  We know x has at least 1 element. */
     if( int_x[0] == NA_INTEGER )
       return ScalarLogical(0);
 
