@@ -203,6 +203,9 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
   /* truncate so length(_out) = k
    * NB: output is in reverse order!
    */
-  UNPROTECT(1);
-  return lengthgets(_out, k);
+
+  SEXP _trunc = PROTECT(lengthgets(_out, k));
+  UNPROTECT(2);
+  
+  return _trunc;
 }
