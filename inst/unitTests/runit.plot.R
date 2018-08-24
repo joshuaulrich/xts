@@ -20,6 +20,9 @@ test.axTicksByTime_ticks.on_quarter <- function() {
     c("\nJan\n2016", "\nApr\n2016", "\nJul\n2016", "\nOct\n2016",
       "\nJan\n2017", "\nApr\n2017", "\nJul\n2017", "\nOct\n2017",
       "\nJan\n2018", "\nJan\n2018"))
+  if (.Platform$OS.type != "unix") {
+    names(tick_marks) <- gsub("\n(.*)\n", "\\1 ", names(tick_marks))
+  }
   ym <- as.yearmon("2018-01") - 24:0 / 12
   x <- xts(seq_along(ym), ym)
 
