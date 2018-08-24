@@ -1,3 +1,27 @@
+Changed in xts 0.11-1:
+
+o  Fix regression in .xts() that caused 'tclass' argument/attribute to be
+   incorrectly set to POSIXct regardless of user-provided value. Thanks to
+   @Eluvias for the report and Tom Andrews for the PR (#249, #250).
+
+o  Fix performance regression when xts object is subset by a date-time vector.
+   Thanks to Tom Andrews for the report, and the PR to fix the bug in my patch
+   (#251, #263, #264).
+
+o  Restore behavior from 0.10-2 so subsetting an empty xts object by a date-
+   time vector returns an empty xts object instead of throwing an error.
+   Thanks to @alkment for the report (#252).
+
+o  Add ability for merge.xts() to handle multiple character or complex xts
+   objects. Thanks to Ken Williams for the report (#44).
+
+o  Add ability to use "quarters" to specify tick/grid mark locations on plots.
+   This ran but produced an incorrect result in 0.10-2 and threw an error in
+   0.11-0. Thanks to Marc Weibel for the report (#256).
+
+o  Fix illegal read reported by valgrind. Thanks to Tom Andrews for the report
+   and PR (#236, #264).
+
 Changed in xts 0.11-0:
 
 o  Fix make.index.unique() to always return a unique and sorted index. Thanks
