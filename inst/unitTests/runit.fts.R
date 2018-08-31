@@ -1,5 +1,6 @@
+if (requireNamespace("fts", quietly = TRUE)) {
+
 data(sample_matrix)
-stopifnot(requireNamespace("fts"))
 sample.fts1 <- ts(sample_matrix,start=as.Date(rownames(sample_matrix)[1]))
 sample.fts1 <- fts::fts(index(sample.fts1), sample_matrix)
 sample.xts.fts1 <- as.xts(sample.fts1)
@@ -97,3 +98,5 @@ test.fts12_reclass_subset_as.xfts_j1 <- function() {
 test.fts12_reclass_subset_fts_j1 <- function() {
   checkIdentical(sample.fts12[,1],reclass(try.xts(sample.fts12[,1])))
 }
+
+}  # requireNamespace

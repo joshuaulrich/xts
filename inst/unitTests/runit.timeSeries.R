@@ -3,7 +3,7 @@
 ## 
 ## 
 
-library(timeSeries)
+if (requireNamespace("timeSeries", quietly = TRUE)) {
 data(sample_matrix)
 
 ###############################################################################
@@ -16,7 +16,7 @@ data(sample_matrix)
 
 ###############################################################################
 # create timeSeries object from sample_matrix
-sample.timeSeries <- timeSeries(sample_matrix,charvec=as.Date(rownames(sample_matrix)))
+sample.timeSeries <- timeSeries::timeSeries(sample_matrix,charvec=as.Date(rownames(sample_matrix)))
 ###############################################################################
 
 ###############################################################################
@@ -83,7 +83,7 @@ test.timeSeries_reclass_subset_timeSeries_j1 <- function() {
 
 ###############################################################################
 # create timeSeries object from sample_matrix
-sample.timeSeries.univariate <- timeSeries(sample_matrix[,1],charvec=as.Date(rownames(sample_matrix)))
+sample.timeSeries.univariate <- timeSeries::timeSeries(sample_matrix[,1],charvec=as.Date(rownames(sample_matrix)))
 ###############################################################################
 
 ###############################################################################
@@ -109,3 +109,4 @@ test.convert_timeSeries.univariate_to_xts_i1j1 <- function() {
 
 # end subsetting functionality
 ###############################################################################
+}  # requireNamespace

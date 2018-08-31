@@ -1,8 +1,8 @@
+if (requireNamespace("tseries", quietly = TRUE)) {
 #
-library(tseries)
 data(sample_matrix)
 
-sample.irts <- irts(as.POSIXct(rownames(sample_matrix)),sample_matrix)
+sample.irts <- tseries::irts(as.POSIXct(rownames(sample_matrix)),sample_matrix)
 sample.irts.xts <- as.xts(sample.irts)
 
 test.convert_irts_to_xts <- function() {
@@ -34,4 +34,4 @@ test.irts_reclass_subset_irts_j1 <- function() {
   checkIdentical(sample.irts[,1],reclass(try.xts(sample.irts[,1])))
 }
 
-detach('package:tseries')
+}  # requireNamespace

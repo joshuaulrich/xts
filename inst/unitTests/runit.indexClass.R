@@ -1,3 +1,11 @@
+withPackage <- function(pkg, expr) {
+  if (require(pkg, quietly = TRUE, character.only = TRUE)) {
+    pkgpkg <- paste0("package:", pkg)
+    on.exit(detach(pkgpkg, character.only = TRUE), add = TRUE)
+    eval(expr)
+  }
+}
+
 data(sample_matrix)
 
 convert_xts <- as.xts(sample_matrix) # indexClass defaults to POSIXct
@@ -16,12 +24,12 @@ test.convert_POSIXct2Date <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_POSIXct2chron <- function() {
-  library(chron)
+  withPackage("chron", {
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
   checkUTCindexTZ(x)
-  detach('package:chron')
+  })
 }
 test.convert_POSIXct2yearmon <- function() {
   x <- convert_xts
@@ -36,11 +44,12 @@ test.convert_POSIXct2yearqtr <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_POSIXct2timeDate <- function() {
-  library(timeDate)
+  withPackage("timeDate", {
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
   checkUTCindexTZ(x)
+  })
 }
 test.convert_POSIXct2POSIXct <- function() {
   x <- convert_xts
@@ -59,11 +68,12 @@ test.convert_Date2Date <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_Date2chron <- function() {
-  library(chron)
+  withPackage("chron", {
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
   checkUTCindexTZ(x)
+  })
 }
 test.convert_Date2yearmon <- function() {
   x <- convert_xts
@@ -78,11 +88,12 @@ test.convert_Date2yearqtr <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_Date2timeDate <- function() {
-  library(timeDate)
+  withPackage("timeDate", {
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
   checkUTCindexTZ(x)
+  })
 }
 test.convert_Date2POSIXct <- function() {
   x <- convert_xts
@@ -92,6 +103,7 @@ test.convert_Date2POSIXct <- function() {
 }
 
 # Convert from 'chron'
+if (requireNamespace("chron", quietly = TRUE)) {
 indexClass(convert_xts) <- 'chron'
 
 test.convert_chron2Date <- function() {
@@ -101,11 +113,12 @@ test.convert_chron2Date <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_chron2chron <- function() {
-  library(chron)
+  withPackage("chron", {
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
   checkUTCindexTZ(x)
+  })
 }
 test.convert_chron2yearmon <- function() {
   x <- convert_xts
@@ -120,17 +133,19 @@ test.convert_chron2yearqtr <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_chron2timeDate <- function() {
-  library(timeDate)
+  withPackage("timeDate", {
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
   checkUTCindexTZ(x)
+  })
 }
 test.convert_chron2POSIXct <- function() {
   x <- convert_xts
   indexClass(x) <- 'POSIXct'
   checkTrue(inherits(index(x),'POSIXct'))
   checkUTCindexTZ(x)
+}
 }
 
 # Convert from 'yearmon'
@@ -143,11 +158,12 @@ test.convert_yearmon2Date <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_yearmon2chron <- function() {
-  library(chron)
+  withPackage("chron", {
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
   checkUTCindexTZ(x)
+  })
 }
 test.convert_yearmon2yearmon <- function() {
   x <- convert_xts
@@ -162,11 +178,12 @@ test.convert_yearmon2yearqtr <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_yearmon2timeDate <- function() {
-  library(timeDate)
+  withPackage("timeDate", {
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
   checkUTCindexTZ(x)
+  })
 }
 test.convert_yearmon2POSIXct <- function() {
   x <- convert_xts
@@ -185,11 +202,12 @@ test.convert_yearqtr2Date <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_yearqtr2chron <- function() {
-  library(chron)
+  withPackage("chron", {
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
   checkUTCindexTZ(x)
+  })
 }
 test.convert_yearqtr2yearmon <- function() {
   x <- convert_xts
@@ -204,11 +222,12 @@ test.convert_yearqtr2yearqtr <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_yearqtr2timeDate <- function() {
-  library(timeDate)
+  withPackage("timeDate", {
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
   checkUTCindexTZ(x)
+  })
 }
 test.convert_yearqtr2POSIXct <- function() {
   x <- convert_xts
@@ -218,6 +237,7 @@ test.convert_yearqtr2POSIXct <- function() {
 }
 
 # Convert from 'timeDate'
+if (requireNamespace("timeDate", quietly = TRUE)) {
 indexClass(convert_xts) <- 'timeDate'
 
 test.convert_timeDate2Date <- function() {
@@ -227,11 +247,12 @@ test.convert_timeDate2Date <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_timeDate2chron <- function() {
-  library(chron)
+  withPackage("chron", {
   x <- convert_xts
   indexClass(x) <- 'chron'
   checkTrue(inherits(index(x),'dates'))
   checkUTCindexTZ(x)
+  })
 }
 test.convert_timeDate2yearmon <- function() {
   x <- convert_xts
@@ -246,17 +267,19 @@ test.convert_timeDate2yearqtr <- function() {
   checkUTCindexTZ(x)
 }
 test.convert_timeDate2timeDate <- function() {
-  library(timeDate)
+  withPackage("timeDate", {
   x <- convert_xts
   indexClass(x) <- 'timeDate'
   checkTrue(inherits(index(x),'timeDate'))
   checkUTCindexTZ(x)
+  })
 }
 test.convert_timeDate2POSIXct <- function() {
   x <- convert_xts
   indexClass(x) <- 'POSIXct'
   checkTrue(inherits(index(x),'POSIXct'))
   checkUTCindexTZ(x)
+}
 }
 
 # set index and ensure TZ = "UTC"
@@ -267,11 +290,12 @@ test.checkUTC_set_index2Date <- function() {
   checkUTCindexTZ(x)
 }
 test.checkUTC_set_index2chron <- function() {
+  withPackage("chron", {
   x <- .xts(1:2, 1:2)
   d <- c("2007-01-02", "2007-01-03")
-  stopifnot(requireNamespace("chron"))
   index(x) <- chron::dates(d, format="Y-m-d")
   checkUTCindexTZ(x)
+  })
 }
 test.checkUTC_set_index2yearmon <- function() {
   x <- .xts(1:2, 1:2)
@@ -298,8 +322,9 @@ test.indexClass_full_index <- function() {
   checkException((indexClass(convert_xts) <- index(convert_xts)))
 }
 test.indexClass_unquoted_symbol <- function() {
-  library(timeDate)
+  withPackage("timeDate", {
   checkException((indexClass(convert_xts) <- timeDate))
+  })
 }
 test.indexClass_missing_object <- function() {
   rm(Date)
