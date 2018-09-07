@@ -44,6 +44,14 @@ test.xts_order.by_Inf_double <- function() {
 }
 ### }}}
 
+# Test that only first tzone element is stored
+test.xts_only_use_first_tzone_element <- function() {
+  tz <- "America/Chicago"
+  i <- as.POSIXlt("2018-01-01", tz = tz)
+  y <- xts(1, i)
+  checkIdentical(tz, tzone(y))
+}
+
 # .xts()
 test..xts_dimnames_in_dots <- function() {
   x <- .xts(1:5, 1:5, dimnames = list(NULL, "x"))
