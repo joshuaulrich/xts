@@ -77,12 +77,12 @@ checkXtsTz <- function(xts, tzone) {
   checkEquals(attr(attr(xts, "index"), "tzone"), tzone)
 }
 
-.setUp <- function() {
-  Sys.setenv(TZ="UTC")
-}
-
 ### Check that tzone is honoured and .indexTZ ignored
 test..xts_tzone <- function() {
+  sysTZ <- Sys.getenv("TZ")
+  Sys.setenv(TZ = "UTC")
+  on.exit(Sys.setenv(TZ = sysTZ), add = TRUE)
+
   checkXtsTz(.xts(1, 1), "UTC")
   checkXtsTz(.xts(1, 1, tzone="Europe/London"), "Europe/London")
   ## this case passes in 0.10-2 but looks wrong

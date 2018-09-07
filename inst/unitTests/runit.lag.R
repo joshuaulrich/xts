@@ -1,12 +1,7 @@
-.setUp <- function() {
-  LAG <<- function(x, k=1, na.pad=TRUE) {
-    z <- lag(as.zoo(x), -k, na.pad)
-    dimnames(z) <- NULL
-    as.xts(z)
-  }
-}
-.tearDown <- function() {
-  rm(LAG)
+LAG <- function(x, k=1, na.pad=TRUE) {
+  z <- lag(as.zoo(x), -k, na.pad)
+  dimnames(z) <- NULL
+  as.xts(z)
 }
 
 # POSIXct index

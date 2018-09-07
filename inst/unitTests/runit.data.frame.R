@@ -1,23 +1,6 @@
-# In the other files, we are able to set up global data.
-# For some reason, it does not work in this file.
-# Use explicit setup and teardown
-.setUp <- function() {
-  data(sample_matrix)
-  sysTZ <- Sys.getenv('TZ')
-  assign("sysTZ", sysTZ, envir = .GlobalEnv)
-  Sys.setenv(TZ='GMT')
-
-  sample.data.frame <- data.frame(sample_matrix)
-  sample.xts <- as.xts(sample.data.frame)
-  assign("sample.data.frame", sample.data.frame, envir = .GlobalEnv)
-  assign("sample.xts", sample.xts, envir = .GlobalEnv)
-}
-
-.tearDown <- function() {
-  Sys.setenv(TZ=sysTZ)
-  rm(sample.data.frame, envir = .GlobalEnv)
-  rm(sample.xts, envir = .GlobalEnv)
-}
+data(sample_matrix)
+sample.data.frame <- data.frame(sample_matrix)
+sample.xts <- as.xts(sample.data.frame)
 
 test.convert_data.frame_to_xts <- function() {
   checkIdentical(sample.xts,as.xts(sample.data.frame))
