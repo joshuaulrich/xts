@@ -5,3 +5,5 @@
 \.orig$
 \.md$
 .travis.yml
+^0.*\.patch$
+^.*\.tar.gz$

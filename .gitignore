@@ -24,3 +24,12 @@ vignettes/*.pdf
 *.swp
 *.swo
 *~
+
+# R package build/check
+*.tar.gz
+*.Rcheck/
+
+# miscellaneous
+0*.patch
+*.bak
+*.orig
