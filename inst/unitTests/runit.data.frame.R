@@ -23,7 +23,6 @@ test.data.frame_reclass_subset_reclass_j1 <- function() {
 }
 
 # subsetting to 1 col converts to simple numeric - can't successfully handle
-
 test.data.frame_reclass_subset_as.xts_j1 <- function() {
   checkIdentical(sample.data.frame[,1,drop=FALSE],reclass(try.xts(sample.data.frame)[,1]))
 }
@@ -36,6 +35,7 @@ test.data.frame_reclass_subset_data.frame_j1 <- function() {
 test.convert_data.frame_to_xts_order.by_POSIXlt <- function() {
   orderby = as.POSIXlt(rownames(sample.data.frame))
   x <- as.xts(sample.data.frame, order.by = orderby)
+  # tz = "" by default for as.POSIXlt.POSIXct
   y <- xts(coredata(sample.xts), as.POSIXlt(index(sample.xts)))
   checkIdentical(y, x)
 }
@@ -45,8 +45,10 @@ test.convert_data.frame_to_xts_order.by_POSIXct <- function() {
   checkIdentical(sample.xts, x)
 }
 test.convert_data.frame_to_xts_order.by_Date <- function() {
+  # tz = "UTC" by default for as.Date.POSIXct (y), but
+  # tz = "" by default for as.Date.character (orderby)
   orderby = as.Date(rownames(sample.data.frame))
   x <- as.xts(sample.data.frame, order.by = orderby)
-  y <- xts(coredata(sample.xts), as.Date(index(sample.xts)))
+  y <- xts(coredata(sample.xts), as.Date(index(sample.xts), tz = ""))
   checkIdentical(y, x)
 }
