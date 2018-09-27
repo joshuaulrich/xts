@@ -76,7 +76,7 @@ function(x=NULL,
     x <- as.matrix(x)
   } else x <- numeric(0)
 
-  if(orderBy == "timeDate" && missing(tzone)) {
+  if(orderBy[1L] == "timeDate" && missing(tzone)) {
     tzone <- order.by@FinCenter
   } else
   if(!is.null(attr(order.by,"tzone")) && missing(tzone))
