@@ -1,0 +1,1 @@
+Please review the [contributing guide](.github/CONTRIBUTING.md) before submitting your pull request. Please pay special attention to the [pull request](.github/CONTRIBUTING.md#want-to-submit-a-pull-request) and [commit message](.github/CONTRIBUTING.md#commit-messages) sections. Thanks for your contribution and interest in the project!
