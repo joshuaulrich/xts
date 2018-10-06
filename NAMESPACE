@@ -291,16 +291,19 @@ S3method(as.matrix,xts)
 S3method(as.environment,xts)
 
 # timeSeries (package:timeSeries) specific methods
-#export(xts.as.timeSeries)
-export(as.timeSeries.xts)
+if (getRversion() >= "3.6.0") {
+  S3method(timeSeries::as.timeSeries, xts)
+}
 S3method(as.xts,timeSeries)
 
 # irts (package:tseries) specific methods
 S3method(as.xts,irts)
 
 # fts (package:fts) specific methods
+if (getRversion() >= "3.6.0") {
+  S3method(fts::as.fts, xts)
+}
 S3method(as.xts,fts)
-export(as.fts.xts)
 
 # Date specific methods
 S3method(as.xts,Date)
