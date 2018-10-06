@@ -1,3 +1,17 @@
+Changed in xts 0.11-2:
+
+o  Fix if-statement in xts constructor that may use a logical with length > 1.
+   Thanks to @HughParsonage for the report and PR (#270, #272).
+
+o  Register shift.time.xts() method. Thanks to Philippe Verspeelt for the
+   report and PR (#268, #273).
+
+o  Conditionally register S3 methods for as.timeSeries.xts() and as.fts.xts()
+   when their respective packages are available (as requested by CRAN). Note
+   that this means these two functions are no longer exported. This may break
+   some existing code that calls the methods directly, though 'best practice'
+   is to let method dispatch determine which method to invoke.
+
 Changed in xts 0.11-1:
 
 o  Fix regression in .xts() that caused 'tclass' argument/attribute to be
