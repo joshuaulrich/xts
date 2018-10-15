@@ -165,10 +165,12 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
     return allocVector(INTSXP, 0);
   }
 
-  SEXP _out = PROTECT(allocVector(INTSXP, length(_index)));
+  PROTECT_INDEX px;
+  SEXP _out;
+  PROTECT_WITH_INDEX(_out = allocVector(INTSXP, length(_index)), &px);
   int *out = INTEGER(_out);
 
-  int i, xi, j, k = 0;
+  int i, xi, j, k = 0, n_out = length(_out);
   switch (TYPEOF(_index)) {
     case REALSXP:
       {
@@ -178,6 +180,12 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
           xi = x[i-1];
           j = xi;
           do {
+            /* Check if we need to lengthen output due to duplicates */
+            if (k == n_out) {
+              REPROTECT(_out = xlengthgets(_out, k+2*(i+1)), px);
+              out = INTEGER(_out);
+              n_out = length(_out);
+            }
             out[k++] = j--;
           } while (j > 0 && index[xi-1] == index[j-1]);
         }
@@ -191,6 +199,12 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
           xi = x[i-1];
           j = xi;
           do {
+            /* Check if we need to lengthen output due to duplicates */
+            if (k == n_out) {
+              REPROTECT(_out = xlengthgets(_out, k+2*(i+1)), px);
+              out = INTEGER(_out);
+              n_out = length(_out);
+            }
             out[k++] = j--;
           } while (j > 0 && index[xi-1] == index[j-1]);
         }
@@ -203,9 +217,8 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
   /* truncate so length(_out) = k
    * NB: output is in reverse order!
    */
+  REPROTECT(_out = xlengthgets(_out, k), px);
+  UNPROTECT(1);
 
-  SEXP _trunc = PROTECT(lengthgets(_out, k));
-  UNPROTECT(2);
-  
-  return _trunc;
+  return _out;
 }

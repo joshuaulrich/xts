@@ -269,3 +269,17 @@ test.empty_i_NULL <- function() {
   checkIdentical(zl[NULL,], empty)
   checkIdentical(zl[NULL],  empty)
 }
+
+test.duplicate_index_duplicate_i <- function() {
+  dates <-
+    structure(c(15770, 16257, 16282, 16291, 16296, 16296, 16298, 16301,
+                16432, 16452), class = "Date")
+  x <- xts(c(1, 2, 2, 3, 3, 3, 3, 3, 4, 4), dates)
+
+  dupdates <-
+    structure(c(15770, 16257, 16282, 16291, 16296, 16296, 16296, 16296,
+                16298, 16301, 16432, 16452), class = "Date")
+  y <- xts(c(1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4), dupdates)
+
+  checkIdentical(x[index(x),],  y)
+}
