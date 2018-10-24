@@ -108,8 +108,6 @@ if(TYPEOF(xindex)==INTSXP) {
   PROTECT(newindex = allocVector(TYPEOF(xindex), len)); P++;
   PROTECT(result   = allocVector(TYPEOF(x), len * ncx)); P++;
 
-  copyMostAttrib(xindex, newindex);
-
   switch( TYPEOF(x) ) {
     case INTSXP:
         int_x = INTEGER(x);
@@ -498,6 +496,8 @@ return(result);
   if(truelen != len) {
     PROTECT(newindex = lengthgets(newindex, truelen)); P++;
   }
+  copyMostAttrib(xindex, newindex);
+
   setAttrib(result, xts_IndexSymbol, newindex);
   setAttrib(result, xts_ClassSymbol, getAttrib(x, xts_ClassSymbol));
   copy_xtsAttributes(x, result);
