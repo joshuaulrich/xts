@@ -18,45 +18,50 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+.lgl_ops <- c("&", "|", ">", ">=", "==", "!=", "<=", "<")
 
 `Ops.xts` <-
 function(e1, e2)
 {
-  CLASS <- .Class
-  e <- if (missing(e2)) {
-      .Class <- "matrix"
-      NextMethod(.Generic)
-  }
-  else if (any(nchar(.Method) == 0)) {
-      .Class <- "matrix"
-      NextMethod(.Generic)
-  }
-  else {
-    if( NROW(e1)==NROW(e2) && identical(.index(e1),.index(e2)) ) {
+  if (missing(e2)) {
     .Class <- "matrix"
-    NextMethod(.Generic)
-    } else {
-      tmp.e1 <- merge.xts(e1, e2, all=FALSE, retclass=FALSE, retside=c(TRUE,FALSE))
-      e2 <- merge.xts(e2, e1, all=FALSE, retclass=FALSE, retside=c(TRUE,FALSE))
-      e1 <- tmp.e1
-      .Class <- "matrix"
-      NextMethod(.Generic)
+    e <- NextMethod(.Generic)
+    if (.Generic == "!") {
+      attributes(e) <- attributes(e1)
     }
+    return(e)
   }
-  if(.Generic %in% c("+","-","*","/","^","%%","%/%")) {
-    if(length(e)==0)
-      attr(e,'index') <- numeric(0)
-    #.Call('add_xts_class', e)
-    .Call('add_class', e, CLASS, PACKAGE="xts")
-  }
-  else 
-  if(is.null(attr(e,'index'))) {
-    if(is.xts(e1)) {
-      .xts(e, .index(e1))
-    } else {
-      .xts(e, .index(e2))
+
+  .method <- nzchar(.Method)
+  if (!all(.method)) {
+    a <- if (.method[1L]) e1 else e2
+
+    .Class <- "matrix"
+    e <- NextMethod(.Generic)
+    if (any(.Generic == .lgl_ops)) {
+      attributes(e) <- attributes(a)
     }
   } else {
-  e
+    if( NROW(e1)==NROW(e2) && identical(.index(e1),.index(e2)) ) {
+      .Class <- "matrix"
+      e <- NextMethod(.Generic)
+      if (any(.Generic == .lgl_ops)) {
+        attributes(e) <- attributes(e1)
+      }
+    } else {
+      side <- c(TRUE, FALSE)
+      e1 <- merge.xts(e1, e2, all=FALSE, retclass=TRUE,  retside=side)
+      a1 <- e1
+      e1 <- coredata(e1)
+      e2 <- merge.xts(e2, a1, all=FALSE, retclass=FALSE, retside=side)
+
+      .Class <- "matrix"
+      e <- NextMethod(.Generic)
+
+      if (length(attr(e, "index")) < 1 || any(.Generic == .lgl_ops)) {
+        attributes(e) <- attributes(a1)
+      }
+    }
   }
+  e
 }
