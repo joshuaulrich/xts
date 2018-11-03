@@ -108,3 +108,15 @@ test.n_way_merge_on_all_types <- function() {
     checkIdentical(m, m3)
   }
 }
+
+test.shorter_colnames_for_unnamed_args <- function() {
+  X <- .xts(rnorm(10, 10), 1:10)
+
+  types <- c("double", "integer", "logical", "character", "complex")
+  for (type in types) {
+    x <- X
+    storage.mode(x) <- type
+    mx <- do.call(merge, list(x, x))
+    checkTrue(all(nchar(colnames(mx)) < 200), type)
+  }
+}

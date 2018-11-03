@@ -1,5 +1,9 @@
 Changed in xts 0.11-2:
 
+o  Make column names for merge() results with unnamed objects shorter and more
+   like zoo (#248). This also makes na.fill() much faster (#259).
+   BREAKING: This may break existing code for integer unnamed objects.
+
 o  Fix subset when 'index(x)' and 'i' contain duplicates. Thanks to Stack
    Overflow user 'scs' (https://stackoverflow.com/users/4024268/scs) for the
    report, and Philippe Verspeelt for debugging (#275).
