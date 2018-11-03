@@ -1,5 +1,9 @@
 Changed in xts 0.11-2:
 
+o  The to.period() family of functions now use the index timezone when
+   converting intraday index values to daily values (or lower frequency).
+   Thanks to Garrett See and Gabor Grothendieck for the reports (#53, #277).
+
 o  Make column names for merge() results with unnamed objects shorter and more
    like zoo (#248). This also makes na.fill() much faster (#259).
    BREAKING: This may break existing code for integer unnamed objects.

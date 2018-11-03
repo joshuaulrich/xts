@@ -125,3 +125,13 @@ test.period.prod_converts_index_to_integer <- function() {
   storage.mode(e) <- "numeric"
   pm <- period.prod(x, e)
 }
+
+# test conversion from intraday to daily or lower frequency
+test.intraday_to_daily <- function() {
+  set.seed(21)
+  i <- as.POSIXct("2013-02-05 01:01", tz = "America/Chicago")
+  x <- xts(rnorm(10000), i - 10000:1 * 60)
+  d <- to.daily(x)
+  dateseq <- seq(as.Date("2013-01-29"), as.Date("2013-02-05"), "day")
+  checkEqualsNumeric(index(d), dateseq)
+}
