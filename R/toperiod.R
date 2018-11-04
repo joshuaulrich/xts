@@ -193,7 +193,7 @@ function(x) {
     # if x is xts, drop HHMMSS from index
     if(any(indexClass(x)=='POSIXt')) {
       # convert index to Date
-      index(x) <- as.Date(index(x), tz = indexTZ(x))
+      index(x) <- as.Date(as.POSIXlt(index(x)))
       indexClass(x) <- "Date"  # set indexClass to Date
     }
     if(any(indexClass(x) %in% .classesWithoutTZ)) {
