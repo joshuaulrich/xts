@@ -46,8 +46,12 @@ function(x,on='months',k=1) {
       as.integer(c(0, which(diff(posixltindex$year %/% k + 1) != 0), NR))
     },
     "quarters" = {
-      ixqtr <- posixltindex$year * 100L + 190000L + posixltindex$mon %/% 3 + 1
-      as.integer(c(0,which(diff(ixqtr) != 0),NR))
+      ixyear <- posixltindex$year * 100L + 190000L
+      ixqtr <- ixyear + posixltindex$mon %/% 3L + 1L
+      ep <- c(0L, which(diff(ixqtr) != 0L), NR)
+      if(k > 1)
+        ep[seq(1,length(ep),k)]
+      else ep
     },
     "months" = {
       ixmon <- posixltindex$year * 100L + 190000L + posixltindex$mon

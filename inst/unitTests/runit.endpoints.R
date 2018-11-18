@@ -216,3 +216,14 @@ test.sub_second_resolution_representation <- function() {
   ep <- endpoints(x, "ms", 200)
   checkIdentical(ep, seq(0L, 10L, 2L))
 }
+
+# on = "quarters", k > 1
+test.multiple_quarters <- function() {
+  x <- xts(1:48, as.yearmon("2015-01-01") + 0:47 / 12)
+  checkIdentical(endpoints(x, "quarters", 1), seq(0L, 48L, 3L))
+  checkIdentical(endpoints(x, "quarters", 2), seq(0L, 48L, 6L))
+  checkIdentical(endpoints(x, "quarters", 3), seq(0L, 48L, 9L))
+  checkIdentical(endpoints(x, "quarters", 4), seq(0L, 48L,12L))
+  checkIdentical(endpoints(x, "quarters", 5), seq(0L, 48L,15L))
+  checkIdentical(endpoints(x, "quarters", 6), seq(0L, 48L,18L))
+}
