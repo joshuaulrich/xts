@@ -1,5 +1,8 @@
 Changed in xts 0.11-2.1:
 
+o  .parseISO8601() no longer has a potential length-1 logical error. Thanks to
+   Kurt Hornik for the report (#280).
+
 o  endpoints() now honors k > 0 when on = "quarters". Thanks to @alkment for
    the report (#279).
 
