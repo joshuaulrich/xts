@@ -19,6 +19,24 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+.subsetTimeOfDay <- function(x, fromTimeString, toTimeString) {
+  timestringToSeconds <- function(timeString) {
+    # "09:00:00" to seconds of day
+    origin <- paste("1970-01-01", timeString)
+    as.numeric(as.POSIXct(origin, "UTC")) %% 86400L
+  }
+
+  # handle timezone
+  tz <- indexTZ(x)
+  secOfDay <- as.POSIXlt(index(x), tz = tz)
+  secOfDay <- secOfDay$hour*60*60 + secOfDay$min*60 + secOfDay$sec
+
+  secBegin <- timestringToSeconds(fromTimeString)
+  secEnd   <- timestringToSeconds(toTimeString)
+
+  which(secOfDay >= secBegin & secOfDay <= secEnd)
+}
+
 .subset_xts <- function(x, i, j, ...) {
   if(missing(i)) {
     i <- 1:NROW(x)
@@ -68,27 +86,27 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]
     } else
     if (is.character(i)) {
-      # is i of the format T/T?
       if(length(i) == 1 && !identical(integer(),grep("^T.*?/T",i[1]))) {
-      #if(grepl("^T.*?/T",i[1]) && length(i) == 1) {
-        i <- gsub("T|:","",i)
-        i <- strsplit(i, "/")[[1]]
-        i <- .makeISO8601TT(x, i[1],i[2])
-      }
-      # enables subsetting by date style strings
-      # must be able to process - and then allow for operations???
+        # is i of the format T/T?
+        ii <- gsub("T", "", i, fixed = TRUE)
+        ii <- strsplit(ii, "/", fixed = TRUE)[[1L]]
+        i <- .subsetTimeOfDay(x, ii[1L], ii[2L])
+      } else {
+        # enables subsetting by date style strings
+        # must be able to process - and then allow for operations???
 
-      i.tmp <- NULL
-      tz <- as.character(indexTZ(x)) # ideally this moves to attr(index,"tzone")
-      i_len <- length(i)
+        i.tmp <- NULL
+        tz <- as.character(indexTZ(x)) # ideally this moves to attr(index,"tzone")
 
-      for(ii in i) {
-        adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[nr], tz=tz)
-        if(length(adjusted.times) > 1) {
-          i.tmp <- c(i.tmp, index_bsearch(.index(x), adjusted.times$first.time, adjusted.times$last.time))
+        for(ii in i) {
+          adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[nr], tz=tz)
+          if(length(adjusted.times) > 1) {
+            i.tmp <- c(i.tmp, index_bsearch(.index(x), adjusted.times$first.time, adjusted.times$last.time))
+          }
         }
+        i <- i.tmp
       }
-      i <- i.tmp
+      i_len <- length(i)
 
       if(i_len == 1L)  # IFF we are using ISO8601 subsetting
         USE_EXTRACT <- TRUE
