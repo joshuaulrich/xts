@@ -332,3 +332,11 @@ test.time_of_day_end_before_start <- function() {
 # end time before start time
 # start time and/or end time missing "T" prefix
 # start time and/or end time missing ":" separator
+
+test.time_of_day_on_zero_width <- function() {
+  # return relevant times and a column of NA; consistent with zoo
+  i <- 0:47
+  x <- .xts(, i * 3600)
+  y <- x["T18:00/T20:00"]
+  checkIdentical(y, .xts(rep(NA, 6), c(0:2, 24:26)*3600))
+}
