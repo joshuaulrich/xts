@@ -34,7 +34,12 @@
   secBegin <- timestringToSeconds(fromTimeString)
   secEnd   <- timestringToSeconds(toTimeString)
 
-  which(secOfDay >= secBegin & secOfDay <= secEnd)
+  if (secBegin <= secEnd) {
+    i <- secOfDay >= secBegin & secOfDay <= secEnd
+  } else {
+    i <- secOfDay >= secBegin | secOfDay <= secEnd
+  }
+  which(i)
 }
 
 .subset_xts <- function(x, i, j, ...) {

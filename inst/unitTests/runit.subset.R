@@ -318,6 +318,16 @@ test.time_of_day_start_equals_end <- function() {
   checkIdentical(.index(x["T01:00/T01:00"]), i1)
 }
 
+test.time_of_day_end_before_start <- function() {
+  # Yes, this actually makes sense and is useful for financial markets
+  # E.g. some futures markets open at 18:00 and close at 16:00 the next day
+  i <- 0:47
+  x <- .xts(i, i * 3600, tz = "UTC")
+  i1 <- .index(x[-c(18L, 42L)])
+
+  checkIdentical(.index(x["T18:00/T16:00"]), i1)
+}
+
 # TODO: Add tests for possible edge cases and/or errors
 # end time before start time
 # start time and/or end time missing "T" prefix
