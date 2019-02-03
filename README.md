@@ -7,6 +7,16 @@ overall flexibility (you can use *anything* as an index).  The xts extension
 was motivated by the ability to improve performance by imposing reasonable
 constraints, while providing a truly time-based structure.
 
+### Professionally-supported xts now available
+
+Tidelift gives software development teams a single source for purchasing and maintaining their software, with professional-grade assurances from the experts who know it best, while seamlessly integrating with existing tools.
+
+[Get supported xts with the Tidelift Subscription](https://tidelift.com/subscription/pkg/cran-xts?utm_source=cran-xts&utm_medium=referral&utm_campaign=readme)
+
+### Supporting xts through Patreon
+
+If you are interested in supporting this project, please consider [becoming a patron](https://www.patreon.com/joshuaulrich).
+
 ### Installation
 
 The current release is available on [CRAN](https://CRAN.R-project.org/package=xts),
