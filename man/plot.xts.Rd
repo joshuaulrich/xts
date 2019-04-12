@@ -99,11 +99,11 @@ add to the last active panel.}
 \details{
   Possible values for arguments \code{major.ticks}, \code{minor.ticks},
   and \code{grid.ticks.on} include \sQuote{auto}, \sQuote{minute},
-  \sQuote{hourly}, \sQuote{daily}, \sQuote{weekly}, \sQuote{monthly},
-  \sQuote{quarterly}, and \sQuote{yearly}. The default is \sQuote{auto}, which
+  \sQuote{hours}, \sQuote{days}, \sQuote{weeks}, \sQuote{months},
+  \sQuote{quarters}, and \sQuote{years}. The default is \sQuote{auto}, which
   attempts to determine sensible locations from the periodicity and locations
-  of observations. The other values are based on the output from
-  \code{periodicity}.
+  of observations. The other values are based on the possible values for the
+  \code{ticks.on} argument of \code{\link{axTicksByTime}}.
 }
 \description{
 Plotting for xts objects.
