@@ -65,6 +65,10 @@ function(pkg, generic, class, fun = NULL)
   if (getRversion() < "3.6.0") {
     register_s3_method("timeSeries", "as.timeSeries", "xts")
     register_s3_method("fts", "as.fts", "xts")
+    if (utils::packageVersion("zoo") < "1.8.5") {
+      # xts:::as.zoo.xts was copied to zoo:::as.zoo.xts in zoo 1.8-5
+      register_s3_method("zoo", "as.zoo", "xts")
+    }
   }
   invisible()
 }

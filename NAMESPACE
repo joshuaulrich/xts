@@ -213,7 +213,6 @@ S3method(coredata,xts)
 S3method(xcoredata,default)
 S3method('xcoredata<-',default)
 S3method(as.xts,xts)
-S3method(as.zoo,xts)
 S3method('[',xts)
 S3method('[<-',xts)
 S3method(str,xts)
@@ -276,7 +275,10 @@ S3method(as.ts, xts)
 # zoo specific methods
 #importFrom(zoo,as.zoo)  # now in zoo
 S3method(as.xts,zoo)
-#S3method(as.zoo,xts) # now in zoo
+if (getRversion() >= "3.6.0" && utils::packageVersion("zoo") < "1.8.5") {
+  # xts:::as.zoo.xts was copied to zoo:::as.zoo.xts in zoo 1.8-5
+  S3method(zoo::as.zoo, xts)
+}
 
 # data.frame specific methods
 S3method(as.xts,data.frame)
