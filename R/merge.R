@@ -44,7 +44,6 @@ merge.xts <- function(...,
   dots <- mc$...
   if(is.null(suffixes)) {
     syms <- names(dots)
-    syms[nchar(syms)==0] <- as.character(dots)[nchar(syms)==0]
     if(is.null(syms)) {
       # Based on makeNames() in merge.zoo()
       syms <- substitute(alist(...))[-1L]
@@ -57,6 +56,11 @@ merge.xts <- function(...,
         nm[fixup] <- dep
       }
       syms <- nm
+    } else {
+      have.symnames <- nzchar(syms)
+      if(any(!have.symnames)) {
+        syms[!have.symnames] <- as.character(dots[!have.symnames])
+      }
     }
   } else
   if(length(suffixes) != length(dots)) {
