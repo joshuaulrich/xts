@@ -120,3 +120,14 @@ test.shorter_colnames_for_unnamed_args <- function() {
     checkTrue(all(nchar(colnames(mx)) < 200), type)
   }
 }
+
+test.check_names_false <- function() {
+  x <- .xts(1:3, 1:3, dimnames = list(NULL, "42"))
+  y <- .xts(1:3, 1:3, dimnames = list(NULL, "21"))
+  z <- merge(x, y)                       # leading "X" added
+  checkIdentical(colnames(z), c("X42", "X21"))
+  z <- merge(x, y, check.names = TRUE)   # same
+  checkIdentical(colnames(z), c("X42", "X21"))
+  z <- merge(x, y, check.names = FALSE)  # should have numeric column names
+  checkIdentical(colnames(z), c("42", "21"))
+}
