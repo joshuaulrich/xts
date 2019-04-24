@@ -19,10 +19,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 .lgl_ops <- c("&", "|", ">", ">=", "==", "!=", "<=", "<")
+.math_ops <- c("+", "-", "*", "/", "^", "%%", "%/%")
 
 `Ops.xts` <-
 function(e1, e2)
 {
+  CLASS <- .Class
   if (missing(e2)) {
     .Class <- "matrix"
     e <- NextMethod(.Generic)
@@ -38,16 +40,16 @@ function(e1, e2)
 
     .Class <- "matrix"
     e <- NextMethod(.Generic)
-    if (any(.Generic == .lgl_ops)) {
+#    if (any(.Generic == .lgl_ops)) {
       attributes(e) <- attributes(a)
-    }
+#    }
   } else {
     if( NROW(e1)==NROW(e2) && identical(.index(e1),.index(e2)) ) {
       .Class <- "matrix"
       e <- NextMethod(.Generic)
-      if (any(.Generic == .lgl_ops)) {
+#      if (any(.Generic == .lgl_ops)) {
         attributes(e) <- attributes(e1)
-      }
+#      }
     } else {
       side <- c(TRUE, FALSE)
       e1 <- merge.xts(e1, e2, all=FALSE, retclass=TRUE,  retside=side)
@@ -58,10 +60,16 @@ function(e1, e2)
       .Class <- "matrix"
       e <- NextMethod(.Generic)
 
-      if (length(attr(e, "index")) < 1 || any(.Generic == .lgl_ops)) {
+      if (length(attr(e, "index")) < 1) {# || any(.Generic == .lgl_ops)) {
         attributes(e) <- attributes(a1)
       }
     }
+  }
+  if (.Generic %in% .math_ops) {
+    if (length(e) == 0L) {
+      attr(e, "index") <- numeric(0)
+    }
+    .Call("add_class", e, CLASS, PACKAGE = "xts")
   }
   e
 }
