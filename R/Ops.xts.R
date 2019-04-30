@@ -52,11 +52,17 @@ function(e1, e2)
   else 
   if(is.null(attr(e,'index'))) {
     if(is.xts(e1)) {
-      .xts(e, .index(e1))
+      e <- .xts(e, .index(e1))
     } else {
-      .xts(e, .index(e2))
+      e <- .xts(e, .index(e2))
     }
-  } else {
-  e
   }
+  if(!is.null(dimnames(e)[[1L]])) {
+    if(is.null(dimnames(e)[[2L]])) {
+      attr(e, "dimnames") <- NULL
+    } else {
+      dimnames(e)[[1]] <- list(NULL)
+    }
+  }
+  e
 }
