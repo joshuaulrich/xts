@@ -98,3 +98,57 @@ test.xts1d_minus_vector_names <- function() {
   colnames(x) <- colnames(y) <- "x"
   checkIdentical(x-M, y)
 }
+
+### xts vector, matrix/vector
+test.xts_vector_minus_matrix1d <- function() {
+  rn <- format(.POSIXct(1:3))
+  cn <- "x"
+  x <- drop(.xts(1:3, 1:3))
+  m <- matrix(1:3, 3, 1, dimnames = list(rn, cn))
+  y <- .xts(1:3*0L, 1:3, dimnames = list(NULL, cn))
+
+  # use checkEquals because attributes change order
+  checkEquals(x-m, y)
+  # test again with no rownames
+  rownames(m) <- NULL
+  checkEquals(x-m, y)
+  # test again with no rownames or colnames
+  colnames(m) <- colnames(y) <- NULL
+  checkEquals(x-m, y)
+  # test again with only colnames
+  colnames(m) <- colnames(y) <- cn
+  checkEquals(x-m, y)
+}
+
+test.xts_vector_minus_matrix2d <- function() {
+  # FIXME:
+  rn <- format(.POSIXct(1:3))
+  cn <- c("x", "y")
+  x <- drop(.xts(1:3, 1:3))
+  m <- matrix(1:6, 3, 2, dimnames = list(rn, cn))
+  y <- .xts(cbind(1:3*0L, 1:3-4:6), 1:3, dimnames = list(NULL, cn))
+
+  # use checkEquals because attributes change order
+  checkEquals(x-m, y)
+  # test again with no rownames
+  rownames(m) <- NULL
+  checkEquals(x-m, y)
+  # test again with no rownames or colnames
+  colnames(m) <- colnames(y) <- NULL
+  checkEquals(x-m, y)
+  # test again with only colnames
+  colnames(m) <- colnames(y) <- cn
+  checkEquals(x-m, y)
+}
+
+test.xts_vector_minus_vector <- function() {
+  # FIXME:
+  m <- 1:3
+  x <- drop(.xts(m, 1:3))
+  y <- drop(.xts(m*0L, 1:3))
+
+  checkIdentical(x-m, y)
+  # add names to vector
+  names(m) <- format(index(x))
+  checkIdentical(x-m, y)
+}

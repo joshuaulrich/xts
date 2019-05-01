@@ -49,7 +49,6 @@ function(e1, e2)
     #.Call('add_xts_class', e)
     .Call('add_class', e, CLASS, PACKAGE="xts")
   }
-  else 
   if(is.null(attr(e,'index'))) {
     if(is.xts(e1)) {
       e <- .xts(e, .index(e1))
@@ -64,5 +63,6 @@ function(e1, e2)
       dimnames(e)[[1]] <- list(NULL)
     }
   }
+  attr(e, "names") <- NULL
   e
 }
