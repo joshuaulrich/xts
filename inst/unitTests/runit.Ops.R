@@ -236,6 +236,19 @@ test.math_xts1d_xts1d_different_index <- function() {
     }
   }
 }
+
+test.math_xts1d_xts1d_no_common_index <- function() {
+  X1 <- .xts(1:3, 1:3, dimnames = list(NULL, "x"))
+  X2 <- .xts(4:6, 4:6 * 1.0, dimnames = list(NULL, "y"))
+  for (o in ops.math) {
+    for (m in numeric.modes) {
+      e <- ops_numeric_tester(X1, X2, m, o)
+      # only coredata should change
+      E <- drop(.xts(coredata(e)[0], .index(e)[0]))
+      checkIdentical(e, E, sprintf("op: %s, type: %s", o, m))
+    }
+  }
+}
 ### }}} 1-column objects
 
 ### {{{ xts with dim, vector

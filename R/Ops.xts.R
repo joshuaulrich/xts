@@ -44,10 +44,17 @@ function(e1, e2)
     }
   }
   if(.Generic %in% c("+","-","*","/","^","%%","%/%")) {
-    if(length(e)==0)
-      attr(e,'index') <- numeric(0)
     #.Call('add_xts_class', e)
     .Call('add_class', e, CLASS, PACKAGE="xts")
+  }
+  if(length(e)==0) {
+    if(is.xts(e1)) {
+      idx <- .index(e1)
+    } else {
+      idx <- .index(e2)
+    }
+    idx[] <- idx[0]
+    attr(e,'index') <- idx
   }
   if(is.null(attr(e,'index'))) {
     if(is.xts(e1)) {
