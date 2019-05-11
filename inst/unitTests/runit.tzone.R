@@ -42,21 +42,6 @@ test.set_tzone_to_NULL_sets_empty_string <- function() {
   checkIdentical("", attr(attr(y, "index"), "tzone"))
 }
 
-test.ctors_dont_add_tzone_indexTZ_to_object <- function() {
-  x <- xts(1, as.Date("2018-05-02"))
-  checkIdentical(NULL, attr(x, "tzone"))
-  checkIdentical(NULL, attr(x, ".indexTZ"))
-  y <- .xts(1, 1)
-  checkIdentical(NULL, attr(y, "tzone"))
-  checkIdentical(NULL, attr(y, ".indexTZ"))
-}
-
-test.xts_ctor_warns_for_indexTZ_arg <- function() {
-  op <- options(warn = 2)
-  on.exit(options(warn = op$warn))
-  checkException(x <- xts(1, as.Date("2018-05-02"), .indexTZ = "UTC"))
-}
-
 test.get_coredata_drops_xts_tzone_indexTZ <- function() {
   y <- coredata(x)
   checkIdentical(NULL, attr(y, "tzone"))
