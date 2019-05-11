@@ -83,6 +83,7 @@ test.xts_ctor_warns_for_indexCLASS_arg <- function() {
   op <- options(warn = 2)
   on.exit(options(warn = op$warn))
   checkException(x <- xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"))
+  checkException(x <- .xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"))
 }
 
 test.xts_ctor_warns_for_indexTZ_arg <- function() {
@@ -103,6 +104,23 @@ test..xts_dimnames_in_dots <- function() {
   x <- .xts(1:5, 1:5, dimnames = list(NULL, "x"))
   y <- xts(1:5, index(x), dimnames = list(NULL, "x"))
   checkEquals(x, y)
+}
+
+test..xts_ctor_warns_if_index_tclass_not_NULL_or_POSIXct <- function() {
+  op <- options(warn = 2)
+  on.exit(options(warn = op$warn))
+
+  idx <- 1:3
+  x <- .xts(1:3, idx)  # no error, NULL
+  idx <- .POSIXct(idx)
+  x <- .xts(1:3, idx)  # no error, POSIXct
+
+  idx <- structure(1:3, tclass = "Date", tzone = "UTC")
+  checkException(.xts(1:3, idx), msg = "tclass = Date")
+  idx <- structure(idx, tclass = "yearmon", tzone = "UTC")
+  checkException(.xts(1:3, idx), msg = "tclass = yearmon")
+  idx <- structure(idx, tclass = "timeDate", tzone = "UTC")
+  checkException(.xts(1:3, idx), msg = "tclass = timeDate")
 }
 
 checkXtsFormat <- function(xts, format) {
@@ -130,22 +148,23 @@ test..xts_index_format_precedence <- function() {
 
 checkXtsClass <- function(xts, class) {
   checkEquals(tclass(xts), class)
-  checkEquals(indexClass(xts), class)
   checkEquals(attr(attr(xts, "index"), "tclass"), class)
 }
 
-### Check that .indexCLASS takes precedence over tclass when both specified
-test..xts_class <- function() {
+### Check that index class attribute precedence is:
+### .indexCLASS argument > tclass argument > tclass index attribute
+test..xts_index_class_precedence <- function() {
   checkXtsClass(.xts(1, 1), c("POSIXct", "POSIXt"))
   checkXtsClass(.xts(1, 1, tclass="timeDate"), "timeDate")
   checkXtsClass(.xts(1, 1, .indexCLASS="Date"), "Date")
   checkXtsClass(.xts(1, 1, tclass="timeDate", .indexCLASS="Date"), "Date")
 
   ## also check that tclass is ignored if specified as part of index
-  checkXtsClass(.xts(1, structure(1, tzone="",tclass="yearmon")), c("POSIXct", "POSIXt"))
-  checkXtsClass(.xts(1, structure(1, tzone="",tclass="yearmon"), tclass="timeDate"), "timeDate")
-  checkXtsClass(.xts(1, structure(1, tzone="",tclass="yearmon"), .indexCLASS="Date"), "Date")
-  checkXtsClass(.xts(1, structure(1, tzone="",tclass="yearmon"), tclass="timeDate", .indexCLASS="Date"), "Date")
+  idx <- structure(1, tzone="",tclass="yearmon")
+  checkXtsClass(.xts(1, idx), c("POSIXct", "POSIXt"))
+  checkXtsClass(.xts(1, idx, tclass="timeDate"), "timeDate")
+  checkXtsClass(.xts(1, idx, .indexCLASS="Date"), "Date")
+  checkXtsClass(.xts(1, idx, tclass="timeDate", .indexCLASS="Date"), "Date")
 }
 
 checkXtsTz <- function(xts, tzone) {

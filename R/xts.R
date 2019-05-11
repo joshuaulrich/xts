@@ -158,6 +158,20 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
     tformat <- attr(index, "tformat")
   }
 
+  if(hasArg(".indexCLASS")) {
+    warning(sQuote(".indexCLASS"), " is deprecated, use tclass instead.")
+    tclass <- eval.parent(ctor.call$.indexCLASS)
+  } else if(missing("tclass")) {
+    # compare tclass on the index with tclass argument because the
+    # tclass argument will override the index attribute, but it shouldn't...
+    index.class <- attr(index, 'tclass')
+    default.class <- c("POSIXct", "POSIXt")
+    if(!is.null(index.class) && !all(index.class %in% default.class)) {
+      warning("the index tclass attribute is ", index.class,
+              " but will be changed to (POSIXct, POSIXt)")
+    }
+  }
+
   # don't overwrite index tzone if tzone arg is missing
   if(missing(tzone)) {
     if(!is.null(index.tz <- attr(index,'tzone')))
@@ -166,12 +180,6 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   # xts' tzone must only contain one element (POSIXlt tzone has 3)
   tzone <- tzone[1L]
 
-  ## restore behaviour from v0.10-2
-  if(hasArg(".indexCLASS")) {
-    ctor.call <- match.call(expand.dots = TRUE)
-    tclass <- eval.parent(ctor.call$.indexCLASS)
-  }
-
   xx <- .Call("add_xtsCoreAttributes", x, index, tzone, tclass,
               c('xts','zoo'), tformat, PACKAGE='xts')
 
@@ -179,6 +187,8 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   dots.names <- eval(substitute(alist(...)))
   dots.names$.indexFORMAT <- NULL
   dots.names$tformat <- NULL
+  dots.names$.indexCLASS <- NULL
+  dots.names$tclass <- NULL
   # set any user attributes
   if(length(dots.names))
     attributes(xx) <- c(attributes(xx), list(...))
