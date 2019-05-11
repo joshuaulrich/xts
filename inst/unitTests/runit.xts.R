@@ -95,6 +95,7 @@ test.xts_ctor_warns_for_indexFORMAT_arg <- function() {
   op <- options(warn = 2)
   on.exit(options(warn = op$warn))
   checkException(x <- xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"))
+  checkException(x <- .xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"))
 }
 
 # .xts()
@@ -102,6 +103,29 @@ test..xts_dimnames_in_dots <- function() {
   x <- .xts(1:5, 1:5, dimnames = list(NULL, "x"))
   y <- xts(1:5, index(x), dimnames = list(NULL, "x"))
   checkEquals(x, y)
+}
+
+checkXtsFormat <- function(xts, format) {
+  checkIdentical(tformat(xts), format)
+  checkIdentical(attr(attr(xts, "index"), "tformat"), format)
+}
+
+### Check that index format attribute precedence is:
+### .indexFORMAT argument > tformat argument > tformat index attribute
+test..xts_index_format_precedence <- function() {
+  fmt <- "%Y-%m-%d"
+  checkXtsFormat(.xts(1, 1), NULL)
+  checkXtsFormat(.xts(1, 1, tformat=fmt), fmt)
+  checkXtsFormat(.xts(1, 1, .indexFORMAT=fmt), fmt)
+  checkXtsFormat(.xts(1, 1, tformat="%Y", .indexFORMAT=fmt), fmt)
+
+  ## check constructor arguments override existing index attribute
+  idx <- structure(1, tzone="", tclass="yearmon", tformat="%Y-%b")
+  fmt <- "%Y-%m"
+  checkXtsFormat(.xts(1, idx), "%Y-%b")
+  checkXtsFormat(.xts(1, idx, tformat=fmt), fmt)
+  checkXtsFormat(.xts(1, idx, .indexFORMAT=fmt), fmt)
+  checkXtsFormat(.xts(1, idx, tformat="%b%y", .indexFORMAT=fmt), fmt)
 }
 
 checkXtsClass <- function(xts, class) {

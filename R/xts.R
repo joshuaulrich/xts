@@ -146,6 +146,18 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
     x <- vector(storage.mode(x))
   } else x <- numeric(0)
 
+  ctor.call <- match.call(expand.dots = TRUE)
+
+  tformat <- NULL
+  if(hasArg(".indexFORMAT")) {
+    warning(sQuote(".indexFORMAT"), " is deprecated, use tformat instead.")
+    tformat <- eval.parent(ctor.call$.indexFORMAT)
+  } else if(hasArg("tformat")) {
+    tformat <- eval.parent(ctor.call$tformat)
+  } else {
+    tformat <- attr(index, "tformat")
+  }
+
   # don't overwrite index tzone if tzone arg is missing
   if(missing(tzone)) {
     if(!is.null(index.tz <- attr(index,'tzone')))
@@ -154,13 +166,6 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   # xts' tzone must only contain one element (POSIXlt tzone has 3)
   tzone <- tzone[1L]
 
-  # work-around for Ops.xts
-  dots.names <- eval(substitute(alist(...)))
-  if(hasArg(.indexFORMAT))
-    .indexFORMAT <- eval(dots.names$.indexFORMAT,parent.frame())
-  else
-    .indexFORMAT <- NULL
-
   ## restore behaviour from v0.10-2
   if(hasArg(".indexCLASS")) {
     ctor.call <- match.call(expand.dots = TRUE)
@@ -168,9 +173,12 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   }
 
   xx <- .Call("add_xtsCoreAttributes", x, index, tzone, tclass,
-              c('xts','zoo'), .indexFORMAT, PACKAGE='xts')
-  # remove .indexFORMAT that come through Ops.xts
+              c('xts','zoo'), tformat, PACKAGE='xts')
+
+  # remove any index attributes that came through '...'
+  dots.names <- eval(substitute(alist(...)))
   dots.names$.indexFORMAT <- NULL
+  dots.names$tformat <- NULL
   # set any user attributes
   if(length(dots.names))
     attributes(xx) <- c(attributes(xx), list(...))
