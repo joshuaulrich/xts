@@ -11,6 +11,10 @@ structure(1:5, .Dim = c(5L, 1L),
           .indexTZ = "UTC", tzone = "UTC",
           class = c("xts", "zoo"))
 
+test.get_tzone <- function() {
+  checkIdentical(tzone(x), "")
+}
+
 test.get_indexTZ_warns <- function() {
   op <- options(warn = 2)
   on.exit(options(warn = op$warn))

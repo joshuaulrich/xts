@@ -43,7 +43,7 @@ function(x, value) {
 `tformat.xts` <-
 function(x) {
   ix <- .index(x)
-  attr(x, 'tformat')
+  attr(ix, 'tformat')
 }
 
 `tformat<-.xts` <-

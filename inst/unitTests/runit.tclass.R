@@ -11,6 +11,10 @@ structure(1:5, .Dim = c(5L, 1L),
           .indexTZ = "UTC", tzone = "UTC",
           class = c("xts", "zoo"))
 
+test.get_tclass  <- function() {
+  checkIdentical(tclass(x), c("POSIXct", "POSIXt"))
+}
+
 test.get_indexClass_warns <- function() {
   op <- options(warn = 2)
   on.exit(options(warn = op$warn))

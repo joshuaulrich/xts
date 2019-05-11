@@ -5,12 +5,18 @@
 # test behavior when functions encounter xts objects created before 0.10-3.
 x <-
 structure(1:5, .Dim = c(5L, 1L),
-          index = structure(1:5, tzone = "", tclass = c("POSIXct", "POSIXt")),
+          index = structure(1:5, tzone = "",
+                                 tclass = c("POSIXct", "POSIXt"),
+                                 tformat = "%Y-%m-%d"),
           .indexCLASS = c("POSIXct", "POSIXt"),
           tclass = c("POSIXct", "POSIXt"),
           .indexTZ = "UTC", tzone = "UTC",
           .indexFORMAT = "%Y-%m-%d %H:%M:%S",
           class = c("xts", "zoo"))
+
+test.get_tformat <- function() {
+  checkIdentical(tformat(x), "%Y-%m-%d")
+}
 
 test.get_indexFORMAT_warns <- function() {
   op <- options(warn = 2)
