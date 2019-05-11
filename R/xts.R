@@ -172,8 +172,12 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
     }
   }
 
+  if(hasArg(".indexTZ")) {
+    warning(sQuote(".indexTZ"), " is deprecated and will be ignored,",
+            " use tzone instead.")
+  }
   # don't overwrite index tzone if tzone arg is missing
-  if(missing(tzone)) {
+  if(missing("tzone")) {
     if(!is.null(index.tz <- attr(index,'tzone')))
       tzone <- index.tz
   }
@@ -189,6 +193,9 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   dots.names$tformat <- NULL
   dots.names$.indexCLASS <- NULL
   dots.names$tclass <- NULL
+  dots.names$.indexTZ <- NULL
+  dots.names$tzone <- NULL
+
   # set any user attributes
   if(length(dots.names))
     attributes(xx) <- c(attributes(xx), list(...))

@@ -90,6 +90,7 @@ test.xts_ctor_warns_for_indexTZ_arg <- function() {
   op <- options(warn = 2)
   on.exit(options(warn = op$warn))
   checkException(x <- xts(1, as.Date("2018-05-02"), .indexTZ = "UTC"))
+  checkException(x <- .xts(1, as.Date("2018-05-02"), .indexTZ = "UTC"))
 }
 
 test.xts_ctor_warns_for_indexFORMAT_arg <- function() {
@@ -169,12 +170,14 @@ test..xts_index_class_precedence <- function() {
 
 checkXtsTz <- function(xts, tzone) {
   checkEquals(tzone(xts), tzone)
-  checkEquals(indexTZ(xts), tzone)
   checkEquals(attr(attr(xts, "index"), "tzone"), tzone)
 }
 
 ### Check that tzone is honoured and .indexTZ ignored
-test..xts_tzone <- function() {
+### Check that index timezone attribute precedence is:
+### .indexTZ argument > tzone argument > tzone index attribute
+### tzone argument > tzone argument > tzone index attribute
+test..xts_index_tzone_precedence <- function() {
   sysTZ <- Sys.getenv("TZ")
   Sys.setenv(TZ = "UTC")
   on.exit(Sys.setenv(TZ = sysTZ), add = TRUE)
@@ -186,8 +189,9 @@ test..xts_tzone <- function() {
   checkXtsTz(.xts(1, 1, tzone="Europe/London", .indexTZ="America/New_York"), "Europe/London")
 
   ## Cases where tzone is specified in the index
-  checkXtsTz(.xts(1, structure(1, tzone="Asia/Tokyo",tclass="yearmon")), "Asia/Tokyo")
-  checkXtsTz(.xts(1, structure(1, tzone="Asia/Tokyo",tclass="yearmon"), tzone="Europe/London"), "Europe/London")
-  checkXtsTz(.xts(1, structure(1, tzone="Asia/Tokyo",tclass="yearmon"), .indexTZ="America/New_York"), "Asia/Tokyo")
-  checkXtsTz(.xts(1, structure(1, tzone="Asia/Tokyo",tclass="yearmon"), tzone="Europe/London", .indexTZ="America/New_York"), "Europe/London")
+  idx <- structure(1, tzone="Asia/Tokyo",tclass="yearmon")
+  checkXtsTz(.xts(1, idx), "Asia/Tokyo")
+  checkXtsTz(.xts(1, idx, tzone="Europe/London"), "Europe/London")
+  checkXtsTz(.xts(1, idx, .indexTZ="America/New_York"), "Asia/Tokyo")
+  checkXtsTz(.xts(1, idx, tzone="Europe/London", .indexTZ="America/New_York"), "Europe/London")
 }
