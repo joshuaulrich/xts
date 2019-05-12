@@ -36,7 +36,7 @@ function(x, ...) {
       colnames(y) <- cnx
     } else {
       cn <- deparse(substitute(x), width.cutoff = 100, nlines = 1)
-      if (ncol(x) == 1) {
+      if (NCOL(x) == 1) {
         colnames(y) <- cn
       } else {
         colnames(y) <- paste(cn, 1:ncol(x), sep = ".")

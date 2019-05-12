@@ -20,7 +20,8 @@
 
 indexTZ <- function(x, ...)
 {
-  UseMethod("indexTZ")
+  .Deprecated("tzone", "xts")
+  tzone(x, ...)
 }
 
 tzone <- function(x, ...) {
@@ -28,35 +29,65 @@ tzone <- function(x, ...) {
 }
 
 `indexTZ<-` <- function(x, value) {
-  UseMethod("indexTZ<-")
+  .Deprecated("tzone<-", "xts")
+  `tzone<-`(x, value)
 }
 
 `tzone<-` <- function(x, value) {
   UseMethod("tzone<-")
 }
 
-`tzone<-.xts` <- `indexTZ<-.xts` <- function(x, value) {
-  if( is.null(value) ) value <- ""
+`tzone<-.xts` <-
+function(x, value)
+{
+  if (is.null(value)) {
+    value <- ""
+  }
 
-  attr(x, ".indexTZ") <- attr(x, "tzone") <- structure(value,.Names="TZ")
-  attr(attr(x,"index"),"tzone") <- structure(value,.Names="TZ")
+  tzone <- as.character(value)
+  attr(attr(x, "index"), "tzone") <- tzone
+  # Remove tz attrs (object created before 0.10-3)
+  attr(x, ".indexTZ") <- NULL
+  attr(x, "tzone") <- NULL
   x
 }
 
-
-tzone.default <- indexTZ.default <- function(x, ...) {
-  attr(x, ".indexTZ")
+tzone.default <-
+function(x, ...)
+{
+  attr(x, "tzone")
 }
 
-tzone.xts <- indexTZ.xts <- function(x, ...)
+`tzone<-.default` <-
+function(x, value)
+{
+  if (!is.null(value)) {
+    tzone <- as.character(value)
+  }
+  attr(x, "tzone") <- value
+  x
+}
+
+tzone.xts <-
+function(x, ...)
 {
   tzone <- attr(attr(x, "index"), "tzone")
-  if(is.null(tzone))
-    tzone <- attr(x, ".indexTZ")
-  if(is.null(tzone))
-    return("")
-  else
-    return(tzone)
+
+  # For xts objects created pre-0.10.3
+  if (is.null(tzone)) {
+    warning("index does not have a ", sQuote("tzone"), " attribute")
+
+    tzone <- attr(x, "tzone")
+    if (is.null(tzone)) {
+      tzone <- attr(x, ".indexTZ")
+    }
+    if (is.null(tzone)) {
+      warning("object does not have a ", sQuote("tzone"), " or ",
+              sQuote(".indexTZ"), " attribute")
+      tzone <- ""
+    }
+  }
+  return(tzone)
 }
 
 .classesWithoutTZ <- c("chron","dates","times","Date","yearmon","yearqtr")
@@ -69,19 +100,19 @@ check.TZ <- function(x, ...)
   if( !is.null(check) && !check)
     return()
   STZ <- as.character(Sys.getenv("TZ"))
-  if(any(indexClass(x) %in% .classesWithoutTZ)) {
-    # warn if indexTZ is not UTC or GMT (GMT is not technically correct, since
+  if(any(tclass(x) %in% .classesWithoutTZ)) {
+    # warn if tzone is not UTC or GMT (GMT is not technically correct, since
     # it *is* a timezone, but it should work for all practical purposes)
-    if (!(indexTZ(x) %in% c("UTC","GMT")))
+    if (!(tzone(x) %in% c("UTC","GMT")))
       warning(paste0("index class is ", paste(class(index(x)), collapse=", "),
         ", which does not support timezones.\nExpected 'UTC' timezone",
-        ", but indexTZ is ", ifelse(indexTZ(x)=="", "''", indexTZ(x))), call.=FALSE)
+        ", but tzone is ", sQuote(tzone(x))), call.=FALSE)
     else
       return()
   }
-  if(!is.null(indexTZ(x)) && indexTZ(x) != "" &&
-     !identical(STZ, as.character(indexTZ(x))))
-    warning(paste("timezone of object (",indexTZ(x),
+  if(!is.null(tzone(x)) && tzone(x) != "" &&
+     !identical(STZ, as.character(tzone(x))))
+    warning(paste("timezone of object (",tzone(x),
                   ") is different than current timezone (",STZ,").",sep=""),
            call.=FALSE)
 }

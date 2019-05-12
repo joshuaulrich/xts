@@ -23,15 +23,15 @@ coredata.xts <- function(x, fmt=FALSE, ...) {
   x.attr <- attributes(x)
 
   if(is.character(fmt)) {
-    indexFormat(x) <- fmt
+    tformat(x) <- fmt
     fmt <- TRUE
   }
   
   if(length(x) > 0 && fmt) {
-    if(!is.null(indexFormat(x))) {
-      x.attr$dimnames <- list(format(index(x), format=indexFormat(x)),
+    if(!is.null(tformat(x))) {
+      x.attr$dimnames <- list(format(index(x), format=tformat(x)),
                               dimnames(x)[[2]])
-      indexFormat(x) <- NULL  # remove before printing
+      tformat(x) <- NULL  # remove before printing
     } else {
       x.attr$dimnames <- list(format(index(x)),dimnames(x)[[2]])
     }
@@ -53,6 +53,7 @@ coredata.xts <- function(x, fmt=FALSE, ...) {
     xx <- NextMethod(x)
     attr(xx, ".indexCLASS") <- NULL
     attr(xx, "tclass") <- NULL
+    # Remove tz attrs (object created before 0.10-3)
     attr(xx, ".indexTZ") <- NULL
     attr(xx, "tzone") <- NULL
     return(xx)
@@ -106,7 +107,7 @@ function(x, user=NULL) {
   else
   if(user) {
   # Only user attributes
-    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT','.indexTZ','tzone','tclass', 
+    rm.attr <- c(rm.attr,'.CLASS','.CLASSnames','.ROWNAMES', '.indexCLASS', '.indexFORMAT','.indexTZ','tzone','tclass',
                  x.attr$.CLASSnames)
     xa <- x.attr[!names(x.attr) %in% rm.attr]
   } else {
@@ -131,9 +132,16 @@ function(x,value) {
     }
   } else
   for(nv in names(value)) {
-    if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES','.CLASSnames',
-                  '.indexCLASS','.indexFORMAT','.indexTZ'))
+    if(!nv %in% c('dim','dimnames','index','class','.CLASS','.ROWNAMES','.CLASSnames'))
       attr(x,nv) <- value[[nv]]
   }
+  # Remove tz attrs (object created before 0.10-3)
+  attr(x, ".indexTZ") <- NULL
+  attr(x, "tzone") <- NULL
+  # Remove index class attrs (object created before 0.10-3)
+  attr(x, ".indexCLASS") <- NULL
+  attr(x, "tclass") <- NULL
+  # Remove index format attr (object created before 0.10-3)
+  attr(x, ".indexFORMAT") <- NULL
   x
 }

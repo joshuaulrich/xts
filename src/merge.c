@@ -1000,9 +1000,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   setAttrib(result, xts_IndexSymbol, index);
   if(LOGICAL(retclass)[0])
     setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
-  setAttrib(result, xts_IndexClassSymbol, getAttrib(x, xts_IndexClassSymbol));
-  setAttrib(result, xts_IndexTZSymbol, getAttrib(x, xts_IndexTZSymbol));
-  setAttrib(result, xts_IndexFormatSymbol, getAttrib(x, xts_IndexFormatSymbol));
   setAttrib(result, xts_ClassSymbol, getAttrib(x, xts_ClassSymbol));
   copy_xtsAttributes(x, result);
 
@@ -1285,7 +1282,6 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
     }
 
     SET_xtsIndex(result, GET_xtsIndex(_INDEX));
-    SET_xtsIndexTZ(result, GET_xtsIndexTZ(_INDEX));
     copy_xtsCoreAttributes(_INDEX, result);
     copy_xtsAttributes(_INDEX, result);
 
@@ -1314,7 +1310,6 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   }
   copyMostAttrib(getAttrib(_x,xts_IndexSymbol), index_tmp);
   setAttrib(result, xts_IndexSymbol, index_tmp);
-  setAttrib(result, xts_IndexTZSymbol, getAttrib(index_tmp, xts_IndexTzoneSymbol));
 
   UNPROTECT(P);
   return(result);

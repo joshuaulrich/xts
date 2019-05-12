@@ -21,10 +21,10 @@
 
 index.xts <- time.xts <-
 function(x, ...) {
-  value <- indexClass(x)
+  value <- tclass(x)
   if(is.null(value))
     return(.index(x))
-  #  if indexClass is Date, POSIXct time is set to 00:00:00 GMT. Convert here
+  #  if tclass is Date, POSIXct time is set to 00:00:00 GMT. Convert here
   #  to avoid ugly and hard to debug TZ conversion.  What will this break? 
   if(value[[1]] == "Date")
     #return( as.Date(.index(x)/86400) )
@@ -61,7 +61,7 @@ function(x, ...) {
     #Date = as.Date(as.character(x.index)),  # handled above
     yearmon = as.yearmon(x.index),
     yearqtr = as.yearqtr(x.index),
-    stop(paste('unsupported',sQuote('indexClass'),'indexing type:',value[[1]]))
+    stop(paste('unsupported',sQuote('tclass'),'indexing type:',value[[1]]))
   )
 }
 
@@ -81,13 +81,13 @@ function(x, ...) {
   if(!isOrdered(.index(x), strictly=FALSE))
     stop("new index needs to be sorted")
 
-  # set the .indexCLASS/tclass attribute to the end-user specified class
-  attr(x, '.indexCLASS') <- class(value)
+  # set tzone attribute
   if(any(class(value) %in% .classesWithoutTZ)) {
     attr(.index(x), 'tzone') <- 'UTC'
   } else {
     attr(.index(x), 'tzone') <- attr(value, 'tzone')
   }
+  # set tclass attribute to the end-user specified class
   attr(.index(x), 'tclass') <- class(value)
   return(x)
 }
@@ -113,36 +113,35 @@ function(x, ...) {
 }
 
 `.indexsec` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$sec
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$sec
 }
 `.indexmin` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$min
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$min
 }
 `.indexhour` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$hour
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$hour
 }
 `.indexmday` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$mday
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$mday
 }
 `.indexmon` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$mon
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$mon
 }
 `.indexyear` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$year
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$year
 }
 `.indexwday` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$wday
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$wday
 }
 `.indexbday` <- function(x) {
   # is business day T/F
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$wday %% 6 > 0
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$wday %% 6 > 0
 }
 `.indexyday` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$yday
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$yday
 }
 `.indexisdst` <- function(x) {
-  as.POSIXlt(.POSIXct(.index(x), tz=indexTZ(x)))$isdst
-}
+  as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$isdst }
 `.indexDate` <- `.indexday` <- function(x) {
   .index(x) %/% 86400L
 }

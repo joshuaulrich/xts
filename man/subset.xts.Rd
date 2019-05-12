@@ -83,7 +83,7 @@ provide the most performance efficiency.
 As \code{xts} uses POSIXct time representations
 of all user-level index classes internally, the fastest
 timeBased subsetting will always be from POSIXct objects,
-regardless of the \code{indexClass} of the original
+regardless of the \code{tclass} of the original
 object.  All non-POSIXct time classes
 are converted to character first to preserve
 consistent TZ behavior.

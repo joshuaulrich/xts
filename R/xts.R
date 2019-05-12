@@ -40,7 +40,7 @@ function(x=NULL,
          ...)
 {
   if(is.null(x) && missing(order.by))
-    return(structure(.xts(,0),index=integer()))
+    return(.xts(NULL, integer()))
  
   if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
@@ -95,11 +95,28 @@ function(x=NULL,
   x <- structure(.Data=x,
             index=structure(index,tzone=tzone,tclass=orderBy),
             class=c('xts','zoo'),
-            .indexCLASS=orderBy,
-            tclass=orderBy,
-            .indexTZ=tzone,
-            tzone=tzone,
             ...)
+
+  ctor.call <- match.call(expand.dots = TRUE)
+  if(hasArg(".indexFORMAT")) {
+    warning(sQuote(".indexFORMAT"), " is deprecated, use tformat instead.")
+    if(missing("tformat")) {
+      attr(attr(x, "index"), "tformat") <- eval.parent(ctor.call$.indexFORMAT)
+    }
+  }
+  if(hasArg(".indexCLASS")) {
+    warning(sQuote(".indexCLASS"), " is deprecated, use tclass instead.")
+    if(missing("tclass")) {
+      attr(attr(x, "index"), "tclass") <- eval.parent(ctor.call$.indexCLASS)
+    }
+  }
+  if(hasArg(".indexTZ")) {
+    warning(sQuote(".indexTZ"), " is deprecated, use tzone instead.")
+    if(missing("tzone")) {
+      attr(attr(x, "index"), "tzone") <- eval.parent(ctor.call$.indexTZ)
+    }
+  }
+
   if(!is.null(attributes(x)$dimnames[[1]]))
     # this is very slow if user adds rownames, but maybe that is deserved :)
     dimnames(x) <- dimnames(x) # removes row.names
@@ -109,7 +126,7 @@ function(x=NULL,
 `.xts` <-
 function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
          tzone=Sys.getenv("TZ"),
-         check=TRUE, unique=FALSE, .indexCLASS=tclass, ...) {
+         check=TRUE, unique=FALSE, ...) {
   if(check) {
     if( !isOrdered(index, increasing=TRUE, strictly=unique) )
       stop('index is not in ',ifelse(unique, 'strictly', ''),' increasing order')
@@ -129,30 +146,56 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
     x <- vector(storage.mode(x))
   } else x <- numeric(0)
 
+  ctor.call <- match.call(expand.dots = TRUE)
+
+  tformat <- NULL
+  if(hasArg(".indexFORMAT")) {
+    warning(sQuote(".indexFORMAT"), " is deprecated, use tformat instead.")
+    tformat <- eval.parent(ctor.call$.indexFORMAT)
+  } else if(hasArg("tformat")) {
+    tformat <- eval.parent(ctor.call$tformat)
+  } else {
+    tformat <- attr(index, "tformat")
+  }
+
+  if(hasArg(".indexCLASS")) {
+    warning(sQuote(".indexCLASS"), " is deprecated, use tclass instead.")
+    tclass <- eval.parent(ctor.call$.indexCLASS)
+  } else if(missing("tclass")) {
+    # compare tclass on the index with tclass argument because the
+    # tclass argument will override the index attribute, but it shouldn't...
+    index.class <- attr(index, 'tclass')
+    default.class <- c("POSIXct", "POSIXt")
+    if(!is.null(index.class) && !all(index.class %in% default.class)) {
+      warning("the index tclass attribute is ", index.class,
+              " but will be changed to (POSIXct, POSIXt)")
+    }
+  }
+
+  if(hasArg(".indexTZ")) {
+    warning(sQuote(".indexTZ"), " is deprecated and will be ignored,",
+            " use tzone instead.")
+  }
   # don't overwrite index tzone if tzone arg is missing
-  if(missing(tzone)) {
+  if(missing("tzone")) {
     if(!is.null(index.tz <- attr(index,'tzone')))
       tzone <- index.tz
   }
   # xts' tzone must only contain one element (POSIXlt tzone has 3)
   tzone <- tzone[1L]
 
-  # work-around for Ops.xts
-  dots.names <- eval(substitute(alist(...)))
-  if(hasArg(.indexFORMAT))
-    .indexFORMAT <- eval(dots.names$.indexFORMAT,parent.frame())
-  else
-    .indexFORMAT <- NULL
+  xx <- .Call("add_xtsCoreAttributes", x, index, tzone, tclass,
+              c('xts','zoo'), tformat, PACKAGE='xts')
 
-  ## restore behaviour from v0.10-2
-  tclass <- .indexCLASS
-  xx <- .Call("add_xtsCoreAttributes", x, index, .indexCLASS, tzone, tclass,
-              c('xts','zoo'), .indexFORMAT, PACKAGE='xts')
-  # remove .indexFORMAT and .indexTZ that come through Ops.xts
-  dots.names$.indexFORMAT <- dots.names$.indexTZ <- NULL
-  # set any user attributes
-  if(length(dots.names))
-    attributes(xx) <- c(attributes(xx), list(...))
+  # remove any index attributes that came through '...'
+  # and set any user attributes (and/or dim, dimnames, etc)
+  dots.names <- eval(substitute(alist(...)))
+  if(length(dots.names) > 0L) {
+    dot.attrs <- list(...)
+    drop.attr <- c(".indexFORMAT", "tformat", ".indexCLASS", ".indexTZ")
+    dot.attrs[drop.attr] <- NULL
+    attributes(xx) <- c(attributes(xx), dot.attrs)
+  }
   xx
 }
 
@@ -164,7 +207,7 @@ function(x, match.to, error=FALSE, ...) {
         stop('incompatible match.to attibutes')
       } else return(x)
 
-    if(!is.xts(x)) x <- .xts(coredata(x),.index(match.to), .indexCLASS=indexClass(match.to), tzone=indexTZ(match.to))
+    if(!is.xts(x)) x <- .xts(coredata(x),.index(match.to),tzone=tzone(match.to))
     attr(x, ".CLASS") <- CLASS(match.to)
     xtsAttributes(x) <- xtsAttributes(match.to)
   }
@@ -225,7 +268,7 @@ function(x,value) {
 function(x) {
   inherits(x,'xts') &&
   is.numeric(.index(x)) &&
-  !is.null(indexClass(x))
+  !is.null(tclass(x))
 }
 
 `as.xts` <-

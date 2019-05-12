@@ -45,9 +45,6 @@ SEXP do_xtsAttributes(SEXP x)
   for( /* a=ATTRIB(a) */; a != R_NilValue; a = CDR(a) ) {
     if(TAG(a) != xts_IndexSymbol &&
        TAG(a) != xts_ClassSymbol &&
-       TAG(a) != xts_IndexFormatSymbol &&
-       TAG(a) != xts_IndexClassSymbol &&
-       TAG(a) != xts_IndexTZSymbol &&
        TAG(a) != R_ClassSymbol &&
        TAG(a) != R_DimSymbol &&
        TAG(a) != R_DimNamesSymbol &&
@@ -90,9 +87,6 @@ SEXP do_xtsCoreAttributes(SEXP x)
   */
   for( /* a=ATTRIB(a) */; a != R_NilValue; a = CDR(a) ) {
     if(TAG(a) == xts_ClassSymbol ||
-       TAG(a) == xts_IndexFormatSymbol ||
-       TAG(a) == xts_IndexClassSymbol ||
-       TAG(a) == xts_IndexTZSymbol ||
        TAG(a) == R_ClassSymbol)
     {
       SET_VECTOR_ELT(values, i, CAR(a));
@@ -178,8 +172,8 @@ SEXP ca (SEXP x, SEXP y)
   return R_NilValue;
 }
 
-SEXP add_xtsCoreAttributes(SEXP _x, SEXP _index, SEXP _indexClass, SEXP _tzone,
-        SEXP _tclass, SEXP _class, SEXP _indexFormat)
+SEXP add_xtsCoreAttributes(SEXP _x, SEXP _index, SEXP _tzone,
+        SEXP _tclass, SEXP _class, SEXP _tformat)
 {
   int P=0;
   if(MAYBE_SHARED(_index)) {
@@ -188,22 +182,14 @@ SEXP add_xtsCoreAttributes(SEXP _x, SEXP _index, SEXP _indexClass, SEXP _tzone,
   /* add tzone and tclass to index */
   setAttrib(_index, xts_IndexTclassSymbol, _tclass);
   setAttrib(_index, xts_IndexTzoneSymbol, _tzone);
+  setAttrib(_index, xts_IndexTformatSymbol, _tformat);
 
   if(MAYBE_SHARED(_x)) {
     PROTECT(_x = duplicate(_x)); P++;
     //_x = duplicate(_x);
   }
   setAttrib(_x, xts_IndexSymbol, _index);              /* index */
-  setAttrib(_x, xts_IndexClassSymbol, _indexClass);    /* .indexClass */
-  setAttrib(_x, xts_IndexTZSymbol, _tzone);            /* .indexTZ */
-  setAttrib(_x, xts_IndexTclassSymbol, _tclass);       /* tclass */
-  setAttrib(_x, xts_IndexTzoneSymbol, _tzone);         /* tzone */
   setAttrib(_x, R_ClassSymbol, _class);                /* class */
-
-  /* .indexFormat is only here because it's set in Ops.xts
-   * This should go away once this attribute is on the index */
-  if(_indexFormat != R_NilValue)
-    setAttrib(_x, xts_IndexFormatSymbol, _indexFormat);
 
   UNPROTECT(P);
   return(_x);

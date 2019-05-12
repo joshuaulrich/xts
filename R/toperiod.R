@@ -78,9 +78,9 @@ to.period <- to_period <- function(x, period='months', k=1, indexAt=NULL, name=N
 
   if(!is.null(indexAt)) {
     if(indexAt=="yearmon" || indexAt=="yearqtr")
-      indexClass(xx) <- indexAt
+      tclass(xx) <- indexAt
     if(indexAt=="firstof") {
-      ix <- as.POSIXlt(c(.index(xx)), tz=indexTZ(xx))
+      ix <- as.POSIXlt(c(.index(xx)), tz=tzone(xx))
       if(period %in% c("years","months","quarters","days"))
         index(xx) <- firstof(ix$year + 1900, ix$mon + 1)
       else
@@ -88,7 +88,7 @@ to.period <- to_period <- function(x, period='months', k=1, indexAt=NULL, name=N
                              ix$hour, ix$min, ix$sec)
     }
     if(indexAt=="lastof") {
-      ix <- as.POSIXlt(c(.index(xx)), tz=indexTZ(xx))
+      ix <- as.POSIXlt(c(.index(xx)), tz=tzone(xx))
       if(period %in% c("years","months","quarters","days"))
         index(xx) <- as.Date(lastof(ix$year + 1900, ix$mon + 1))
       else
@@ -191,15 +191,15 @@ function(x) {
     x <- try.xts(x, error=FALSE)
   if(is.xts(x)) {
     # if x is xts, drop HHMMSS from index
-    if(any(indexClass(x)=='POSIXt')) {
+    if(any(tclass(x)=='POSIXt')) {
       # convert index to Date
       index(x) <- as.Date(as.POSIXlt(index(x)))
-      indexClass(x) <- "Date"  # set indexClass to Date
+      tclass(x) <- "Date"  # set tclass to Date
     }
-    if(any(indexClass(x) %in% .classesWithoutTZ)) {
-      indexTZ(x) <- "UTC"  # set indexTZ to UTC
+    if(any(tclass(x) %in% .classesWithoutTZ)) {
+      tzone(x) <- "UTC"  # set tzone to UTC
     }
-    # force conversion, even if we didn't set indexClass to Date
+    # force conversion, even if we didn't set tclass to Date
     # because indexAt yearmon/yearqtr won't drop time from index
     index(x) <- index(x)
     if(xts.in)  x    # if input already was xts

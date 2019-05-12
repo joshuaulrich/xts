@@ -101,7 +101,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
         # must be able to process - and then allow for operations???
 
         i.tmp <- NULL
-        tz <- as.character(indexTZ(x)) # ideally this moves to attr(index,"tzone")
+        tz <- as.character(tzone(x))
 
         for(ii in i) {
           adjusted.times <- .parseISO8601(ii, .index(x)[1], .index(x)[nr], tz=tz)
@@ -187,8 +187,7 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     if(length(j) == 0 || (length(j)==1 && (is.na(j) || j==0))) {
       if(missing(i))
         i <- seq_len(nr)
-      return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i],
-                  .indexCLASS=indexClass(x), .indexTZ=indexTZ(x)))
+      return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i]))
     } 
     if(missing(i))
       return(.Call("extract_col", x, as.integer(j), drop, 1, nr, PACKAGE='xts'))
@@ -274,7 +273,7 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
     usr_idx <- TRUE
     idx <- .index(x)
 
-    index. <- .toPOSIXct(index., indexTZ(x))
+    index. <- .toPOSIXct(index., tzone(x))
     index. <- index.[!is.na(index.)]
     if(is.unsorted(index.)) {
       # index. must be sorted for index_bsearch
@@ -292,11 +291,11 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
   }
 
   if(!is.null(start)) {
-    start <- .toPOSIXct(start, indexTZ(x))
+    start <- .toPOSIXct(start, tzone(x))
   }
 
   if(!is.null(end)) {
-    end <- .toPOSIXct(end, indexTZ(x))
+    end <- .toPOSIXct(end, tzone(x))
   }
 
   firstlast <- index_bsearch(index., start, end)

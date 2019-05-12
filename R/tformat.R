@@ -19,38 +19,54 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+`tformat` <-
+function(x) {
+  UseMethod('tformat')
+}
+
+`tformat<-` <-
+function(x, value) {
+  UseMethod('tformat<-')
+}
+
+`tformat.default` <-
+function(x) {
+  attr(x, 'tformat')
+}
+
+`tormat<-.default` <-
+function(x, value) {
+  attr(x, '.tformat') <- value
+  x
+}
+
+`tformat.xts` <-
+function(x) {
+  ix <- .index(x)
+  attr(ix, 'tformat')
+}
+
+`tformat<-.xts` <-
+function(x, value) {
+
+  if(!is.character(value) && !is.null(value))
+    stop('must provide valid POSIX formatting string')
+
+  # Remove format attrs (object created before 0.10-3)
+  attr(x, ".indexFORMAT") <- NULL
+
+  attr(attr(x, 'index'), 'tformat') <- value
+  x
+}
+
 `indexFormat` <-
 function(x) {
-  UseMethod('indexFormat')
+  .Deprecated("tformat", "xts")
+  tformat(x)
 }
 
 `indexFormat<-` <-
 function(x, value) {
-  UseMethod('indexFormat<-')
-}
-
-`indexFormat.default` <-
-function(x) {
-  attr(x, '.indexFORMAT')
-}
-
-`indexFormat<-.default` <-
-function(x, value) {
-  attr(x, '.indexFORMAT') <- value
-  x
-}
-
-`indexFormat.xts` <-
-function(x) {
-  attr(x, '.indexFORMAT')
-}
-
-`indexFormat<-.xts` <-
-function(x, value) {
-  
-  if(!is.character(value) && !is.null(value))
-    stop('must provide valid POSIX formatting string')
-
-  attr(x, '.indexFORMAT') <- value
-  x
+  .Deprecated("tformat<-", "xts")
+  `tformat<-`(x, value)
 }

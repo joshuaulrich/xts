@@ -44,26 +44,32 @@ function(e1, e2)
     }
   }
   if(.Generic %in% c("+","-","*","/","^","%%","%/%")) {
-    if(length(e)==0)
-      attr(e,'index') <- numeric(0)
     #.Call('add_xts_class', e)
     .Call('add_class', e, CLASS, PACKAGE="xts")
   }
-  else 
+  if(length(e)==0) {
+    if(is.xts(e1)) {
+      idx <- .index(e1)
+    } else {
+      idx <- .index(e2)
+    }
+    idx[] <- idx[0]
+    attr(e,'index') <- idx
+  }
   if(is.null(attr(e,'index'))) {
     if(is.xts(e1)) {
-      .xts(e, .index(e1), 
-              .indexCLASS=indexClass(e1), 
-              .indexFORMAT=indexFormat(e1), 
-              .indexTZ=indexTZ(e1))
+      e <- .xts(e, .index(e1))
     } else {
-      .xts(e, .index(e2),
-              .indexCLASS=indexClass(e2), 
-              .indexFORMAT=indexFormat(e2), 
-              .indexTZ=indexTZ(e2)
-          )
+      e <- .xts(e, .index(e2))
     }
-  } else {
-  e
   }
+  if(!is.null(dimnames(e)[[1L]])) {
+    if(is.null(dimnames(e)[[2L]])) {
+      attr(e, "dimnames") <- NULL
+    } else {
+      dimnames(e)[[1]] <- list(NULL)
+    }
+  }
+  attr(e, "names") <- NULL
+  e
 }

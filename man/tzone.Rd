@@ -29,7 +29,7 @@ Going forward from 0.7-4, the TZ variable is now
 also stored in the index itself, in the \code{tzone}
 attribute. This is to facilitate the transition to
 removing the xts-specific attributes referenced by
-\code{indexTZ}, \code{indexFormat}, and \code{indexClass}.
+\code{tzone}, \code{indexFormat}, and \code{indexClass}.
 These accessor functions will continue to behave the
 same under the new internals. Additionally, there is a new
 getter/setter method with \code{tzone} and \code{tzone<-}.
@@ -54,9 +54,9 @@ where the index was stored in its native format (i.e. class).
 The ability to create an index using any of the supported
 timeBased classes (POSIXct, Date, dates, chron, timeDate,
 yearmon, yearqtr) is managed at the user-interaction point,
-and the class is merely stored in another hidden attribute
-names \code{.indexCLASS}.  This is accessible via
-the \code{indexClass} and \code{indexClass(x)<-} functions.
+and the class is merely stored in another index attribute,
+which is named \sQuote{tclass}.  This is accessible and changeable
+via the \code{tclass} and \code{tclass(x)<-} functions.
 
 In most cases, all of this makes the subsetting by time strings
 possible, and also allows for consistent and fast manipulation
@@ -79,8 +79,7 @@ is not needed, it is often best to set the system TZ to "GMT" or
 \seealso{ \code{\link{POSIXt}} }
 \examples{
 x <- xts(1:10, Sys.Date()+1:10)
-indexTZ(x)
-
+#indexTZ(x)  # Deprecated(?)
 # same, preferred as of 0.9-1
 tzone(x)
 str(x)

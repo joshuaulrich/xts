@@ -1,10 +1,12 @@
-\name{indexClass}
-\alias{indexClass}
+\name{tclass}
 \alias{tclass}
+\alias{tformat}
+\alias{indexClass}
 \alias{indexFormat}
 \alias{convertIndex}
 \alias{indexClass<-}
 \alias{tclass<-}
+\alias{tformat<-}
 \alias{indexFormat<-}
 \alias{index.xts}
 \alias{index<-.xts}
@@ -37,11 +39,11 @@ of an xts object.
 indexClass(x)
 indexClass(x) <- value
 
-tclass(x)
+tclass(x, ...)
 tclass(x) <- value
 
-indexFormat(x)
-indexFormat(x) <- value
+tformat(x)
+tformat(x) <- value
 
 convertIndex(x,value)
 
@@ -80,28 +82,28 @@ xts object.  Upon a standard \code{index} call, this is used
 to convert the numeric value to the desired class.
 
 It is possible to view and set the class of the time-index
-of a given \code{xts} object via the \code{indexClass} function.
+of a given \code{xts} object via the \code{tclass} function.
 
 To retrieve the raw numeric data a new accessor function (and replacement) has been
 added \code{.index}. This is primarily for internal use, but may be useful for
 end-users.
 
 \code{.indexXXX} functions are useful to extract time
-components of the underlying time index.  The \sQuote{indexClass}
+components of the underlying time index.  The \sQuote{tclass}
 is virtual, and as such suitable conversions are made depending
 on the component requested.
 
 
 The specified value for 
-\code{indexClass<-} must be a character string containing
+\code{tclass<-} must be a character string containing
 one of the following: \code{Date}, \code{POSIXct},
 \code{chron}, \code{yearmon}, \code{yearqtr} or \code{timeDate}.
 
-\code{indexFormat} only manages the manner in which the object
+\code{tformat} only manages the manner in which the object
 is displayed via \code{print} (also called automatically
 when the object is returned) and in conversion to other
 classes such as \code{matrix}.  The valid values
-for indexFormat are the same for \code{format.POSIXct},
+for \code{tformat} are the same for \code{format.POSIXct},
 as this is the function that does the conversion internally.
 
 \code{convertIndex} returns a modified \code{xts} object, and
@@ -121,7 +123,7 @@ x <- xts(1:length(x), x)
 x[.indexhour(x) \%in\% c(8,15) & .indexmin(x) \%in\% c(0:5,57:59)]
 
 # change the index format
-indexFormat(x) <- "\%Y-\%b-\%d \%H:\%M:\%OS3"
+tformat(x) <- "\%Y-\%b-\%d \%H:\%M:\%OS3"
 head(x)
 
 }

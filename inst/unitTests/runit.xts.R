@@ -52,6 +52,60 @@ test.xts_only_use_first_tzone_element <- function() {
   checkIdentical(tz, tzone(y))
 }
 
+test.xts_no_args_has_index_with_tzone_tclass <- function() {
+  x <- xts()
+  checkTrue(!is.null(attr(.index(x), "tclass")))
+  checkTrue(!is.null(attr(.index(x), "tzone")))
+}
+
+# don't add index attributes to xts object
+test.ctors_dont_add_tclass_indexCLASS_to_object <- function() {
+  x <- xts(1, as.Date("2018-05-02"))
+  checkIdentical(NULL, attr(x, "tclass"))
+  checkIdentical(NULL, attr(x, ".indexCLASS"))
+  y <- .xts(1, 1)
+  checkIdentical(NULL, attr(y, "tclass"))
+  checkIdentical(NULL, attr(y, ".indexCLASS"))
+}
+
+test.ctors_dont_add_tzone_indexTZ_to_object <- function() {
+  x <- xts(1, as.Date("2018-05-02"))
+  checkIdentical(NULL, attr(x, "tzone"))
+  checkIdentical(NULL, attr(x, ".indexTZ"))
+  y <- .xts(1, 1)
+  checkIdentical(NULL, attr(y, "tzone"))
+  checkIdentical(NULL, attr(y, ".indexTZ"))
+}
+
+test.ctors_dont_add_indexFORMAT_to_object <- function() {
+  x <- xts(1, as.Date("2018-05-02"))
+  checkIdentical(NULL, attr(x, ".indexFORMAT"))
+  y <- .xts(1, 1)
+  checkIdentical(NULL, attr(y, ".indexFORMAT"))
+}
+
+# warn if deprecated arguments passed to constructor
+test.xts_ctor_warns_for_indexCLASS_arg <- function() {
+  op <- options(warn = 2)
+  on.exit(options(warn = op$warn))
+  checkException(x <- xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"))
+  checkException(x <- .xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"))
+}
+
+test.xts_ctor_warns_for_indexTZ_arg <- function() {
+  op <- options(warn = 2)
+  on.exit(options(warn = op$warn))
+  checkException(x <- xts(1, as.Date("2018-05-02"), .indexTZ = "UTC"))
+  checkException(x <- .xts(1, as.Date("2018-05-02"), .indexTZ = "UTC"))
+}
+
+test.xts_ctor_warns_for_indexFORMAT_arg <- function() {
+  op <- options(warn = 2)
+  on.exit(options(warn = op$warn))
+  checkException(x <- xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"))
+  checkException(x <- .xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"))
+}
+
 # .xts()
 test..xts_dimnames_in_dots <- function() {
   x <- .xts(1:5, 1:5, dimnames = list(NULL, "x"))
@@ -59,34 +113,90 @@ test..xts_dimnames_in_dots <- function() {
   checkEquals(x, y)
 }
 
+test..xts_ctor_warns_if_index_tclass_not_NULL_or_POSIXct <- function() {
+  op <- options(warn = 2)
+  on.exit(options(warn = op$warn))
+
+  idx <- 1:3
+  x <- .xts(1:3, idx)  # no error, NULL
+  idx <- .POSIXct(idx)
+  x <- .xts(1:3, idx)  # no error, POSIXct
+
+  idx <- structure(1:3, tclass = "Date", tzone = "UTC")
+  checkException(.xts(1:3, idx), msg = "tclass = Date")
+  idx <- structure(idx, tclass = "yearmon", tzone = "UTC")
+  checkException(.xts(1:3, idx), msg = "tclass = yearmon")
+  idx <- structure(idx, tclass = "timeDate", tzone = "UTC")
+  checkException(.xts(1:3, idx), msg = "tclass = timeDate")
+}
+
+checkXtsFormat <- function(xts, format) {
+  checkIdentical(tformat(xts), format)
+  checkIdentical(attr(attr(xts, "index"), "tformat"), format)
+}
+
+### Check that index format attribute precedence is:
+### .indexFORMAT argument > tformat argument > tformat index attribute
+test..xts_index_format_precedence <- function() {
+  fmt <- "%Y-%m-%d"
+  checkXtsFormat(.xts(1, 1), NULL)
+  checkXtsFormat(.xts(1, 1, tformat=fmt), fmt)
+  checkXtsFormat(.xts(1, 1, .indexFORMAT=fmt), fmt)
+  checkXtsFormat(.xts(1, 1, tformat="%Y", .indexFORMAT=fmt), fmt)
+
+  ## check constructor arguments override existing index attribute
+  idx <- structure(1, tzone="", tclass="yearmon", tformat="%Y-%b")
+  fmt <- "%Y-%m"
+  checkXtsFormat(.xts(1, idx), "%Y-%b")
+  checkXtsFormat(.xts(1, idx, tformat=fmt), fmt)
+  checkXtsFormat(.xts(1, idx, .indexFORMAT=fmt), fmt)
+  checkXtsFormat(.xts(1, idx, tformat="%b%y", .indexFORMAT=fmt), fmt)
+}
+
+test..xts_user_attributes <- function() {
+  x <- .xts(1, 1, tformat = "%Y", .indexCLASS = "Date", .indexTZ = "UTC",
+            user = "attribute", hello = "world", dimnames = list(NULL, "x"))
+  checkIdentical(NULL, attr(x, "tformat"))
+  checkIdentical(NULL, attr(x, "tclass"))
+  checkIdentical(NULL, attr(x, "tzone"))
+  checkIdentical(NULL, attr(x, ".indexCLASS"))
+  checkIdentical(NULL, attr(x, ".indexTZ"))
+  checkIdentical("attribute", attr(x, "user"))
+  checkIdentical("world", attr(x, "hello"))
+  checkIdentical("x", colnames(x))
+}
+
 checkXtsClass <- function(xts, class) {
   checkEquals(tclass(xts), class)
-  checkEquals(indexClass(xts), class)
   checkEquals(attr(attr(xts, "index"), "tclass"), class)
 }
 
-### Check that .indexCLASS takes precedence over tclass when both specified
-test..xts_class <- function() {
+### Check that index class attribute precedence is:
+### .indexCLASS argument > tclass argument > tclass index attribute
+test..xts_index_class_precedence <- function() {
   checkXtsClass(.xts(1, 1), c("POSIXct", "POSIXt"))
   checkXtsClass(.xts(1, 1, tclass="timeDate"), "timeDate")
   checkXtsClass(.xts(1, 1, .indexCLASS="Date"), "Date")
   checkXtsClass(.xts(1, 1, tclass="timeDate", .indexCLASS="Date"), "Date")
 
   ## also check that tclass is ignored if specified as part of index
-  checkXtsClass(.xts(1, structure(1, tzone="",tclass="yearmon")), c("POSIXct", "POSIXt"))
-  checkXtsClass(.xts(1, structure(1, tzone="",tclass="yearmon"), tclass="timeDate"), "timeDate")
-  checkXtsClass(.xts(1, structure(1, tzone="",tclass="yearmon"), .indexCLASS="Date"), "Date")
-  checkXtsClass(.xts(1, structure(1, tzone="",tclass="yearmon"), tclass="timeDate", .indexCLASS="Date"), "Date")
+  idx <- structure(1, tzone="",tclass="yearmon")
+  checkXtsClass(.xts(1, idx), c("POSIXct", "POSIXt"))
+  checkXtsClass(.xts(1, idx, tclass="timeDate"), "timeDate")
+  checkXtsClass(.xts(1, idx, .indexCLASS="Date"), "Date")
+  checkXtsClass(.xts(1, idx, tclass="timeDate", .indexCLASS="Date"), "Date")
 }
 
 checkXtsTz <- function(xts, tzone) {
   checkEquals(tzone(xts), tzone)
-  checkEquals(indexTZ(xts), tzone)
   checkEquals(attr(attr(xts, "index"), "tzone"), tzone)
 }
 
 ### Check that tzone is honoured and .indexTZ ignored
-test..xts_tzone <- function() {
+### Check that index timezone attribute precedence is:
+### .indexTZ argument > tzone argument > tzone index attribute
+### tzone argument > tzone argument > tzone index attribute
+test..xts_index_tzone_precedence <- function() {
   sysTZ <- Sys.getenv("TZ")
   Sys.setenv(TZ = "UTC")
   on.exit(Sys.setenv(TZ = sysTZ), add = TRUE)
@@ -98,8 +208,9 @@ test..xts_tzone <- function() {
   checkXtsTz(.xts(1, 1, tzone="Europe/London", .indexTZ="America/New_York"), "Europe/London")
 
   ## Cases where tzone is specified in the index
-  checkXtsTz(.xts(1, structure(1, tzone="Asia/Tokyo",tclass="yearmon")), "Asia/Tokyo")
-  checkXtsTz(.xts(1, structure(1, tzone="Asia/Tokyo",tclass="yearmon"), tzone="Europe/London"), "Europe/London")
-  checkXtsTz(.xts(1, structure(1, tzone="Asia/Tokyo",tclass="yearmon"), .indexTZ="America/New_York"), "Asia/Tokyo")
-  checkXtsTz(.xts(1, structure(1, tzone="Asia/Tokyo",tclass="yearmon"), tzone="Europe/London", .indexTZ="America/New_York"), "Europe/London")
+  idx <- structure(1, tzone="Asia/Tokyo",tclass="yearmon")
+  checkXtsTz(.xts(1, idx), "Asia/Tokyo")
+  checkXtsTz(.xts(1, idx, tzone="Europe/London"), "Europe/London")
+  checkXtsTz(.xts(1, idx, .indexTZ="America/New_York"), "Asia/Tokyo")
+  checkXtsTz(.xts(1, idx, tzone="Europe/London", .indexTZ="America/New_York"), "Europe/London")
 }
