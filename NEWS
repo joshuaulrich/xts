@@ -1,12 +1,44 @@
-Changed in xts 0.11-2.1:
+Changed in xts 0.12-0:
+
+o  All the index-attributes have been removed from the xts object and are now
+   only attached to the index itself (#245). We took great care to maintain
+   backward compatibility, and throw warnings when deprecated functions are
+   called and when index-attributes are found on the xts object. But there
+   still may be some breaking changes lurking in edge cases.
+
+o  Several binary operations (e.g. +, -, !=, <, etc.) on variations of
+   uncommon xts objects with other xts, matrix, or vector objects, could
+   result in malformed xts objects (#295). Some examples of the types of
+   uncommon xts objects: no dim attribute, zero-width, zero-length.
+
+o  Calling as.matrix() on an xts object without a dim attribute no longer
+   throws an error (#294).
 
 o  merge.xts() now honors check.names = FALSE (#293).
+
+o  The possible values for major.ticks, minor.ticks, and grid.ticks.on in the
+   Details section of ?plot.xts have been corrected. Thanks to Harvey Smith
+   (@harvey131) for the report and patch (#291).
+
+o  as.zoo.xts() is now only registered for zoo versions prior to 1.8-5. Methods
+   to convert an object to another class should reside in the package that
+   implements the target class. Thanks to Kurt Hornik for the report (#287).
 
 o  .parseISO8601() no longer has a potential length-1 logical error. Thanks to
    Kurt Hornik for the report (#280).
 
 o  endpoints() now honors k > 0 when on = "quarters". Thanks to @alkment for
    the report (#279).
+
+o  Performance for the period.XYZ() functions (sum, prod, min, max) is much
+   faster (#278). Thanks to Harvey Smith (@harvey131) for the report and
+   examples.
+
+o  merge.xts() now creates shorter column names when passed unnamed objects.
+   This is now consistent with zoo (#248).
+
+o  Time-of-day performance is ~200x faster, thanks to StackOverflow
+   user3226167 (#193).
 
 Changed in xts 0.11-2:
 
