@@ -188,17 +188,14 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
               c('xts','zoo'), tformat, PACKAGE='xts')
 
   # remove any index attributes that came through '...'
+  # and set any user attributes (and/or dim, dimnames, etc)
   dots.names <- eval(substitute(alist(...)))
-  dots.names$.indexFORMAT <- NULL
-  dots.names$tformat <- NULL
-  dots.names$.indexCLASS <- NULL
-  dots.names$tclass <- NULL
-  dots.names$.indexTZ <- NULL
-  dots.names$tzone <- NULL
-
-  # set any user attributes
-  if(length(dots.names))
-    attributes(xx) <- c(attributes(xx), list(...))
+  if(length(dots.names) > 0L) {
+    dot.attrs <- list(...)
+    drop.attr <- c(".indexFORMAT", "tformat", ".indexCLASS", ".indexTZ")
+    dot.attrs[drop.attr] <- NULL
+    attributes(xx) <- c(attributes(xx), dot.attrs)
+  }
   xx
 }
 

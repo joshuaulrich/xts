@@ -147,6 +147,19 @@ test..xts_index_format_precedence <- function() {
   checkXtsFormat(.xts(1, idx, tformat="%b%y", .indexFORMAT=fmt), fmt)
 }
 
+test..xts_user_attributes <- function() {
+  x <- .xts(1, 1, tformat = "%Y", .indexCLASS = "Date", .indexTZ = "UTC",
+            user = "attribute", hello = "world", dimnames = list(NULL, "x"))
+  checkIdentical(NULL, attr(x, "tformat"))
+  checkIdentical(NULL, attr(x, "tclass"))
+  checkIdentical(NULL, attr(x, "tzone"))
+  checkIdentical(NULL, attr(x, ".indexCLASS"))
+  checkIdentical(NULL, attr(x, ".indexTZ"))
+  checkIdentical("attribute", attr(x, "user"))
+  checkIdentical("world", attr(x, "hello"))
+  checkIdentical("x", colnames(x))
+}
+
 checkXtsClass <- function(xts, class) {
   checkEquals(tclass(xts), class)
   checkEquals(attr(attr(xts, "index"), "tclass"), class)
