@@ -1,6 +1,7 @@
-numeric.modes <- c("double", "integer", "logical")#, "complex")
+all.modes <- c("double", "integer", "logical", "character")
 ops.math <- c("+", "-", "*", "/", "^", "%%", "%/%")
-ops.logic <- c("&", "|", ">", ">=", "==", "!=", "<=", "<")
+ops.relation <- c(">", ">=", "==", "!=", "<=", "<")
+ops.logic <- c("&", "|", ops.relation)
 all.ops <- c(ops.math, ops.logic)
 
 ops_numeric_tester <-
@@ -20,7 +21,9 @@ test.ops_xts2d_matrix2d_dimnames <- function() {
   colnames(M2) <- rev(colnames(M2))
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, M1, m, o)
       E <- X1
@@ -47,7 +50,9 @@ test.ops_xts2d_matrix2d_only_colnames <- function() {
   colnames(M2) <- rev(colnames(M2))
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, M1, m, o)
       E <- X1
@@ -75,7 +80,9 @@ test.ops_xts2d_matrix2d_only_rownames <- function() {
   colnames(M2) <- rev(colnames(M2))
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, M1, m, o)
       E <- X1
@@ -99,7 +106,9 @@ test.ops_xts2d_matrix2d_no_dimnames <- function() {
   M1 <- coredata(X1) * 5
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, M1, m, o)
       E <- X1
@@ -126,7 +135,9 @@ test.ops_xts1d_matrix1d_dimnames <- function() {
   colnames(M2) <- "y"
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, M1, m, o)
       E <- X1
@@ -152,7 +163,9 @@ test.ops_xts1d_matrix1d_only_colnames <- function() {
   colnames(M2) <- "y"
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, M1, m, o)
       E <- X1
@@ -178,7 +191,9 @@ test.ops_xts1d_matrix1d_only_rownames <- function() {
   rownames(M1) <- format(.POSIXct(1:3))
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, M1, m, o)
       E <- X1
@@ -202,7 +217,9 @@ test.ops_xts1d_matrix1d_no_dimnames <- function() {
   M1 <- coredata(X1) * 5
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, M1, m, o)
       E <- X1
@@ -224,7 +241,9 @@ test.ops_xts1d_xts1d <- function() {
   X1 <- .xts(1:3, 1:3, dimnames = list(NULL, "x"))
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
       e <- ops_numeric_tester(X1, X1, m, o)
       E <- X1
       E[] <- ops_numeric_tester(coredata(X1), coredata(X1), m, o)
@@ -239,7 +258,9 @@ test.ops_xts1d_xts1d_different_index <- function() {
   X2 <- .xts(2:4, 2:4, dimnames = list(NULL, "y"))
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, X2, m, o)
       E <- X1[2:3,]
@@ -264,7 +285,9 @@ test.ops_xts2d_vector_no_names <- function() {
   V1 <- as.vector(coredata(X1[,1L])) * 5
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, V1, m, o)
       E <- X1
@@ -287,7 +310,9 @@ test.ops_xts2d_vector_names <- function() {
   V1 <- setNames(as.vector(X1[,1L]), index(X1)) * 5
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, V1, m, o)
       E <- X1
@@ -310,7 +335,9 @@ test.ops_xts1d_vector_no_names <- function() {
   V1 <- as.vector(coredata(X1[,1L])) * 5
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, V1, m, o)
       E <- X1
@@ -333,7 +360,9 @@ test.ops_xts1d_vector_names <- function() {
   V1 <- setNames(as.vector(X1[,1L]), index(X1)) * 5
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(X1, V1, m, o)
       E <- X1
@@ -359,7 +388,9 @@ test.ops_xts_no_dim_matrix1d <- function() {
   M1 <- coredata(X1) * 5
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(Xv, M1, m, o)
       E <- X1
@@ -384,7 +415,9 @@ test.ops_xts_no_dim_matrix2d <- function() {
   M2 <- coredata(X2)
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(Xv, M2, m, o)
       E <- X2
@@ -410,7 +443,9 @@ test.ops_xts_no_dim_vector <- function() {
   V1 <- 4:6
 
   for (o in all.ops) {
-    for (m in numeric.modes) {
+    for (m in all.modes) {
+      if ("character" == m && !(o %in% ops.relation))
+        next
 
       e <- ops_numeric_tester(Xv, V1, m, o)
       E <- Xv
