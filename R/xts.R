@@ -310,3 +310,28 @@ function(x,...,.RECLASS=FALSE) {
 function(x,...) {
   return(x)
 }
+
+.checkIndexAttr <-
+function(x)
+{
+  indexAttrs <- c(".indexTZ", "tzone",
+                  ".indexCLASS", "tclass",
+                  ".indexFORMAT")
+  xAttrs <- attributes(x)
+  if (any(names(xAttrs) %in% indexAttrs)) {
+    warning("Found index attributes attached to xts object. This is no longer",
+            "supported and these attributes will be automatically removed in",
+            "a future xts version. Please re-create the object.")
+  }
+  if (packageVersion("xts") > "0.12-0") {
+    # Remove tz attributes
+    attr(x, ".indexTZ") <- NULL
+    attr(x, "tzone") <- NULL
+    # Remove index class attributes
+    attr(x, ".indexCLASS") <- NULL
+    attr(x, "tclass") <- NULL
+    # Remove index format attribute
+    attr(x, ".indexFORMAT") <- NULL
+  }
+  x
+}

@@ -52,8 +52,7 @@ function(x, value) {
   if(!is.character(value) && !is.null(value))
     stop('must provide valid POSIX formatting string')
 
-  # Remove format attrs (object created before 0.10-3)
-  attr(x, ".indexFORMAT") <- NULL
+  x <- .checkIndexAttr(x)
 
   attr(attr(x, 'index'), 'tformat') <- value
   x

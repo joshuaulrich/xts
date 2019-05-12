@@ -46,9 +46,7 @@ function(x, value)
 
   tzone <- as.character(value)
   attr(attr(x, "index"), "tzone") <- tzone
-  # Remove tz attrs (object created before 0.10-3)
-  attr(x, ".indexTZ") <- NULL
-  attr(x, "tzone") <- NULL
+  x <- .checkIndexAttr(x)
   x
 }
 

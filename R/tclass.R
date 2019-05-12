@@ -93,9 +93,6 @@ function(x, value) {
   }
   attr(attr(x,'index'), 'tclass') <- value
 
-  # Remove class attrs (object created before 0.10-3)
-  attr(x, ".indexCLASS") <- NULL
-  attr(x, "tclass") <- NULL
-
+  x <- .checkIndexAttr(x)
   x
 }
