@@ -52,6 +52,12 @@ test.xts_only_use_first_tzone_element <- function() {
   checkIdentical(tz, tzone(y))
 }
 
+test.xts_no_args_has_index_with_tzone_tclass <- function() {
+  x <- xts()
+  checkTrue(!is.null(attr(.index(x), "tclass")))
+  checkTrue(!is.null(attr(.index(x), "tzone")))
+}
+
 # don't add index attributes to xts object
 test.ctors_dont_add_tclass_indexCLASS_to_object <- function() {
   x <- xts(1, as.Date("2018-05-02"))

@@ -40,7 +40,7 @@ function(x=NULL,
          ...)
 {
   if(is.null(x) && missing(order.by))
-    return(structure(.xts(,0),index=integer()))
+    return(.xts(NULL, integer()))
  
   if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
