@@ -62,6 +62,8 @@ function(e1, e2)
     } else {
       e <- .xts(e, .index(e2))
     }
+    if(is.null(dim(e1)) && is.null(dim(e2)))
+      dim(e) <- NULL
   }
   if(!is.null(dimnames(e)[[1L]])) {
     if(is.null(dimnames(e)[[2L]])) {
