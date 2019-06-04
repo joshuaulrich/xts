@@ -274,6 +274,7 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
     idx <- .index(x)
 
     index. <- .toPOSIXct(index., tzone(x))
+    index. <- unclass(index.)
     index. <- index.[!is.na(index.)]
     if(is.unsorted(index.)) {
       # index. must be sorted for index_bsearch
@@ -287,6 +288,7 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
     match <- idx[base_idx] == index.
     base_idx <- base_idx[match]
     index. <- index.[match]
+    index. <- .POSIXct(index., tz = tzone(x))
     if(length(base_idx) < 1) return(x[NULL,])
   }
 
