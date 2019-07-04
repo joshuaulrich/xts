@@ -12,6 +12,7 @@ matrix:
     - name: "macOS tests"
       os: osx
       osx_image: xcode8
+      before_script: sed -i.bak 's/-isysroot /-I/g' $(R RHOME)/etc/Makeconf
 
     - name: "Linux tests conditional Suggests"
       os: linux
