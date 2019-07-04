@@ -107,11 +107,29 @@ test.first_xtsible_vector <- function() {
   v1 <- setNames(d1$x, rownames(d1))
   checkIdentical(first(v1, 1), head(v1, 1))
   checkIdentical(first(v1,-1), tail(v1,-1))
+  checkIdentical(first(v1, "1 day"), head(v1, 1))
+  checkIdentical(first(v1,"-1 day"), tail(v1,-1))
+  checkIdentical(first(v1, "2 days"), head(v1, 2))
+  checkIdentical(first(v1,"-2 days"), tail(v1,-2))
+
+  d <- .Date(3) + 1:21
+  checkIdentical(first(d, "1 week"), head(d, 7))
+  checkIdentical(first(d,"-1 week"), tail(d,-7))
+  checkIdentical(first(d, "2 weeks"), head(d, 14))
+  checkIdentical(first(d,"-2 weeks"), tail(d,-14))
 }
 test.last_xtsible_vector <- function() {
   v1 <- setNames(d1$x, rownames(d1))
   checkIdentical(last(v1, 1), tail(v1, 1))
   checkIdentical(last(v1,-1), head(v1,-1))
+  checkIdentical(last(v1, "1 day"), tail(v1, 1))
+  checkIdentical(last(v1,"-1 day"), head(v1,-1))
+
+  d <- .Date(3) + 1:21
+  checkIdentical(last(d, "1 week"), tail(d, 7))
+  checkIdentical(last(d,"-1 week"), head(d,-7))
+  checkIdentical(last(d, "2 weeks"), tail(d, 14))
+  checkIdentical(last(d,"-2 weeks"), head(d,-14))
 }
 test.first_nonxtsible_vector <- function() {
   v1 <- d1$x
