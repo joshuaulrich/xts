@@ -22,7 +22,7 @@
 index.xts <- time.xts <-
 function(x, ...) {
   value <- tclass(x)
-  if(is.null(value) || !nzchar(value)) {
+  if(is.null(value) || !nzchar(value[1L])) {
     warning("index does not have a ", sQuote("tclass"), " attribute\n",
             "    returning c(\"POSIXct\", \"POSIXt\")")
     ix <- .index(x)
