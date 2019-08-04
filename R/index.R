@@ -86,14 +86,15 @@ function(x, ...) {
   if(!isOrdered(.index(x), strictly=FALSE))
     stop("new index needs to be sorted")
 
+  # set tclass attribute to the end-user specified class
+  attr(attr(x, 'index'), 'tclass') <- class(value)
+
   # set tzone attribute
   if(any(class(value) %in% .classesWithoutTZ)) {
-    attr(.index(x), 'tzone') <- 'UTC'
+    attr(attr(x, 'index'), 'tzone') <- 'UTC'
   } else {
-    attr(.index(x), 'tzone') <- attr(value, 'tzone')
+    attr(attr(x, 'index'), 'tzone') <- attr(value, 'tzone')
   }
-  # set tclass attribute to the end-user specified class
-  attr(.index(x), 'tclass') <- class(value)
   return(x)
 }
 
@@ -112,6 +113,8 @@ function(x, ...) {
     }
   } else 
   if(is.numeric(value)) {
+    attr(value, 'tclass') <- tclass(x)
+    attr(value, 'tzone') <- tzone(x)
     attr(x, 'index') <- value
   } else stop(".index is used for low level operations - data must be numeric or timeBased")
   return(x)
