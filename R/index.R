@@ -22,8 +22,13 @@
 index.xts <- time.xts <-
 function(x, ...) {
   value <- tclass(x)
-  if(is.null(value))
-    return(.index(x))
+  if(is.null(value) || !nzchar(value)) {
+    warning("index does not have a ", sQuote("tclass"), " attribute\n",
+            "    returning c(\"POSIXct\", \"POSIXt\")")
+    ix <- .index(x)
+    attr(ix, "tclass") <- attr(ix, "class") <- c("POSIXct", "POSIXt")
+    return(ix)
+  }
   #  if tclass is Date, POSIXct time is set to 00:00:00 GMT. Convert here
   #  to avoid ugly and hard to debug TZ conversion.  What will this break? 
   if(value[[1]] == "Date")
