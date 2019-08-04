@@ -6,6 +6,11 @@ o  All the index-attributes have been removed from the xts object and are now
    called and when index-attributes are found on the xts object. But there
    still may be some breaking changes lurking in edge cases.
 
+   o @SamoPP found one edge case (#297) where an error was thrown when index()
+     was called on an xts object with an index that had no tclass attribute.
+   o ...which led Joshua to find that the index setting functions did not
+     always copy index attributes (#305).
+
 o  Several binary operations (e.g. +, -, !=, <, etc.) on variations of
    uncommon xts objects with other xts, matrix, or vector objects, could
    result in malformed xts objects (#295). Some examples of the types of
