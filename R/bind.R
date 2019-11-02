@@ -83,20 +83,11 @@ rbind.xts <- function(..., deparse.level=1)
 
 `.rbind.xts` <-
 function(..., deparse.level=1) {
-#  if(missing(y)) 
-#    return(x)
-#  if( missing(...) )
-#    return(.Call('do_rbind_xts',x, y))
-#  
   dots <- list(...)
   if(length(dots) < 2) return(dots[[1]])
   x <- dots[[1]]
   dots <- dots[-1]
-#  y <- dots[[2]]
-#  if(!is.null(colnames(y)) && colnames(x) != colnames(y))
-#    warning('column names differ')
-#  x <- .Call('do_rbind_xts', x, y)
-  env <- new.env()
+
   while( length(dots) > 0 ) {
     y <- dots[[1]]
     if( length(dots) > 0)
