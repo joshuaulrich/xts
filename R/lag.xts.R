@@ -98,8 +98,10 @@ diff.xts <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad
   if(is.na(differences))
     stop("'differences' must be integer")
 
-  if(is.logical(x))
-    x <- .xts(matrix(as.integer(x),ncol=NCOL(x)), .index(x), tclass(x))
+  if(is.logical(x)) {
+    x <- .xts(matrix(as.integer(x), ncol=NCOL(x)), .index(x),
+              tclass(x), dimnames=dimnames(x))
+  }
 
   if(lag < 1 || differences < 1)
     stop("'diff.xts' defined only for positive lag and differences arguments")

@@ -50,3 +50,10 @@ test.diff_lag_LT1 <- function() {
   x <- .xts(1:5, 1:5)
   checkException(diff(x, -1L, 1L), "'diff.xts' defined only for positive lag and differences arguments")
 }
+
+test.diff_logical_preserves_colnames <- function() {
+  cnames <- c("a", "b")
+  x <- .xts(matrix(rnorm(10) > 0, 5), 1:5, dimnames = list(NULL, cnames))
+  y <- diff(x)
+  checkIdentical(colnames(y), cnames)
+}
