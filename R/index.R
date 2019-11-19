@@ -77,6 +77,9 @@ function(x, ...) {
     stop(paste('unsupported',sQuote('index'),
                'index type of class',sQuote(class(value))))
 
+  # copy original index attributes
+  ixattr <- attributes(attr(x, 'index'))
+
   # set index to the numeric value of the desired index class
   if(inherits(value,"Date"))
     attr(x, 'index') <- structure(unclass(value)*86400, tclass="Date", tzone="UTC")
@@ -93,7 +96,12 @@ function(x, ...) {
   if(any(class(value) %in% .classesWithoutTZ)) {
     attr(attr(x, 'index'), 'tzone') <- 'UTC'
   } else {
-    attr(attr(x, 'index'), 'tzone') <- attr(value, 'tzone')
+    if (is.null(attr(value, 'tzone'))) {
+      # ensure index has tzone attribute if value does not
+      attr(attr(x, 'index'), 'tzone') <- ixattr[["tzone"]]
+    } else {
+      attr(attr(x, 'index'), 'tzone') <- attr(value, 'tzone')
+    }
   }
   return(x)
 }

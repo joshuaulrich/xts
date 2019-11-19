@@ -27,3 +27,14 @@ test.set_index_copies_index_attributes <- function() {
   index(x) <- .POSIXct(4:6, "UTC")
   checkEquals(index(x), ix)
 }
+
+test.set_index_restores_tzone_attribute <- function() {
+  # x index must be numeric, because index<-.xts coerces RHS to numeric
+  x <- .xts(1:3, 1:3+0, tzone = "")
+  y <- x
+
+  # Ops.POSIXt drops tzone attribute when tzone = ""
+  index(y) <- index(y) + 0
+
+  checkIdentical(x, y)
+}
