@@ -37,11 +37,13 @@ function(x,n=1,keep=FALSE,...)
   }
   if(is.null(dim(x))) {
     if(n > 0) {
-      xx <- x[(NROW(x)-n+1):NROW(x)]
+      sub <- seq.int(to = length(x), length.out = min(n, length(x)))
+      xx <- x[sub]
       if(keep) xx <- structure(xx,keep=x[1:(NROW(x)+(-n))])
       xx
     } else {
-      xx <- x[1:(NROW(x)+n)]
+      sub <- seq_len(max(length(x) + n, 0L))
+      xx <- x[sub]
       if(keep) xx <- structure(xx,keep=x[((NROW(x)-(-n)+1):NROW(x))])
       xx
     }

@@ -141,6 +141,19 @@ test.last_nonxtsible_vector <- function() {
   checkIdentical(last(v1, 1), tail(v1, 1))
   checkIdentical(last(v1,-1), head(v1,-1))
 }
+# zero-length vectors
+test.zero_length_vector <- function() {
+  types <- c("logical", "integer", "numeric", "complex", "character", "raw")
+
+  for (type in types) {
+    v <- vector(type, 0)
+    checkIdentical(first(v, 1), head(v, 1), paste("zero-length", type))
+    checkIdentical(last(v, 1), tail(v, 1), paste("zero-length", type))
+    # negative 'n'
+    checkIdentical(first(v, -1), tail(v, -1), paste("zero-length", type))
+    checkIdentical(last(v, -1), head(v, -1), paste("zero-length", type))
+  }
+}
 
 # tests for zoo
 z1 <- zoo(seq_along(dates), as.Date(dates))
