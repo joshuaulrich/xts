@@ -147,13 +147,27 @@ test.zero_length_vector <- function() {
 
   for (type in types) {
     v <- vector(type, 0)
-    checkIdentical(first(v, 1), head(v, 1), paste("zero-length", type))
-    checkIdentical(last(v, 1), tail(v, 1), paste("zero-length", type))
+    checkIdentical(first(v, 1), v, paste("zero-length", type))
+    checkIdentical(last(v, 1), v, paste("zero-length", type))
     # negative 'n'
-    checkIdentical(first(v, -1), tail(v, -1), paste("zero-length", type))
-    checkIdentical(last(v, -1), head(v, -1), paste("zero-length", type))
+    checkIdentical(first(v, -1), v, paste("zero-length", type))
+    checkIdentical(last(v, -1), v, paste("zero-length", type))
   }
 }
+# zero-row matrix
+test.zero_row_matrix <- function() {
+  types <- c("logical", "integer", "numeric", "complex", "character", "raw")
+
+  for (type in types) {
+    m <- matrix(vector(type, 0), 0)
+    checkIdentical(first(m, 1), m, paste("zero-row", type))
+    checkIdentical(last(m, 1), m, paste("zero-row", type))
+    # negative 'n'
+    checkIdentical(first(m, -1), m, paste("zero-row", type))
+    checkIdentical(last(m, -1), m, paste("zero-row", type))
+  }
+}
+
 
 # tests for zoo
 z1 <- zoo(seq_along(dates), as.Date(dates))
