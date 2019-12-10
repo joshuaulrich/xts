@@ -25,11 +25,11 @@ extern "C" {
 /*
 INTERNAL SYMBOLS
 */
-SEXP xts_IndexSymbol;
-SEXP xts_ClassSymbol;
-SEXP xts_IndexTformatSymbol;
-SEXP xts_IndexTclassSymbol;
-SEXP xts_IndexTzoneSymbol;
+extern SEXP xts_IndexSymbol;
+extern SEXP xts_ClassSymbol;
+extern SEXP xts_IndexTformatSymbol;
+extern SEXP xts_IndexTclassSymbol;
+extern SEXP xts_IndexTzoneSymbol;
 
 /*
 DATA TOOLS
@@ -52,8 +52,8 @@ DATA TOOLS
 /*
 IMPORTS FROM zoo
 */
-SEXP(*zoo_lag)(SEXP,SEXP,SEXP);
-SEXP(*zoo_coredata)(SEXP,SEXP);
+extern SEXP(*zoo_lag)(SEXP,SEXP,SEXP);
+extern SEXP(*zoo_coredata)(SEXP,SEXP);
 
 /*
 FUNCTIONS

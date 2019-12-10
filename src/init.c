@@ -55,6 +55,17 @@ R_ExternalMethodDef externalMethods[] = {
   {NULL,                    NULL,                               0}
 };
 
+/* define globals */
+SEXP xts_IndexSymbol;
+SEXP xts_ClassSymbol;
+SEXP xts_IndexTformatSymbol;
+SEXP xts_IndexTclassSymbol;
+SEXP xts_IndexTzoneSymbol;
+
+/* define imports from zoo */
+SEXP (*zoo_lag)(SEXP,SEXP,SEXP);
+SEXP (*zoo_coredata)(SEXP,SEXP);
+
 /*
  * Taken from R/src/main/names.c
  *   "Set up a set of globals so that a symbol table search can be
