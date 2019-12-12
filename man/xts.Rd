@@ -65,7 +65,7 @@ a standard zoo object, while providing an mechanism to customize
 the object's meta-data, as well as create custom methods to handle
 the object in a manner required by the user.
 
-Many xts-sepcific methods have been written to better handle the
+Many xts-specific methods have been written to better handle the
 unique aspects of xts.  These include, \sQuote{"["}, merge, cbind,
 rbind, c, Ops, lag, diff, coredata, head and tail.  Additionally
 there are xts specific methods for converting amongst R's different
