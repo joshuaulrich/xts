@@ -114,6 +114,7 @@ test..xts_dimnames_in_dots <- function() {
 }
 
 test..xts_ctor_warns_if_index_tclass_not_NULL_or_POSIXct <- function() {
+  DEACTIVATED("Warning causes errors in dependencies")
   op <- options(warn = 2)
   on.exit(options(warn = op$warn))
 
