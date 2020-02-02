@@ -527,7 +527,7 @@ plot.xts <- function(x,
       }
     }
   } else {
-    if(type == "h" & NCOL(x) > 1) 
+    if(type == "h" && NCOL(x) > 1) 
       warning("only the univariate series will be plotted")
 
     exp <- quote(chart.lines(xdata[xsubset],
