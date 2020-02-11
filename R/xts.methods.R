@@ -27,7 +27,7 @@
   }
 
   # handle timezone
-  tz <- indexTZ(x)
+  tz <- tzone(x)
   secOfDay <- as.POSIXlt(index(x), tz = tz)
   secOfDay <- secOfDay$hour*60*60 + secOfDay$min*60 + secOfDay$sec
 
