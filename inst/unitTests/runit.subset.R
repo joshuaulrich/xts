@@ -310,12 +310,43 @@ test.time_of_day_when_DST_ends <- function() {
   checkIdentical(.index(x["T01:00:00/T03:00:00"]), i)
 }
 
-test.time_of_day_start_equals_end <- function() {
-  i <- 0:47
-  x <- .xts(i, i * 3600, tz = "UTC")
-  i1 <- .index(x[c(2L, 26L)])
 
-  checkIdentical(.index(x["T01:00/T01:00"]), i1)
+test.time_of_day_by_hour_start_equals_end <- function() {
+  i <- 0:94
+  x <- .xts(i, i * 1800, tz = "UTC")
+  i1 <- .index(x[c(3, 4, 51, 52)])
+  
+  checkIdentical(.index(x["T01/T01"]), i1)
+  checkIdentical(.index(x["T1/T1"]), i1)
+}
+
+test.time_of_day_by_minute <- function() {
+  i <- 0:189
+  x <- .xts(i, i * 900, tz = "UTC")
+  i1 <- .index(x[c(5:8, 101:104)])
+
+  checkIdentical(.index(x["T01:00/T01:45"]), i1)
+  checkIdentical(.index(x["T01/T01:45"]), i1)
+}
+
+test.time_of_day_check_time_string <- function() {
+  i <- 0:10
+  x <- .xts(i, i * 1800, tz = "UTC")
+  # Should supply with colon separator:
+  checkException(x["T0100/T0115"])
+}
+
+test.time_of_day_by_second <- function() {
+  i <- 0:500
+  x <- .xts(c(i, i), c(i * 15, 86400 + i * 15), tz = "UTC")
+  i1 <- .index(x[c(474L, 475L, 476L, 477L, 478L, 479L, 480L, 481L, 482L, 483L, 
+                   484L, 485L, 975L, 976L, 977L, 978L, 979L, 980L, 981L, 982L, 
+                   983L, 984L, 985L, 986L)])
+
+  checkIdentical(.index(x["T01:58:05/T02:01:09"]), i1)
+  # Can omit 0 padding, as is possible by default with as.POSIXct():
+  checkIdentical(.index(x["T01:58:5/T02:1:9"]), i1)  
+  checkIdentical(.index(x["T01:58:05.000/T02:01:09.000"]), i1)
 }
 
 test.time_of_day_end_before_start <- function() {

@@ -20,19 +20,40 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 .subsetTimeOfDay <- function(x, fromTimeString, toTimeString) {
-  timestringToSeconds <- function(timeString) {
-    # "09:00:00" to seconds of day
-    origin <- paste("1970-01-01", timeString)
-    as.numeric(as.POSIXct(origin, "UTC")) %% 86400L
+  validateTimestring <- function(time) {
+    if (isFALSE(grepl(paste0("^(([0-9]{1,2}|",
+                             "[0-9]{1,2}:[0-9]{1,2})$)|",
+                             "([0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}($|?(.[0-9]+)))"),
+                      time)))
+      stop("Supply time-of-day subsetting in the format of T%H:%M:%OS/T%H:%M:%OS")
   }
-
-  # handle timezone
+  padTimestring <- function(time) {
+    ifelse(grepl("^[0-9]{1,2}$", time), paste0(time, ":00"), time)
+  }
+  timestringToSeconds <- function(timeString) {
+    validateTimestring(timeString)
+    tstring <- paste("1970-01-01", padTimestring(timeString))
+    as.numeric(as.POSIXct(tstring, "UTC")) %% 86400L
+  }
+  roundupTimestring <- function(timestring) {
+    ts <- unlist(strsplit(timestring, ":|\\."))
+    n_ts <- length(ts)
+    if (n_ts == 4) ts[4] <- paste0(".", ts[4])
+    ts <- as.numeric(ts)
+    names(ts) <- c("hour", "min", "sec", "subsec")[1:n_ts]
+    ts <- c(ts, list(tz = "UTC"))
+    do.call(lastof, as.list(ts))
+  }
+  timestringToSecondsRoundUp <- function(timeString) {
+    validateTimestring(timeString)
+    tstamp <- roundupTimestring(timeString)
+    as.numeric(tstamp) %% 86400L
+  }
   tz <- tzone(x)
   secOfDay <- as.POSIXlt(index(x), tz = tz)
-  secOfDay <- secOfDay$hour*60*60 + secOfDay$min*60 + secOfDay$sec
-
+  secOfDay <- secOfDay$hour * 60 * 60 + secOfDay$min * 60 + secOfDay$sec
   secBegin <- timestringToSeconds(fromTimeString)
-  secEnd   <- timestringToSeconds(toTimeString)
+  secEnd   <- timestringToSecondsRoundUp(toTimeString)
 
   if (secBegin <= secEnd) {
     i <- secOfDay >= secBegin & secOfDay <= secEnd
