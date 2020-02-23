@@ -126,5 +126,56 @@ x[.indexhour(x) \%in\% c(8,15) & .indexmin(x) \%in\% c(0:5,57:59)]
 tformat(x) <- "\%Y-\%b-\%d \%H:\%M:\%OS3"
 head(x)
 
+i <- 0:60000
+focal_date <- as.numeric(as.POSIXct("2018-02-01", tz = "UTC"))
+x <- .xts(i, c(focal_date + i * 15), tz = "UTC", dimnames = list(NULL, "value"))
+
+#select all observations for the first minute of each hour:
+x[.indexmin(x) == 0]
+
+# Select all observations for Monday:
+mon <- x[.indexwday(x) == 1]
+head(mon) ; tail(mon)
+unique(weekdays(index(mon))) # check
+
+
+# Disjoint time of day selections
+
+# Select all observations between 08:30 and 08:59:59.9999  or between 12:00 and 12:14:59.99999:
+x[.indexhour(x) == 8 & .indexmin(x) >= 30 | .indexhour(x) == 12 & .indexmin(x) \%in\% 0:14]
+
+### Compound selections
+
+# Select all observations for Wednesdays or Fridays between 9am and 4pm (exclusive of 4pm):
+x[.indexwday(x) \%in\% c(3, 5) & (.indexhour(x) \%in\%  c(9:15))]
+
+# Select all observations on Monday between 8:59:45 and 09:04:30:
+
+x[.indexwday(x) == 1 & (.indexhour(x) == 8 & .indexmin(x) == 59 & .indexsec(x) >= 45 |
+                          .indexhour(x) == 9 & 
+                          (.indexmin(x) < 4 | .indexmin(x) == 4 & .indexsec(x) <= 30))]
+
+i <- 0:30000
+u <- .xts(i, c(focal_date + i * 1800), tz = "UTC", dimnames = list(NULL, "value"))
+
+# Select all observations for January or February:
+u[.indexmon(u) \%in\% c(0, 1) ]
+
+# Select all data for the 28th to 31st of each month, excluding any Fridays:
+u[.indexmday(u) \%in\% 28:31 & .indexwday(u) != 5]
+
+# Subset by week since origin
+
+unique(.indexweek(u))
+origin <- xts(1, as.POSIXct("1970-01-01"))
+unique(.indexweek(origin))
+
+# e.g. select all observations in weeks 2515 to 2517.
+u2 <- u[.indexweek(u) \%in\% 2515:2517]
+head(u2); tail(u2)
+
+# select all observations after 12pm for day 50 and 51 in each year
+u[.indexyday(u) \%in\% 50:51 & .indexhour(u) >= 12]
+
 }
 \keyword{ utilities }

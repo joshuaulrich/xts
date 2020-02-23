@@ -111,6 +111,7 @@ Jeffrey A. Ryan
 \seealso{
 \code{\link{xts}},
 \code{\link{.parseISO8601}},
+\code{\link{.index}}
 }
 \examples{
 x <- xts(1:3, Sys.Date()+1:3)
@@ -155,5 +156,41 @@ x['1999/200001'] # January 2000
 x['2000/200005'] # 2000-01 to 2000-05
 x['2000/2000-04-01'] # through April 01, 2000
 y['2000/2000-04-01'] # through April 01, 2000 (using POSIXct series)
+
+
+### Time of day subsetting 
+
+i <- 0:60000
+focal_date <- as.numeric(as.POSIXct("2018-02-01", tz = "UTC"))
+x <- .xts(i, c(focal_date + i * 15), tz = "UTC", dimnames = list(NULL, "value"))
+
+# Select all observations between 9am and 15:59:59.99999:
+w1 <- x["T09/T15"] # or x["T9/T15"]
+head(w1)
+
+# timestring is of the form THH:MM:SS.ss/THH:MM:SS.ss
+
+# Select all observations between 13:00:00 and 13:59:59.9999 in two ways:
+y1 <- x["T13/T13"]
+head(y1)
+
+x[.indexhour(x) == 13]
+
+# Select all observations between 9:30am and 30 seconds, and 4.10pm:
+x["T09:30:30/T16:10"]
+
+# It is possible to subset time of day overnight.
+# e.g. This is useful for subsetting FX time series which trade 24 hours on week days
+
+# Select all observations between 23:50 and 00:15 the following day, in the xts time zone
+z <- x["T23:50/T00:14"]
+z["2018-02-10 12:00/"] # check the last day
+
+
+# Select all observations between 7pm and 8.30am the following day:
+z2 <- x["T19:00/T08:29:59"]
+head(z2); tail(z2)
+
+
 }
 \keyword{ utilities }
