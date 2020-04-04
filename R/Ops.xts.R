@@ -58,9 +58,18 @@ function(e1, e2)
   }
   if(is.null(attr(e,'index'))) {
     if(is.xts(e1)) {
-      e <- .xts(e, .index(e1))
+      e <- .xts(e, .index(e1), tclass(e1), tzone(e1), tformat = tformat(e1))
+    } else if(is.xts(e2)) {
+      e <- .xts(e, .index(e2), tclass(e2), tzone(e2), tformat = tformat(e2))
     } else {
-      e <- .xts(e, .index(e2))
+      # neither have class = ('xts', 'zoo'), because they were overwritten
+      # by the result of merge(..., retclass = FALSE). But they still have
+      # an 'index' attribute.
+      ix <- .index(e1)
+      if (is.null(ix)) {
+        ix <- .index(e2)
+      }
+      e <- .xts(e, ix, tclass(ix), tzone(ix), tformat = tformat(ix))
     }
     if(is.null(dim(e1)) && is.null(dim(e2)))
       dim(e) <- NULL

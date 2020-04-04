@@ -30,6 +30,12 @@ function(x, ...) {
   UseMethod('tclass')
 }
 
+tclass.default <-
+function(x, ...)
+{
+  attr(x, "tclass")
+}
+
 tclass.xts <-
 function(x, ...) {
   tclass <- attr(attr(x, "index"), "tclass")
@@ -56,6 +62,17 @@ function(x, ...) {
 function(x,value) {
   UseMethod('tclass<-')
 }
+
+`tclass<-.default` <-
+function(x, value)
+{
+  if (!is.null(value)) {
+    tclass <- as.character(value)
+  }
+  attr(x, "tclass") <- value
+  x
+}
+
 
 indexClass <-
 function(x) {
