@@ -481,3 +481,32 @@ test.tclass_after_rel_op <- function() {
   checkIdentical(tclass(ts1 == 0), c("Date"))
   checkIdentical(tclass(ts1 != 0), c("Date"))
 }
+
+tstz <- "Atlantic/Reykjavik"
+ts2 <- xts(17, order.by = as.POSIXct("2020-01-29", tz = tstz))
+
+test.get_tclass_POSIXct_ts2  <- function() {
+  checkTrue("POSIXct" %in% tclass(ts2))
+}
+
+test.tclass_POSIXct_after_rel_op <- function() {
+  checkTrue("POSIXct" %in% tclass(ts2 <  0))
+  checkTrue("POSIXct" %in% tclass(ts2 >  0))
+  checkTrue("POSIXct" %in% tclass(ts2 <= 0))
+  checkTrue("POSIXct" %in% tclass(ts2 >= 0))
+  checkTrue("POSIXct" %in% tclass(ts2 == 0))
+  checkTrue("POSIXct" %in% tclass(ts2 != 0))
+}
+
+test.get_tzone_ts2  <- function() {
+  checkIdentical(tzone(ts2), tstz)
+}
+
+test.tzone_after_rel_op <- function() {
+  checkIdentical(tzone(ts2 <  0), tstz)
+  checkIdentical(tzone(ts2 >  0), tstz)
+  checkIdentical(tzone(ts2 <= 0), tstz)
+  checkIdentical(tzone(ts2 >= 0), tstz)
+  checkIdentical(tzone(ts2 == 0), tstz)
+  checkIdentical(tzone(ts2 != 0), tstz)
+}
