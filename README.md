@@ -7,11 +7,11 @@ overall flexibility (you can use *anything* as an index).  The xts extension
 was motivated by the ability to improve performance by imposing reasonable
 constraints, while providing a truly time-based structure.
 
-### Professionally-supported xts now available
+### xts for enterprise
 
-Tidelift gives software development teams a single source for purchasing and maintaining their software, with professional-grade assurances from the experts who know it best, while seamlessly integrating with existing tools.
+Available as part of the Tidelift Subscription.
 
-[Get supported xts with the Tidelift Subscription](https://tidelift.com/subscription/pkg/cran-xts?utm_source=cran-xts&utm_medium=referral&utm_campaign=readme)
+The maintainers of `xts` and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/cran-xts?utm_source=cran-xts&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
 
 ### Supporting xts through Patreon
 
