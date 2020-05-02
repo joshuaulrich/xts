@@ -45,7 +45,7 @@ function(e1, e2)
   }
   if(.Generic %in% c("+","-","*","/","^","%%","%/%")) {
     #.Call('add_xts_class', e)
-    .Call('add_class', e, CLASS, PACKAGE="xts")
+    e <- .Call('add_class', e, CLASS, PACKAGE="xts")
   }
   if(length(e)==0) {
     if(is.xts(e1)) {
