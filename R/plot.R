@@ -131,6 +131,7 @@ plot.xts <- function(x,
                      lwd=2,
                      lend=1,
                      main=deparse(substitute(x)),
+                     ylab=NULL,
                      observation.based=FALSE,
                      ylim=NULL,
                      yaxis.same=TRUE,
@@ -557,7 +558,10 @@ plot.xts <- function(x,
     }
   }
   assign(".xts_chob", cs, .plotxtsEnv)
-  cs
+  plot(cs)
+  if(hasArg(ylab)){
+    title(ylab = ylab)
+  }
 }
 
 # apply a function to the xdata in the xts chob and add a panel with the result
