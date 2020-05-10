@@ -286,6 +286,7 @@ plot.xts <- function(x,
   cs$Env$column_names <- colnames(x)
   cs$Env$nobs <- NROW(cs$Env$xdata)
   cs$Env$main <- main
+  cs$Env$ylab <- if (hasArg("ylab")) eval.parent(plot.call$ylab) else ""
   
   # Set xlim using the raw returns data passed into function
   # xlim can be based on observations or time
@@ -411,6 +412,10 @@ plot.xts <- function(x,
                              col=theme$labels, srt=theme$srt, offset=1, pos=4,
                              cex=theme$cex.axis, xpd=TRUE)))
   }
+
+  # ylab
+  exp <- c(exp, expression(title(ylab = ylab[1], mgp = c(1, 1, 0))))
+
   cs$add(exp, env=cs$Env, expr=TRUE)
   
   # add main series
