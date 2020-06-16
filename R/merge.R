@@ -93,7 +93,7 @@ merge.xts <- function(...,
     #   
     #  (full) outer - all cases, equivelant to all=c(TRUE,TRUE)
     #         left  - all x,    &&  y's that match x
-    #         right - all  ,y   &&  x's that match x
+    #         right - all  ,y   &&  x's that match y
     #         inner - only x and y where index(x)==index(y)
     all <- switch(pmatch(join,c("outer","left","right","inner")),
                     c(TRUE,  TRUE ), #  outer
