@@ -128,9 +128,10 @@ function (year = 1970,
     }
     # strptime has an issue (bug?) which returns NA when passed
     # 1969-12-31-23-59-59; pass 58.9 secs instead.
+    sysTZ <- Sys.getenv("TZ")
     if (length(c(year, month, day, hour, min, sec)) == 6 &&
         all(c(year, month, day, hour, min, sec) == c(1969, 12, 31, 23, 59, 59)) &&
-        Sys.getenv("TZ") %in% c("", "GMT", "UTC"))
+        (sysTZ == "" || isUTC(sysTZ)))
         sec <- sec-1
     ISOdatetime(year, month, day, hour, min, sec, tz)
 }

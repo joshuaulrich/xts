@@ -92,6 +92,21 @@ function(x, ...)
 
 .classesWithoutTZ <- c("chron","dates","times","Date","yearmon","yearqtr")
 
+isUTC <- function(tz = NULL) {
+  if (is.null(tz)) {
+    tz <- Sys.timezone()
+  }
+  switch(tz,
+         "UTC" = ,
+         "GMT" = ,
+         "Etc/UTC" = ,
+         "Etc/GMT" = ,
+         "GMT-0" = ,
+         "GMT+0" = ,
+         "GMT0" = TRUE,
+         FALSE)
+}
+
 check.TZ <- function(x, ...)
 {
   #if( !getOption("xts_check_TZ", FALSE))
@@ -103,7 +118,7 @@ check.TZ <- function(x, ...)
   if(any(tclass(x) %in% .classesWithoutTZ)) {
     # warn if tzone is not UTC or GMT (GMT is not technically correct, since
     # it *is* a timezone, but it should work for all practical purposes)
-    if (!(tzone(x) %in% c("UTC","GMT")))
+    if (!isUTC(tzone(x)))
       warning(paste0("index class is ", paste(class(index(x)), collapse=", "),
         ", which does not support timezones.\nExpected 'UTC' timezone",
         ", but tzone is ", sQuote(tzone(x))), call.=FALSE)
