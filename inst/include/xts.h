@@ -77,7 +77,7 @@ SEXP make_index_unique(SEXP x, SEXP eps);
 SEXP make_unique(SEXP X, SEXP eps);
 SEXP endpoints(SEXP _x, SEXP _on, SEXP _k, SEXP _addlast);
 SEXP do_merge_xts(SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, SEXP colnames, 
-                  SEXP suffixes, SEXP retside, SEXP check_names, SEXP env, int coerce);
+                  SEXP suffixes, SEXP retside, SEXP check_names, SEXP env, SEXP coerce);
 SEXP na_omit_xts(SEXP x);
 SEXP na_locf(SEXP x, SEXP fromlast, SEXP maxgap, SEXP limit);
 

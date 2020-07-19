@@ -67,7 +67,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
                    SEXP retside,
                    SEXP check_names,
                    SEXP env,
-                   int coerce)
+                   SEXP coerce)
 {
   int nrx, ncx, nry, ncy, len;
   int left_join, right_join;
@@ -269,7 +269,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
      either here or in the calling R code.  I suspect here is
      more useful if other function can call the C code as well. 
      If objects are not the same type, convert to REALSXP. */
-  if( coerce || TYPEOF(x) != TYPEOF(y) ) {
+  if( Rf_asInteger(coerce) || TYPEOF(x) != TYPEOF(y) ) {
     PROTECT( x = coerceVector(x, REALSXP) ); p++;
     PROTECT( y = coerceVector(y, REALSXP) ); p++;
   }
@@ -1116,7 +1116,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                                              rets,
                                              check_names,
                                              env,
-                                             coerce_to_double), &idx); P++;
+                                             Rf_ScalarInteger(coerce_to_double)), &idx); P++;
 
     /* merge all objects into one zero-width common index */
     while(args != R_NilValue) { 
@@ -1131,7 +1131,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                                         rets,
                                         check_names,
                                         env,
-                                        coerce_to_double), idx);
+                                        Rf_ScalarInteger(coerce_to_double)), idx);
       }
       args = CDR(args);
     }
@@ -1169,7 +1169,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                                     retside,
                                     check_names,
                                     env,
-                                    coerce_to_double), idxtmp);
+                                    Rf_ScalarInteger(coerce_to_double)), idxtmp);
 
       nr = nrows(xtmp);
       nc = (0 == nr) ? 0 : ncols(xtmp);  // ncols(numeric(0)) == 1
@@ -1297,7 +1297,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                              retside,
                          check_names,
                                  env,
-                    coerce_to_double)); P++;
+   Rf_ScalarInteger(coerce_to_double))); P++;
   }
 
   SEXP index_tmp = getAttrib(result, xts_IndexSymbol);
