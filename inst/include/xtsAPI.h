@@ -105,11 +105,12 @@ SEXP attribute_hidden xtsEndpoints(SEXP x, SEXP on, SEXP k, SEXP addlast) {
 }
 
 SEXP attribute_hidden xtsMerge(SEXP x, SEXP y, SEXP all, SEXP fill, SEXP retclass, 
-                               SEXP colnames, SEXP suffixes, SEXP retside, SEXP env, int coerce) {
-    static SEXP(*fun)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,int) = NULL;
+                               SEXP colnames, SEXP suffixes, SEXP retside, SEXP check_names,
+                               SEXP env, int coerce) {
+    static SEXP(*fun)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,int) = NULL;
     if (fun == NULL) 
-        fun = (SEXP(*)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,int)) R_GetCCallable("xts","do_merge_xts");
-    return fun(x, y, all, fill, retclass, colnames, suffixes, retside, env, coerce);
+        fun = (SEXP(*)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,int)) R_GetCCallable("xts","do_merge_xts");
+    return fun(x, y, all, fill, retclass, colnames, suffixes, retside, check_names, env, coerce);
 }
 
 SEXP attribute_hidden xtsNaOmit(SEXP x) {
