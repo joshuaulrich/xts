@@ -57,10 +57,10 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP dup)
     return y;
   }
 
-  if( !isXts(x) ) {
+  if( !Rf_asInteger(isXts(x)) ) {
     PROTECT( x = tryXts(x) ); P++;
   }
-  if( !isXts(y) ) {
+  if( !Rf_asInteger(isXts(y)) ) {
     PROTECT( y = tryXts(y) ); P++;
   }
 

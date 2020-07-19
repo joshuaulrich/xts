@@ -25,7 +25,7 @@
 #include <Rdefines.h>
 #include "xts.h"
 
-int isXts(SEXP x) 
+SEXP isXts(SEXP x)
 {
   int i;
   SEXP attr, index;
@@ -34,7 +34,7 @@ int isXts(SEXP x)
   PROTECT( attr = coerceVector(getAttrib(x, R_ClassSymbol),STRSXP) );
   if(length(attr) <= 1) {
     UNPROTECT(1);
-    return 0;
+    return Rf_ScalarInteger(0);
   }
 
   for(i = 0; i < length(attr); i++) {
@@ -42,22 +42,22 @@ int isXts(SEXP x)
       /* check for index attribute */
       if(TYPEOF(index)==REALSXP || TYPEOF(index)==INTSXP) {
         UNPROTECT(1);
-        return 1;
+        return Rf_ScalarInteger(1);
       } else {
         UNPROTECT(1);
-        return 0;
+        return Rf_ScalarInteger(0);
       }
     }
   }
   UNPROTECT(1);
-  return FALSE;
+  return Rf_ScalarInteger(FALSE);
 
 }
 
 /* test function and example */
 SEXP test_isXts(SEXP x)
 {
-  if(isXts(x)) {
+    if(Rf_asInteger(isXts(x))) {
     Rprintf("TRUE\n");
   } else {
     Rprintf("FALSE\n");

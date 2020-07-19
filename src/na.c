@@ -392,7 +392,7 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
       error("unsupported type");
       break;
   }
-  if(isXts(x)) {
+  if(Rf_asInteger(isXts(x))) {
     setAttrib(result, R_DimSymbol, getAttrib(x, R_DimSymbol));
     setAttrib(result, R_DimNamesSymbol, getAttrib(x, R_DimNamesSymbol));
     setAttrib(result, xts_IndexSymbol, getAttrib(x, xts_IndexSymbol));

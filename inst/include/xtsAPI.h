@@ -41,10 +41,10 @@ extern "C" {
     fun = ( RETURNTYPE(*)(ARG1,ARG2)) R_GetCCallable("PACKAGENAME", "FUNCTIONNAME")
 
 */
-int attribute_hidden xtsIs(SEXP x)
+SEXP attribute_hidden xtsIs(SEXP x)
 {
-  static int(*fun)(SEXP) = NULL;
-  if (fun == NULL) fun = (int(*)(SEXP)) R_GetCCallable("xts","isXts");
+  static SEXP(*fun)(SEXP) = NULL;
+  if (fun == NULL) fun = (SEXP(*)(SEXP)) R_GetCCallable("xts","isXts");
   return fun(x);
 }
 

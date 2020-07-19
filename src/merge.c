@@ -102,7 +102,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   PROTECT( xindex = getAttrib(x, xts_IndexSymbol) ); p++;
 
   /* convert to xts object if needed */
-  if( !isXts(y) ) {
+  if( !Rf_asInteger(isXts(y)) ) {
     PROTECT(s = t = allocList(4)); p++;
     SET_TYPEOF(s, LANGSXP);
     SETCAR(t, install("try.xts")); t = CDR(t);
@@ -118,7 +118,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
 
   mode = TYPEOF(x);
 
-  if( isXts(y) ) {
+  if( Rf_asInteger(isXts(y)) ) {
     PROTECT( yindex = getAttrib(y, xts_IndexSymbol) ); p++;
   } else {
     PROTECT( yindex = getAttrib(x, xts_IndexSymbol) ); p++;
@@ -1068,7 +1068,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   args = CDR(args);
 
   int leading_non_xts = 0;
-  while( !isXts(_x) ) {
+  while( !Rf_asInteger(isXts(_x)) ) {
     if( args == R_NilValue ) error("no xts object to merge");
     leading_non_xts = 1;
     /*warning("leading non-xts objects may have been dropped");*/

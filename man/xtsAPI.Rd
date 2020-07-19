@@ -22,7 +22,7 @@ Callable from other R packages:
   SEXP xtsLag(SEXP x, SEXP k, SEXP pad)
 
 Internal use functions:
-  int isXts(SEXP x)
+  SEXP isXts(SEXP x)
   void copy_xtsAttributes(SEXP x, SEXP y)
   void copy_xtsCoreAttributes(SEXP x, SEXP y)
 
