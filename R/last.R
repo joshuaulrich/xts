@@ -28,6 +28,8 @@ function(x,...)
 `last.default` <-
 function(x,n=1,keep=FALSE,...)
 {
+  if(length(x) == 0)
+    return(x)
   if(is.character(n)) {
     xx <- try.xts(x, error=FALSE)
     if(is.xts(xx)) {

@@ -28,6 +28,8 @@ function(x,...)
 `first.default` <-
 function(x,n=1,keep=FALSE,...)
 {
+  if(length(x) == 0)
+    return(x)
   if(is.character(n)) {
     xx <- try.xts(x, error=FALSE)
     if(is.xts(xx)) {
@@ -42,7 +44,7 @@ function(x,n=1,keep=FALSE,...)
       if(keep) xx <- structure(xx,keep=x[(-(-n)+1):NROW(x)])
       xx
     } else {
-      sub <- seq.int(to = length(x), length.out = max(-n+1, 0L))
+      sub <- seq.int(to = length(x), length.out = max(length(x)-(-n), 0L))
       xx <- x[sub]
       if(keep) xx <- structure(xx,keep=x[1:(-n)])
       xx
@@ -54,7 +56,7 @@ function(x,n=1,keep=FALSE,...)
       if(keep) xx <- structure(xx,keep=x[(-(-n)+1):NROW(x),])
       xx
     } else {
-      sub <- seq.int(to = NROW(x), length.out = max(-n+1, 0L))
+      sub <- seq.int(to = NROW(x), length.out = max(NROW(x)-(-n), 0L))
       xx <- x[sub,,drop=FALSE]
       if(keep) xx <- structure(xx,keep=x[1:(-n),])
       xx
