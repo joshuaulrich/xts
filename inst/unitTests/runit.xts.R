@@ -113,6 +113,12 @@ test..xts_dimnames_in_dots <- function() {
   checkEquals(x, y)
 }
 
+test..xts_ctor_does_not_return_rownames <- function() {
+  m <- matrix(1, dimnames = list("a", "b"))
+  x <- .xts(m, 1)
+  checkEquals(rownames(x), NULL)
+}
+
 test..xts_ctor_warns_if_index_tclass_not_NULL_or_POSIXct <- function() {
   DEACTIVATED("Warning causes errors in dependencies")
   op <- options(warn = 2)

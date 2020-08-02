@@ -191,6 +191,11 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   xx <- .Call("add_xtsCoreAttributes", x, index, tzone, tclass,
               c('xts','zoo'), tformat, PACKAGE='xts')
 
+  # ensure there are no rownames
+  if(!is.null((dimnames(xx)))) {
+    dimnames(xx)[[1]] <- NULL
+  }
+
   # remove any index attributes that came through '...'
   # and set any user attributes (and/or dim, dimnames, etc)
   dots.names <- eval(substitute(alist(...)))
