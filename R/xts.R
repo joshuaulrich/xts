@@ -192,7 +192,9 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
               c('xts','zoo'), tformat, PACKAGE='xts')
 
   # ensure there are no rownames
-  if(!is.null((dimnames(xx)))) {
+  rn <- dimnames(xx)[[1]]
+  if(!is.null(rn)) {
+    attr(xx, '.ROWNAMES') <- rn
     dimnames(xx)[[1]] <- NULL
   }
 
