@@ -56,6 +56,14 @@ function(e1, e2)
     idx[] <- idx[0]
     attr(e,'index') <- idx
   }
+  dn <- dimnames(e)
+  if(!is.null(dn[[1L]])) {
+    if(is.null(dn[[2L]])) {
+      attr(e, "dimnames") <- NULL
+    } else {
+      dimnames(e) <- list(NULL, dn[[2L]])
+    }
+  }
   if(is.null(attr(e,'index'))) {
     if(is.xts(e1)) {
       e <- .xts(e, .index(e1), tclass(e1), tzone(e1), tformat = tformat(e1))
@@ -73,13 +81,6 @@ function(e1, e2)
     }
     if(is.null(dim(e1)) && is.null(dim(e2)))
       dim(e) <- NULL
-  }
-  if(!is.null(dimnames(e)[[1L]])) {
-    if(is.null(dimnames(e)[[2L]])) {
-      attr(e, "dimnames") <- NULL
-    } else {
-      dimnames(e)[[1]] <- list(NULL)
-    }
   }
   attr(e, "names") <- NULL
   e
