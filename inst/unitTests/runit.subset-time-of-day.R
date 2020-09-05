@@ -1,5 +1,12 @@
 # Time-of-day subset
 
+test.time_of_day_start_equals_end <- function() {
+  i <- 0:47
+  x <- .xts(i, i * 3600, tz = "UTC")
+  i1 <- .index(x[c(2L, 26L)])
+  checkIdentical(.index(x["T01:00/T01:00"]), i1)
+}
+
 test.time_of_day_when_DST_starts <- function() {
   # 2017-03-12: no 0200
   tz <- "America/Chicago"
