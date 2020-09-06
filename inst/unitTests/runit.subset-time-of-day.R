@@ -65,9 +65,10 @@ test.time_of_day_by_second <- function() {
                    983L, 984L, 985L, 986L)])
 
   checkIdentical(.index(x["T01:58:05/T02:01:09"]), i1)
-  # Can omit 0 padding, as is possible by default with as.POSIXct():
-  checkIdentical(.index(x["T01:58:5/T02:1:9"]), i1)
-  checkIdentical(.index(x["T01:58:05.000/T02:01:09.000"]), i1)
+  # Can only omit 0 padding for hours. Only for convenience because it does
+  # not conform to the ISO 8601 standard, which requires padding with zeros.
+  checkIdentical(.index(x["T1:58:05/T2:01:09"]), i1)
+  checkIdentical(.index(x["T1:58:05.000/T2:01:09.000"]), i1)
 }
 
 test.time_of_day_end_before_start <- function() {
