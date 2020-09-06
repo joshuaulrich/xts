@@ -113,29 +113,23 @@ test..xts_dimnames_in_dots <- function() {
   checkEquals(x, y)
 }
 
-test..xts_ctor_does_not_return_rownames <- function() {
-  m <- matrix(1, dimnames = list("a", "b"))
-  x <- .xts(m, 1)
-  checkEquals(rownames(x), NULL)
-}
-
-test..xts_ctor_warns_if_index_tclass_not_NULL_or_POSIXct <- function() {
-  DEACTIVATED("Warning causes errors in dependencies")
-  op <- options(warn = 2)
-  on.exit(options(warn = op$warn))
-
-  idx <- 1:3
-  x <- .xts(1:3, idx)  # no error, NULL
-  idx <- .POSIXct(idx)
-  x <- .xts(1:3, idx)  # no error, POSIXct
-
-  idx <- structure(1:3, tclass = "Date", tzone = "UTC")
-  checkException(.xts(1:3, idx), msg = "tclass = Date")
-  idx <- structure(idx, tclass = "yearmon", tzone = "UTC")
-  checkException(.xts(1:3, idx), msg = "tclass = yearmon")
-  idx <- structure(idx, tclass = "timeDate", tzone = "UTC")
-  checkException(.xts(1:3, idx), msg = "tclass = timeDate")
-}
+# test..xts_ctor_warns_if_index_tclass_not_NULL_or_POSIXct <- function() {
+#   DEACTIVATED("Warning causes errors in dependencies")
+#   op <- options(warn = 2)
+#   on.exit(options(warn = op$warn))
+#
+#   idx <- 1:3
+#   x <- .xts(1:3, idx)  # no error, NULL
+#   idx <- .POSIXct(idx)
+#   x <- .xts(1:3, idx)  # no error, POSIXct
+#
+#   idx <- structure(1:3, tclass = "Date", tzone = "UTC")
+#   checkException(.xts(1:3, idx), msg = "tclass = Date")
+#   idx <- structure(idx, tclass = "yearmon", tzone = "UTC")
+#   checkException(.xts(1:3, idx), msg = "tclass = yearmon")
+#   idx <- structure(idx, tclass = "timeDate", tzone = "UTC")
+#   checkException(.xts(1:3, idx), msg = "tclass = timeDate")
+# }
 
 checkXtsFormat <- function(xts, format) {
   checkIdentical(tformat(xts), format)
