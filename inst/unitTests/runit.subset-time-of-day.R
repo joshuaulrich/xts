@@ -53,8 +53,8 @@ test.time_of_day_by_minute <- function() {
 test.time_of_day_check_time_string <- function() {
   i <- 0:10
   x <- .xts(i, i * 1800, tz = "UTC")
-  # Should supply with colon separator:
-  checkException(x["T0100/T0115"])
+  # Should work with and without colon separator
+  checkIdentical(x["T0100/T0115"], x["T01:00/T01:15"])
 }
 
 test.time_of_day_by_second <- function() {
@@ -84,7 +84,6 @@ test.time_of_day_end_before_start <- function() {
 # TODO: Add tests for possible edge cases and/or errors
 # end time before start time
 # start time and/or end time missing "T" prefix
-# start time and/or end time missing ":" separator
 
 test.time_of_day_on_zero_width <- function() {
   # return relevant times and a column of NA; consistent with zoo
@@ -93,4 +92,17 @@ test.time_of_day_on_zero_width <- function() {
   x <- .xts(, i * 3600, tzone = tz)
   y <- x["T18:00/T20:00"]
   checkIdentical(y, .xts(rep(NA, 6), c(0:2, 24:26)*3600, tzone = tz))
+}
+
+test.time_of_day_zero_padding <- function() {
+  i <- 0:189
+  x <- .xts(i, i * 900, tz = "UTC")
+  i1 <- .index(x[c(5:8, 101:104)])
+
+  checkIdentical(.index(x["T01:00/T01:45"]), i1)
+  # we support un-padded hours, for convenience (it's not in the standard)
+  checkIdentical(.index(x["T1/T1:45"]), i1)
+  # minutes and seconds must be zero-padded
+  checkException(x["T01:5:5/T01:45"])
+  checkException(x["T01:05:5/T01:45"])
 }
