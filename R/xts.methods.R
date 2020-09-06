@@ -21,11 +21,19 @@
 
 .subsetTimeOfDay <- function(x, fromTimeString, toTimeString) {
   validateTimestring <- function(time) {
-    if (isFALSE(grepl(paste0("^(([0-9]{1,2}|",
-                             "[0-9]{1,2}:[0-9]{1,2})$)|",
-                             "([0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}($|?(.[0-9]+)))"),
-                      time)))
-      stop("Supply time-of-day subsetting in the format of T%H:%M:%OS/T%H:%M:%OS")
+    h    <- "(?:[01]?\\d|2[0-3])"
+    hm   <- paste0(h, "(?::[0-5]\\d)")
+    hms  <- paste0(hm, "(?::[0-5]\\d)")
+    hmsS <- paste0(hms, "(?:\\.\\d{1,9})?")
+    pattern <- paste(h, hm, hms, hmsS, sep = ")$|^(")
+    pattern <- paste0("^(", pattern, "$)")
+
+    if (!grepl(pattern, time)) {
+      # FIXME: this isn't necessarily true...
+      # colons aren't required, and neither are all of the components
+      stop("Supply time-of-day subsetting in the format of T%H:%M:%OS/T%H:%M:%OS",
+           call. = FALSE)
+    }
   }
   padTimestring <- function(time) {
     ifelse(grepl("^[0-9]{1,2}$", time), paste0(time, ":00"), time)
