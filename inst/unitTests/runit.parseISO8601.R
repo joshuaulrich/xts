@@ -51,19 +51,19 @@ test.start_end_dates_do_not_exist <- function() {
   checkIdentical(y, UNKNOWN_TIME)
 }
 
-test.start_date_does_not_exist <- function() {
-  DEACTIVATED("FAILS: returns everything")
-  x <- "2015-02-30/2015-03-03"
-  y <- .parseISO8601(x, START_N, END_N, "UTC")
-  checkIdentical(y, UNKNOWN_TIME)
-}
-
-test.end_date_does_not_exist <- function() {
-  DEACTIVATED("FAILS: returns everything")
-  x <- "2015-02-25/2015-02-30"
-  y <- .parseISO8601(x, START_N, END_N, "UTC")
-  checkIdentical(y, UNKNOWN_TIME)
-}
+# test.start_date_does_not_exist <- function() {
+#   DEACTIVATED("FAILS: returns everything")
+#   x <- "2015-02-30/2015-03-03"
+#   y <- .parseISO8601(x, START_N, END_N, "UTC")
+#   checkIdentical(y, UNKNOWN_TIME)
+# }
+#
+# test.end_date_does_not_exist <- function() {
+#   DEACTIVATED("FAILS: returns everything")
+#   x <- "2015-02-25/2015-02-30"
+#   y <- .parseISO8601(x, START_N, END_N, "UTC")
+#   checkIdentical(y, UNKNOWN_TIME)
+# }
 
 # Fuzz tests
 test.start_end_dates_are_garbage <- function() {
