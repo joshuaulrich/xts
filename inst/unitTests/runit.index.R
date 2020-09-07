@@ -5,7 +5,12 @@ test.get_index_does_not_error_if_index_has_no_attributes  <- function() {
   ix <- ix + 3
 
   attr(x, "index") <- 4:6
-  checkEquals(index(x), ix)
+
+  # get index (test will fail if it errors)
+  i <- index(x)
+
+  # won't get here if index(x) errors
+  return(TRUE)
 }
 
 test.set_.index_copies_index_attributes <- function() {
