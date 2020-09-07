@@ -146,6 +146,16 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   }
 
   len = nrx + nry;
+  if (len < 1 && ncx < 1 && ncy < 1) {
+    /* nothing to do, return empty xts object */
+    SEXP s, t;
+    PROTECT(s = t = allocList(1)); p++;
+    SET_TYPEOF(s, LANGSXP);
+    SETCAR(t, install("xts"));
+    SEXP out = PROTECT(eval(s, env)); p++;
+    UNPROTECT(p);
+    return out;
+  }
 
   /* at present we are failing the call if the indexing is of
      mixed type.  This should probably instead simply coerce
