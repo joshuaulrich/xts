@@ -48,9 +48,9 @@ test.window <- function() {
   # null start and end not supported
   window_dbg <- function(x, index. = index(x), start, end)
   {
-    start <- xts:::.toPOSIXct(start, indexTZ(x))
-    end <- xts:::.toPOSIXct(end, indexTZ(x))
-    index. <- as.POSIXct(index., tz=indexTZ(x))
+    start <- xts:::.toPOSIXct(start, tzone(x))
+    end <- xts:::.toPOSIXct(end, tzone(x))
+    index. <- as.POSIXct(index., tz=tzone(x))
     all.indexes <- .index(x)
     in.index <- all.indexes %in% index.
     matches <- (in.index & all.indexes >= start & all.indexes <= end)
