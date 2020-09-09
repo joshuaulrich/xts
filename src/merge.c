@@ -1099,6 +1099,10 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
     PROTECT(_y = duplicate(_x)); P++;
   }
 
+  /* rchk complains about possible protect-stack imbalance
+   * if this is PROTECT-ed before this point (not sure why) */
+  SEXP coerce = PROTECT(ScalarInteger(coerce_to_double)); P++;
+
   if(n > 2 || leading_non_xts) { /*args != R_NilValue) {*/
     /* generalized n-case optimization
        currently if n>2 this is faster and more memory efficient
@@ -1126,7 +1130,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                                              rets,
                                              check_names,
                                              env,
-                                             Rf_ScalarInteger(coerce_to_double)), &idx); P++;
+                                             coerce), &idx); P++;
 
     /* merge all objects into one zero-width common index */
     while(args != R_NilValue) { 
@@ -1141,7 +1145,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                                         rets,
                                         check_names,
                                         env,
-                                        Rf_ScalarInteger(coerce_to_double)), idx);
+                                        coerce), idx);
       }
       args = CDR(args);
     }
@@ -1179,7 +1183,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                                     retside,
                                     check_names,
                                     env,
-                                    Rf_ScalarInteger(coerce_to_double)), idxtmp);
+                                    coerce), idxtmp);
 
       nr = nrows(xtmp);
       nc = (0 == nr) ? 0 : ncols(xtmp);  // ncols(numeric(0)) == 1
@@ -1307,7 +1311,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                              retside,
                          check_names,
                                  env,
-   Rf_ScalarInteger(coerce_to_double))); P++;
+                              coerce)); P++;
   }
 
   SEXP index_tmp = getAttrib(result, xts_IndexSymbol);
