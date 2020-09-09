@@ -53,7 +53,7 @@ defaults of lag.xts to k=-1 and na.pad=FALSE.
 \value{
 An \code{xts} object reflected the desired lag and/or differencing.
 }
-\references{ \url{http://en.wikipedia.org/wiki/Lag } }
+\references{ \url{https://en.wikipedia.org/wiki/Lag } }
 \author{ Jeffrey A. Ryan }
 \examples{
 x <- xts(1:10, Sys.Date()+1:10)
