@@ -1,3 +1,34 @@
+Changed in xts 0.12.1:
+
+o  Various function could change the tclass of xts objects. This would happen
+   in calls to reclass(), period.apply(), and for logical operations on
+   POSIXct indexes. Thanks to Tom Andrews for the report and testing, and to
+   Panagiotis Cheilaris for contributing test cases (#322, #323).
+
+o  plot.xts() now supports y-axis labels via 'ylab'. Thanks to Jasen Mackie
+   for the suggestion and PR (#333, #334).
+
+o  The API header has been updated to fix the signatures of do_merge_xts() and
+   is_xts, which did not return a SEXP as required of functions callable by
+   .Call(). Thanks to Tomas Kalibera for the report (#317), and Dirk
+   Eddelbuettel for the PR (#337). This is a breaking change, but is required
+   to avoid the potential for a segfault.
+
+o  Michael Chirico added an internal isUTC() function to recognize many UTC-
+   equivalent time zones (#319).
+
+o  first() now operates correctly on non-xts objects when 'n = -1'. Previously
+   it would always return the last two values. Thanks to GitHub user vxg20
+   for the report (#325).
+
+o  The .xts() constructor would create an xts object with row names if 'x' had
+   row names. This shouldn't happen, because xts objects do not have or
+   support row names (#298).
+
+o  Claymore Marshall added many examples of time-of-day subsetting to
+   ?subset.xts. He also fixed a bug in time-of-day subsetting where subsetting
+   by hour only returned wrong results (#304, #326, #328).
+
 Changed in xts 0.12-0:
 
 o  All the index-attributes have been removed from the xts object and are now
