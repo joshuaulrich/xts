@@ -1046,14 +1046,15 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
 
   n = 0;
   int type_of;
-  int coerce_to_double=0;
+  SEXP coerce = PROTECT(ScalarInteger(0)); P++;
+
   if(args != R_NilValue) type_of = TYPEOF(CAR(args));
   while(args != R_NilValue) {
     if(length(CAR(args)) > 0) {
       ncs += ncols(CAR(args));
       /* need to convert all objects if one non-zero-width needs to be converted */
       if(TYPEOF(CAR(args)) != type_of) {
-        coerce_to_double = 1;
+        INTEGER(coerce)[0] = 1;
       }
     }
     args = CDR(args);
@@ -1088,6 +1089,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   /* test for NULLs that may be present from cbind dispatch */
   if(!leading_non_xts) { /* leading non-xts in 2 case scenario was igoring non-xts value */
     if(n < 3 && (args == R_NilValue || (isNull(CAR(args)) && length(args) == 1))) {/* no y arg or y==NULL */
+      UNPROTECT(P);
       return(_x);
     }
   }
@@ -1098,10 +1100,6 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
   } else {
     PROTECT(_y = duplicate(_x)); P++;
   }
-
-  /* rchk complains about possible protect-stack imbalance
-   * if this is PROTECT-ed before this point (not sure why) */
-  SEXP coerce = PROTECT(ScalarInteger(coerce_to_double)); P++;
 
   if(n > 2 || leading_non_xts) { /*args != R_NilValue) {*/
     /* generalized n-case optimization
