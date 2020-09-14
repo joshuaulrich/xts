@@ -41,6 +41,15 @@ function(x,on='months',k=1) {
   if(on %in% c('years','quarters','months','weeks','days'))
     posixltindex <- as.POSIXlt(.POSIXct(.index(x)),tz=tzone(x))
 
+  include_last <- function(x, k) {
+    len <- length(x)
+    i <- seq(1L ,len, k)
+    if(i[length(i)] != len) {
+      i <- c(i, len)
+    }
+    ep[i]
+  }
+
   switch(on,
     "years" = {
       as.integer(c(0, which(diff(posixltindex$year %/% k + 1) != 0), NR))
@@ -49,16 +58,18 @@ function(x,on='months',k=1) {
       ixyear <- posixltindex$year * 100L + 190000L
       ixqtr <- ixyear + posixltindex$mon %/% 3L + 1L
       ep <- c(0L, which(diff(ixqtr) != 0L), NR)
-      if(k > 1)
-        ep[seq(1,length(ep),k)]
-      else ep
+      if(k > 1) {
+        ep <- include_last(ep, k)
+      }
+      ep
     },
     "months" = {
       ixmon <- posixltindex$year * 100L + 190000L + posixltindex$mon
       ep <- .Call("endpoints", ixmon, 1L, 1L, addlast, PACKAGE='xts')
-      if(k > 1)
-        ep[seq(1,length(ep),k)]
-      else ep
+      if(k > 1) {
+        ep <- include_last(ep, k)
+      }
+      ep
     },
     "weeks" = {
       .Call("endpoints", .index(x)+3L*86400L, 604800L, k, addlast, PACKAGE='xts')
