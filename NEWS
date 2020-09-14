@@ -67,8 +67,8 @@ o  endpoints() now honors k > 0 when on = "quarters". Thanks to @alkment for
    the report (#279).
 
 o  Performance for the period.XYZ() functions (sum, prod, min, max) is much
-   faster (#278). Thanks to Harvey Smith (@harvey131) for the report and
-   examples.
+   faster (#278). Thanks to Chris Katsulis for the report, and Harvey Smith
+   (@harvey131) for several examples.
 
 o  merge.xts() now creates shorter column names when passed unnamed objects.
    This is now consistent with zoo (#248).
