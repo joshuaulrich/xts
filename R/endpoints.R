@@ -21,6 +21,11 @@
 
 endpoints <-
 function(x,on='months',k=1) {
+
+  if(k < 1) {
+    stop("'k' must be > 0")
+  }
+
   if(timeBased(x)) {
     NR <- length(x)
     x <- xts(, order.by=x)

@@ -265,3 +265,41 @@ test.last_obs_always_in_output <- function() {
   ep <- endpoints(xx, on = "weeks", k = 4) # OK
   checkIdentical(end(xx), end(xx[ep,]), "weeks, k=4")
 }
+
+test.k_less_than_1_errors <- function() {
+  x <- xDailyIntIdx
+
+  checkException(endpoints(x, on = "years", k =  0))
+  checkException(endpoints(x, on = "years", k = -1))
+
+  checkException(endpoints(x, on = "quarters", k =  0))
+  checkException(endpoints(x, on = "quarters", k = -1))
+
+  checkException(endpoints(x, on = "months", k =  0))
+  checkException(endpoints(x, on = "months", k = -1))
+
+  checkException(endpoints(x, on = "weeks", k =  0))
+  checkException(endpoints(x, on = "weeks", k = -1))
+
+  checkException(endpoints(x, on = "days", k =  0))
+  checkException(endpoints(x, on = "days", k = -1))
+
+  x <- xSecIntIdx
+
+  checkException(endpoints(x, on = "hours", k =  0))
+  checkException(endpoints(x, on = "hours", k = -1))
+
+  checkException(endpoints(x, on = "minutes", k =  0))
+  checkException(endpoints(x, on = "minutes", k = -1))
+
+  checkException(endpoints(x, on = "seconds", k =  0))
+  checkException(endpoints(x, on = "seconds", k = -1))
+
+  x <- .xts(1:10, sort(1 + runif(10)))
+
+  checkException(endpoints(x, on = "ms", k =  0))
+  checkException(endpoints(x, on = "ms", k = -1))
+
+  checkException(endpoints(x, on = "us", k =  0))
+  checkException(endpoints(x, on = "us", k = -1))
+}
