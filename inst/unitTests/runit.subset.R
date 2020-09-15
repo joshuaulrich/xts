@@ -283,3 +283,24 @@ test.duplicate_index_duplicate_i <- function() {
 
   checkIdentical(x[index(x),],  y)
 }
+
+test.window_yearmon_yearqtr_tclass_dispatches_to_zoo <- function() {
+  i1 <- seq(as.yearmon(2007), by = 1/12, length.out = 36)
+  x1 <- xts(1:36, i1)
+  i2 <- seq(as.yearqtr(2007), by = 1/4, length.out = 36)
+  x2 <- xts(1:36, i2)
+
+  r1 <- x1["2015"]
+  r2 <- x2["2015"]
+
+  # zoo supports numeric start for yearmon and yearqtr
+  w1 <- window(x1, start = 2015.01)  # to window.zoo()
+  w2 <- window(x2, start = 2015.1)   # to window.zoo()
+  checkEquals(r1, w1, "window, yearmon, numeric start")
+  checkEquals(r2, w2, "window, yearqtr, numeric start")
+
+  w1 <- window(x1, start = "2015-01-01")  # to window.xts()
+  w2 <- window(x2, start = "2015Q1")      # to window.zoo()
+  checkEquals(r1, w1, "window, yearmon, character start")
+  checkEquals(r2, w2, "window, yearqtr, character start")
+}

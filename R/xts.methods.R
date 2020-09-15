@@ -374,6 +374,11 @@ window.xts <- function(x, index. = NULL, start = NULL, end = NULL, ...)
 {
   if(is.null(start) && is.null(end) && is.null(index.)) return(x)
 
+  # dispatch to window.zoo() for yearmon and yearqtr
+  if(tclass(x) %in% c("yearmon", "yearqtr")) {
+    return(NextMethod(.Generic))
+  }
+
   firstlast <- window_idx(x, index., start, end) # firstlast may be NULL
 
   .Call('_do_subset_xts',
