@@ -375,8 +375,7 @@ window.xts <- function(x, index. = NULL, start = NULL, end = NULL, ...)
   if(is.null(start) && is.null(end) && is.null(index.)) return(x)
 
   # dispatch to window.zoo() for yearmon and yearqtr
-  tc <- tclass(x)
-  if(tc == "yearmon" || tc == "yearqtr") {
+  if(any(tclass(x) %in% c("yearmon", "yearqtr"))) {
     return(NextMethod(.Generic))
   }
 
