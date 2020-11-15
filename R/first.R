@@ -77,9 +77,10 @@ function(x,n=1,keep=FALSE,...)
     # series periodicity
     sp <- periodicity(x)
     # requested periodicity$units
+    sp.units <- sp[["units"]]
     rpu <- np[length(np)]
     rpf <- ifelse(length(np) > 1, as.numeric(np[1]), 1)
-    if(rpu == sp$unit) {
+    if(rpu == sp.units) {
       n <- rpf
     } else {
       # if singular - add an s to make it work
@@ -92,7 +93,7 @@ function(x,n=1,keep=FALSE,...)
       if(!rpu %in% dt.options)
         stop(paste("n must be numeric or use",paste(dt.options,collapse=',')))
       dt <- dt.options[pmatch(rpu,dt.options)]
-      if(u.list[[dt]] > u.list[[sp$unit]]) {
+      if(u.list[[dt]] > u.list[[sp.units]]) {
         #  req is for higher freq data period e.g. 100 mins of daily data
         stop(paste("At present, without some sort of magic, it isn't possible",
              "to resolve",rpu,"from",sp$scale,"data"))
