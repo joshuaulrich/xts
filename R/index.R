@@ -141,6 +141,7 @@ function(x, ...) {
   as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$mday
 }
 `.indexmon` <- function(x) {
+  if (x == 12) x <- 11
   as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$mon
 }
 `.indexyear` <- function(x) {
