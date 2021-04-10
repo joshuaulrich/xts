@@ -43,10 +43,14 @@ function(x,n=1,keep=FALSE,...)
       xx <- x[sub]
       if(keep) xx <- structure(xx,keep=x[1:(NROW(x)+(-n))])
       xx
-    } else {
+    } else if(n < 0) {
       sub <- seq_len(max(length(x) + n, 0L))
       xx <- x[sub]
       if(keep) xx <- structure(xx,keep=x[((NROW(x)-(-n)+1):NROW(x))])
+      xx
+    } else {
+      xx <- x[0]
+      if(keep) xx <- structure(xx,keep=x[0])
       xx
     }
   } else {
@@ -55,10 +59,14 @@ function(x,n=1,keep=FALSE,...)
       xx <- x[sub,,drop=FALSE]
       if(keep) xx <- structure(xx,keep=x[1:(NROW(x)+(-n)),])
       xx
-    } else {
+    } else if(n < 0) {
       sub <- seq_len(max(NROW(x) + n, 0L))
       xx <- x[sub,,drop=FALSE]
       if(keep) xx <- structure(xx,keep=x[((NROW(x)-(-n)+1):NROW(x)),])
+      xx
+    } else {
+      xx <- x[0,,drop=FALSE]
+      if(keep) xx <- structure(xx,keep=x[0,])
       xx
     }
   }
@@ -112,7 +120,7 @@ function(x,n=1,keep=FALSE,...)
         }
         if(keep) xx <- structure(xx,keep=x[1:(ep[length(ep)+(-rpf)])])
         return(xx)
-      } else {
+      } else if(rpf < 0) {
         n <- ep[length(ep)+rpf]
         if(is.null(dim(x))) {
           xx <- x[1:n]
@@ -120,6 +128,14 @@ function(x,n=1,keep=FALSE,...)
           xx <- x[1:n,,drop=FALSE]
         }
         if(keep) xx <- structure(xx,keep=x[(ep[length(ep)-(-rpf)]+1):NROW(x)])
+        return(xx)
+      } else {
+        if(is.null(dim(x))) {
+          xx <- x[0]
+        } else {
+          xx <- x[0,,drop=FALSE]
+        }
+        if(keep) xx <- structure(xx,keep=x[0])
         return(xx)
       }
     }
@@ -134,7 +150,7 @@ function(x,n=1,keep=FALSE,...)
     }
     if(keep) xx <- structure(xx,keep=x[1:(NROW(x)+(-n))])
     xx
-  } else {
+  } else if(n < 0) {
     if(abs(n) >= NROW(x))
       return(x[0])
     if(is.null(dim(x))) {
@@ -143,6 +159,14 @@ function(x,n=1,keep=FALSE,...)
       xx <- x[1:(NROW(x)+n),,drop=FALSE]
     }
     if(keep) xx <- structure(xx,keep=x[((NROW(x)-(-n)+1):NROW(x))])
+    xx
+  } else {
+    if(is.null(dim(x))) {
+      xx <- x[0]
+    } else {
+      xx <- x[0,,drop=FALSE]
+    }
+    if(keep) xx <- structure(xx,keep=x[0])
     xx
   }
 }

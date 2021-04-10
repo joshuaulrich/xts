@@ -17,6 +17,13 @@ test.first_xtsible_data.frame_neg_n <- function() {
   checkIdentical(first(d1, "-1 day"), tail(d1, -1))
   checkIdentical(first(d2, "-1 day"), tail(d2, -1))
 }
+test.first_xtsible_data.frame_zero_n <- function() {
+  checkIdentical(first(d1, 0), head(d1, 0))
+  checkIdentical(first(d2, 0), head(d2, 0))
+
+  checkIdentical(first(d1, "0 day"), head(d1, 0))
+  checkIdentical(first(d2, "0 day"), head(d2, 0))
+}
 test.last_xtsible_data.frame_pos_n <- function() {
   checkIdentical(last(d1, 1), tail(d1, 1))
   checkIdentical(last(d2, 1), tail(d2, 1))
@@ -31,6 +38,13 @@ test.last_xtsible_data.frame_neg_n <- function() {
   checkIdentical(last(d1, "-1 day"), head(d1, -1))
   checkIdentical(last(d2, "-1 day"), head(d2, -1))
 }
+test.last_xtsible_data.frame_zero_n <- function() {
+  checkIdentical(last(d1, 0), head(d1, 0))
+  checkIdentical(last(d2, 0), head(d2, 0))
+
+  checkIdentical(last(d1, "0 day"), head(d1, 0))
+  checkIdentical(last(d2, "0 day"), head(d2, 0))
+}
 test.first_nonxtsible_data.frame_pos_n <- function() {
   rownames(d1) <- rownames(d2) <- NULL
   checkIdentical(first(d1, 1), head(d1, 1))
@@ -41,6 +55,11 @@ test.first_nonxtsible_data.frame_neg_n <- function() {
   checkIdentical(first(d1, -1), tail(d1, -1))
   checkIdentical(first(d2, -1), tail(d2, -1))
 }
+test.first_nonxtsible_data.frame_zero_n <- function() {
+  rownames(d1) <- rownames(d2) <- NULL
+  checkIdentical(first(d1, 0), tail(d1, 0))
+  checkIdentical(first(d2, 0), tail(d2, 0))
+}
 test.last_nonxtsible_data.frame_pos_n <- function() {
   rownames(d1) <- rownames(d2) <- NULL
   checkIdentical(last(d1, 1), tail(d1, 1))
@@ -50,6 +69,11 @@ test.last_nonxtsible_data.frame_neg_n <- function() {
   rownames(d1) <- rownames(d2) <- NULL
   checkIdentical(last(d1, -1), head(d1, -1))
   checkIdentical(last(d2, -1), head(d2, -1))
+}
+test.last_nonxtsible_data.frame_zero_n <- function() {
+  rownames(d1) <- rownames(d2) <- NULL
+  checkIdentical(last(d1, 0), head(d1, 0))
+  checkIdentical(last(d2, 0), head(d2, 0))
 }
 
 # basic functionality on matrix
@@ -70,6 +94,13 @@ test.first_xtsible_matrix_neg_n <- function() {
   checkIdentical(first(m1, "-1 day"), tail(m1, -1, addrownums = FALSE))
   checkIdentical(first(m2, "-1 day"), tail(m2, -1, addrownums = FALSE))
 }
+test.first_xtsible_matrix_zero_n <- function() {
+  checkIdentical(first(m1, 0), tail(m1, 0, addrownums = FALSE))
+  checkIdentical(first(m2, 0), tail(m2, 0, addrownums = FALSE))
+
+  checkIdentical(first(m1, "0 day"), tail(m1, 0, addrownums = FALSE))
+  checkIdentical(first(m2, "0 day"), tail(m2, 0, addrownums = FALSE))
+}
 test.last_xtsible_matrix_pos_n <- function() {
   checkIdentical(last(m1, 1), tail(m1, 1, addrownums = FALSE))
   checkIdentical(last(m2, 1), tail(m2, 1, addrownums = FALSE))
@@ -81,6 +112,10 @@ test.last_xtsible_matrix_neg_n <- function() {
   checkIdentical(last(m1, -1), head(m1, -1))
   checkIdentical(last(m2, -1), head(m2, -1))
 }
+test.last_xtsible_matrix_zero_n <- function() {
+  checkIdentical(last(m1, 0), head(m1, 0))
+  checkIdentical(last(m2, 0), head(m2, 0))
+}
 test.first_nonxtsible_matrix_pos_n <- function() {
   rownames(m1) <- rownames(m2) <- NULL
   checkIdentical(first(m1, 1), head(m1, 1))
@@ -91,6 +126,11 @@ test.first_nonxtsible_matrix_neg_n <- function() {
   checkIdentical(first(m1, -1), tail(m1, -1, addrownums = FALSE))
   checkIdentical(first(m2, -1), tail(m2, -1, addrownums = FALSE))
 }
+test.first_nonxtsible_matrix_zero_n <- function() {
+  rownames(m1) <- rownames(m2) <- NULL
+  checkIdentical(first(m1, 0), tail(m1, 0, addrownums = FALSE))
+  checkIdentical(first(m2, 0), tail(m2, 0, addrownums = FALSE))
+}
 test.last_nonxtsible_matrix_pos_n <- function() {
   rownames(m1) <- rownames(m2) <- NULL
   checkIdentical(last(m1, 1), tail(m1, 1, addrownums = FALSE))
@@ -100,6 +140,11 @@ test.last_nonxtsible_matrix_neg_n <- function() {
   rownames(m1) <- rownames(m2) <- NULL
   checkIdentical(last(m1, -1), head(m1, -1))
   checkIdentical(last(m2, -1), head(m2, -1))
+}
+test.last_nonxtsible_matrix_zero_n <- function() {
+  rownames(m1) <- rownames(m2) <- NULL
+  checkIdentical(last(m1, 0), head(m1, 0))
+  checkIdentical(last(m2, 0), head(m2, 0))
 }
 
 # basic functionality on vector
@@ -135,11 +180,13 @@ test.first_nonxtsible_vector <- function() {
   v1 <- d1$x
   checkIdentical(first(v1, 1), head(v1, 1))
   checkIdentical(first(v1,-1), tail(v1,-1))
+  checkIdentical(first(v1,0), tail(v1,0))
 }
 test.last_nonxtsible_vector <- function() {
   v1 <- d1$x
   checkIdentical(last(v1, 1), tail(v1, 1))
   checkIdentical(last(v1,-1), head(v1,-1))
+  checkIdentical(last(v1,0), head(v1,0))
 }
 # zero-length vectors
 test.zero_length_vector <- function() {
@@ -152,6 +199,9 @@ test.zero_length_vector <- function() {
     # negative 'n'
     checkIdentical(first(v, -1), v, paste("zero-length", type))
     checkIdentical(last(v, -1), v, paste("zero-length", type))
+    #zero 'n'
+    checkIdentical(first(v, 0), v, paste("zero-length", type))
+    checkIdentical(last(v, 0), v, paste("zero-length", type))
   }
 }
 # zero-row matrix
@@ -165,6 +215,9 @@ test.zero_row_matrix <- function() {
     # negative 'n'
     checkIdentical(first(m, -1), m, paste("zero-row", type))
     checkIdentical(last(m, -1), m, paste("zero-row", type))
+    #zero 'n'
+    checkIdentical(first(m, 0), m, paste("zero-row", type))
+    checkIdentical(last(m, 0), m, paste("zero-row", type))
   }
 }
 
