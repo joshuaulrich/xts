@@ -34,20 +34,26 @@ function(x, ..., .RECLASS=FALSE)
 `as.fts.xts` <-
 function(x)
 {
-  if(!requireNamespace('fts', quietly=TRUE))
+  if(!requireNamespace('fts', quietly=TRUE)) {
     fts <- function(...) message("package 'fts' is required")
+  } else {
+    fts <- fts::fts
+  }
 
   ix <- .index(x)
   attributes(ix) <- NULL
-  fts::fts(ix, coredata(x))
+  fts(ix, coredata(x))
 }
 
 re.fts <- function(x, ...) 
 {
-  if(!requireNamespace('fts', quietly=TRUE))
+  if(!requireNamespace('fts', quietly=TRUE)) {
     fts <- function(...) message("package 'fts' is required")
+  } else {
+    fts <- fts::fts
+  }
 
   ix <- .index(x)
   attributes(ix) <- NULL
-  fts::fts(ix, coredata(x))
+  fts(ix, coredata(x))
 }

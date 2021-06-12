@@ -750,7 +750,6 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
                     .xts(rep(1, NROW(events)),# use numeric for the merge
                          .index(events)))[subset.range]
     # should we not merge and only add events that are in index(xdata)?
-    ta.x <- as.numeric(na.approx(ta.adj[,1], rule=2) )
     ta.y <- ta.adj[,-1]
     # the merge should result in NAs for any object that is not in events
     event.ind <- which(!is.na(ta.y))
@@ -823,7 +822,6 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
   } else {
     for(i in 1:length(on)) {
-      ind <- on[i]
       no.update <- FALSE
 
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
@@ -904,7 +902,6 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
   } else {
     for(i in 1:length(on)) {
-      ind <- on[i]
       no.update <- FALSE
 
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
@@ -958,7 +955,6 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     ta.adj <- merge(n=.xts(1:NROW(xdata[xsubset]),
                            .index(xdata[xsubset]), 
                            tzone=tzone(xdata)),ta)[subset.range]
-    ta.x <- as.numeric(na.approx(ta.adj[,1], rule=2) )
     # NAs in the coordinates break the polygon which is not the behavior we want
     ta.y <- na.omit(ta.adj[,-1])
     
@@ -1093,7 +1089,6 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   get_asp   <- function(asp) { Env$asp }
   get_xlim  <- function(xlim) { Env$xlim }
   get_ylim  <- function(ylim) { Env$ylim }
-  get_pad   <- function() c(Env$pad1,Env$pad3)
   
   # scale ylim based on current frame, and asp values
   scale_ranges <- function(frame, asp, ranges)
@@ -1199,7 +1194,6 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   next_frame <- function() {
     set_frame(max(abs(sapply(Env$actions,function(x) attr(x,"frame"))))+1L)
   }
-  move_frame   <- function() {}
   
   # actions
   Env$actions <- list()

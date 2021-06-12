@@ -23,8 +23,11 @@
 
 `re.timeSeries` <-
 function(x,...) {
-  if(!requireNamespace('timeSeries', quietly=TRUE))
+  if(!requireNamespace('timeSeries', quietly=TRUE)) {
     timeSeries <- function(...) message("package 'timeSeries' is required")
+  } else {
+    timeSeries <- timeSeries::timeSeries
+  }
 
   # strip all non-'core' attributes so they're not attached to the Data slot
   x.attr <- attributes(x)
@@ -35,7 +38,7 @@ function(x,...) {
     attr(xx,i) <- NULL
   }
 
-  timeSeries::timeSeries(coredata(xx),charvec=as.POSIXct(format(index(x)),tz="GMT"),format=x.attr$format,
+  timeSeries(coredata(xx),charvec=as.POSIXct(format(index(x)),tz="GMT"),format=x.attr$format,
              zone=x.attr$FinCenter,FinCenter=x.attr$FinCenter,
              recordIDs=x.attr$recordIDs,title=x.attr$title,
              documentation=x.attr$documentation,...)
@@ -77,10 +80,13 @@ function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,..., .RE
 }
 
 as.timeSeries.xts <- function(x, ...) {
-  if(!requireNamespace('timeSeries', quietly=TRUE))
+  if(!requireNamespace('timeSeries', quietly=TRUE)) {
     timeSeries <- function(...) message("package 'timeSeries' is required")
+  } else {
+    timeSeries <- timeSeries::timeSeries
+  }
 
-  timeSeries::timeSeries(data=coredata(x), charvec=as.character(index(x)), ...)
+  timeSeries(data=coredata(x), charvec=as.character(index(x)), ...)
 }
 
 `xts.as.timeSeries` <- function(x,...) {}

@@ -21,22 +21,19 @@
 
 # methods for handling ts <--> xts
 
-`re.ts2` <-
-function(x,...) {
-  # attempt to provide a more robust reclass 'ts' method
-  na.replace <- function(x) {
-    na.removed <- attr(x,'na.action')
-    if(class(na.removed) != 'omit') return()
-    nrows <- NROW(x)
-    ncols <- NCOL(x)
-    xx <- vector('numeric',length=(nrows+length(na.removed)))
-    xx[ na.removed,] <- NA
-    xx[-na.removed] <- x
-    xx
-  }
-
-
-}
+#`re.ts2` <-
+#function(x,...) {
+#  # attempt to provide a more robust reclass 'ts' method
+#  na.replace <- function(x) {
+#    na.removed <- attr(x,'na.action')
+#    if(class(na.removed) != 'omit') return()
+#    nrows <- NROW(x)
+#    xx <- vector('numeric',length=(nrows+length(na.removed)))
+#    xx[ na.removed,] <- NA
+#    xx[-na.removed] <- x
+#    xx
+#  }
+#}
 
 `re.ts` <-
 function(x,...) {
@@ -48,7 +45,6 @@ function(x,...) {
 
   #ts(coredata(x), start=tsp.attr[1],frequency=freq.attr)
   dim <- attr(x, 'dim')
-  dn <- attr(x,'dimnames')
   if(!is.null(dim) && dim[2]==1) {
     attr(x,'dim') <- attr(x, 'dimnames') <- NULL
   }

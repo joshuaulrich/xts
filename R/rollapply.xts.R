@@ -123,10 +123,10 @@ rollsum.xts <- function (x, k, fill=if(na.pad) NA, na.pad=TRUE,
 
   # process alignment
   align <- match.arg(align)
-  n1 <- switch(align,    
-    "left" = { k - 1 },
-    "center" = { floor(k/2) },
-    "right" = { 0 })
+  #n1 <- switch(align,
+  #  "left" = { k - 1 },
+  #  "center" = { floor(k/2) },
+  #  "right" = { 0 })
   #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
   res <- .Call("roll_sum", x, k, PACKAGE="xts")
   res
@@ -150,10 +150,10 @@ rollmax.xts <- function (x, k, fill=if(na.pad) NA, na.pad=TRUE,
 
   # process alignment
   align <- match.arg(align)
-  n1 <- switch(align,    
-    "left" = { k - 1 },
-    "center" = { floor(k/2) },
-    "right" = { 0 })
+  #n1 <- switch(align,
+  #  "left" = { k - 1 },
+  #  "center" = { floor(k/2) },
+  #  "right" = { 0 })
   #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
   res <- .Call("roll_max", x, k, PACKAGE="xts")
   res
@@ -172,10 +172,10 @@ rollmin.xts <- function (x, k, fill=if(na.pad) NA, na.pad=TRUE,
 
   # process alignment
   align <- match.arg(align)
-  n1 <- switch(align,    
-    "left" = { k - 1 },
-    "center" = { floor(k/2) },
-    "right" = { 0 })
+  #n1 <- switch(align,
+  #  "left" = { k - 1 },
+  #  "center" = { floor(k/2) },
+  #  "right" = { 0 })
   #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
   res <- .Call("roll_min", x, k, PACKAGE="xts")
   res
@@ -195,10 +195,10 @@ rollcov.xts <- function (x, y, k, fill=if(na.pad) NA, na.pad=TRUE,
 
   # process alignment
   align <- match.arg(align)
-  n1 <- switch(align,    
-    "left" = { k - 1 },
-    "center" = { floor(k/2) },
-    "right" = { 0 })
+  #n1 <- switch(align,
+  #  "left" = { k - 1 },
+  #  "center" = { floor(k/2) },
+  #  "right" = { 0 })
   #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
   res <- .Call("roll_cov", x, y, k, sample, PACKAGE="xts")
   res

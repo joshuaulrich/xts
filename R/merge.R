@@ -71,7 +71,6 @@ merge.xts <- function(...,
     syms <- as.character(dots)
   } else {
     syms <- as.character(suffixes)
-    sfx  <- as.character(suffixes)
   }
 
   .times <- .External('number_of_cols', ..., PACKAGE="xts")

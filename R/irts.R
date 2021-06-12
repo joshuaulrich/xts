@@ -23,13 +23,16 @@
 
 `re.irts` <-
 function(x,...) {
-  if(!requireNamespace('tseries', quietly=TRUE))
+  if(!requireNamespace('tseries', quietly=TRUE)) {
     irts <- function(...) message("package 'tseries' is required for re.irts")
+  } else {
+    irts <- tseries::irts
+  }
 
   tclass(x) <- "POSIXct"
   xx <- coredata(x)
 #  rownames(xx) <- attr(x,'irts.rownames')
-  tseries::irts(index(x),xx)
+  irts(index(x),xx)
 }
 
 `as.xts.irts` <-

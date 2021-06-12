@@ -164,12 +164,12 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   } else if(missing("tclass")) {
     # compare tclass on the index with tclass argument because the
     # tclass argument will override the index attribute, but it shouldn't...
-    index.class <- attr(index, 'tclass')
-    default.class <- c("POSIXct", "POSIXt")
 ### FIXME:
 ### This warning causes errors in dependencies (e.g. portfolioBacktest,
 ### when the warning is thrown from PerformanceAnalytics). Reinstate this
 ### warning after fixing downstream packages.
+###    index.class <- attr(index, 'tclass')
+###    default.class <- c("POSIXct", "POSIXt")
 ###    if(!is.null(index.class) && !all(index.class %in% default.class)) {
 ###      warning("the index tclass attribute is ", index.class,
 ###              " but will be changed to (POSIXct, POSIXt)")
