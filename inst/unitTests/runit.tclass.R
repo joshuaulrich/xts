@@ -58,3 +58,9 @@ test.set_xtsAttributes_removes_tclass_indexClass <- function() {
   checkIdentical(NULL, attr(y, "tclass"))
   checkIdentical(NULL, attr(y, ".indexCLASS"))
 }
+
+test.set_tclass_default_always_character <- function() {
+  x <- "hello"
+  tclass(x) <- 1
+  checkIdentical(storage.mode(attr(x, "tclass")), "character")
+}

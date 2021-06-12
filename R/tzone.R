@@ -62,7 +62,7 @@ function(x, ...)
 function(x, value)
 {
   if (!is.null(value)) {
-    tzone <- as.character(value)
+    value <- as.character(value)
   }
   attr(x, "tzone") <- value
   x

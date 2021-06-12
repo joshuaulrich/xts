@@ -67,7 +67,7 @@ function(x,value) {
 function(x, value)
 {
   if (!is.null(value)) {
-    tclass <- as.character(value)
+    value <- as.character(value)
   }
   attr(x, "tclass") <- value
   x
