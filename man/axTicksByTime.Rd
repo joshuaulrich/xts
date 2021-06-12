@@ -33,7 +33,7 @@ for those wishing to use outside of the internal function
 uses. In general it is most unlikely that the end user will
 call this function directly.
 
-The format.labels allows for standard formatting like
+The \code{format.labels} argument allows for standard formatting like
 that used in \code{format}, \code{strptime}, and \code{strftime}.
 }
 \value{
