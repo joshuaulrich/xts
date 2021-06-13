@@ -742,8 +742,10 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     }
     ypos <- x$Env$ylim[[2*on]][2]*0.995
     # we can add points that are not necessarily at the points on the main series
-    subset.range <- paste(start(xdata[xsubset]),
-                          end(xdata[xsubset]),sep="/")
+    subset.range <-
+      paste(format(start(xdata[xsubset]), "%Y%m%d %H:%M:%OS6"),
+            format(end(xdata[xsubset]), "%Y%m%d %H:%M:%OS6"),
+            sep = "/")
     ta.adj <- merge(n=.xts(1:NROW(xdata[xsubset]),
                            .index(xdata[xsubset]), 
                            tzone=tzone(xdata)),
