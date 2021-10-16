@@ -31,6 +31,9 @@
 #  xts methods (which match foreign conversion methods in other files)
 #  are also defined below
 
+# For S4 extensions
+setOldClass("xts")
+
 `xts` <-
 function(x=NULL,
          order.by=index(x),
