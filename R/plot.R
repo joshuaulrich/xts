@@ -1152,21 +1152,23 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       if(!attr(ylim[[y]],'fixed'))
         ylim[[y]] <- structure(c(Inf,-Inf),fixed=FALSE)
     }
-    lapply(Env$actions,
-           function(x) {
-             if(!is.null(attr(x,"no.update")) && attr(x, "no.update"))
-               return(NULL)
-             frame <- abs(attr(x, "frame"))
-             fixed <- attr(ylim[[frame]],'fixed')
-             if(frame %% from_by == 0 && !fixed) {
-               lenv <- attr(x,"env")
-               if(is.list(lenv)) lenv <- lenv[[1]]
-               dat.range <- range(na.omit(lenv$xdata[Env$xsubset]))
-               min.tmp <- min(ylim[[frame]][1],dat.range,na.rm=TRUE)
-               max.tmp <- max(ylim[[frame]][2],dat.range,na.rm=TRUE)
-               ylim[[frame]] <<- structure(c(min.tmp,max.tmp),fixed=fixed)
-             }
-           })
+    update_frame <- function(x)
+    {
+      if(!is.null(attr(x,"no.update")) && attr(x, "no.update"))
+        return(NULL)
+      frame <- abs(attr(x, "frame"))
+      fixed <- attr(ylim[[frame]],'fixed')
+
+      if(frame %% from_by == 0 && !fixed) {
+        lenv <- attr(x,"env")
+        if(is.list(lenv)) lenv <- lenv[[1]]
+        dat.range <- range(na.omit(lenv$xdata[Env$xsubset]))
+        min.tmp <- min(ylim[[frame]][1],dat.range,na.rm=TRUE)
+        max.tmp <- max(ylim[[frame]][2],dat.range,na.rm=TRUE)
+        ylim[[frame]] <<- structure(c(min.tmp,max.tmp),fixed=fixed)
+      }
+    }
+    lapply(Env$actions, update_frame)
     # reset all ylim values, by looking for range(env[[1]]$xdata)
     # xdata should be either coming from Env or if lenv, lenv
     set_ylim(ylim)
@@ -1313,35 +1315,28 @@ plot.replot_xts <- function(x, ...) {
   oxpd <- par(xpd = FALSE)
   usr <- par("usr")
 
-  # plot negative (underlay) actions
   last.frame <- x$get_frame()
   x$update_frames()
-  lapply(x$Env$actions,
-         function(aob) {
-           if(attr(aob,"frame") < 0) {
-             x$set_frame(attr(aob,"frame"),attr(aob,"clip"))
-             env <- attr(aob,"env")
-             if(is.list(env)) {
-               # if env is c(env, Env), convert to list
-               env <- unlist(lapply(env, function(x) eapply(x, eval)),recursive=FALSE)
-             }
-             eval(aob, env)
-           }
-         }
-  )
-  # plot positive (overlay) actions
-  lapply(x$Env$actions,
-         function(aob) {
-           if(attr(aob,"frame") > 0) {
-             x$set_frame(attr(aob,"frame"),attr(aob,"clip"))
-             env <- attr(aob,"env")
-             if(is.list(env)) {
-               env <- unlist(lapply(env, function(x) eapply(x, eval)),recursive=FALSE)
-             }
-             eval(aob, env)
-           }
-         }
-  )
+
+  is_underlay_action <- sapply(x$Env$actions, function(a) attr(a, "frame") < 0)
+
+  plot_action <- function(action)
+  {
+    x$set_frame(attr(action,"frame"),attr(action,"clip"))
+    env <- attr(action,"env")
+    if(is.list(env)) {
+      env <- unlist(lapply(env, function(x) eapply(x, eval)),recursive=FALSE)
+    }
+    eval(action, env)
+  }
+  # plot negative (underlay) actions first
+  for(a in x$Env$actions[ is_underlay_action]) {
+    plot_action(a)
+  }
+  # next, plot positive (overlay) actions
+  for(a in x$Env$actions[!is_underlay_action]) {
+    plot_action(a)
+  }
 
   x$set_frame(abs(last.frame),clip=FALSE)
   do.call("clip", as.list(usr))  # reset clipping region
