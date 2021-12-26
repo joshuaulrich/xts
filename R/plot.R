@@ -328,7 +328,7 @@ plot.xts <- function(x,
         yrange <- c(0.8, 1.2) * yrange[1L]
       }
     }
-    cs$set_ylim(list(structure(yrange, fixed=TRUE)))
+    cs$set_ylim(list(structure(yrange, fixed=FALSE)))
     cs$Env$constant_ylim <- range(cs$Env$xdata[subset], na.rm=TRUE)
   } else {
     # use the ylim arg passed in
