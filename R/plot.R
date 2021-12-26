@@ -54,13 +54,10 @@ chart.lines <- function(x,
            if(length(lwd) < NCOL(x)) lwd <- rep(lwd, length.out = NCOL(x))
            if(length(col) < NCOL(x)) col <- rep(col, length.out = NCOL(x))
 
-           # ensure series only has index values in xdata subset
-           xdataSubset <- xx$Env$xdata[xx$Env$xsubset]
-           y <- merge(x, .xts(,.index(xdataSubset)), join = "right")
            xcoords <- xx$Env$xycoords$x
 
-           for(i in NCOL(y):1) {
-             lines(xcoords, y[,i], type=type, lend=lend, col=col[i],
+           for(i in NCOL(x):1) {
+             lines(xcoords, x[,i], type=type, lend=lend, col=col[i],
                    lty=lty[i], lwd=lwd[i], ...)
            }
          },
@@ -611,13 +608,19 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
       x$Env$x_grid_lines(xDataSubset, x$Env$grid.ticks.on, par("usr")[3:4])
     }
     # we can add points that are not necessarily at the points
-    # on the main series
-    if(xsubset == "") {
-      subset.range <- xsubset
-    } else {
-      subset.range <- paste(start(xDataSubset), end(xDataSubset),sep="/")
-    }
+    # on the main series, but need to ensure the new series only
+    # has index values within the xdata subset
+    subset.range <-
+      paste(format(start(xdata[xsubset]), "%Y%m%d %H:%M:%OS6"),
+            format(end(xdata[xsubset]), "%Y%m%d %H:%M:%OS6"),
+            sep = "/")
+
     ta.y <- merge(ta, .xts(,.index(xDataSubset), tzone=tzone(xdata)))[subset.range]
+    # update xy-coordinates for chart.lines()
+    x$Env$xycoords <- xy.coords(.index(ta.y), ta.y[,1])
+    x$Env$xlim <- range(x$Env$xycoords$x, na.rm=TRUE)
+    x$Env$xstep <- diff(x$Env$xycoords$x[1:2])
+
     chart.lines(ta.y, type=type, col=col, lty=lty, lwd=lwd, pch=pch, ...)
   }
 
