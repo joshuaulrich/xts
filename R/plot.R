@@ -321,10 +321,11 @@ plot.xts <- function(x,
   
   # compute the x-axis ticks for the grid
   if(!isNullOrFalse(grid.ticks.on)) {
-    cs$add(expression(atbt <- axTicksByTime(xdata[xsubset], ticks.on=grid.ticks.on),
-                      segments(get_xcoords()[atbt],
+    cs$add(expression(xcoords <- get_xcoords(),
+                      atbt <- axTicksByTime(.xts(,xcoords)[xsubset], ticks.on=grid.ticks.on),
+                      segments(xcoords[atbt],
                                get_ylim()[[2]][1],
-                               get_xcoords()[atbt],
+                               xcoords[atbt],
                                get_ylim()[[2]][2],
                                col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)),
            clip=FALSE, expr=TRUE)
@@ -340,9 +341,10 @@ plot.xts <- function(x,
   
   # major x-axis ticks and labels
   if(!isNullOrFalse(major.ticks)) {
-    cs$add(expression(axt <- axTicksByTime(xdata[xsubset], ticks.on=major.ticks, format.labels=format.labels),
+    cs$add(expression(xcoords <- get_xcoords(),
+                      axt <- axTicksByTime(.xts(,xcoords)[xsubset], ticks.on=major.ticks, format.labels=format.labels),
                       axis(1,
-                           at=get_xcoords()[axt],
+                           at=xcoords[axt],
                            labels=names(axt),
                            las=theme$las, lwd.ticks=1.5, mgp=c(3,1.5,0),
                            tcl=-0.4, cex.axis=theme$cex.axis,
@@ -352,9 +354,10 @@ plot.xts <- function(x,
   
   # minor x-axis ticks
   if(!isNullOrFalse(minor.ticks)) {
-    cs$add(expression(axt <- axTicksByTime(xdata[xsubset], ticks.on=minor.ticks, format.labels=format.labels),
+    cs$add(expression(xcoords <- get_xcoords(),
+                      axt <- axTicksByTime(.xts(,xcoords)[xsubset], ticks.on=minor.ticks, format.labels=format.labels),
                  axis(1,
-                      at=get_xcoords()[axt],
+                      at=xcoords[axt],
                       labels=FALSE,
                       las=theme$las, lwd.ticks=0.75, mgp=c(3,1.5,0),
                       tcl=-0.4, cex.axis=theme$cex.axis,
@@ -1323,9 +1326,10 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       invisible()
     } else {
       if (isTRUE(ticks.on)) ticks.on <- "auto"
-      atbt <- axTicksByTime(x, ticks.on = ticks.on)
-      segments(get_xcoords()[atbt], ylim[1L],
-               get_xcoords()[atbt], ylim[2L],
+      xcoords <- get_xcoords(x)
+      atbt <- axTicksByTime(.xts(,xcoords), ticks.on = ticks.on)
+      segments(xcoords[atbt], ylim[1L],
+               xcoords[atbt], ylim[2L],
                col = Env$theme$grid,
                lwd = Env$grid.ticks.lwd,
                lty = Env$grid.ticks.lty)
