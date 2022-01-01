@@ -597,10 +597,13 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     # we can add points that are not necessarily at the points
     # on the main series, but need to ensure the new series only
     # has index values within the xdata subset
-    subset.range <-
-      paste(format(start(xdata[xsubset]), "%Y%m%d %H:%M:%OS6"),
-            format(end(xdata[xsubset]), "%Y%m%d %H:%M:%OS6"),
-            sep = "/")
+    if(xsubset == "") {
+      subset.range <- xsubset
+    } else {
+      fmt <- "%Y-%m-%d %H:%M:%OS6"
+      subset.range <- paste(format(start(xDataSubset), fmt),
+                            format(end(xDataSubset), fmt), sep = "/")
+    }
 
     ta.y <- merge(ta, .xts(,.index(xDataSubset), tzone=tzone(xdata)))[subset.range]
 
