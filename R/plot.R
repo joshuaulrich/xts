@@ -1200,8 +1200,11 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
         if (is.list(lenv)) {
           lenv <- lenv[[1]]
         }
-        lenv_data <- lenv$xdata[Env$xsubset]
-        x_axis <<- merge(x_axis, .xts(, .index(lenv_data)))
+        lenv_data <- lenv$xdata
+        if (!is.null(lenv_data)) {
+          # some actions (e.g. addLegend) do not have 'xdata'
+          x_axis <<- merge(x_axis, .xts(, .index(lenv_data[Env$xsubset])))
+        }
       }
     }
     lapply(Env$actions, update_xaxis)
