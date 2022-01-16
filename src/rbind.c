@@ -488,7 +488,7 @@ return(result);
   SEXP dim;
   PROTECT(dim = allocVector(INTSXP, 2));
   INTEGER(dim)[0] = truelen;
-  INTEGER(dim)[1] = INTEGER(getAttrib(x, R_DimSymbol))[1];
+  INTEGER(dim)[1] = ncx;
   UNPROTECT(1);
   setAttrib(result, R_DimSymbol, dim);
   setAttrib(result, R_DimNamesSymbol, getAttrib(x, R_DimNamesSymbol));

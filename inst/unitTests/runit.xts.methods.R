@@ -21,6 +21,20 @@ test.rbind_zero_length_non_zero_length_Date_errors <- function() {
   xpe <- tryCatch(rbind(xpz, xp1), error = identity)
   checkIdentical(zpe$message, xpe$message)
 }
+test.rbind_no_dim_does_not_error <- function() {
+  d <- rep(0.1, 2)
+  i <- rep(581910048, 2)
+
+  xts_no_dim <-
+    structure(d[1], class = c("xts", "zoo"),
+              index = structure(i[1], tzone = "UTC", tclass = "Date"))
+  xts_out <-
+    structure(d, class = c("xts", "zoo"), .Dim = 2:1,
+              index = structure(i, tzone = "UTC", tclass = "Date"))
+
+  xts_rbind <- rbind(xts_no_dim, xts_no_dim)
+  checkIdentical(xts_out, xts_rbind)
+}
 
 # Test that as.Date.numeric() works at the top level (via zoo::as.Date()),
 # and for functions defined in the xts namespace even if xts::as.Date.numeric()
