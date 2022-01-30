@@ -144,7 +144,8 @@ plot.xts <- function(x,
                      labels.col="#333333",
                      format.labels=TRUE,
                      grid2="#F5F5F5",
-                     legend.loc=NULL){
+                     legend.loc=NULL,
+                     extend.xaxis=FALSE){
   
   # Small multiples with multiple pages behavior occurs when multi.panel is
   # an integer. (i.e. multi.panel=2 means to iterate over the data in a step
@@ -205,7 +206,8 @@ plot.xts <- function(x,
                     labels.col=labels.col,
                     format.labels=format.labels,
                     grid2=grid2,
-                    legend.loc=legend.loc)
+                    legend.loc=legend.loc,
+                    extend.xaxis=extend.xaxis)
       if(i < length(chunks))
         print(p)
     }
@@ -271,6 +273,7 @@ plot.xts <- function(x,
   
   cs$Env$lend <- lend
   cs$Env$legend.loc <- legend.loc
+  cs$Env$extend.xaxis <- extend.xaxis
   cs$Env$call_list <- list()
   cs$Env$call_list[[1]] <- plot.call
   cs$Env$observation.based <- observation.based
@@ -608,7 +611,15 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
                             format(end(xDataSubset), fmt), sep = "/")
     }
 
-    ta.y <- merge(ta, .xts(,.index(xDataSubset), tzone=tzone(xdata)))[subset.range]
+    xds <- .xts(, .index(xDataSubset), tzone=tzone(xdata))
+    ta.y <- merge(ta, xds)[subset.range]
+    if (!isTRUE(x$Env$extend.xaxis)) {
+        xi <- .index(ta.y)
+        xc <- .index(xds)
+
+        xsubset <- which(xi >= xc[1] & xi <= xc[length(xc)])
+        ta.y <- ta.y[xsubset]
+    }
 
     chart.lines(ta.y, type=type, col=col, lty=lty, lwd=lwd, pch=pch, ...)
   }
@@ -1130,6 +1141,15 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       xcoords <- merge(.xts(seq_along(xcoords), xcoords), xts_object,
                        fill = na.locf,  # for duplicate index values
                        join = "right", retside = c(TRUE, FALSE))
+
+      if (!isTRUE(Env$extend.xaxis)) {
+        xc <- Env$xycoords$x
+        xi <- .index(xcoords)
+
+        xsubset <- which(xi >= xc[1] & xi <= xc[length(xc)])
+        xcoords <- xcoords[xsubset]
+      }
+
       if(Env$observation.based && !at_posix) {
         result <- drop(coredata(xcoords))
       } else {
@@ -1203,7 +1223,16 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
         lenv_data <- lenv$xdata
         if (!is.null(lenv_data)) {
           # some actions (e.g. addLegend) do not have 'xdata'
-          x_axis <<- merge(x_axis, .xts(, .index(lenv_data[Env$xsubset])))
+
+          new_x_axis <- merge(x_axis, .xts(, .index(lenv_data[Env$xsubset])))
+
+          if (isTRUE(Env$extend.xaxis)) {
+            x_axis <<- new_x_axis
+          } else {
+            ixc <- .index(new_x_axis)
+            xaxis_rng <- range(.index(x_axis), na.rm = TRUE)
+            x_axis <<- new_x_axis[ixc >= xaxis_rng[1L] & ixc <= xaxis_rng[2L],]
+          }
         }
       }
     }
