@@ -1365,9 +1365,8 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       invisible()
     } else {
       if (isTRUE(ticks.on)) ticks.on <- "auto"
-      x_index <- get_xcoords(x, at_posix = TRUE)
-      xcoords <- get_xcoords(x)
-      atbt <- axTicksByTime(.xts(,x_index), ticks.on = ticks.on)
+      xcoords <- get_xcoords(at_posix = TRUE)
+      atbt <- axTicksByTime(.xts(, xcoords), ticks.on = ticks.on)
       segments(xcoords[atbt], ylim[1L],
                xcoords[atbt], ylim[2L],
                col = Env$theme$grid,
