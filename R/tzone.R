@@ -117,15 +117,15 @@ check.TZ <- function(x, ...)
     # warn if tzone is not UTC or GMT (GMT is not technically correct, since
     # it *is* a timezone, but it should work for all practical purposes)
     if (!isUTC(tzone(x)))
-      warning(paste0("index class is ", paste(class(index(x)), collapse=", "),
-        ", which does not support timezones.\nExpected 'UTC' timezone",
-        ", but tzone is ", sQuote(tzone(x))), call.=FALSE)
+      warning(paste0("object index class (", paste(tclass(x), collapse=", "),
+        ") does not support timezones.\nExpected 'UTC' timezone, but tzone is ",
+        sQuote(tzone(x))), call.=FALSE)
     else
       return()
   }
   if(!is.null(tzone(x)) && tzone(x) != "" &&
      !identical(STZ, as.character(tzone(x)))) {
-    warning(paste("timezone of object (",tzone(x),
+    warning(paste("object timezone (", tzone(x),
                   ") is different than current timezone (",STZ,").",sep=""),
            call.=FALSE, immediate.=TRUE)
 
