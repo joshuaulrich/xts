@@ -109,8 +109,6 @@ isUTC <- function(tz = NULL) {
 
 check.TZ <- function(x, ...)
 {
-  #if( !getOption("xts_check_TZ", FALSE))
-  #  return()
   check <- getOption("xts_check_TZ")
   if( !is.null(check) && !check)
     return()
@@ -126,8 +124,17 @@ check.TZ <- function(x, ...)
       return()
   }
   if(!is.null(tzone(x)) && tzone(x) != "" &&
-     !identical(STZ, as.character(tzone(x))))
+     !identical(STZ, as.character(tzone(x)))) {
     warning(paste("timezone of object (",tzone(x),
                   ") is different than current timezone (",STZ,").",sep=""),
-           call.=FALSE)
+           call.=FALSE, immediate.=TRUE)
+
+    if(is.null(check)) {
+      # xts_check_TZ is NULL by default
+      # set to TRUE after messaging user how to disable the warning
+      message("NOTE: set 'options(xts_check_TZ = FALSE)' to disable this warning\n",
+              "  This note is displayed once per session")
+      options(xts_check_TZ = TRUE)
+    }
+  }
 }
