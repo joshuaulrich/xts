@@ -24,7 +24,30 @@ function(x, f="months", drop=FALSE, k=1, ...) {
     ep <- endpoints(x, on=f, k=k)
     sp <- (ep + 1)[-length(ep)]
     ep <- ep[-1]
-    lapply(1:length(ep), function(X) x[sp[X]:ep[X]])
+    out <- lapply(seq_along(ep), function(X) x[sp[X]:ep[X]])
+
+    if(f == "secs" || f == "mins") {
+      f <- substr(f, 1L, 3L)
+    }
+    f <- match.arg(f, c("years", "quarters", "months", "weeks", "days", "hours",
+    "minutes", "seconds", "milliseconds", "microseconds", "ms", "us"))
+
+    obs.for.names <- index(x)[sp]
+    outnames <-
+      switch(f,
+             "years"    = format(obs.for.names, "%Y"),
+             "quarters" = as.character(as.yearqtr(obs.for.names)),
+             "months"   = as.character(as.yearmon(obs.for.names)),
+             "weeks"    = format(obs.for.names, "%Y-%m-%d"),
+             "days"     = format(obs.for.names, "%Y-%m-%d"),
+             "hours"    = format(obs.for.names, "%Y-%m-%d %H:00:00"),
+             "minutes"  = format(obs.for.names, "%Y-%m-%d %H:%M:00"),
+             "seconds"  = format(obs.for.names, "%Y-%m-%d %H:%M:%S"),
+             "milliseconds" = ,
+             "ms" = format(obs.for.names, "%Y-%m-%d %H:%M:%OS3"),
+             "microseconds" = ,
+             "us" = format(obs.for.names, "%Y-%m-%d %H:%M:%OS6"))
+    setNames(out, outnames)
   } else
   NextMethod("split")
 }
