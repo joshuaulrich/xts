@@ -92,13 +92,10 @@ addLegend("topright", legend.names = c("Close", "SMA(20)", "SMA(50)"),
 `points`, and `addLegend`.
 ```{r fig.keep='last'}
 plot(sample.xts[,4])
-addEventLines(c("2007-03-20","2007-05-28"), c("foo", "bar"))
-addEventLines(c("2007-03-20","2007-05-28"), c("foo", "bar"), 
-              offset=1.2, pos=2, , srt=90, cex=1.5)
-addEventLines(c("2007-03-20","2007-05-28"), c("foo", "bar"), 
-              offset=1.2, pos=4, , srt=-90, cex=1.5)
-
-
+events <- xts(c("foo", "bar"), as.Date(c("2007-03-20","2007-05-28")))
+addEventLines(events)
+addEventLines(events, offset=1.2, pos=2, , srt=90, cex=1.5)
+addEventLines(events, offset=1.2, pos=4, , srt=-90, cex=1.5)
 ```
 
 Event lines can be drawn on a specific panel by specifying an integer 
@@ -109,7 +106,6 @@ plot(sample.xts[,"Close"])
 lines(TTR::SMA(sample.xts[,"Close"], n = 20), on=NA, col="blue")
 # add a new panel
 lines(TTR::SMA(sample.xts[,"Close"], n = 50), on=NA, col="red")
-addEventLines(c("2007-03-20","2007-05-28"), c("foo", "bar"), on=1,
-              offset=.4, pos=2, srt=90, cex=1.5, col="red")
+addEventLines(events, on=1, offset=.4, pos=2, srt=90, cex=1.5, col="red")
 ```
 
