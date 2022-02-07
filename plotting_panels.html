@@ -1,23 +1,36 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
-<meta charset="utf-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
 
 
 
 <title>Plotting Panels</title>
 
-<script src="libs/jquery-1.11.0/jquery.min.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="libs/bootstrap-3.3.1/css/spacelab.min.css" rel="stylesheet" />
-<script src="libs/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="libs/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="libs/bootstrap-3.3.1/shim/respond.min.js"></script>
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
 
 <style type="text/css">
 
@@ -55,29 +68,32 @@ body {
 
 <link rel="stylesheet" href="libs/font-awesome-4.1.0/css/font-awesome.min.css"/>
 
-<style type="text/css">code{white-space: pre;}</style>
-<link rel="stylesheet"
-      href="libs/highlight/textmate.css"
-      type="text/css" />
-<script src="libs/highlight/highlight.js"></script>
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
 <script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
 }
 </script>
 
 
 
-</head>
 
-<body>
+
+
+
 
 <style type = "text/css">
 .main-container {
@@ -85,16 +101,97 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
+img {
+  max-width:100%;
 }
-img { 
-  max-width:100%; 
-  height: auto; 
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
 }
 </style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
 <div class="container-fluid main-container">
+
+
 
 
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -180,45 +277,37 @@ img {
 </div><!--/.navbar -->
 
 <div id="header">
-<h1 class="title">Plotting Panels</h1>
+
+
+
+<h1 class="title toc-ignore">Plotting Panels</h1>
+
 </div>
 
 
 <div id="panel-basics" class="section level3">
 <h3>Panel Basics</h3>
 <p>Load the xts package and some sample OHLC data. The PerformanceAnalytics package is loaded for functions that will be used in the examples and the edhec dataset of EDHEC composite hedge fund style index returns.</p>
-<pre class="r"><code>library(xts)</code></pre>
-<pre><code>## Loading required package: zoo
-## 
-## Attaching package: &#39;zoo&#39;
-## 
-## The following objects are masked from &#39;package:base&#39;:
-## 
-##     as.Date, as.Date.numeric</code></pre>
-<pre class="r"><code>library(PerformanceAnalytics)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;PerformanceAnalytics&#39;
-## 
-## The following object is masked from &#39;package:graphics&#39;:
-## 
-##     legend</code></pre>
-<pre class="r"><code>data(sample_matrix)
+<pre class="r"><code>library(xts)
+library(PerformanceAnalytics)
+
+data(sample_matrix)
 sample.xts &lt;- as.xts(sample_matrix)</code></pre>
 <p>Create a basic plot and add a panel of the simple returns</p>
 <pre class="r"><code>plot(sample.xts[,&quot;Close&quot;])
 lines(Return.calculate(sample.xts[,&quot;Close&quot;]), type=&quot;h&quot;, on=NA)</code></pre>
-<p><img src="plotting_panels_files/figure-html/unnamed-chunk-3.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" width="672" /></p>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Instead of calculating the returns and plotting the result, an alternative is to use <code>addPanel</code> which is useful for applying a function to the raw data in the current plot object. Note that <code>addPanel</code> accepts a function, it does not accept data like <code>lines</code> and <code>points</code>. The raw data in the current plot object is passed to the first argument in <code>FUN</code>. Additional arguments to <code>FUN</code> are passed via dots (<code>...</code>).</p>
 <pre class="r"><code># plot the Close
 plot(sample.xts[,&quot;Close&quot;], col=&quot;blue&quot;)
 
 # calculate returns
 addPanel(Return.calculate, method=&quot;discrete&quot;, type=&quot;h&quot;)</code></pre>
-<p><img src="plotting_panels_files/figure-html/unnamed-chunk-4.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="672" /></p>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>We can also create the same plot by using the <code>panels</code> argument.</p>
 <pre class="r"><code>plot(sample.xts[,&quot;Close&quot;], 
      panels=&#39;lines(Return.calculate(sample.xts[,&quot;Close&quot;]), type=&quot;h&quot;, on=NA)&#39;)</code></pre>
-<p><img src="plotting_panels_files/figure-html/unnamed-chunk-5.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" width="672" /></p>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
 <div id="multiple-panels" class="section level3">
 <h3>Multiple Panels</h3>
@@ -226,8 +315,6 @@ addPanel(Return.calculate, method=&quot;discrete&quot;, type=&quot;h&quot;)</cod
 <pre class="r"><code>data(edhec)
 R &lt;- edhec[,1:4]
 head(R)</code></pre>
-<pre><code>## Warning: index class is Date, which does not support timezones.
-## Expected &#39;UTC&#39; timezone, but indexTZ is GMT</code></pre>
 <pre><code>##            Convertible Arbitrage CTA Global Distressed Securities
 ## 1997-01-31                0.0119     0.0393                0.0178
 ## 1997-02-28                0.0123     0.0298                0.0122
@@ -244,23 +331,23 @@ head(R)</code></pre>
 ## 1997-06-30           0.0581</code></pre>
 <p>To plot each column in a separate panel, specify <code>multi.panel = TRUE</code>. The default behavior is to use the same range for the y-axis for each panel.</p>
 <pre class="r"><code>plot(R, multi.panel=TRUE, type=&quot;h&quot;)</code></pre>
-<p><img src="plotting_panels_files/figure-html/unnamed-chunk-7.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="672" /></p>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Plot each column of data in a separate panel, setting the range of the y-axis for each panel based on each column of data. Note how each panel has a different y-axis range.</p>
 <pre class="r"><code>plot(R, multi.panel=TRUE, type=&quot;h&quot;, yaxis.same=FALSE)</code></pre>
-<p><img src="plotting_panels_files/figure-html/unnamed-chunk-8.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" width="672" /></p>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>Attributes such as <code>col</code>, <code>lty</code>, and <code>lwd</code> are passed to each panel.</p>
 <pre class="r"><code>plot(R, multi.panel=TRUE, col=c(&quot;black&quot;, &quot;blue&quot;, &quot;red&quot;, &quot;green&quot;), lty=1:4)</code></pre>
-<p><img src="plotting_panels_files/figure-html/unnamed-chunk-9.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="672" /></p>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>An important feature of <code>plot.xts</code> is that it does not use <code>layout</code> internally for panels. This means that <code>plot.xts</code> is “layout safe” and multiple panels can be plotted in a specified layout for custom plots.</p>
 <p>Plot the returns data in a 1x2 panel.</p>
 <pre class="r"><code>layout(matrix(1:2, 1, 2))
 plot(R, multi.panel=2, type=&quot;h&quot;)</code></pre>
-<p><img src="plotting_panels_files/figure-html/unnamed-chunk-10.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" width="672" /></p>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <pre class="r"><code>layout(matrix(1))</code></pre>
 <p>Plot the returns data in a 2x2 panel.</p>
 <pre class="r"><code>layout(matrix(1:4, 2, 2))
 plot(R, multi.panel=1, type=&quot;h&quot;)</code></pre>
-<p><img src="plotting_panels_files/figure-html/unnamed-chunk-11.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" width="672" /></p>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <pre class="r"><code>layout(matrix(1))</code></pre>
 </div>
 <div id="custom-panels" class="section level3">
@@ -278,11 +365,11 @@ plot(R, multi.panel=1, type=&quot;h&quot;)</code></pre>
 }</code></pre>
 <pre class="r"><code>plot(R[,1], type=&quot;h&quot;)
 addDrawdowns()</code></pre>
-<p><img src="plotting_panels_files/figure-html/unnamed-chunk-13.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" width="672" /></p>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>Multiple panels of returns with the custom drawdowns panel.</p>
 <pre class="r"><code>layout(matrix(1:4, 2, 2))
 plot(R, type=&quot;h&quot;, multi.panel=1, panels=&quot;addDrawdowns()&quot;)</code></pre>
-<p><img src="plotting_panels_files/figure-html/unnamed-chunk-14.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" width="672" /></p>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <pre class="r"><code>layout(matrix(1))</code></pre>
 <p>Another example of a custom panel function is to add a rolling Expected Shortfall to the main panel.</p>
 <pre class="r"><code>addrollingES &lt;- function(gap=50, p=0.95, method=&quot;historical&quot;, on=1, ...){
@@ -299,7 +386,7 @@ plot(R, type=&quot;h&quot;, multi.panel=1, panels=&quot;addDrawdowns()&quot;)</c
 addrollingES(lty=2, col=&quot;blue&quot;, lwd=2)
 addLegend(&quot;topleft&quot;, legend.names = &quot;Historical 95% ES&quot;, 
           lty=2, lwd=2, col=&quot;blue&quot;)</code></pre>
-<p><img src="plotting_panels_files/figure-html/unnamed-chunk-16.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="672" /></p>
+<p><img src="plotting_panels_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 </div>
 
 
@@ -345,16 +432,39 @@ $(document).ready(function () {
     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 -->
 
+
+
 </div>
 
 <script>
 
 // add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
 $(document).ready(function () {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  bootstrapStylePandocTables();
 });
 
+
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 
 </body>

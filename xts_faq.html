@@ -1,24 +1,37 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
-<meta charset="utf-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
 
 <meta name="author" content="Joshua M. Ulrich" />
 
 
 <title>xts FAQ</title>
 
-<script src="libs/jquery-1.11.0/jquery.min.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="libs/bootstrap-3.3.1/css/spacelab.min.css" rel="stylesheet" />
-<script src="libs/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="libs/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="libs/bootstrap-3.3.1/shim/respond.min.js"></script>
+<link href="libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
 
 <style type="text/css">
 
@@ -56,29 +69,32 @@ body {
 
 <link rel="stylesheet" href="libs/font-awesome-4.1.0/css/font-awesome.min.css"/>
 
-<style type="text/css">code{white-space: pre;}</style>
-<link rel="stylesheet"
-      href="libs/highlight/textmate.css"
-      type="text/css" />
-<script src="libs/highlight/highlight.js"></script>
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
 <script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
 }
 </script>
 
 
 
-</head>
 
-<body>
+
+
+
 
 <style type = "text/css">
 .main-container {
@@ -86,16 +102,97 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
+img {
+  max-width:100%;
 }
-img { 
-  max-width:100%; 
-  height: auto; 
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
 }
 </style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
 <div class="container-fluid main-container">
+
+
 
 
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -181,8 +278,12 @@ img {
 </div><!--/.navbar -->
 
 <div id="header">
-<h1 class="title">xts FAQ</h1>
-<h4 class="author"><em>Joshua M. Ulrich</em></h4>
+
+
+
+<h1 class="title toc-ignore">xts FAQ</h1>
+<h4 class="author">Joshua M. Ulrich</h4>
+
 </div>
 
 
@@ -204,11 +305,10 @@ img {
 <div id="collection-of-frequently-asked-questions-and-answers" class="section level3">
 <h3>Collection of Frequently Asked Questions and Answers</h3>
 <pre class="r"><code>library(&quot;xts&quot;)</code></pre>
-<pre><code>## Loading required package: zoo
-## 
-## Attaching package: &#39;zoo&#39;
-## 
-## The following objects are masked from &#39;package:base&#39;:
+<pre><code>## Loading required package: zoo</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     as.Date, as.Date.numeric</code></pre>
 <pre class="r"><code>Sys.setenv(TZ=&quot;GMT&quot;)</code></pre>
@@ -245,6 +345,8 @@ cbind(orig=sample.xts, locf=na.locf(sample.xts))</code></pre>
 <p>Milliseconds in <code>xts</code> indexes are stored as decimal values. This example builds an index spaced by 100 milliseconds, starting at the current system time:</p>
 <pre class="r"><code>data(sample_matrix)
 sample.xts &lt;- xts(1:10, seq(as.POSIXct(&quot;1970-01-01&quot;), by=0.1, length=10))</code></pre>
+<pre><code>## Warning in seq.POSIXt(as.POSIXct(&quot;1970-01-01&quot;), by = 0.1, length = 10): partial
+## argument match of &#39;length&#39; to &#39;length.out&#39;</code></pre>
 <p><strong>Q:</strong> I have a millisecond-resolution index, but the milliseconds aren’t displayed. What went wrong?</p>
 <p>Set the <code>digits.secs</code> option to some sub-second precision. Continuing from the previous example, if you are interested in milliseconds:</p>
 <pre class="r"><code>options(digits.secs=3)
@@ -269,8 +371,10 @@ print(as.numeric(dt), digits=20)</code></pre>
 <p><strong>Q:</strong> I have an <code>xts</code> object with varying numbers of observations per day (e.g., one day might contain 10 observations, while another day contains 20 observations). How can I apply a function to all observations for each day?</p>
 <p>You can use <code>apply.daily</code>, or <code>period.apply</code> more generally:</p>
 <pre class="r"><code>sample.xts &lt;- xts(1:50, seq(as.POSIXct(&quot;1970-01-01&quot;),
-  as.POSIXct(&quot;1970-01-03&quot;)-1, length=50))
-apply.daily(sample.xts, mean)</code></pre>
+  as.POSIXct(&quot;1970-01-03&quot;)-1, length=50))</code></pre>
+<pre><code>## Warning in seq.POSIXt(as.POSIXct(&quot;1970-01-01&quot;), as.POSIXct(&quot;1970-01-03&quot;) - :
+## partial argument match of &#39;length&#39; to &#39;length.out&#39;</code></pre>
+<pre class="r"><code>apply.daily(sample.xts, mean)</code></pre>
 <pre><code>##                         [,1]
 ## 1970-01-01 23:30:36.244   13
 ## 1970-01-02 23:59:59.000   38</code></pre>
@@ -289,7 +393,7 @@ apply.daily(sample.xts, mean)</code></pre>
 ## 1970-01-02 17:08:33.428 40.5
 ## 1970-01-02 23:59:59.000 47.0</code></pre>
 <p><strong>Q:</strong> How can I process daily data for a specific time subset?</p>
-<p>First use time-of-day subsetting to extract the time range you want to work on (note the leading <code>&quot;T&quot;</code> and leading zeros are required for each time in the range: <code>&quot;T06:00&quot;</code>), then use <code>apply.daily</code> to apply your function to the subset:</p>
+<p>First use time-of-day subsetting to extract the time range you want to work on (note the leading <code>"T"</code> and leading zeros are required for each time in the range: <code>"T06:00"</code>), then use <code>apply.daily</code> to apply your function to the subset:</p>
 <pre class="r"><code>apply.daily(sample.xts[&#39;T06:00/T17:00&#39;,], mean)</code></pre>
 <p><strong>Q:</strong> How can I analyze my irregular data in regular blocks, adding observations for each regular block if one doesn’t exist in the origianl time-series object?</p>
 <p>Use <code>align.time</code> to round-up the indexes to the periods you are interested in, then call <code>period.apply</code> to apply your function. Finally, merge the result with an empty xts object that contains all the regular index values you want:</p>
@@ -326,8 +430,8 @@ head(out2 &lt;- merge(empty.xts, count, fill=0))</code></pre>
 <p>You might also have to reset the index timezone:</p>
 <pre class="r"><code>indexTZ(sample.xts) &lt;- Sys.getenv(&quot;TZ&quot;)</code></pre>
 <p><strong>Q:</strong> Why can’t I use the <code>\&amp;</code> operator in <code>xts</code> objects when querying dates?</p>
-<p><code>&quot;2011-09-21&quot;</code> is not a logical vector and cannot be coerced to a logical vector. See <code>?&quot;\&amp;&quot;</code> for details.</p>
-<p><code>xts</code> ISO-8601 style subsetting is nice, but there’s nothing we can do to change the behavior of <code>.Primitive(&quot;\&amp;&quot;)</code>. You can do something like this though:</p>
+<p><code>"2011-09-21"</code> is not a logical vector and cannot be coerced to a logical vector. See <code>?"\&amp;"</code> for details.</p>
+<p><code>xts</code> ISO-8601 style subsetting is nice, but there’s nothing we can do to change the behavior of <code>.Primitive("\&amp;")</code>. You can do something like this though:</p>
 <pre class="r"><code>sample.xts[sample.xts$Symbol == &quot;AAPL&quot; &amp; index(sample.xts) == as.POSIXct(&quot;2011-09-21&quot;),]</code></pre>
 <p>or:</p>
 <pre class="r"><code>sample.xts[sample.xts$Symbol == &quot;AAPL&quot;][&#39;2011-09-21&#39;]</code></pre>
@@ -337,13 +441,13 @@ head(out2 &lt;- merge(empty.xts, count, fill=0))</code></pre>
 sample.xts &lt;- as.xts(sample_matrix)
 wday.xts &lt;- sample.xts[.indexwday(sample.xts) %in% 1:5]
 head(wday.xts)</code></pre>
-<pre><code>##             Open  High   Low Close
-## 2007-01-02 50.04 50.12 49.95 50.12
-## 2007-01-03 50.23 50.42 50.23 50.40
-## 2007-01-04 50.42 50.42 50.26 50.33
-## 2007-01-05 50.37 50.37 50.22 50.33
-## 2007-01-08 50.04 50.10 49.97 49.99
-## 2007-01-09 49.99 49.99 49.80 49.91</code></pre>
+<pre><code>##                Open     High      Low    Close
+## 2007-01-02 50.03978 50.11778 49.95041 50.11778
+## 2007-01-03 50.23050 50.42188 50.23050 50.39767
+## 2007-01-04 50.42096 50.42096 50.26414 50.33236
+## 2007-01-05 50.37347 50.37347 50.22103 50.33459
+## 2007-01-08 50.03555 50.10363 49.96971 49.98806
+## 2007-01-09 49.99489 49.99489 49.80454 49.91333</code></pre>
 <p><strong>Q:</strong> I need to quickly convert a data.frame that contains the time-stamps in one of the columns. Using <code>as.xts(Data)</code> returns an error. How do I build my <code>xts</code> object?</p>
 <p>The <code>as.xts</code> function assumes the date-time index is contained in the <code>rownames</code> of the object to be converted. If this is not the case, you need to use the <code>xts</code> constructor, which requires two arguments: a vector or a matrix carrying data and a vector of type <code>Date</code>, <code>POSIXct</code>, <code>chron</code>, <code>...</code>, supplying the time index information. If you are certain the time-stamps are in a specific column, you can use:</p>
 <pre class="r"><code>Data &lt;- data.frame(timestamp=as.Date(&quot;1970-01-01&quot;), obs=21)
@@ -361,8 +465,8 @@ merge(x1, x2)</code></pre>
 <pre class="r"><code>data(sample_matrix)
 sample.xts &lt;- as.xts(sample_matrix)
 sample.xts[&quot;2007-01&quot;]$Close &lt;- sample.xts[&quot;2007-01&quot;]$Close + 1</code></pre>
-<pre><code>## Warning: number of items to replace is not a multiple of replacement
-## length</code></pre>
+<pre><code>## Warning in NextMethod(.Generic): number of items to replace is not a multiple of
+## replacement length</code></pre>
 <p>This code creates two calls to the subset-replacement function <code>xts:::[&lt;-.xts</code>. The first call replaces the value of <code>Close</code> in a temporary copy of the first row of the object on the left-hand-side of the assignment, which works fine. The second call tries to replace the first <strong>element</strong> of the object on the left-hand-side of the assignment with the modified temporary copy of the first row. This is the problem.</p>
 <p>For the command to work, there needs to be a comma in the first subset call on the left-hand-side:</p>
 <pre class="r"><code>sample.xts[&quot;2007-01&quot;,]$Close &lt;- sample.xts[&quot;2007-01&quot;]$Close + 1</code></pre>
@@ -420,16 +524,39 @@ $(document).ready(function () {
     <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 -->
 
+
+
 </div>
 
 <script>
 
 // add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
 $(document).ready(function () {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  bootstrapStylePandocTables();
 });
 
+
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 
 </body>
