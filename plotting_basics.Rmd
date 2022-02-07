@@ -5,7 +5,7 @@ title: "Plotting Basics"
 ### Basics
 
 Load the xts package and some sample data
-```{r}
+```{r message=FALSE}
 library(xts)
 
 data(sample_matrix)

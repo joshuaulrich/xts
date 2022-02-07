@@ -10,7 +10,7 @@ Sys.setenv(TZ="GMT")
 Load the xts package and some sample OHLC data. The PerformanceAnalytics 
 package is loaded for functions that will be used in the examples and the
 edhec dataset of EDHEC composite hedge fund style index returns.
-```{r}
+```{r message=FALSE}
 library(xts)
 library(PerformanceAnalytics)
 
