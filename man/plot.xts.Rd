@@ -12,7 +12,7 @@
   major.ticks = "auto", minor.ticks = NULL,
   grid.ticks.on = "auto", grid.ticks.lwd = 1, grid.ticks.lty = 1,
   grid.col = "darkgray", labels.col = "#333333", format.labels = TRUE,
-  grid2 = "#F5F5F5", legend.loc = NULL)
+  grid2 = "#F5F5F5", legend.loc = NULL, extend.xaxis = FALSE)
 \method{lines}{xts}(x, ..., main = "", on = 0, col = NULL, type = "l",
   lty = 1, lwd = 1, pch = 1)
 \method{points}{xts}(x, ..., main = "", on = 0, col = NULL, pch = 1)
@@ -95,6 +95,11 @@ The default, \code{on=0}, will add to the active panel. The active panel is
 defined as the panel on which the most recent action was performed. Note that
 only the first element of \code{on} is checked for the default behavior to
 add to the last active panel.}
+
+\item{extend.xaxis}{TRUE/FALSE (default FALSE). If TRUE, extend the x-axis
+before and/or after the plot's existing time index range, so all of of the
+time index values of the new series are included in the plot.}
+
 }
 \details{
   Possible values for arguments \code{major.ticks}, \code{minor.ticks},
