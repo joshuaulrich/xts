@@ -38,8 +38,6 @@ function(x, ...) {
 
   #x.index  <- structure(.index(x), class=c("POSIXct","POSIXt"))
   x.index  <- .POSIXct(.index(x), tz=attr(.index(x), "tzone"))
-  if(length(x.index) == 0)
-    return(integer())
 
   if(!is.list(value)) 
     value <- as.list(value)
