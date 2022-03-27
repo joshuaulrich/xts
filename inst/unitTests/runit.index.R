@@ -43,3 +43,24 @@ test.set_index_restores_tzone_attribute <- function() {
 
   checkIdentical(x, y)
 }
+
+test.get_index_zero_length_returns_correct_index_type <- function() {
+  xd <- xts(1, .Date(1))
+  zd <- as.zoo(xd)
+  xd_index <- index(xd[0,])
+
+  checkTrue(length(xd_index) == 0)
+  checkEquals(index(xd[0,]), index(zd[0,]))
+  checkEquals(index(xd[0,]), .Date(numeric()))
+
+  xp <- xts(1, .POSIXct(1), tzone = "UTC")
+  zp <- as.zoo(xp)
+
+  xp_index <- index(xp[0,])
+  zp_index <- index(zp[0,])
+  zl_index <- .POSIXct(numeric(), tz = "UTC")
+
+  checkTrue(length(xp_index) == 0)
+  checkEquals(tzone(xp_index), tzone(zp_index))
+  checkTrue(inherits(xp_index, c("POSIXct", "POSIXt")))
+}
