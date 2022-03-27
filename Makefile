@@ -70,7 +70,7 @@ check: build
 #	${R_HOME}/bin/R CMD check ${PKG_TARGZ}
 
 # Run unit test suite
-tests: install
+tests: install ${UNIT_TEST_FILES}
 	@${R_HOME}/bin/Rscript ${UNIT_TEST_SUITE}
 
 # Run one test file
