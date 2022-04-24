@@ -24,17 +24,12 @@
 
 SEXP xts_period_apply(SEXP _data, SEXP _index, SEXP _function, SEXP _env)
 {
-  if (!isInteger(_index)) {
-    error("index must be integer");
-  }
-
   int i;
   R_xlen_t n = xlength(_index);
   SEXP _result = PROTECT(allocVector(VECSXP, n));
   SEXP _j = PROTECT(allocVector(INTSXP, ncols(_data)));
   SEXP _drop = PROTECT(ScalarLogical(0));
 
-  int *index = INTEGER(_index);
   for (i = 0; i < ncols(_data); i++)
     INTEGER(_j)[i] = i + 1;
 
@@ -56,12 +51,33 @@ SEXP xts_period_apply(SEXP _data, SEXP _index, SEXP _function, SEXP _env)
   SEXP _subcall = PROTECT(lang3(_function, _subsym, R_DotsSymbol));
 
   int N = n - 1;
-  for (i = 0; i < N; i++) {
-    idx0[0] = index[i] + 1;
-    idx1[0] = index[i + 1];
-    REPROTECT(_xsubset = extract_col(_data, _j, _drop, _idx0, _idx1), px);
-    defineVar(_subsym, _xsubset, _env);
-    SET_VECTOR_ELT(_result, i, eval(_subcall, _env));
+
+  switch(TYPEOF(_index)) {
+    case REALSXP:
+      ;
+      double *d_index = REAL(_index);
+      for (i = 0; i < N; i++) {
+        idx0[0] = d_index[i] + 1;
+        idx1[0] = d_index[i + 1];
+        REPROTECT(_xsubset = extract_col(_data, _j, _drop, _idx0, _idx1), px);
+        defineVar(_subsym, _xsubset, _env);
+        SET_VECTOR_ELT(_result, i, eval(_subcall, _env));
+      }
+      break;
+
+    case INTSXP:
+      ;
+      int *i_index = INTEGER(_index);
+      for (i = 0; i < N; i++) {
+        idx0[0] = i_index[i] + 1;
+        idx1[0] = i_index[i + 1];
+        REPROTECT(_xsubset = extract_col(_data, _j, _drop, _idx0, _idx1), px);
+        defineVar(_subsym, _xsubset, _env);
+        SET_VECTOR_ELT(_result, i, eval(_subcall, _env));
+      }
+      break;
+    default:
+      error("unsupported index type");
   }
 
   UNPROTECT(7);

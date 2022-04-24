@@ -108,7 +108,16 @@ function(x,FUN, ...)
 period_apply <- function(x, INDEX, FUN, ...) {
   fun <- substitute(FUN)
   e <- new.env()
+
+  if (INDEX[1] != 0) {
+    INDEX <- c(0, INDEX)
+  }
+
+  if (INDEX[length(INDEX)] != NROW(x)) {
+    INDEX <- c(INDEX, NROW(x))
+  }
+
   pl <- .Call("xts_period_apply", x, INDEX, fun, e, PACKAGE = "xts")
-  # need to copy other attributes to result?
-  .xts(do.call(rbind, pl), .index(x)[INDEX])
+
+  .xts(do.call(rbind, pl), .index(x)[INDEX], tclass = tclass(x), tzone = tzone(x))
 }
