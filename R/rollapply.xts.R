@@ -22,6 +22,14 @@ rollapply.xts <- function(data, width, FUN, ..., by=1, by.column=TRUE,
   fill=if(na.pad) NA, na.pad=TRUE, partial=TRUE,
   align=c("right","center","left")) {
 
+  # dispatch to rollapply.zoo() if width is a list
+  if (is.list(width)) {
+    .Class <- "zoo"
+    res <- NextMethod()
+    res <- as.xts(res)
+    return(res)
+  }
+
   if (!missing(na.pad)) {
     warning("na.pad argument is deprecated")
   }
