@@ -69,6 +69,8 @@ merge.xts <- function(...,
   if(length(suffixes) != length(dots)) {
     warning("length of suffixes and does not match number of merged objects")
     syms <- as.character(dots)
+    # should we ignore suffixes here?
+    #suffixes <- NULL
   } else {
     syms <- as.character(suffixes)
   }

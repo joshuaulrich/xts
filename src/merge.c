@@ -43,6 +43,30 @@ SEXP xts_make_names(SEXP colnames, SEXP env)
   return(res);
 }
 
+SEXP xts_colname_suffixes(SEXP colnames, SEXP suffixes, SEXP env)
+{
+  SEXP s, t;
+  PROTECT(s = t = allocList(4));
+  SET_TYPEOF(s, LANGSXP);
+
+  SETCAR(t, install("paste"));
+  t = CDR(t);
+
+  SETCAR(t, colnames);
+  t = CDR(t);
+
+  SETCAR(t, suffixes);
+  t = CDR(t);
+
+  SETCAR(t, mkString("."));
+  SET_TAG(t, install("sep"));
+
+  SEXP res = PROTECT(eval(s, env));
+
+  UNPROTECT(2);
+  return(res);
+}
+
 /* 
 
   This is a merge_join algorithm used to
@@ -992,6 +1016,12 @@ SEXP do_merge_xts (SEXP x, SEXP y,
           }
         }
       }
+
+      // add suffixes
+      if(R_NilValue != suffixes) {
+        newcolnames = PROTECT(xts_colname_suffixes(newcolnames, suffixes, env)); p++;
+      }
+
       SET_VECTOR_ELT(dimnames, 0, R_NilValue);  // ROWNAMES are NULL
       if(LOGICAL(check_names)[0]) {
         SET_VECTOR_ELT(dimnames, 1, xts_make_names(newcolnames, env));
@@ -1284,6 +1314,12 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
       SEXP dimnames;
       PROTECT(dimnames = allocVector(VECSXP, 2)); P++;
       SET_VECTOR_ELT(dimnames, 0, R_NilValue); // rownames are always NULL in xts
+
+      // Add suffixes
+      if(R_NilValue != suffixes) {
+        NewColNames = PROTECT(xts_colname_suffixes(NewColNames, suffixes, env)); P++;
+      }
+
       /* colnames, assure they are unique before returning */
       if(LOGICAL(check_names)[0]) {
         SET_VECTOR_ELT(dimnames, 1, xts_make_names(NewColNames, env));

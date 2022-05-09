@@ -152,3 +152,12 @@ test.merge_fills_complex_types <- function() {
   z <- merge(x, y, fill = 21i)
   checkEqualsNumeric(coredata(z), d21)
 }
+
+test.suffixes_appended <- function() {
+  x <- xts(data.frame(x = 1), as.Date("2012-01-01"))
+  y <- xts(data.frame(x = 2), as.Date("2012-01-01"))
+
+  suffixes <- c("truex", "truey")
+  out <- merge(x, y, suffixes = suffixes)
+  checkEquals(paste("x", suffixes, sep = "."), colnames(out))
+}
