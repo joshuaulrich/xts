@@ -26,8 +26,8 @@ PKG_ALL_FILES := ${PKG_PATH}/DESCRIPTION ${PKG_PATH}/NAMESPACE $(PKG_R_FILES) $(
 HTML_FILES := $(patsubst %.Rmd, %.html, $(wildcard *.Rmd)) \
               $(patsubst %.md, %.html, $(wildcard *.md))
 
-UNIT_TEST_SUITE = ${PKG_PATH}/tests/doRUnit.R
-UNIT_TEST_FILES = $(wildcard ${PKG_PATH}/inst/unitTests/runit*.R)
+UNIT_TEST_SUITE = ${PKG_PATH}/tests/tinytest.R
+UNIT_TEST_FILES = $(wildcard ${PKG_PATH}/inst/tinytest/test-*.R)
 
 BENCHMARK_FILE = ${PKG_PATH}/inst/benchmarks/benchmark.subset.R
 
@@ -75,16 +75,17 @@ tests: install ${UNIT_TEST_FILES}
 	@${R_HOME}/bin/Rscript ${UNIT_TEST_SUITE}
 
 # Run one test file
-TEST_FILE = $(wildcard ${PKG_PATH}/inst/unitTests/*${file}*)
-TEST_CMD = 'suppressMessages({require(xts); require(RUnit)}); \
-            out <- runTestFile("${TEST_FILE}", verbose = TRUE); \
-            printTextProtocol(out)'
+### haven't set up running one file with tinytest
+##TEST_FILE = $(wildcard ${PKG_PATH}/inst/unitTests/*${file}*)
+##TEST_CMD = 'suppressMessages({require(xts); require(RUnit)}); \
+##            out <- runTestFile("${TEST_FILE}", verbose = TRUE); \
+##            printTextProtocol(out)'
 
 test: install
 ifndef file
 	$(error "file not defined")
 endif
-	@${R_HOME}/bin/Rscript -e ${TEST_CMD}
+	@${R_HOME}/bin/Rscript -e 'tinytest::test_package("xts")'
 
 html: $(HTML_FILES)
 

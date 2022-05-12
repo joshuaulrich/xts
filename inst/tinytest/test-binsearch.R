@@ -4,13 +4,12 @@ na <- NA_integer_
 
 # no/yes result (potential infinite loop)
 # https://www.topcoder.com/community/data-science/data-science-tutorials/binary-search/
-test.integer_predicate_no_yes_stops <- function() {
-  ans <- 2L
-  ivec <- 3:4
-  ikey <- ivec[ans]
-  checkIdentical(ans, xts:::binsearch(ikey, ivec, TRUE))
-  checkIdentical(ans, xts:::binsearch(ikey, ivec, FALSE))
-}
+test_message <- "integer predicate no yes stops"
+ans <- 2L
+ivec <- 3:4
+ikey <- ivec[ans]
+expect_identical(ans, xts:::binsearch(ikey, ivec, TRUE), paste(test_message, TRUE))
+expect_identical(ans, xts:::binsearch(ikey, ivec, FALSE), paste(test_message, FALSE))
 
 # small steps between vector elements (test that we actually stop)
 test.double_with_small_delta_stops <- function() {

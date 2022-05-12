@@ -1,16 +1,22 @@
 # make.index.unique
 
-test.make.index.unique_1us_default_eps <- function() {
-  x <- .xts(1:5, rep(1e-6, 5))
-  y <- make.index.unique(x)
-  checkEqualsNumeric(.index(y), cumsum(rep(1e-6, 5)))
-}
+info_msg <- "make.index.unique() uses 1 microsecond epsilon by default"
+x <- .xts(1:5, rep(1e-6, 5))
+y <- make.index.unique(x)
+expect_equivalent(target = cumsum(rep(1e-6, 5)), current = .index(y), info = info_msg)
 
-test.make.index.unique_returns_sorted_index <- function() {
-  x <- .xts(1:5, c(rep(1e-6, 4), 3e-6))
-  y <- make.index.unique(x, eps = 1e-6)
-  checkEqualsNumeric(.index(y), cumsum(rep(1e-6, 5)))
-}
+
+info_msg <- "make.index.unique() warns when index value will be overwritten"
+x <- .xts(1:5, c(rep(1e-6, 4), 3e-6))
+expect_warning(y <- make.index.unique(x, eps = 1e-6),
+               pattern = "index value is unique but will be replaced",
+               info = info_msg)
+
+info_msg <- "make.index.unique() returns unique and sorted index"
+expect_equivalent(target = cumsum(rep(1e-6, 5)),
+                  current = .index(y),
+                  info = info_msg)
+
 
 test.make.index.unique_adds_eps_to_duplicates <- function() {
   epsilon <- c(1e-6, 1e-7, 1e-8)
