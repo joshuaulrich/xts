@@ -161,3 +161,17 @@ test.suffixes_appended <- function() {
   out <- merge(x, y, suffixes = suffixes)
   checkEquals(paste("x", suffixes, sep = "."), colnames(out))
 }
+
+test.suffix_append_order <- function() {
+  idx <- Sys.Date() - 1:10
+  x1 <- xts(cbind(alpha = 1:10, beta = 2:11), idx)
+  x2 <- xts(cbind(alpha = 3:12, beta = 4:13), idx)
+  x3 <- xts(cbind(alpha = 5:14, beta = 6:15), idx)
+
+  suffixes <- LETTERS[1:3]
+
+  mx <- merge(x1, x2, x3, suffixes = suffixes)
+  mz <- merge.zoo(x1, x2, x3, suffixes = suffixes)
+
+  checkEquals(mx, as.xts(mz))
+}

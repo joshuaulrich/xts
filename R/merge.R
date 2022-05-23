@@ -76,7 +76,9 @@ merge.xts <- function(...,
   }
 
   .times <- .External('number_of_cols', ..., PACKAGE="xts")
-  symnames <- rep(syms, .times)  # moved call to make.names inside of mergeXts/do_merge_xts
+  # moved call to make.names inside of mergeXts/do_merge_xts
+  symnames <- rep(syms, .times)
+  suffixes <- rep(suffixes, .times)
 
   if(length(dots) == 1) {
     # this is for compat with zoo; one object AND a name
