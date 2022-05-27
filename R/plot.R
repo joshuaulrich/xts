@@ -290,6 +290,18 @@ plot.xts <- function(x,
   cs$Env$main <- main
   cs$Env$ylab <- if (hasArg("ylab")) eval.parent(plot.call$ylab) else ""
   
+  # guard against constant yrange by (if necessary) perturbing values
+  .perturbConstant <- function(yrange) {
+    if(isTRUE(all.equal(yrange[1L], yrange[2L]))) {
+      if(yrange[1L] == 0) {
+        yrange <- yrange + c(-1, 1)
+      } else {
+        yrange <- c(0.8, 1.2) * yrange[1L]
+      }
+    }
+    return(yrange)
+  }
+  
   # chart_Series uses fixed=FALSE and add_* uses fixed=TRUE, not sure why or
   # which is best.
   if(is.null(ylim)){
@@ -305,14 +317,8 @@ plot.xts <- function(x,
       # set the ylim based on all the data if this is not a multi.panel plot
       yrange <- range(cs$Env$xdata[subset], na.rm=TRUE)
     }
-    if(yrange[1L] == yrange[2L]) {
-      if(yrange[1L] == 0) {
-        yrange <- yrange + c(-1, 1)
-      } else {
-        yrange <- c(0.8, 1.2) * yrange[1L]
-      }
-    }
-    cs$set_ylim(list(structure(yrange, fixed=FALSE)))
+    
+    cs$set_ylim(list(structure(.perturbConstant(yrange), fixed=FALSE)))
     cs$Env$constant_ylim <- range(cs$Env$xdata[subset], na.rm=TRUE)
   } else {
     # use the ylim arg passed in
@@ -420,7 +426,7 @@ plot.xts <- function(x,
     if(yaxis.same){
       lenv$ylim <- cs$Env$constant_ylim
     } else {
-      lenv$ylim <- range(cs$Env$xdata[subset,1], na.rm=TRUE)
+      lenv$ylim <- .perturbConstant(range(cs$Env$xdata[subset,1], na.rm=TRUE))
     }
     
     exp <- quote(chart.lines(xdata,
@@ -452,9 +458,7 @@ plot.xts <- function(x,
         if(yaxis.same){
           lenv$ylim <- cs$Env$constant_ylim
         } else {
-          yrange <- range(cs$Env$xdata[subset,i], na.rm=TRUE)
-          if(all(yrange == 0)) yrange <- yrange + c(-1,1)
-          lenv$ylim <- yrange
+          lenv$ylim <- .perturbConstant(range(cs$Env$xdata[subset,i], na.rm=TRUE))
         }
         lenv$type <- cs$Env$type
         
