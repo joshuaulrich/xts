@@ -1363,8 +1363,9 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
   # function to plot the y-axis grid lines
   replot_env$Env$y_grid_lines <- function(ylim) {
-    p <- pretty(ylim,5)
-    p[p > ylim[1] & p < ylim[2]]
+    p <- pretty(ylim, 5)
+    p <- p[p >= ylim[1] & p <= ylim[2]]
+    return(p)
   }
 
   # function to plot the x-axis grid lines
