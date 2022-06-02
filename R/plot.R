@@ -290,38 +290,26 @@ plot.xts <- function(x,
   cs$Env$main <- main
   cs$Env$ylab <- if (hasArg("ylab")) eval.parent(plot.call$ylab) else ""
   
-  # guard against constant yrange by (if necessary) perturbing values
-  .perturbConstant <- function(yrange) {
-    if(isTRUE(all.equal(yrange[1L], yrange[2L]))) {
-      if(yrange[1L] == 0) {
-        yrange <- yrange + c(-1, 1)
-      } else {
-        yrange <- c(0.8, 1.2) * yrange[1L]
-      }
-    }
-    return(yrange)
-  }
-  
-  # chart_Series uses fixed=FALSE and add_* uses fixed=TRUE, not sure why or
-  # which is best.
   if(is.null(ylim)){
     if(isTRUE(multi.panel)){
       if(yaxis.same){
         # set the ylim for the first panel based on all the data
-        yrange <- range(cs$Env$xdata[subset], na.rm=TRUE)
+        yrange <- cs$create_ylim(cs$Env$xdata[subset,])
       } else {
         # set the ylim for the first panel based on the first column
-        yrange <- range(cs$Env$xdata[,1][subset], na.rm=TRUE)
+        yrange <- cs$create_ylim(cs$Env$xdata[subset, 1])
       }
     } else {
       # set the ylim based on all the data if this is not a multi.panel plot
-      yrange <- range(cs$Env$xdata[subset], na.rm=TRUE)
+      yrange <- cs$create_ylim(cs$Env$xdata[subset,])
     }
-    
-    cs$set_ylim(list(structure(.perturbConstant(yrange), fixed=FALSE)))
+
+    # setting fixed=FALSE causes ylim to be re-calculated when drawing
+    cs$set_ylim(list(structure(yrange, fixed=FALSE)))
     cs$Env$constant_ylim <- range(cs$Env$xdata[subset], na.rm=TRUE)
   } else {
     # use the ylim arg passed in
+    # setting fixed=TRUE prevents ylim from being re-calculated when drawing
     cs$set_ylim(list(structure(ylim, fixed=TRUE)))
     cs$Env$constant_ylim <- ylim
   }
@@ -426,7 +414,7 @@ plot.xts <- function(x,
     if(yaxis.same){
       lenv$ylim <- cs$Env$constant_ylim
     } else {
-      lenv$ylim <- .perturbConstant(range(cs$Env$xdata[subset,1], na.rm=TRUE))
+      lenv$ylim <- cs$create_ylim(cs$Env$xdata[subset, 1])
     }
     
     exp <- quote(chart.lines(xdata,
@@ -458,7 +446,7 @@ plot.xts <- function(x,
         if(yaxis.same){
           lenv$ylim <- cs$Env$constant_ylim
         } else {
-          lenv$ylim <- .perturbConstant(range(cs$Env$xdata[subset,i], na.rm=TRUE))
+          lenv$ylim <- cs$create_ylim(cs$Env$xdata[subset, i])
         }
         lenv$type <- cs$Env$type
         
@@ -1099,6 +1087,25 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   get_xlim  <- function(xlim) { Env$xlim }
   get_ylim  <- function(ylim) { Env$ylim }
   
+  create_ylim <-
+  function(x, const_y_mult = 0.2)
+  {
+    # Create y-axis limits from 'x'. Jitter the max/min limits by
+    # 'const_y_mult' if the max/min values are the same.
+    lim <- range(x, na.rm = TRUE)
+
+    if(isTRUE(all.equal(lim[1L], lim[2L]))) {
+      # if max and min are the same
+      if(lim[1L] == 0) {
+        lim <- c(-1, 1)
+      } else {
+        lim <- lim[1L] * c(1 - const_y_mult, 1 + const_y_mult)
+      }
+    }
+
+    return(lim)
+  }
+
   # scale ylim based on current frame, and asp values
   scale_ranges <- function(frame, asp, ranges)
   {
@@ -1191,6 +1198,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     ylim <- get_ylim()
     for(y in seq(from_by,length(ylim),by=from_by)) {
       if(!attr(ylim[[y]],'fixed'))
+        # if fixed=FALSE set ylim to +/-Inf so update_frame() recalculates ylim
         ylim[[y]] <- structure(c(Inf,-Inf),fixed=FALSE)
     }
     update_frame <- function(x)
@@ -1207,7 +1215,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
         lenv_data <- lenv$xdata
         if(!is.null(lenv_data)) {
           # some actions (e.g. addLegend) do not have 'xdata'
-          dat.range <- range(na.omit(lenv$xdata[Env$xsubset]))
+          dat.range <- create_ylim(lenv$xdata[Env$xsubset])
           min.tmp <- min(ylim[[frame]][1],dat.range,na.rm=TRUE)
           max.tmp <- max(ylim[[frame]][2],dat.range,na.rm=TRUE)
           ylim[[frame]] <<- structure(c(min.tmp,max.tmp),fixed=fixed)
@@ -1356,6 +1364,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$reset_ylim <- reset_ylim
   replot_env$set_ylim <- set_ylim
   replot_env$get_ylim <- get_ylim
+  replot_env$create_ylim <- create_ylim
   replot_env$set_pad <- set_pad
   replot_env$add_call <- add_call
 
