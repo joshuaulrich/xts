@@ -295,21 +295,25 @@ plot.xts <- function(x,
       if(yaxis.same){
         # set the ylim for the first panel based on all the data
         yrange <- cs$create_ylim(cs$Env$xdata[subset,])
+        # and recalculate ylim when drawing (fixed=FALSE)
+        cs$set_ylim(list(structure(yrange, fixed=FALSE)))
       } else {
         # set the ylim for the first panel based on the first column
         yrange <- cs$create_ylim(cs$Env$xdata[subset, 1])
+        # but do NOT recalculate ylim when drawing (fixed=TRUE)
+        cs$set_ylim(list(structure(yrange, fixed=TRUE)))
       }
     } else {
       # set the ylim based on all the data if this is not a multi.panel plot
       yrange <- cs$create_ylim(cs$Env$xdata[subset,])
+      # and recalculate ylim when drawing (fixed=FALSE)
+      cs$set_ylim(list(structure(yrange, fixed=FALSE)))
     }
 
-    # setting fixed=FALSE causes ylim to be re-calculated when drawing
-    cs$set_ylim(list(structure(yrange, fixed=FALSE)))
     cs$Env$constant_ylim <- range(cs$Env$xdata[subset], na.rm=TRUE)
   } else {
     # use the ylim arg passed in
-    # setting fixed=TRUE prevents ylim from being re-calculated when drawing
+    # but do NOT recalculate ylim when drawing (fixed=TRUE)
     cs$set_ylim(list(structure(ylim, fixed=TRUE)))
     cs$Env$constant_ylim <- ylim
   }
