@@ -159,7 +159,7 @@ test.suffixes_appended <- function() {
 
   suffixes <- c("truex", "truey")
   out <- merge(x, y, suffixes = suffixes)
-  checkEquals(paste("x", suffixes, sep = "."), colnames(out))
+  checkEquals(paste0("x", suffixes), colnames(out))
 }
 
 test.suffix_append_order <- function() {
@@ -170,8 +170,8 @@ test.suffix_append_order <- function() {
 
   suffixes <- LETTERS[1:3]
 
-  mx <- merge(x1, x2, x3, suffixes = suffixes)
+  mx <- merge(x1, x2, x3, suffixes = paste0('.', suffixes))
   mz <- merge.zoo(x1, x2, x3, suffixes = suffixes)
-
+  
   checkEquals(mx, as.xts(mz))
 }

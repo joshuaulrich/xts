@@ -58,7 +58,7 @@ SEXP xts_colname_suffixes(SEXP colnames, SEXP suffixes, SEXP env)
   SETCAR(t, suffixes);
   t = CDR(t);
 
-  SETCAR(t, mkString("."));
+  SETCAR(t, mkString(""));
   SET_TAG(t, install("sep"));
 
   SEXP res = PROTECT(eval(s, env));
