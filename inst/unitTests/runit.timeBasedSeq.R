@@ -60,7 +60,7 @@ test.tbs_199901_to_200801_by_month_POSIXct <- function() {
 }
 test.tbs_199901_to_2008_by_month_POSIXct <- function() {
   tbs <- timeBasedSeq('199901/2008', retclass='POSIXct')
-  bench <- as.POSIXct(seq(as.POSIXct("1999-01-01"),as.POSIXct("2008-12-01"),by='month'),tzone='GMT')
+  bench <- as.POSIXct(seq(as.POSIXct("1999-01-01"),as.POSIXct("2008-12-01"),by='month'))
   checkEqualsNumeric(tbs, bench)
 }
 test.tbs_1999_to_200801_by_month_POSIXct <- function() {
