@@ -66,7 +66,7 @@ test.window <- function() {
     end <- xts:::.toPOSIXct(end, tzone(x))
     index. <- as.POSIXct(index., tz=tzone(x))
     all.indexes <- .index(x)
-    in.index <- all.indexes %in% index.
+    in.index <- all.indexes %in% as.numeric(index.)
     matches <- (in.index & all.indexes >= start & all.indexes <= end)
     x[matches,]
   }
