@@ -1,3 +1,81 @@
+################################################################################
+Changed in xts 0.12.2:
+
+o `endpoints()` now always returns last observation. Thanks to GitHub user
+  Eluvias for the report. (#300)
+
+o Ensure `endpoints()` errors for every 'on' value when `k < 1`. It was not
+  throwing an error for `k < 1` for `on` of "years", "quarters", or "months".
+  Thanks to Eluvias for the report. (#301)
+
+o Fix `window()` for yearmon and yearqtr indexes. In xts < 0.11-0, `window.zoo()`
+  was dispatched when `window()` was called on a xts object because there was no
+  `window.xts()` method. `window.zoo()` supports additional types of values for the
+  `start` argument, and possibly other features. So this fixes a breaking change
+  in xts >= 0.11-0. Thanks to GitHub user annaymj for the report. (#312)
+
+o Clarify whether `axTicksByTime()` returns index timestamps or locations (e.g.
+  1, 2, 3). Thanks to @ggrothendieck for the suggestion and feedback. (#354)
+
+o Fix merge on complex types when 'fill' is needed. `merge()` would throw an
+  error because it treated 'fill' as double instead of complex. Thanks to
+  @ggrothendieck for the report. (#346)
+
+o Add a message to tell the user how to disable 'xts_check_TZ' warning. Thanks
+  to Jerzy Pawlowski for the nudge. (#113)
+
+o Update `rbind()` to handle xts objects without dim attribute. `rbind()` threw
+  an obscure error if one of the xts objects does not have a dim attribute. We
+  can handle this case even though all xts objects should always have a dim
+  attribute. (#361)
+
+o `split.xts()` now always return a named list, which makes it consistent with
+  `split.zoo()`. Thanks to Gabor Grothendieck for the report. (#357)
+
+o xts objects with a zero-length POSIXct index now return a zero-length POSIXct
+  vector instead of a zero-length integer vector. Thanks to Jasper Schelfhout
+  for the report and PR! (#363, #364)
+
+o Add suffixes to output of `merge.xts()`. The suffixes are consistent with
+  `merge.default()` and not `merge.zoo()`, because `merge.zoo()` automatically
+  uses "." as a separator between column names, but the default method doesn't.
+  Thanks to Pierre Lamarche for the nudge. Better late than never? (#38, #371)
+
+
+Changes to plotting functionality
+--------------------------------------------------------------------------------
+
+o Fix `addEventLines()` when plotted objects have a 'yearmon' index. The ISO-8601
+  range string was not created correctly. Thanks to @paessens for the report.
+  (#353)
+
+o Make 'ylim' robust against numerical precision issues by replacing `==` with
+  `all.equal()`. Thanks to @bollard for the report, PR, and a ton of help
+  debugging intermediate solutions! (#368)
+
+o Series added to a panel now extend the panel's y-axis. Previously the y-axis
+  limits were based on the first series' values and not updated when new series
+  were added. So values of the new series did not appear on the plot if they
+  were outside of the original series' min/max. Thanks to Vitalie Spinu for the
+  report and help debugging and testing! (#360)
+
+o All series added to any panel of a plot now update the x-axis of all panels.
+  So the entire plot's x-axis will include every series' time index values
+  within the original plot's time range. This behavior is consistent with
+  `chart_Series()`. Thanks to Vitalie Spinu for the report and help debugging
+  and testing! (#360, #216)
+
+o All y-values are now plotted for series that have duplicate index values, but
+  different data values. Thanks to Vitalie Spinu for the report and help
+  debugging and testing! (#360)
+
+o Adding a series can now extend the x-axis before/after the plot's existing
+  time index range, so all of the new series' time index values are included in
+  the plot. This is FALSE by default to maintain backward compatibility. Thanks
+  to Vitalie Spinu for the report and help debugging and testing! (#360)
+
+
+################################################################################
 Changed in xts 0.12.1:
 
 o  Various function could change the tclass of xts objects. This would happen
