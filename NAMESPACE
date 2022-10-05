@@ -197,9 +197,6 @@ S3method(make.index.unique, POSIXct)
 S3method(is.time.unique, xts)
 S3method(is.time.unique, zoo)
 
-# export xts S4 class (for quantmod, spacetime, etc.)
-exportClasses(xts)
-
 # xts methods
 importFrom(zoo,coredata)
 importFrom(zoo, index)
