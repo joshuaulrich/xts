@@ -919,6 +919,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
           switch( mode ) {
             case LGLSXP:
               LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ]; //NA_INTEGER;
+              break;
             case INTSXP:
               int_result[ ij_result ] = int_fill;
               break;
