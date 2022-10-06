@@ -1088,8 +1088,8 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   # getters
   get_frame <- function(frame) { Env$frame }
   get_asp   <- function(asp) { Env$asp }
-  get_xlim  <- function(xlim) { Env$xlim }
-  get_ylim  <- function(ylim) { Env$ylim }
+  get_xlim  <- function(xlim) { update_frames(); Env$xlim }
+  get_ylim  <- function(ylim) { update_frames(); Env$ylim }
   
   create_ylim <-
   function(x, const_y_mult = 0.2)
@@ -1199,7 +1199,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   update_frames <- function(headers=TRUE) {
     # use subset code here, without the subset part.
     from_by <- ifelse(headers,2,1)  
-    ylim <- get_ylim()
+    ylim <- Env$ylim
     for(y in seq(from_by,length(ylim),by=from_by)) {
       if(!attr(ylim[[y]],'fixed'))
         # if fixed=FALSE set ylim to +/-Inf so update_frame() recalculates ylim

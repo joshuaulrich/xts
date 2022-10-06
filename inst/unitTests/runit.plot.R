@@ -29,3 +29,15 @@ test.axTicksByTime_ticks.on_quarter <- function() {
   xtbt <- axTicksByTime(x, ticks.on = "quarters")
   checkIdentical(xtbt, tick_marks)
 }
+
+test.xlim_set_before_rendering <- function() {
+  target <- c(86400.0, 864000.0)
+  p <- plot(xts(1:10, .Date(1:10)))
+  checkEqualsNumeric(target, p$get_xlim())
+}
+
+test.ylim_set_before_rendering <- function() {
+  x <- rnorm(10)
+  p <- plot(xts(x, .Date(1:10)))
+  checkEqualsNumeric(range(x), p$get_ylim()[[2]])
+}
