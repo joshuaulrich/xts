@@ -64,3 +64,10 @@ test.set_tclass_default_always_character <- function() {
   tclass(x) <- 1
   checkIdentical(storage.mode(attr(x, "tclass")), "character")
 }
+
+test.tclass_matches_input_for_zero_width_subset <- function() {
+  target <- "Imatclass"
+  x <- .xts(1:10, 1:10, tclass = target)
+  y <- x[,0]
+  checkEquals(target, tclass(y))
+}

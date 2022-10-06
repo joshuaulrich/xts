@@ -70,3 +70,10 @@ test.set_tzone_default_always_character <- function() {
   tzone(x) <- 1
   checkIdentical(storage.mode(attr(x, "tzone")), "character")
 }
+
+test.tzone_matches_input_for_zero_width_subset <- function() {
+  target <- "Ima/Tzone"
+  x <- .xts(1:10, 1:10, tzone = target)
+  y <- x[,0]
+  checkEquals(target, tzone(y))
+}

@@ -304,3 +304,16 @@ test.window_yearmon_yearqtr_tclass_dispatches_to_zoo <- function() {
   checkEquals(r1, w1, "window, yearmon, character start")
   checkEquals(r2, w2, "window, yearqtr, character start")
 }
+
+test.zero_width_subset_does_not_drop_class <- function(x) {
+  target <- c("custom", "xts", "zoo")
+  x <- .xts(1:10, 1:10, class = target)
+  y <- x[,0]
+  checkEquals(target, class(y))
+}
+
+test.zero_width_subset_does_not_drop_user_attributes <- function(x) {
+  x <- .xts(1:10, 1:10, my_attr = "hello")
+  y <- x[,0]
+  checkEquals("hello", attr(y, "my_attr"))
+}

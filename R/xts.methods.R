@@ -240,7 +240,11 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     if(length(j) == 0 || (length(j)==1 && (is.na(j) || j==0))) {
       if(missing(i))
         i <- seq_len(nr)
-      return(.xts(coredata(x)[i,j,drop=FALSE], index=.index(x)[i]))
+
+      output <- .xts(coredata(x)[i,j,drop=FALSE], .index(x)[i],
+                     tclass(x), tzone(x), class = class(x))
+      xtsAttributes(output) <- xtsAttributes(x)
+      return(output)
     } 
     if(missing(i))
       return(.Call("extract_col", x, as.integer(j), drop, 1, nr, PACKAGE='xts'))
