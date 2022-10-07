@@ -1234,7 +1234,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     # xdata should be either coming from Env or if lenv, lenv
     set_ylim(ylim)
 
-    x_axis <- Env$xdata[Env$xsubset][,1]
+    x_axis <- .index(Env$xdata[Env$xsubset][,1])
     update_xaxis <- function(action)
     {
       # Create x-axis values using index values from data from all frames
@@ -1248,20 +1248,19 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
         if (!is.null(lenv_data)) {
           # some actions (e.g. addLegend) do not have 'xdata'
 
-          new_x_axis <- merge(x_axis, .xts(, .index(lenv_data[Env$xsubset])))
+          lenv_xaxis <- .index(lenv_data[Env$xsubset])
+          new_xaxis <- sort(unique(c(x_axis, lenv_xaxis)))
 
           if (isTRUE(Env$extend.xaxis)) {
-            x_axis <<- new_x_axis
+            x_axis <<- new_xaxis
           } else {
-            ixc <- .index(new_x_axis)
-            xaxis_rng <- range(.index(x_axis), na.rm = TRUE)
-            x_axis <<- new_x_axis[ixc >= xaxis_rng[1L] & ixc <= xaxis_rng[2L],]
+            xaxis_rng <- range(x_axis, na.rm = TRUE)
+            x_axis <<- new_xaxis[new_xaxis >= xaxis_rng[1L] & new_xaxis <= xaxis_rng[2L]]
           }
         }
       }
     }
     lapply(Env$actions, update_xaxis)
-    x_axis <- unique(.index(x_axis))
 
     # Create x/y coordinates using the combined x-axis index
     Env$xycoords <- xy.coords(x_axis, seq_along(x_axis))
