@@ -29,9 +29,10 @@ if(require("RUnit", quietly=TRUE)) {
  
   ## Define tests
   testSuite <- defineTestSuite(name=paste(pkg, "unit testing"),
-                                          dirs=path)
+                               rngKind = "default",
+                               dirs=path)
   ## Run
-  tests <- runTestSuite(testSuite)
+  tests <- runTestSuite(testSuite, verbose = 0)
  
   ## Report to stdout
   cat("------------------- UNIT TEST SUMMARY ---------------------\n\n")
