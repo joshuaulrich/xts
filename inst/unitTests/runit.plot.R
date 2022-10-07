@@ -41,3 +41,14 @@ test.ylim_set_before_rendering <- function() {
   p <- plot(xts(x, .Date(1:10)))
   checkEqualsNumeric(range(x), p$get_ylim()[[2]])
 }
+
+test.yaxis.ticks <- function() {
+
+  x <- xts(rnorm(50), .Date(1:50))
+  ylim <- c(0, 10) # default case
+  p1 <- plot(x)
+  checkIdentical(pretty(ylim, 5), p1$Env$y_grid_lines(ylim))
+
+  p2 <- plot(x, yaxis.ticks = 10) # twice as many y-axis grid lines
+  checkIdentical(pretty(ylim, 10), p2$Env$y_grid_lines(ylim))
+}

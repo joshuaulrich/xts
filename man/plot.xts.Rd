@@ -9,7 +9,7 @@
   dn.col = NULL, bg = "#FFFFFF", type = "l", lty = 1, lwd = 2, lend = 1,
   main = deparse(substitute(x)), observation.based = FALSE,
   ylim = NULL, yaxis.same = TRUE, yaxis.left = TRUE, yaxis.right = TRUE,
-  major.ticks = "auto", minor.ticks = NULL,
+  yaxis.ticks = 5, major.ticks = "auto", minor.ticks = NULL,
   grid.ticks.on = "auto", grid.ticks.lwd = 1, grid.ticks.lty = 1,
   grid.col = "darkgray", labels.col = "#333333", format.labels = TRUE,
   grid2 = "#F5F5F5", legend.loc = NULL, extend.xaxis = FALSE)
@@ -61,6 +61,9 @@ separate panel.}
 \item{yaxis.left}{if TRUE, draws the y axis on the left}
 
 \item{yaxis.right}{if TRUE, draws the y axis on the right}
+
+\item{yaxis.ticks}{desired number of y axis grid lines. The actual number
+  of grid lines is determined by the \code{n} argument to \code{\link{pretty}}.}
 
 \item{major.ticks}{period that specifies where tick marks and labels will be
   drawn on the x-axis. See Details for possible values.}

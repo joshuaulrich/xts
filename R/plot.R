@@ -135,6 +135,7 @@ plot.xts <- function(x,
                      yaxis.same=TRUE,
                      yaxis.left=TRUE,
                      yaxis.right=TRUE,
+                     yaxis.ticks=5,
                      major.ticks="auto",
                      minor.ticks=NULL,
                      grid.ticks.on="auto",
@@ -197,6 +198,7 @@ plot.xts <- function(x,
                     yaxis.same=yaxis.same,
                     yaxis.left=yaxis.left,
                     yaxis.right=yaxis.right,
+                    yaxis.ticks=yaxis.ticks,
                     major.ticks=major.ticks,
                     minor.ticks=minor.ticks,
                     grid.ticks.on=grid.ticks.on,
@@ -257,6 +259,7 @@ plot.xts <- function(x,
   cs$Env$theme$las <- if (hasArg("las")) eval.parent(plot.call$las) else 0
   cs$Env$theme$cex.axis <- if (hasArg("cex.axis")) eval.parent(plot.call$cex.axis) else 0.9
   cs$Env$format.labels <- format.labels
+  cs$Env$yaxis.ticks <- yaxis.ticks
   cs$Env$major.ticks <- if (isTRUE(major.ticks)) "auto" else major.ticks
   cs$Env$minor.ticks <- if (isTRUE(minor.ticks)) "auto" else minor.ticks
   cs$Env$grid.ticks.on <- if (isTRUE(grid.ticks.on)) "auto" else grid.ticks.on
@@ -1376,7 +1379,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
   # function to plot the y-axis grid lines
   replot_env$Env$y_grid_lines <- function(ylim) {
-    p <- pretty(ylim, 5)
+    p <- pretty(ylim, Env$yaxis.ticks)
     p <- p[p >= ylim[1] & p <= ylim[2]]
     return(p)
   }
