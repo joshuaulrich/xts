@@ -223,7 +223,7 @@ test.i_date_range_open_start <- function() {
 test.empty_i_datetime <- function() {
   d0 <- as.Date(integer())
   zl <- xts(, d0)
-  empty <- .xts(logical(), d0, dim = 0:1, dimnames = list(NULL, NULL))
+  empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
 
   i <- Sys.Date()
   checkIdentical(zl[i,], empty)
@@ -237,7 +237,7 @@ test.empty_i_datetime <- function() {
 test.empty_i_zero <- function() {
   d0 <- as.Date(integer())
   zl <- xts(, d0)
-  empty <- .xts(logical(), d0, dim = 0:1, dimnames = list(NULL, NULL))
+  empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
 
   checkIdentical(zl[0,], empty)
   checkIdentical(zl[0],  empty)
@@ -246,7 +246,7 @@ test.empty_i_zero <- function() {
 test.empty_i_negative <- function() {
   d0 <- as.Date(integer())
   zl <- xts(, d0)
-  empty <- .xts(logical(), d0, dim = 0:1, dimnames = list(NULL, NULL))
+  empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
 
   checkIdentical(zl[-1,], empty)
   checkIdentical(zl[-1],  empty)
@@ -255,7 +255,7 @@ test.empty_i_negative <- function() {
 test.empty_i_NA <- function() {
   d0 <- as.Date(integer())
   zl <- xts(, d0)
-  empty <- .xts(logical(), d0, dim = 0:1, dimnames = list(NULL, NULL))
+  empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
 
   checkIdentical(zl[NA,], empty)
   checkIdentical(zl[NA],  empty)
@@ -264,7 +264,7 @@ test.empty_i_NA <- function() {
 test.empty_i_NULL <- function() {
   d0 <- as.Date(integer())
   zl <- xts(, d0)
-  empty <- .xts(logical(), d0, dim = 0:1, dimnames = list(NULL, NULL))
+  empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
 
   checkIdentical(zl[NULL,], empty)
   checkIdentical(zl[NULL],  empty)
@@ -316,4 +316,12 @@ test.zero_width_subset_does_not_drop_user_attributes <- function(x) {
   x <- .xts(1:10, 1:10, my_attr = "hello")
   y <- x[,0]
   checkEquals("hello", attr(y, "my_attr"))
+}
+
+test.zero_length_subset_xts_returns_same_tclass <- function() {
+  x <- .xts(matrix(1)[0,], integer(0), "Date")
+  checkTrue(tclass(x[0,]) == "Date")
+  x <- .xts(matrix(1)[0,], integer(0), "POSIXct", "America/Chicago")
+  checkTrue(tclass(x[0,]) == "POSIXct")
+  checkTrue(tzone(x[0,]) == "America/Chicago")
 }
