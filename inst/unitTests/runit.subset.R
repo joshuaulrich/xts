@@ -325,3 +325,27 @@ test.zero_length_subset_xts_returns_same_tclass <- function() {
   checkTrue(tclass(x[0,]) == "POSIXct")
   checkTrue(tzone(x[0,]) == "America/Chicago")
 }
+
+test.zero_length_subset_returns_same_storage_mode <- function() {
+  # integer
+  x <- .xts(matrix(integer(0), 0), integer(0))
+  checkEquals(storage.mode(x), storage.mode(x[0, ]))
+  checkEquals(storage.mode(x), storage.mode(x[0, 0]))
+  checkEquals(storage.mode(x), storage.mode(x[0, FALSE]))
+
+  x <- .xts(matrix(integer(0), 0, 2), integer(0))
+  checkEquals(storage.mode(x), storage.mode(x[0,]))
+  checkEquals(storage.mode(x), storage.mode(x[0, 1]))
+  checkEquals(storage.mode(x), storage.mode(x[0, c(TRUE, FALSE)]))
+
+  # numeric
+  x <- .xts(matrix(numeric(0), 0), integer(0))
+  checkEquals(storage.mode(x), storage.mode(x[0, ]))
+  checkEquals(storage.mode(x), storage.mode(x[0, 0]))
+  checkEquals(storage.mode(x), storage.mode(x[0, FALSE]))
+
+  x <- .xts(matrix(numeric(0), 0, 2), integer(0))
+  checkEquals(storage.mode(x), storage.mode(x[0,]))
+  checkEquals(storage.mode(x), storage.mode(x[0, 1]))
+  checkEquals(storage.mode(x), storage.mode(x[0, c(TRUE, FALSE)]))
+}

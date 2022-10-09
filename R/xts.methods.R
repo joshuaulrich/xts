@@ -193,7 +193,9 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
         i <- seq_len(nr)
 
       if(length(x)==0) {
-        x.tmp <- .xts(rep(NA, length(i)), .index(x)[i], tclass(x), tzone(x),
+        cdata <- rep(NA, length(i))
+        storage.mode(cdata) <- storage.mode(x)
+        x.tmp <- .xts(cdata, .index(x)[i], tclass(x), tzone(x),
                       dimnames = list(NULL, colnames(x)))
         return(x.tmp)
       } else {
