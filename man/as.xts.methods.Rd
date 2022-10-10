@@ -42,8 +42,8 @@ as.fts.xts(x)
   \item{recordIDs}{see timeSeries help}
   \item{title}{see timeSeries help}
   \item{documentation}{see timeSeries help}
-  \item{order.by}{see zoo help}
-  \item{frequency}{see zoo help}
+  \item{order.by}{see \link[zoo]{zoo} help }
+  \item{frequency}{see \link[zoo]{zoo} help }
   \item{\dots}{ additional parameters or attributes }
   \item{.RECLASS}{ should conversion be reversible? }
 }
@@ -60,7 +60,7 @@ to be added to the new object. A special print.xts method
 will assure that the attributes are hidden from view, but will
 be available via \R's standard \code{attr} function.
 
-If .RECLASS=TRUE, the returned object will preserve all relevant attribute/slot
+If \code{.RECLASS=TRUE}, the returned object will preserve all relevant attribute/slot
 data within itself, allowing for temporary conversion to use
 zoo and xts compatible methods. A call to \code{reclass}
 returns the object to its original class, with all original
@@ -77,7 +77,7 @@ as there would be no available storage slot/attribute.
 An S3 object of class \code{xts}.
 }
 \author{ Jeffrey A. Ryan }
-\seealso{ \code{\link{xts}} }
+\seealso{ \code{\link{xts}}, \code{\link[zoo]{zoo}} }
 \examples{
   \dontrun{
   # timeSeries
