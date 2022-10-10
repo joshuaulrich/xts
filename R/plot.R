@@ -130,6 +130,7 @@ plot.xts <- function(x,
                      lwd=2,
                      lend=1,
                      main=deparse(substitute(x)),
+                     main.timespan=TRUE,
                      observation.based=FALSE,
                      ylim=NULL,
                      yaxis.same=TRUE,
@@ -373,10 +374,12 @@ plot.xts <- function(x,
   }
   
   # add main title and date range of data
-  text.exp <- c(expression(text(xlim[1],0.5,main,font=2,col=theme$labels,offset=0,cex=1.1,pos=4)),
-                expression(text(xlim[2],0.5,
-                                paste(start(xdata[xsubset]),end(xdata[xsubset]),sep=" / "),
-                                col=theme$labels,adj=c(0,0),pos=2)))
+  text.exp <- expression(text(xlim[1],0.5,main,font=2,col=theme$labels,offset=0,cex=1.1,pos=4))
+  if(isTRUE(main.timespan)) {
+    text.exp <- c(text.exp, expression(text(xlim[2],0.5,.makeISO8601(xdata[xsubset]),
+                                            col=theme$labels,adj=c(0,0),pos=2)))
+  }
+
   cs$add(text.exp, env=cs$Env, expr=TRUE)
   
   cs$set_frame(2)
