@@ -510,3 +510,12 @@ test.tzone_after_rel_op <- function() {
   checkIdentical(tzone(ts2 == 0), tstz)
   checkIdentical(tzone(ts2 != 0), tstz)
 }
+
+test.Ops.xts_does_not_change_column_names <- function() {
+  x <- .xts(1:3, 1:3, dimnames = list(NULL, c("-1")))
+  z <- as.zoo(x)
+  checkEquals(names(x + x[-1,]), names(z + z[-1,]),
+              "Ops.xts() doesn't change column names when merge() is called")
+  checkEquals(names(x + x), names(z + z),
+              "Ops.xts() doesn't change column names when indexes are equal")
+}
