@@ -27,19 +27,20 @@
 SEXP tryXts (SEXP x)
 {
   if( !Rf_asInteger(isXts(x)) ) {
+    int P = 0;
     SEXP s, t, result, env, str_xts;
-    PROTECT(s = t = allocList(2));
+    PROTECT(s = t = allocList(2)); P++;
     SET_TYPEOF(s, LANGSXP);
     SETCAR(t, install("try.xts")); t = CDR(t);
     SETCAR(t, x); t=CDR(t);
-    PROTECT(str_xts = mkString("xts"));
-    PROTECT(env = R_FindNamespace(str_xts));
-    PROTECT(result = eval(s, env));
+    PROTECT(str_xts = mkString("xts")); P++;
+    PROTECT(env = R_FindNamespace(str_xts)); P++;
+    PROTECT(result = eval(s, env)); P++;
     if( !Rf_asInteger(isXts(result)) ) {
-      UNPROTECT(2);
+      UNPROTECT(P);
       error("rbind.xts requires xtsible data");
     }
-    UNPROTECT(2);
+    UNPROTECT(P);
     return result;
   }
   return x;
