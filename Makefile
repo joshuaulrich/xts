@@ -19,8 +19,9 @@ R_LIB ?= $(shell Rscript -e 'cat(.libPaths()[1L])')
 PKG_INST_FILE = $(R_LIB)/${PKG_NAME}/DESCRIPTION
 
 PKG_R_FILES := $(wildcard ${PKG_PATH}/R/*.R)
+PKG_RD_FILES := $(wildcard ${PKG_PATH}/man/*.Rd)
 PKG_SRC_FILES := $(wildcard ${PKG_PATH}/src/*)
-PKG_ALL_FILES := ${PKG_PATH}/DESCRIPTION ${PKG_PATH}/NAMESPACE $(PKG_R_FILES) $(PKG_SRC_FILES)
+PKG_ALL_FILES := ${PKG_PATH}/DESCRIPTION ${PKG_PATH}/NAMESPACE $(PKG_R_FILES) $(PKG_RD_FILES) $(PKG_SRC_FILES)
 
 HTML_FILES := $(patsubst %.Rmd, %.html, $(wildcard *.Rmd)) \
               $(patsubst %.md, %.html, $(wildcard *.md))
