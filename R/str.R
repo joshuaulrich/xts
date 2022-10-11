@@ -20,23 +20,92 @@
 
 
 `str.xts` <-
-function(object,...) {
-  if(length(object) == 0) {
-    cat("An 'xts' object of zero-width\n")
-  } else {
-  cat(paste("An",sQuote('xts'),"object on",
-      #index(first(object)),"to",index(last(object)),
-      .makeISO8601(object),
-      "containing:\n"))
-  cat(paste("  Data:"))
-  str(coredata(object))
-  cat(paste("  Indexed by objects of class: "))
-  cat(paste('[',paste(tclass(object),collapse=','),'] ',sep=''))
-  cat(paste("TZ: ", tzone(object), "\n", sep=""))
-  if(!is.null(CLASS(object)))
-    cat(paste("  Original class: '",CLASS(object),"' ",sep=""),"\n")
-  cat(paste("  xts Attributes: "),"\n")
-  str(xtsAttributes(object),...)
-  }
-}
+function(object, ..., ncols = 5)
+{
 
+  is.data.empty <- is.null(dim(object)) || sum(dim(object)) == 0
+  is.zero.index <- (length(.index(object)) == 0)
+
+  nr <- NROW(object)
+  nc <- ifelse(is.data.empty, 0, NCOL(object))
+
+  # "zero-length" xts
+  #    * index length == 0, but tclass and tzone are set
+  #    * NROW == 0
+  #    * NCOL >  0 and may have column names
+  # examples:
+  #   str(.xts(1, 1)["1900"])
+  #   str(.xts(cbind(a = 1, b = 2), 1)["1900"])
+  is.zero.length <- (is.zero.index && nr == 0 && !is.data.empty)
+
+  # "zero-width" xts
+  #    * index length > 0
+  #    * NROW == 0
+  #    * NCOL == 0
+  # example:
+  #   str(.xts(, 1:5))
+  is.zero.width <- (!is.zero.index && is.data.empty)
+
+  # "empty" xts
+  #    * index length == 0, but tclass and tzone are set
+  #    * NROW == 0
+  #    * NCOL == 0
+  # example:
+  #   str(.xts(, numeric(0)))
+  #   str(.xts(matrix()[0,0], numeric(0)))
+  is.empty <- (is.zero.index && is.data.empty)
+
+  if (is.empty) {
+    header <- "An empty xts object"
+  } else if (is.zero.length) {
+    header <- "A zero-length xts object"
+  } else {
+    # zero-width and regular xts objects
+    if (is.zero.width) {
+      header <- "A zero-width xts object on"
+    } else {
+      header <- "An xts object on"
+    }
+    header <- paste(header, .makeISO8601(object), "containing:")
+  }
+
+  cat(header, "\n")
+
+  # Data
+  cat(sprintf("  Data:    %s [%d, %d]\n",
+              storage.mode(object), nr, nc))
+
+  # Column names
+  cnames <- colnames(object)
+  if (!is.null(cnames)) {
+
+    if (nc > ncols) {
+      more <- nc - ncols
+      cname.str <- sprintf("%s ... with %d more %s",
+                           paste(cnames[seq_len(ncols)], collapse = ", "),
+                           more,
+                           ifelse(more > 1, "columns", "column"))
+    } else {
+      cname.str <- paste(colnames(object), collapse = ", ")
+    }
+
+    cat(sprintf("  Columns: %s\n", cname.str))
+  }
+
+  # Index
+  cat(sprintf("  Index:   class [%s], TZ [%s]\n",
+              paste(tclass(object), collapse = ","),
+              tzone(object)))
+
+  if (!is.null(CLASS(object))) {
+    cat(sprintf("  Original class: '%s'\n", CLASS(object)))
+  }
+
+  xts.attr <- xtsAttributes(object)
+  if (!is.null(xts.attr)) {
+      cat("  xts Attributes:\n")
+      str(xts.attr, ..., comp.str = "   $ ", no.list = TRUE)
+  }
+
+  invisible(NULL)
+}
