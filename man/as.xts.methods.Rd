@@ -5,10 +5,8 @@
 \alias{as.xts.xts}
 \alias{as.xts.zoo}
 \alias{as.xts.ts}
-\alias{as.xts.fts}
 \alias{as.xts.data.frame}
 \alias{as.xts.matrix}
-\alias{as.fts.xts}
 \title{ Convert Object To And From Class xts }
 \description{
 Conversion S3 methods to coerce data objects of
@@ -31,9 +29,6 @@ losing any attributes of the original format.
 
 \method{as.xts}{matrix}(x, order.by, dateFormat="POSIXct",
     frequency=NULL, ..., .RECLASS=FALSE) 
-
-
-as.fts.xts(x)
 }
 \arguments{
   \item{x}{ data object to convert. See details for supported types }

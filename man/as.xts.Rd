@@ -33,7 +33,6 @@ objects into a uniform format for use within \R.
 
 It is possible with a call to \code{as.xts} to
 convert objects of class \code{timeSeries}, \code{ts}, \code{irts},
-\code{fts},
 \code{matrix}, \code{data.frame}, and \code{zoo}.
 
 \code{xtsible} safely checks whether an object can be converted to

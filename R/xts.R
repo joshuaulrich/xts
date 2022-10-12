@@ -23,7 +23,7 @@
 #   additional methods are in correspondingly named .R files
 #   current conversions include:
 #     timeSeries, its, irts, ts, matrix, data.frame, and zoo
-#     MISSING: fts, tis, fame
+#     MISSING: tis, fame
 #
 #  this file includes the main xts constructor as well as the reclass
 #  function.

@@ -307,12 +307,6 @@ S3method(as.xts,timeSeries)
 # irts (package:tseries) specific methods
 S3method(as.xts,irts)
 
-# fts (package:fts) specific methods
-if (getRversion() >= "3.6.0") {
-  S3method(fts::as.fts, xts)
-}
-S3method(as.xts,fts)
-
 # Date specific methods
 S3method(as.xts,Date)
 

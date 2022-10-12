@@ -11,7 +11,7 @@ Authors@R: c(
 Depends: zoo (>= 1.7-12)
 Imports: methods
 LinkingTo: zoo
-Suggests: timeSeries, timeDate, tseries, chron, fts, tis, RUnit
+Suggests: timeSeries, timeDate, tseries, chron, tis, RUnit
 LazyLoad: yes
 Description: Provide for uniform handling of R's different time-based data classes by extending zoo, maximizing native format information preservation and allowing for user level customization and extension, while simplifying cross-class interoperability.
 License: GPL (>= 2)
