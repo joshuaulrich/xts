@@ -1,6 +1,31 @@
 ################################################################################
 Changed in xts 0.12.2:
 
+o `Ops.xts()` no longer changes column names (via `make.names()`) when the two
+  objects do not have identical indexes. This makes it consistent with
+  `Ops.zoo()`. (#114)
+
+o Subsetting a zero-length xts object now returns an object with the same
+  storage type as the input. It previously always returned a 'logical' xts
+  object. (#376)
+
+o `tclass()` and `tzone()` now return the correct values for zero-length xts
+  objects, instead of the defaults in the `.xts()` constructor. Thanks to Andre
+  Mikulec for the report and suggested patch! (#255)
+
+o `first()` and `last()` now return a zero-length xts object when `n = 0`. They
+  previously returned the entire object. This is consistent with the default
+  `head()` and `tail()` functions, and data.table's `first()` and `last()`
+  functions. Thanks to Ethan B. Smith for the report and patch! (#350)
+
+o `plot.xts()` now has a `yaxis.ticks` argument to control the number of y-axis
+  grid lines, instead of always drawing 5 grid lines. Thanks to Fredrik
+  Wartenberg for the feature request and patch! (#374)
+
+o Subsetting a zero-width xts now returns an object with the same class, tclass,
+  tzone, and xtsAttributes as the input. Thanks to @shikokuchuo for the report!
+  (#359)
+
 o `endpoints()` now always returns last observation. Thanks to GitHub user
   Eluvias for the report. (#300)
 
@@ -12,7 +37,7 @@ o Fix `window()` for yearmon and yearqtr indexes. In xts < 0.11-0, `window.zoo()
   was dispatched when `window()` was called on a xts object because there was no
   `window.xts()` method. `window.zoo()` supports additional types of values for the
   `start` argument, and possibly other features. So this fixes a breaking change
-  in xts >= 0.11-0. Thanks to GitHub user annaymj for the report. (#312)
+  in xts >= 0.11-0. Thanks to @annaymj for the report. (#312)
 
 o Clarify whether `axTicksByTime()` returns index timestamps or locations (e.g.
   1, 2, 3). Thanks to @ggrothendieck for the suggestion and feedback. (#354)
@@ -44,6 +69,9 @@ o Add suffixes to output of `merge.xts()`. The suffixes are consistent with
 
 Changes to plotting functionality
 --------------------------------------------------------------------------------
+
+o You can now omit the data time range from the upper-right portion of a plot
+  by setting `main.timespan = FALSE`. (#247)
 
 o Fix `addEventLines()` when plotted objects have a 'yearmon' index. The ISO-8601
   range string was not created correctly. Thanks to @paessens for the report.
