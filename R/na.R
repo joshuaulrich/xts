@@ -20,7 +20,7 @@
 
 
 na.omit.xts <- function(object, ...) {
-  xx <- .Call('na_omit_xts', object, PACKAGE="xts")
+  xx <- .Call(C_na_omit_xts, object)
   if(length(xx)==0)
     return(structure(xts(,),.Dim=c(0,NCOL(object))))
   naa <- attr(xx,'na.action')
@@ -41,7 +41,7 @@ na.omit.xts <- function(object, ...) {
 }
 
 na.exclude.xts <- function(object, ...) {
-  xx <- .Call('na_omit_xts', object, PACKAGE="xts")
+  xx <- .Call(C_na_omit_xts, object)
   naa <- attr(xx,'na.action')
   if(length(naa) == 0)
     return(xx)
@@ -99,7 +99,7 @@ na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE, maxgap=Inf, ...) {
       return(object)
     if(hasArg("x") || hasArg("xout"))
       return(NextMethod())
-    x <- .Call("na_locf", object, fromLast, maxgap, Inf, PACKAGE="xts")
+    x <- .Call(C_na_locf, object, fromLast, maxgap, Inf)
     if(na.rm) {
       return(structure(na.omit(x),na.action=NULL))
     } else x

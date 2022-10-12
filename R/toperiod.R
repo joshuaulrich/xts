@@ -67,13 +67,13 @@ to.period <- to_period <- function(x, period='months', k=1, indexAt=NULL, name=N
   if(is.null(name))
     cnames <- NULL
 
-  xx <- .Call("toPeriod", 
+  xx <- .Call(C_toPeriod,
               x, 
               endpoints(x, period, k), 
               has.Vo(x), has.Vo(x,which=TRUE),
               has.Ad(x) && is.OHLC(x),
               index_at, 
-              cnames, PACKAGE='xts')
+              cnames)
   }
 
   if(!is.null(indexAt)) {
@@ -269,13 +269,13 @@ function(x, by, k=1, name=NULL, OHLC=TRUE, ...) {
   if (ep[length(ep)] != nrow(bins)) ep <- c(ep, nrow(bins))
   # end to.frequency-specific code
 
-  xx <- .Call("toPeriod", 
+  xx <- .Call(C_toPeriod,
               x, 
               ep,
               has.Vo(x), has.Vo(x,which=TRUE),
               has.Ad(x) && is.OHLC(x),
               FALSE,
-              cnames, PACKAGE='xts')
+              cnames)
 
   reclass(xx,xo)
 }

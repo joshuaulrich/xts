@@ -25,11 +25,11 @@
 `dimnames.xts` <-
 function(x) {
   #list(NULL, colnames(unclass(x)))
-  .Call("dimnames_zoo",x,PACKAGE="xts");
+  .Call(C_dimnames_zoo,x);
   #list(as.character(index(x)), colnames(unclass(x)))
 }
 
 `dimnames<-.xts` <-
 function(x, value) {
-  .Call("xts_set_dimnames", x, value, PACKAGE = "xts")
+  .Call(C_xts_set_dimnames, x, value)
 }

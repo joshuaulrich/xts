@@ -28,22 +28,41 @@
 static const
 R_CallMethodDef callMethods[] = {
   {"add_class",             (DL_FUNC) &add_class,               2},
-  {"coredata",              (DL_FUNC) &coredata,                2},
   {"coredata_xts",          (DL_FUNC) &coredata_xts,            1},
   {"do_xtsAttributes",      (DL_FUNC) &do_xtsAttributes,        1},
-  {"do_xtsCoreAttributes",  (DL_FUNC) &do_xtsCoreAttributes,    1},
+  {"add_xtsCoreAttributes", (DL_FUNC) &add_xtsCoreAttributes,   6},
+  {"lag_xts",               (DL_FUNC) &lag_xts,                 3},
   {"lagXts",                (DL_FUNC) &lagXts,                  3},
   {"do_is_ordered",         (DL_FUNC) &do_is_ordered,           3},
   {"isXts",                 (DL_FUNC) &isXts,                   1},
   {"tryXts",                (DL_FUNC) &tryXts,                  1},
+  {"na_locf",               (DL_FUNC) &na_locf,                 4},
+  {"na_omit_xts",           (DL_FUNC) &na_omit_xts,             1},
   {"do_rbind_xts",          (DL_FUNC) &do_rbind_xts,            3},
-  {"do_subset_xts",         (DL_FUNC) &do_subset_xts,           4},
+  {"_do_subset_xts",        (DL_FUNC) &_do_subset_xts,          4},
+  {"do_merge_xts",          (DL_FUNC) &do_merge_xts,           11},
   {"naCheck",               (DL_FUNC) &naCheck,                 2},
+  {"make_index_unique",     (DL_FUNC) &make_index_unique,       2},
+  {"make_unique",           (DL_FUNC) &make_unique,             2},
+  {"any_negative",          (DL_FUNC) &any_negative,            1},
+  {"extract_col",           (DL_FUNC) &extract_col,             5},
+  {"binsearch",             (DL_FUNC) &binsearch,               3},
+  {"fill_window_dups_rev",  (DL_FUNC) &fill_window_dups_rev,    2},
+  {"non_duplicates",        (DL_FUNC) &non_duplicates,          2},
+  {"roll_min",              (DL_FUNC) &roll_min,                2},
+  {"roll_max",              (DL_FUNC) &roll_max,                2},
+  {"roll_sum",              (DL_FUNC) &roll_sum,                2},
+  {"roll_cov",              (DL_FUNC) &roll_cov,                4},
+  {"toPeriod",              (DL_FUNC) &toPeriod,                7},
+  {"xts_period_apply",      (DL_FUNC) &xts_period_apply,        4},
   {"xts_period_min",        (DL_FUNC) &xts_period_min,          2},
   {"xts_period_max",        (DL_FUNC) &xts_period_max,          2},
   {"xts_period_sum",        (DL_FUNC) &xts_period_sum,          2},
   {"xts_period_prod",       (DL_FUNC) &xts_period_prod,         2},
+  {"endpoints",             (DL_FUNC) &endpoints,               4},
+  {"dimnames_zoo",          (DL_FUNC) &dimnames_zoo,            1},
   {"xts_set_dimnames",      (DL_FUNC) &xts_set_dimnames,        2},
+  {"do_startofyear",        (DL_FUNC) &do_startofyear,          3},
   {NULL,                    NULL,                               0}
 };
 
@@ -93,7 +112,8 @@ void R_init_xts(DllInfo *info)
                      NULL,
                      externalMethods);
 
-  R_useDynamicSymbols(info, TRUE);
+  R_useDynamicSymbols(info, FALSE);
+  R_forceSymbols(info, TRUE);
 
   /* used by external packages linking to internal xts code from C */
   R_RegisterCCallable("xts","do_is_ordered",(DL_FUNC) &do_is_ordered);

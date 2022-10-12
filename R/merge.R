@@ -75,7 +75,7 @@ merge.xts <- function(...,
     syms <- as.character(suffixes)
   }
 
-  .times <- .External('number_of_cols', ..., PACKAGE="xts")
+  .times <- .External(C_number_of_cols, ...)
   # moved call to make.names inside of mergeXts/do_merge_xts
   symnames <- rep(syms, .times)
   suffixes <- rep(suffixes, .times)
@@ -120,7 +120,7 @@ merge.xts <- function(...,
   if( length(retside) != 2 ) 
     retside <- rep(retside[1], 2)
 
-  x <- .External('mergeXts',
+  x <- .External(C_mergeXts,
             all=all[1:2],
             fill=fill,
             setclass=setclass,
@@ -130,7 +130,7 @@ merge.xts <- function(...,
             env=new.env(),
             tzone=tzone,
             check.names=check.names,
-            ..., PACKAGE="xts")
+            ...)
   if(!is.logical(retclass) && retclass != 'xts') {
     asFun <- paste("as", retclass, sep=".")
     if(!exists(asFun)) {

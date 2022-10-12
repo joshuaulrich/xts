@@ -188,8 +188,8 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   # xts' tzone must only contain one element (POSIXlt tzone has 3)
   tzone <- tzone[1L]
 
-  xx <- .Call("add_xtsCoreAttributes", x, index, tzone, tclass,
-              c('xts','zoo'), tformat, PACKAGE='xts')
+  xx <- .Call(C_add_xtsCoreAttributes, x, index, tzone, tclass,
+              c('xts','zoo'), tformat)
 
   # ensure there are no rownames
   rn <- dimnames(xx)[[1]]

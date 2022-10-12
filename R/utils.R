@@ -20,8 +20,8 @@
 
 naCheck <- function(x, n=0) {
   if(is.null(dim(x)[2])) {
-    NAs <- .Call("naCheck", x, TRUE, PACKAGE='xts')
-  } else NAs <- .Call("naCheck", rowSums(x), TRUE, PACKAGE='xts')
+    NAs <- .Call(C_naCheck, x, TRUE)
+  } else NAs <- .Call(C_naCheck, rowSums(x), TRUE)
   ret <- list()
   ret$NAs <- NAs
   ret$nonNA <- (1+NAs):NROW(x)

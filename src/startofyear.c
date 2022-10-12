@@ -19,16 +19,28 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <R.h>
+#include <Rinternals.h>
 
-
-void do_startofyear (int *from, int *to, int *fromto, int *origin) {
+SEXP do_startofyear (SEXP _from, SEXP _to, SEXP _origin)
+{
 // do_startofyear {{{
-  int i;
-  int nyear[1] = { (to[0] - from[0] + 1) };
+  int i, P = 0;
+
+  int from = INTEGER(_from)[0];
+  int to = INTEGER(_to)[0];
+  int origin = INTEGER(_origin)[0];
+
+  // _fromto is a vector of length (from:to)
+  SEXP _fromto = PROTECT(allocVector(INTSXP, to-from+1)); P++;
+  int *fromto = INTEGER(_fromto);
+
+  int nyear[1] = { (to - from + 1) };
   int leap[nyear[0]];
 
+
   // generate sequence of dates to work with
-  fromto[0] = from[0];
+  fromto[0] = from;
   for(i=1; i < nyear[0]; i++) {
     fromto[i] = fromto[i-1] + 1;
   } 
@@ -54,7 +66,7 @@ void do_startofyear (int *from, int *to, int *fromto, int *origin) {
     and from origin (positive)
   */
 
-  int days_before_origin = origin[0] - from[0];
+  int days_before_origin = origin - from;
   //int days_after_origin  = nyear[0] - days_before_origin - 1; //why is this here?
 
   int tmp=0;
@@ -76,5 +88,8 @@ void do_startofyear (int *from, int *to, int *fromto, int *origin) {
     fromto[ i ] = fromto[ i-1 ];
 
   fromto[ days_before_origin ] = 0;
+
+  UNPROTECT(P);
+  return _fromto;
 
 } //}}}

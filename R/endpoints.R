@@ -70,38 +70,38 @@ function(x,on='months',k=1) {
     },
     "months" = {
       ixmon <- posixltindex$year * 100L + 190000L + posixltindex$mon
-      ep <- .Call("endpoints", ixmon, 1L, 1L, addlast, PACKAGE='xts')
+      ep <- .Call(C_endpoints, ixmon, 1L, 1L, addlast)
       if(k > 1) {
         ep <- include_last(ep, k)
       }
       ep
     },
     "weeks" = {
-      .Call("endpoints", .index(x)+3L*86400L, 604800L, k, addlast, PACKAGE='xts')
+      .Call(C_endpoints, .index(x)+3L*86400L, 604800L, k, addlast)
     },
     "days" = {
       ixyday <- posixltindex$year * 1000L + 1900000L + posixltindex$yday
-      .Call("endpoints", ixyday, 1L, k, addlast, PACKAGE='xts')
+      .Call(C_endpoints, ixyday, 1L, k, addlast)
     },
     # non-date slicing should be indifferent to TZ and DST, so use math instead
     "hours" = {
-      .Call("endpoints", .index(x), 3600L, k, addlast, PACKAGE='xts')
+      .Call(C_endpoints, .index(x), 3600L, k, addlast)
     },
     "minutes" = {
-      .Call("endpoints", .index(x), 60L, k, addlast, PACKAGE='xts')
+      .Call(C_endpoints, .index(x), 60L, k, addlast)
     },
     "seconds" = {
-      .Call("endpoints", .index(x), 1L, k, addlast, PACKAGE='xts')
+      .Call(C_endpoints, .index(x), 1L, k, addlast)
     },
     "ms" = ,
     "milliseconds" = {
       sec2ms <- .index(x) * 1e3
-      .Call("endpoints", sec2ms, 1L, k, addlast, PACKAGE='xts')
+      .Call(C_endpoints, sec2ms, 1L, k, addlast)
     },
     "us" = ,
     "microseconds" = {
       sec2us <- .index(x) * 1e6
-      .Call("endpoints", sec2us, 1L, k, addlast, PACKAGE='xts')
+      .Call(C_endpoints, sec2us, 1L, k, addlast)
     }
   )
 }

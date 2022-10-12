@@ -128,7 +128,7 @@ rollsum.xts <- function (x, k, fill=if(na.pad) NA, na.pad=TRUE,
   #  "center" = { floor(k/2) },
   #  "right" = { 0 })
   #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
-  res <- .Call("roll_sum", x, k, PACKAGE="xts")
+  res <- .Call(C_roll_sum, x, k)
   res
 }
 
@@ -155,7 +155,7 @@ rollmax.xts <- function (x, k, fill=if(na.pad) NA, na.pad=TRUE,
   #  "center" = { floor(k/2) },
   #  "right" = { 0 })
   #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
-  res <- .Call("roll_max", x, k, PACKAGE="xts")
+  res <- .Call(C_roll_max, x, k)
   res
 }
 
@@ -177,7 +177,7 @@ rollmin.xts <- function (x, k, fill=if(na.pad) NA, na.pad=TRUE,
   #  "center" = { floor(k/2) },
   #  "right" = { 0 })
   #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
-  res <- .Call("roll_min", x, k, PACKAGE="xts")
+  res <- .Call(C_roll_min, x, k)
   res
 }
 
@@ -200,7 +200,7 @@ rollcov.xts <- function (x, y, k, fill=if(na.pad) NA, na.pad=TRUE,
   #  "center" = { floor(k/2) },
   #  "right" = { 0 })
   #ix <- index(x)[seq((k-n1), (nrow(x)-n1), 1)]
-  res <- .Call("roll_cov", x, y, k, sample, PACKAGE="xts")
+  res <- .Call(C_roll_cov, x, y, k, sample)
   res
 }
 

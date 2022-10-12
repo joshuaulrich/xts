@@ -1,5 +1,5 @@
 # load symbol table
-useDynLib(xts)
+useDynLib(xts, .registration = TRUE, .fixes = "C_")
 
 # non-base package imports
 importFrom(stats,

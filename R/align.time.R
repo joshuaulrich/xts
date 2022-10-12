@@ -64,24 +64,24 @@ make.index.unique <- make.time.unique <- function(x, eps=0.000001, drop=FALSE, f
 
 make.index.unique.xts <- function(x, eps=0.000001, drop=FALSE, fromLast=FALSE, ...) {
   if( !drop) {
-    .Call('make_index_unique', x, eps, PACKAGE="xts")
+    .Call(C_make_index_unique, x, eps)
   } else {
-    x[.Call('non_duplicates', .index(x), fromLast, PACKAGE="xts")]
+    x[.Call(C_non_duplicates, .index(x), fromLast)]
   }
 }
 
 make.index.unique.numeric <- function(x, eps=0.000001, drop=FALSE, fromLast=FALSE, ...) {
   if( !drop) {
-    .Call('make_unique', x, eps, PACKAGE="xts")
+    .Call(C_make_unique, x, eps)
   } else {
-    x[.Call('non_duplicates', x, fromLast, PACKAGE="xts")]
+    x[.Call(C_non_duplicates, x, fromLast)]
   }
 }
 
 make.index.unique.POSIXct <- function(x, eps=0.000001, drop=FALSE, fromLast=FALSE, ...) {
   if( !drop) {
-    .Call('make_unique', x, eps, PACKAGE="xts")
+    .Call(C_make_unique, x, eps)
   } else {
-    x[.Call('non_duplicates', x, fromLast, PACKAGE="xts")]
+    x[.Call(C_non_duplicates, x, fromLast)]
   }
 }

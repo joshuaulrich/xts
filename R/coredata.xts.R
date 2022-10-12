@@ -58,7 +58,7 @@ coredata.xts <- function(x, fmt=FALSE, ...) {
     attr(xx, "tzone") <- NULL
     return(xx)
   } else 
-  return(.Call("coredata_xts", x, PACKAGE="xts"))
+  return(.Call(C_coredata_xts, x))
 
 }
 

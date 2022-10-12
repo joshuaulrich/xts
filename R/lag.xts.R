@@ -77,7 +77,7 @@ lag.xts <- function(x, k=1, na.pad=TRUE, ...) {
       names(k) <- paste("lag",k,sep="")
     return(do.call("merge.xts", lapply(k, lag.xts, x=x, na.pad=na.pad,...)))
   }
-  .Call('lag_xts', x, k, na.pad, PACKAGE='xts')
+  .Call(C_lag_xts, x, k, na.pad)
 }
 
 lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
@@ -86,7 +86,7 @@ lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
       names(k) <- paste("lag",k,sep="")
     return(do.call("merge.xts", lapply(k, lag.xts, x=x, na.pad=na.pad,...)))
   }
-  .Call('lag_xts', x, k, na.pad, PACKAGE='xts')
+  .Call(C_lag_xts, x, k, na.pad)
 }
 
 diff.xts <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad=TRUE, ...)

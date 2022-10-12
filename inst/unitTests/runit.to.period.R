@@ -5,8 +5,8 @@ test.to.frequency_includes_first_group <- function() {
   x$Volume <- 1
   
   tf <- xts:::to.frequency(x, x$Volume, 90, name=NULL)
-  tp <- .Call("toPeriod", x, c(0L, 90L, 180L), TRUE, 5L, FALSE, FALSE,
-              c("Open", "High", "Low", "Close", "Volume") , PACKAGE="xts")
+  tp <- .Call(xts:::C_toPeriod, x, c(0L, 90L, 180L), TRUE, 5L, FALSE, FALSE,
+              c("Open", "High", "Low", "Close", "Volume"))
 
   checkIdentical(tf, tp)
 }

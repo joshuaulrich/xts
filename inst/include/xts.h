@@ -59,17 +59,20 @@ extern SEXP(*zoo_coredata)(SEXP,SEXP);
 FUNCTIONS
 */
 SEXP do_xtsAttributes(SEXP x);              // xtsAttributes i.e. user-added attributes
+SEXP add_xtsCoreAttributes(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 SEXP do_xtsCoreAttributes(SEXP x);          /* xtsCoreAttributes xts-specific attributes
                                                CLASS, .indexFORMAT, tclass, & class */
 SEXP coredata(SEXP x, SEXP copyAttr);
 SEXP coredata_xts(SEXP x);
 SEXP add_class(SEXP x, SEXP klass);
 SEXP lagXts(SEXP x, SEXP k, SEXP pad);
+SEXP lag_xts(SEXP x, SEXP k, SEXP pad);
 SEXP do_is_ordered(SEXP x, SEXP increasing, SEXP strictly);
 SEXP mergeXts(SEXP args);
 SEXP do_rbind_xts(SEXP x, SEXP y, SEXP dup);
 SEXP rbindXts(SEXP args);
 SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop);
+SEXP _do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop);
 SEXP number_of_cols(SEXP args);
 SEXP naCheck(SEXP x, SEXP check);
 
@@ -82,12 +85,24 @@ SEXP na_omit_xts(SEXP x);
 SEXP na_locf(SEXP x, SEXP fromlast, SEXP maxgap, SEXP limit);
 
 SEXP tryXts(SEXP x);
+SEXP binsearch(SEXP, SEXP, SEXP);
+SEXP any_negative(SEXP);
+SEXP fill_window_dups_rev(SEXP data, SEXP index);
+SEXP non_duplicates(SEXP data, SEXP from_last);
 
+SEXP toPeriod(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+SEXP xts_period_apply(SEXP data, SEXP index, SEXP function, SEXP env);
 SEXP xts_period_min(SEXP data, SEXP index);
 SEXP xts_period_max(SEXP data, SEXP index);
 SEXP xts_period_sum(SEXP data, SEXP index);
 SEXP xts_period_prod(SEXP data, SEXP index);
 
+SEXP roll_min(SEXP x, SEXP n);
+SEXP roll_max(SEXP x, SEXP n);
+SEXP roll_sum(SEXP x, SEXP n);
+SEXP roll_cov(SEXP x, SEXP n, SEXP sample, SEXP);
+
+SEXP dimnames_zoo(SEXP x);
 SEXP xts_set_dimnames(SEXP x, SEXP value);
 
 
@@ -98,6 +113,8 @@ void copy_xtsCoreAttributes(SEXP x, SEXP y);// internal only
 SEXP isXts(SEXP x);                         // is.xts analogue
 int firstNonNA(SEXP x);
 SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_);
+SEXP do_startofyear(SEXP from, SEXP to, SEXP origin);
+
 #endif /* _XTS */
 
 #ifdef __cplusplus

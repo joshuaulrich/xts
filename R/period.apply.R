@@ -117,7 +117,7 @@ period_apply <- function(x, INDEX, FUN, ...) {
     INDEX <- c(INDEX, NROW(x))
   }
 
-  pl <- .Call("xts_period_apply", x, INDEX, fun, e, PACKAGE = "xts")
+  pl <- .Call(C_xts_period_apply, x, INDEX, fun, e)
 
   .xts(do.call(rbind, pl), .index(x)[INDEX], tclass = tclass(x), tzone = tzone(x))
 }

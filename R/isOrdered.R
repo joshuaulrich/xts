@@ -27,8 +27,8 @@
   if(!is.numeric(x))
     x = as.numeric(x)
 
-  .Call('do_is_ordered', 
+  .Call(C_do_is_ordered,
         x = x,
         increasing = as.logical(increasing),
-        strictly   = as.logical(strictly), PACKAGE='xts')
+        strictly   = as.logical(strictly))
 }

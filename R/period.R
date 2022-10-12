@@ -44,7 +44,7 @@ function(x,INDEX) {
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
 
   xx <- as.double(x)
-  xa <- .Call("xts_period_sum", xx, ep, PACKAGE = "xts")
+  xa <- .Call(C_xts_period_sum, xx, ep)
 
   if(timeBased(index(x))) {
     tz <- xts(xa, index(x)[ep[-1]])
@@ -62,7 +62,7 @@ function(x,INDEX) {
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
 
   xx <- as.double(x)
-  xa <- .Call("xts_period_prod", xx, ep, PACKAGE = "xts")
+  xa <- .Call(C_xts_period_prod, xx, ep)
 
   if(timeBased(index(x))) {
     tz <- xts(xa, index(x)[ep[-1]])
@@ -80,7 +80,7 @@ function(x,INDEX) {
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
 
   xx <- as.double(x)
-  xa <- .Call("xts_period_max", xx, ep, PACKAGE = "xts")
+  xa <- .Call(C_xts_period_max, xx, ep)
 
   if(timeBased(index(x))) {
     tz <- xts(xa, index(x)[ep[-1]])
@@ -98,7 +98,7 @@ function(x,INDEX) {
   if(ep[length(ep)] != NROW(x)) ep <- c(ep,NROW(x))
 
   xx <- as.double(x)
-  xa <- .Call("xts_period_min", xx, ep, PACKAGE = "xts")
+  xa <- .Call(C_xts_period_min, xx, ep)
 
   if(timeBased(index(x))) {
     tz <- xts(xa, index(x)[ep[-1]])
