@@ -271,6 +271,11 @@ S3method(cummax, xts)
 #S3method(lagts,xts)
 S3method(rollapply, xts)
 
+export(rowSums)
+S3method(rowSums, xts)
+export(rowMeans)
+S3method(rowMeans, xts)
+
 # list specific methods
 S3method(as.list,xts)
 
