@@ -104,6 +104,11 @@ function(x=NULL,
       attr(attr(x, "index"), "tformat") <- eval.parent(ctor.call$.indexFORMAT)
     }
   }
+  if(hasArg("tformat")) {
+    attr(attr(x, "index"), "tformat") <- eval.parent(ctor.call$tformat)
+    # tformat will be an attr on 'x' via '...' in structure()
+    attr(x, "tformat") <- NULL
+  }
   if(hasArg(".indexCLASS")) {
     warning(sQuote(".indexCLASS"), " is deprecated, use tclass instead.")
     if(missing("tclass")) {
@@ -226,6 +231,9 @@ function(x, match.to, error=FALSE, ...) {
     }
     attr(x, ".CLASS") <- CLASS(match.to)
     xtsAttributes(x) <- xtsAttributes(match.to)
+    tclass(x) <- tclass(match.to)
+    tformat(x) <- tformat(match.to)
+    tzone(x) <- tzone(match.to)
   }
   oldCLASS <- CLASS(x)
   # should this be is.null(oldCLASS)?

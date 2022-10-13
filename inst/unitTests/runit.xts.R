@@ -106,6 +106,15 @@ test.xts_ctor_warns_for_indexFORMAT_arg <- function() {
   checkException(x <- .xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"))
 }
 
+test.xts_and.xts_ctors_add_tformat <- function() {
+  tf <- "%m/%d/%Y"
+  x <- xts(1:3, .Date(1:3), tformat = tf)
+  y <- .xts(1:3, .Date(1:3), tformat = tf)
+
+  checkIdentical(tf, tformat(x))
+  checkIdentical(tf, tformat(y))
+}
+
 # .xts()
 test..xts_dimnames_in_dots <- function() {
   x <- .xts(1:5, 1:5, dimnames = list(NULL, "x"))
