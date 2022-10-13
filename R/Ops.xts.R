@@ -22,7 +22,20 @@
 `Ops.xts` <-
 function(e1, e2)
 {
-  CLASS <- .Class
+  # determine and output class
+  # use 'e1' first because e2 is missing for unary +/-/!
+  if(inherits(e1, "xts")) {
+    # e1 could be a derived class; use its class for output
+    # NOTE: we want the output to be an xts object even if e2 is a derived
+    # class, because Ops.xts() might not create an appropriate derived class
+    # object
+    out_class <- class(e1)
+  } else {
+    # if 'e1' isn't xts, then e2 must be xts or a derived class, otherwise
+    # this method wouldn't have been called
+    out_class <- class(e2)
+  }
+
   e <- if (missing(e2)) {
       .Class <- "matrix"
       NextMethod(.Generic)
@@ -43,8 +56,9 @@ function(e1, e2)
       NextMethod(.Generic)
     }
   }
+  # These return an object the same class as input(s); others return a logical object
   if(.Generic %in% c("+","-","*","/","^","%%","%/%")) {
-    e <- .Call(C_add_class, e, CLASS)
+    e <- .Call(C_add_class, e, out_class)
   }
   if(length(e)==0) {
     if(is.xts(e1)) {

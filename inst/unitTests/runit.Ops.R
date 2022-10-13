@@ -519,3 +519,35 @@ test.Ops.xts_does_not_change_column_names <- function() {
   checkEquals(names(x + x), names(z + z),
               "Ops.xts() doesn't change column names when indexes are equal")
 }
+
+test.Ops.xts_returns_derived_class <- function() {
+  st <- Sys.time()
+  x1 <- xts(1, st)
+  x2 <- xts(2, st)
+  x3 <- xts(3, st)  # regular xts object
+
+  # derived class objects
+  klass <- c("foo", "xts", "zoo")
+  class(x1) <- klass
+  class(x2) <- klass
+
+  checkIdentical(klass, class(x1 + x2), "Ops.xts('foo', 'foo') returns derived class")
+  checkIdentical(klass, class(x2 + x1), "Ops.xts('foo', 'foo') returns derived class")
+  checkIdentical(klass, class(x1 + x3), "Ops.xts('foo', 'xts') returns derived class")
+  checkIdentical(class(x3), class(x3 + x1), "Ops.xts('xts', 'foo') returns xts class")
+}
+
+test.Ops.xts_unary <- function() {
+  xpos <- xts(1, .Date(1))
+  xneg <- xts(-1, .Date(1))
+  lt <- xts(TRUE, .Date(1))
+  lf <- xts(FALSE, .Date(1))
+
+  checkIdentical(xpos, +xpos)
+  checkIdentical(xneg, +xneg)
+  checkIdentical(xneg, -xpos)
+  checkIdentical(xpos, -xneg)
+
+  checkIdentical(lf, !lt)
+  checkIdentical(lt, !lf)
+}
