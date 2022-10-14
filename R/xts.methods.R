@@ -144,10 +144,19 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       i <- which(i) #(1:NROW(x))[rep(i,length.out=NROW(x))]
     } else
     if (is.character(i)) {
-      if(length(i) == 1 && !identical(integer(),grep("^T.*?/T",i[1]))) {
-        # is i of the format T/T?
+      time.of.day.pattern <- "(^/T)|(^T.*?/T)|(^T.*/$)"
+      if (length(i) == 1 && !identical(integer(), grep(time.of.day.pattern, i[1]))) {
+        # time of day subsetting
         ii <- gsub("T", "", i, fixed = TRUE)
         ii <- strsplit(ii, "/", fixed = TRUE)[[1L]]
+
+        if (length(ii) == 1) {
+          # i is right open ended (T.*/)
+          ii <- c(ii, "23:59:59.999999999")
+        } else if (nchar(ii[1L]) == 0) {
+          # i is left open ended (/T)
+          ii[1L] <- "00:00:00.000000000"
+        } # else i is bounded on both sides (T.*/T.*)
         i <- .subsetTimeOfDay(x, ii[1L], ii[2L])
       } else {
         # enables subsetting by date style strings

@@ -106,3 +106,11 @@ test.time_of_day_zero_padding <- function() {
   checkException(x["T01:5:5/T01:45"])
   checkException(x["T01:05:5/T01:45"])
 }
+
+test.open_ended_time_of_day <- function(x) {
+  ix <- seq(.POSIXct(0), .POSIXct(86400 * 5), by = "sec")
+  ix <- ix + runif(length(ix))
+  x <- xts::xts(seq_along(ix), ix)
+  checkTrue(all(xts::.indexhour(x["T1800/"]) > 17))
+  checkTrue(all(xts::.indexhour(x["/T0500"]) < 6))
+}
