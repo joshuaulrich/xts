@@ -28,7 +28,7 @@ or \code{POSIX} class, or coercible to such.
 
 The only list item of note is the \code{scale}.
 This is an estimate of the periodicity of the data
-in common terms - e.g. 7 day dialy data is best
+in common terms - e.g. 7 day daily data is best
 described as \sQuote{weekly}, and would be returned as
 such.
 
