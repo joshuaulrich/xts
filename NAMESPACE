@@ -273,8 +273,10 @@ S3method(rollapply, xts)
 
 export(rowSums)
 S3method(rowSums, xts)
+S3method(rowSums, default)
 export(rowMeans)
 S3method(rowMeans, xts)
+S3method(rowMeans, default)
 
 # list specific methods
 S3method(as.list,xts)
