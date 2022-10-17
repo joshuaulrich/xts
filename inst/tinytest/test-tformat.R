@@ -14,47 +14,35 @@ structure(1:5, .Dim = c(5L, 1L),
           .indexFORMAT = "%Y-%m-%d %H:%M:%S",
           class = c("xts", "zoo"))
 
-test.get_tformat <- function() {
-  checkIdentical(tformat(x), "%Y-%m-%d")
-}
+info_msg <- "test.get_tformat"
+expect_identical(tformat(x), "%Y-%m-%d", info = info_msg)
 
-test.get_indexFORMAT_warns <- function() {
-  op <- options(warn = 2)
-  on.exit(options(warn = op$warn))
-  checkException(indexFormat(x))
-}
+info_msg <- "test.get_indexFORMAT_warns"
+expect_warning(indexFormat(x), info = info_msg)
 
-test.set_indexFORMAT_warns <- function() {
-  op <- options(warn = 2)
-  on.exit(options(warn = op$warn))
-  checkException(indexFormat(x) <- "GMT")
-}
+info_msg <- "test.set_indexFORMAT_warns"
+expect_warning(indexFormat(x) <- "GMT", info = info_msg)
 
-test.set_tformat_drops_xts_indexFORMAT <- function() {
-  y <- x
-  tformat(y) <- "%Y-%m-%d %H:%M"
-  checkIdentical(NULL, attr(y, ".indexFORMAT"))
-}
+info_msg <- "test.set_tformat_drops_xts_indexFORMAT"
+y <- x
+tformat(y) <- "%Y-%m-%d %H:%M"
+expect_identical(NULL, attr(y, ".indexFORMAT"), info = info_msg)
 
-test.set_tformat_changes_index_tformat <- function() {
-  y <- x
-  fmt <- "%Y-%m-%d %H:%M"
-  tformat(y) <- fmt
-  checkIdentical(fmt, attr(attr(y, "index"), "tformat"))
-}
+info_msg <- "test.set_tformat_changes_index_tformat"
+y <- x
+fmt <- "%Y-%m-%d %H:%M"
+tformat(y) <- fmt
+expect_identical(fmt, attr(attr(y, "index"), "tformat"), info = info_msg)
 
-test.get_coredata_drops_xts_indexFORMAT <- function() {
-  y <- coredata(x)
-  checkIdentical(NULL, attr(y, ".indexFORMAT"))
-}
+info_msg <- "test.get_coredata_drops_xts_indexFORMAT"
+y <- coredata(x)
+expect_identical(NULL, attr(y, ".indexFORMAT"), info = info_msg)
 
-test.get_xtsAttributes_excludes_indexFORMAT <- function() {
-  y <- xtsAttributes(x)
-  checkIdentical(NULL, y$.indexFORMAT)
-}
+info_msg <- "test.get_xtsAttributes_excludes_indexFORMAT"
+y <- xtsAttributes(x)
+expect_identical(NULL, y$.indexFORMAT, info = info_msg)
 
-test.set_xtsAttributes_removes_indexFORMAT <- function() {
-  y <- x
-  xtsAttributes(y) <- xtsAttributes(x)
-  checkIdentical(NULL, attr(y, ".indexFORMAT"))
-}
+info_msg <- "test.set_xtsAttributes_removes_indexFORMAT"
+y <- x
+xtsAttributes(y) <- xtsAttributes(x)
+expect_identical(NULL, attr(y, ".indexFORMAT"), info = info_msg)

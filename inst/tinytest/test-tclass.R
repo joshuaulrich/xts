@@ -11,63 +11,49 @@ structure(1:5, .Dim = c(5L, 1L),
           .indexTZ = "UTC", tzone = "UTC",
           class = c("xts", "zoo"))
 
-test.get_tclass  <- function() {
-  checkIdentical(tclass(x), c("POSIXct", "POSIXt"))
-}
+info_msg <- "test.get_tclass"
+expect_identical(tclass(x), c("POSIXct", "POSIXt"), info = info_msg)
 
-test.get_indexClass_warns <- function() {
-  op <- options(warn = 2)
-  on.exit(options(warn = op$warn))
-  checkException(indexClass(x))
-}
+info_msg <- "test.get_indexClass_warns"
+expect_warning(indexClass(x), info = info_msg)
 
-test.set_indexClass_warns <- function() {
-  op <- options(warn = 2)
-  on.exit(options(warn = op$warn))
-  checkException(indexClass(x) <- "Date")
-}
+info_msg <- "test.set_indexClass_warns"
+expect_warning(indexClass(x) <- "Date", info = info_msg)
 
-test.set_tclass_drops_xts_tclass_indexCLASS <- function() {
-  y <- x
-  tclass(y) <- "POSIXct"
-  checkIdentical(NULL, attr(y, "tclass"))
-  checkIdentical(NULL, attr(y, ".indexCLASS"))
-}
+info_msg <- "test.set_tclass_drops_xts_tclass_indexCLASS"
+y <- x
+tclass(y) <- "POSIXct"
+expect_identical(NULL, attr(y, "tclass"), info = info_msg)
+expect_identical(NULL, attr(y, ".indexCLASS"), info = info_msg)
 
-test.set_tclass_changes_index_tclass <- function() {
-  y <- x
-  tclass(y) <- "Date"
-  checkIdentical("Date", attr(attr(y, "index"), "tclass"))
-}
+info_msg <- "test.set_tclass_changes_index_tclass"
+y <- x
+tclass(y) <- "Date"
+expect_identical("Date", attr(attr(y, "index"), "tclass"), info = info_msg)
 
-test.get_coredata_drops_xts_tclass_indexCLASS <- function() {
-  y <- coredata(x)
-  checkIdentical(NULL, attr(y, "tclass"))
-  checkIdentical(NULL, attr(y, ".indexCLASS"))
-}
+info_msg <- "test.get_coredata_drops_xts_tclass_indexCLASS"
+y <- coredata(x)
+expect_identical(NULL, attr(y, "tclass"), info = info_msg)
+expect_identical(NULL, attr(y, ".indexCLASS"), info = info_msg)
 
-test.get_xtsAttributes_excludes_tclass_indexCLASS <- function() {
-  y <- xtsAttributes(x)
-  checkIdentical(NULL, y$tclass)
-  checkIdentical(NULL, y$.indexCLASS)
-}
+info_msg <- "test.get_xtsAttributes_excludes_tclass_indexCLASS"
+y <- xtsAttributes(x)
+expect_identical(NULL, y$tclass, info = info_msg)
+expect_identical(NULL, y$.indexCLASS, info = info_msg)
 
-test.set_xtsAttributes_removes_tclass_indexClass <- function() {
-  y <- x
-  xtsAttributes(y) <- xtsAttributes(x)
-  checkIdentical(NULL, attr(y, "tclass"))
-  checkIdentical(NULL, attr(y, ".indexCLASS"))
-}
+info_msg <- "test.set_xtsAttributes_removes_tclass_indexClass"
+y <- x
+xtsAttributes(y) <- xtsAttributes(x)
+expect_identical(NULL, attr(y, "tclass"), info = info_msg)
+expect_identical(NULL, attr(y, ".indexCLASS"), info = info_msg)
 
-test.set_tclass_default_always_character <- function() {
-  x <- "hello"
-  tclass(x) <- 1
-  checkIdentical(storage.mode(attr(x, "tclass")), "character")
-}
+info_msg <- "test.set_tclass_default_always_character"
+x <- "hello"
+tclass(x) <- 1
+expect_identical(storage.mode(attr(x, "tclass")), "character")
 
-test.tclass_matches_input_for_zero_width_subset <- function() {
-  target <- "Imatclass"
-  x <- .xts(1:10, 1:10, tclass = target)
-  y <- x[,0]
-  checkEquals(target, tclass(y))
-}
+info_msg <- "test.tclass_matches_input_for_zero_width_subset"
+target <- "Imatclass"
+x <- .xts(1:10, 1:10, tclass = target)
+y <- x[,0]
+expect_equal(target, tclass(y))

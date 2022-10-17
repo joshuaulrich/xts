@@ -1,351 +1,321 @@
-# i = missing, j = NA, object has column names
-# See #181
-test.i_missing_j_NA_has_colnames <- function() {
-  iina <- .xts(matrix(NA_integer_, 5, 2), 1:5)
-  idna <- .xts(matrix(NA_integer_, 5, 2), 1.0 * 1:5)
-  dina <- .xts(matrix(NA_real_, 5, 2), 1:5)
-  ddna <- .xts(matrix(NA_real_, 5, 2), 1.0 * 1:5)
-  colnames(iina) <- colnames(idna) <-
-  colnames(dina) <- colnames(ddna) <- rep(NA_character_, 2)
+### i = missing, j = NA, object has column names
+### See #181
+info_msg <- "test.i_missing_j_NA_has_colnames"
+iina <- .xts(matrix(NA_integer_, 5, 2), 1:5)
+idna <- .xts(matrix(NA_integer_, 5, 2), 1.0 * 1:5)
+dina <- .xts(matrix(NA_real_, 5, 2), 1:5)
+ddna <- .xts(matrix(NA_real_, 5, 2), 1.0 * 1:5)
+colnames(iina) <- colnames(idna) <-
+colnames(dina) <- colnames(ddna) <- rep(NA_character_, 2)
 
-  # int data, int index
-  ii <- .xts(matrix(1:10, 5, 2), 1:5)
-  colnames(ii) <- c("a", "b")
-  checkIdentical(ii[, NA], iina)
-  checkIdentical(ii[, 1][, NA], iina[, 1])
+# int data, int index
+ii <- .xts(matrix(1:10, 5, 2), 1:5)
+colnames(ii) <- c("a", "b")
+expect_identical(ii[, NA], iina, info = paste(info_msg, "int data, int index"))
+expect_identical(ii[, 1][, NA], iina[, 1], info = paste(info_msg, "int data, int index"))
 
-  # int data, dbl index
-  id <- .xts(matrix(1:10, 5, 2), 1.0 * 1:5)
-  colnames(id) <- c("a", "b")
-  checkIdentical(id[, NA], idna)
-  checkIdentical(id[, 1][, NA], idna[, 1])
+# int data, dbl index
+id <- .xts(matrix(1:10, 5, 2), 1.0 * 1:5)
+colnames(id) <- c("a", "b")
+expect_identical(id[, NA], idna, info = paste(info_msg, "int data, dbl index"))
+expect_identical(id[, 1][, NA], idna[, 1], info = paste(info_msg, "int data, dbl index"))
 
-  # dbl data, int index
-  di <- .xts(1.0 * matrix(1:10, 5, 2), 1:5)
-  colnames(di) <- c("a", "b")
-  checkIdentical(di[, NA], dina)
-  checkIdentical(di[, 1][, NA], dina[, 1])
+# dbl data, int index
+di <- .xts(1.0 * matrix(1:10, 5, 2), 1:5)
+colnames(di) <- c("a", "b")
+expect_identical(di[, NA], dina, info = paste(info_msg, "dbl data, int index"))
+expect_identical(di[, 1][, NA], dina[, 1], info = paste(info_msg, "dbl data, int index"))
 
-  # dbl data, dbl index
-  dd <- .xts(1.0 * matrix(1:10, 5, 2), 1.0 * 1:5)
-  colnames(dd) <- c("a", "b")
-  checkIdentical(dd[, NA], ddna)
-  checkIdentical(dd[, 1][, NA], ddna[, 1])
-}
+# dbl data, dbl index
+dd <- .xts(1.0 * matrix(1:10, 5, 2), 1.0 * 1:5)
+colnames(dd) <- c("a", "b")
+expect_identical(dd[, NA], ddna, info = paste(info_msg, "dbl data, dbl index"))
+expect_identical(dd[, 1][, NA], ddna[, 1], info = paste(info_msg, "dbl data, dbl index"))
 
-# i = missing, j = NA, object does not have column names
-# See #97
-test.i_missing_j_NA_no_colnames <- function() {
-  iina <- .xts(matrix(NA_integer_, 5, 2), 1:5)
-  idna <- .xts(matrix(NA_integer_, 5, 2), 1.0 * 1:5)
-  dina <- .xts(matrix(NA_real_, 5, 2), 1:5)
-  ddna <- .xts(matrix(NA_real_, 5, 2), 1.0 * 1:5)
 
-  # int data, int index
-  ii <- .xts(matrix(1:10, 5, 2), 1:5)
-  checkIdentical(ii[, NA], iina)
-  checkIdentical(ii[, 1][, NA], iina[, 1])
+### i = missing, j = NA, object does not have column names
+### See #97
+info_msg <- "test.i_missing_j_NA_no_colnames"
+iina <- .xts(matrix(NA_integer_, 5, 2), 1:5)
+idna <- .xts(matrix(NA_integer_, 5, 2), 1.0 * 1:5)
+dina <- .xts(matrix(NA_real_, 5, 2), 1:5)
+ddna <- .xts(matrix(NA_real_, 5, 2), 1.0 * 1:5)
 
-  # int data, dbl index
-  id <- .xts(matrix(1:10, 5, 2), 1.0 * 1:5)
-  checkIdentical(id[, NA], idna)
-  checkIdentical(id[, 1][, NA], idna[, 1])
+# int data, int index
+ii <- .xts(matrix(1:10, 5, 2), 1:5)
+expect_identical(ii[, NA], iina, info = paste(info_msg, "int data, int index"))
+expect_identical(ii[, 1][, NA], iina[, 1], info = paste(info_msg, "int data, int index"))
 
-  # dbl data, int index
-  di <- .xts(1.0 * matrix(1:10, 5, 2), 1:5)
-  checkIdentical(di[, NA], dina)
-  checkIdentical(di[, 1][, NA], dina[, 1])
+# int data, dbl index
+id <- .xts(matrix(1:10, 5, 2), 1.0 * 1:5)
+expect_identical(id[, NA], idna, info = paste(info_msg, "int data, dbl index"))
+expect_identical(id[, 1][, NA], idna[, 1], info = paste(info_msg, "int data, dbl index"))
 
-  # dbl data, dbl index
-  dd <- .xts(1.0 * matrix(1:10, 5, 2), 1.0 * 1:5)
-  checkIdentical(dd[, NA], ddna)
-  checkIdentical(dd[, 1][, NA], ddna[, 1])
-}
+# dbl data, int index
+di <- .xts(1.0 * matrix(1:10, 5, 2), 1:5)
+expect_identical(di[, NA], dina, info = paste(info_msg, "dbl data, int index"))
+expect_identical(di[, 1][, NA], dina[, 1], info = paste(info_msg, "dbl data, int index"))
 
-# i = integer, j = NA, object has column names
-# See #97
-test.i_integer_j_NA_has_colnames <- function() {
-  iina <- .xts(matrix(NA_integer_, 5, 2), 1:5)
-  idna <- .xts(matrix(NA_integer_, 5, 2), 1.0 * 1:5)
-  dina <- .xts(matrix(NA_real_, 5, 2), 1:5)
-  ddna <- .xts(matrix(NA_real_, 5, 2), 1.0 * 1:5)
-  colnames(iina) <- colnames(idna) <-
-  colnames(dina) <- colnames(ddna) <- rep(NA_character_, 2)
+# dbl data, dbl index
+dd <- .xts(1.0 * matrix(1:10, 5, 2), 1.0 * 1:5)
+expect_identical(dd[, NA], ddna, info = paste(info_msg, "dbl data, dbl index"))
+expect_identical(dd[, 1][, NA], ddna[, 1], info = paste(info_msg, "dbl data, dbl index"))
 
-  i <- 1:3
 
-  # int data, int index
-  ii <- .xts(matrix(1:10, 5, 2), 1:5)
-  colnames(ii) <- c("a", "b")
-  checkIdentical(ii[i, NA], iina[i,])
-  checkIdentical(ii[i, 1][, NA], iina[i, 1])
+### i = integer, j = NA, object has column names
+### See #97
+info_msg <- "test.i_integer_j_NA_has_colnames"
+iina <- .xts(matrix(NA_integer_, 5, 2), 1:5)
+idna <- .xts(matrix(NA_integer_, 5, 2), 1.0 * 1:5)
+dina <- .xts(matrix(NA_real_, 5, 2), 1:5)
+ddna <- .xts(matrix(NA_real_, 5, 2), 1.0 * 1:5)
+colnames(iina) <- colnames(idna) <-
+colnames(dina) <- colnames(ddna) <- rep(NA_character_, 2)
 
-  # int data, dbl index
-  id <- .xts(matrix(1:10, 5, 2), 1.0 * 1:5)
-  colnames(id) <- c("a", "b")
-  checkIdentical(id[i, NA], idna[i,])
-  checkIdentical(id[i, 1][, NA], idna[i, 1])
+i <- 1:3
 
-  # dbl data, int index
-  di <- .xts(1.0 * matrix(1:10, 5, 2), 1:5)
-  colnames(di) <- c("a", "b")
-  checkIdentical(di[i, NA], dina[i,])
-  checkIdentical(di[i, 1][, NA], dina[i, 1])
+# int data, int index
+ii <- .xts(matrix(1:10, 5, 2), 1:5)
+colnames(ii) <- c("a", "b")
+expect_identical(ii[i, NA], iina[i,], info = paste(info_msg, "int data, int index"))
+expect_identical(ii[i, 1][, NA], iina[i, 1], info = paste(info_msg, "int data, int index"))
 
-  # dbl data, dbl index
-  dd <- .xts(1.0 * matrix(1:10, 5, 2), 1.0 * 1:5)
-  colnames(dd) <- c("a", "b")
-  checkIdentical(dd[i, NA], ddna[i,])
-  checkIdentical(dd[i, 1][, NA], ddna[i, 1])
-}
+# int data, dbl index
+id <- .xts(matrix(1:10, 5, 2), 1.0 * 1:5)
+colnames(id) <- c("a", "b")
+expect_identical(id[i, NA], idna[i,], info = paste(info_msg, "int data, dbl index"))
+expect_identical(id[i, 1][, NA], idna[i, 1], info = paste(info_msg, "int data, dbl index"))
 
-# i = integer, j = NA, object does not have column names
-# See #97
-test.i_integer_j_NA_no_colnames <- function() {
-  iina <- .xts(matrix(NA_integer_, 5, 2), 1:5)
-  idna <- .xts(matrix(NA_integer_, 5, 2), 1.0 * 1:5)
-  dina <- .xts(matrix(NA_real_, 5, 2), 1:5)
-  ddna <- .xts(matrix(NA_real_, 5, 2), 1.0 * 1:5)
+# dbl data, int index
+di <- .xts(1.0 * matrix(1:10, 5, 2), 1:5)
+colnames(di) <- c("a", "b")
+expect_identical(di[i, NA], dina[i,], info = paste(info_msg, "dbl data, int index"))
+expect_identical(di[i, 1][, NA], dina[i, 1], info = paste(info_msg, "dbl data, int index"))
 
-  i <- 1:3
+# dbl data, dbl index
+dd <- .xts(1.0 * matrix(1:10, 5, 2), 1.0 * 1:5)
+colnames(dd) <- c("a", "b")
+expect_identical(dd[i, NA], ddna[i,], info = paste(info_msg, "dbl data, dbl index"))
+expect_identical(dd[i, 1][, NA], ddna[i, 1], info = paste(info_msg, "dbl data, dbl index"))
 
-  # int data, int index
-  ii <- .xts(matrix(1:10, 5, 2), 1:5)
-  checkIdentical(ii[i, NA], iina[i,])
-  checkIdentical(ii[i, 1][, NA], iina[i, 1])
 
-  # int data, dbl index
-  id <- .xts(matrix(1:10, 5, 2), 1.0 * 1:5)
-  checkIdentical(id[i, NA], idna[i,])
-  checkIdentical(id[i, 1][, NA], idna[i, 1])
+### i = integer, j = NA, object does not have column names
+### See #97
+info_msg <- "test.i_integer_j_NA_no_colnames"
+iina <- .xts(matrix(NA_integer_, 5, 2), 1:5)
+idna <- .xts(matrix(NA_integer_, 5, 2), 1.0 * 1:5)
+dina <- .xts(matrix(NA_real_, 5, 2), 1:5)
+ddna <- .xts(matrix(NA_real_, 5, 2), 1.0 * 1:5)
+i <- 1:3
 
-  # dbl data, int index
-  di <- .xts(1.0 * matrix(1:10, 5, 2), 1:5)
-  checkIdentical(di[i, NA], dina[i,])
-  checkIdentical(di[i, 1][, NA], dina[i, 1])
+# int data, int index
+ii <- .xts(matrix(1:10, 5, 2), 1:5)
+expect_identical(ii[i, NA], iina[i,], info = paste(info_msg, "int data, int index"))
+expect_identical(ii[i, 1][, NA], iina[i, 1], info = paste(info_msg, "int data, int index"))
 
-  # dbl data, dbl index
-  dd <- .xts(1.0 * matrix(1:10, 5, 2), 1.0 * 1:5)
-  checkIdentical(dd[i, NA], ddna[i,])
-  checkIdentical(dd[i, 1][, NA], ddna[i, 1])
-}
+# int data, dbl index
+id <- .xts(matrix(1:10, 5, 2), 1.0 * 1:5)
+expect_identical(id[i, NA], idna[i,], info = paste(info_msg, "int data, dbl index"))
+expect_identical(id[i, 1][, NA], idna[i, 1], info = paste(info_msg, "int data, dbl index"))
 
-test.i_0 <- function() {
-  x <- .xts(matrix(1:10, 5, 2), 1:5)
-  z <- as.zoo(x)
-  xz0 <- as.xts(z[0,])
+# dbl data, int index
+di <- .xts(1.0 * matrix(1:10, 5, 2), 1:5)
+expect_identical(di[i, NA], dina[i,], info = paste(info_msg, "dbl data, int index"))
+expect_identical(di[i, 1][, NA], dina[i, 1], info = paste(info_msg, "dbl data, int index"))
 
-  checkEquals(x[0,], xz0, check.attributes = TRUE)
-}
+# dbl data, dbl index
+dd <- .xts(1.0 * matrix(1:10, 5, 2), 1.0 * 1:5)
+expect_identical(dd[i, NA], ddna[i,], info = paste(info_msg, "dbl data, dbl index"))
+expect_identical(dd[i, 1][, NA], ddna[i, 1], info = paste(info_msg, "dbl data, dbl index"))
 
-# Subset by non-numeric classes
+
+info_msg <- "test.i_0"
+x <- .xts(matrix(1:10, 5, 2), 1:5)
+z <- as.zoo(x)
+xz0 <- as.xts(z[0,])
+expect_equal(x[0,], xz0, info = info_msg)
+
+### Subset by non-numeric classes
 X <- xts(1:5, as.Date("2018-04-21") - 5:1)
 
-test.i_character <- function() {
-  x <- X
-
-  for (r in c(1L, 3L, 5L)) {
-    y <- x[r,]
-    i <- as.character(index(y))
-    checkIdentical(y, x[i, ])
-  }
+info_msg <- "test.i_character"
+x <- X
+for (r in c(1L, 3L, 5L)) {
+  y <- x[r,]
+  i <- as.character(index(y))
+  expect_identical(y, x[i, ], info = paste(info_msg, "i =", r))
 }
 
-test.i_asis_character <- function() {
-  x <- X
-
-  for (r in c(1L, 3L, 5L)) {
-    y <- x[r,]
-    i <- as.character(index(y))
-    checkIdentical(y, x[I(i), ])
-  }
+info_msg <- "test.i_asis_character"
+x <- X
+for (r in c(1L, 3L, 5L)) {
+  y <- x[r,]
+  i <- as.character(index(y))
+  expect_identical(y, x[I(i), ], info = paste(info_msg, "r =", r))
 }
 
-test.i_Date <- function() {
-  x <- X
-
-  for (r in c(1L, 3L, 5L)) {
-    y <- x[r,]
-    i <- index(y)
-    checkIdentical(y, x[i, ])
-  }
+info_msg <- "test.i_Date"
+x <- X
+for (r in c(1L, 3L, 5L)) {
+  y <- x[r,]
+  i <- index(y)
+  expect_identical(y, x[i, ], info = paste(info_msg, "r =", r))
 }
 
-test.i_POSIXct <- function() {
-  x <- X
-  index(x) <- as.POSIXct(index(x), tz = "UTC")
-
-  for (r in c(1L, 3L, 5L)) {
-    y <- x[r,]
-    i <- index(y)
-    checkIdentical(y, x[i, ])
-  }
+info_msg <- "test.i_POSIXct"
+x <- X
+index(x) <- as.POSIXct(index(x), tz = "UTC")
+for (r in c(1L, 3L, 5L)) {
+  y <- x[r,]
+  i <- index(y)
+  expect_identical(y, x[i, ], info = paste(info_msg, "r =", r))
 }
 
-test.i_POSIXlt <- function() {
-  x <- X
-  index(x) <- as.POSIXlt(index(x), tz = "UTC")
-
-  for (r in c(1L, 3L, 5L)) {
-    y <- x[r,]
-    i <- index(y)
-    checkIdentical(y, x[i, ])
-  }
+info_msg <- "test.i_POSIXlt"
+x <- X
+index(x) <- as.POSIXlt(index(x), tz = "UTC")
+for (r in c(1L, 3L, 5L)) {
+  y <- x[r,]
+  i <- index(y)
+  expect_identical(y, x[i, ], info = paste(info_msg, "r =", r))
 }
 
-# invalid date/time
-test.i_invalid_date_string <- function() {
-  x <- xts(1:10, as.Date("2015-02-20")+0:9)
-  y <- x["2012-02-30"]
-  checkIdentical(y, x[NA,])
-}
-test.i_only_range_separator_or_empty_string <- function() {
-  x <- xts(1:10, as.Date("2015-02-20")+0:9)
-  y <- x["/",]
-  checkIdentical(y, x)
-  y <- x["::",]
-  checkIdentical(y, x)
-  y <- x["",]
-  checkIdentical(y, x)
-}
-test.i_date_range_open_end <- function() {
-  x <- xts(1:10, as.Date("2015-02-20")+0:9)
-  y <- x["2015-02-23/",]
-  checkIdentical(y, x[4:10,])
-}
-test.i_date_range_open_start <- function() {
-  x <- xts(1:10, as.Date("2015-02-20")+0:9)
-  y <- x["/2015-02-26",]
-  checkIdentical(y, x[1:7,])
-}
+### invalid date/time
+info_msg <- "test.i_invalid_date_string"
+x <- xts(1:10, as.Date("2015-02-20")+0:9)
+expect_warning(y <- x["2012-02-30"], pattern = "cannot determine first and last time")
+expect_identical(y, x[NA,], info = info_msg)
 
-# subset empty xts
-test.empty_i_datetime <- function() {
-  d0 <- as.Date(integer())
-  zl <- xts(, d0)
-  empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+info_msg <- "test.i_only_range_separator_or_empty_string"
+x <- xts(1:10, as.Date("2015-02-20")+0:9)
+y <- x["/",]
+expect_identical(y, x, info = paste(info_msg, "sep = '/'"))
+y <- x["::",]
+expect_identical(y, x, info = paste(info_msg, "sep = '::'"))
+y <- x["",]
+expect_identical(y, x, info = paste(info_msg, "sep = ''"))
 
-  i <- Sys.Date()
-  checkIdentical(zl[i,], empty)
-  checkIdentical(zl[i],  empty)
+info_msg <- "test.i_date_range_open_end"
+x <- xts(1:10, as.Date("2015-02-20")+0:9)
+y <- x["2015-02-23/",]
+expect_identical(y, x[4:10,], info = info_msg)
 
-  i <- Sys.time()
-  checkIdentical(zl[i,], empty)
-  checkIdentical(zl[i],  empty)
-}
+info_msg <- "test.i_date_range_open_start"
+x <- xts(1:10, as.Date("2015-02-20")+0:9)
+y <- x["/2015-02-26",]
+expect_identical(y, x[1:7,], info = info_msg)
 
-test.empty_i_zero <- function() {
-  d0 <- as.Date(integer())
-  zl <- xts(, d0)
-  empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+### subset empty xts
+info_msg <- "test.empty_xts_i_datetime"
+d0 <- as.Date(integer())
+zl <- xts(, d0)
+empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+i <- Sys.Date()
+expect_identical(zl[i,], empty, info = paste(info_msg, "i = Date, [i,]"))
+expect_identical(zl[i],  empty, info = paste(info_msg, "i = Date, [i]"))
+i <- Sys.time()
+expect_identical(zl[i,], empty, info = paste(info_msg, "i = POSIXct, [i,]"))
+expect_identical(zl[i],  empty, info = paste(info_msg, "i = POSIXct, [i]"))
 
-  checkIdentical(zl[0,], empty)
-  checkIdentical(zl[0],  empty)
-}
+info_msg <- "test.empty_xts_i_zero"
+d0 <- as.Date(integer())
+zl <- xts(, d0)
+empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+expect_identical(zl[0,], empty, info = paste(info_msg, "[i,]"))
+expect_identical(zl[0],  empty, info = paste(info_msg, "[i]"))
 
-test.empty_i_negative <- function() {
-  d0 <- as.Date(integer())
-  zl <- xts(, d0)
-  empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+info_msg <- "test.empty_i_negative"
+d0 <- as.Date(integer())
+zl <- xts(, d0)
+empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+expect_identical(zl[-1,], empty, info = paste(info_msg, "[-1,]"))
+expect_identical(zl[-1],  empty, info = paste(info_msg, "[-1]"))
 
-  checkIdentical(zl[-1,], empty)
-  checkIdentical(zl[-1],  empty)
-}
+info_msg <- "test.empty_i_NA"
+d0 <- as.Date(integer())
+zl <- xts(, d0)
+empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+expect_identical(zl[NA,], empty, info = paste(info_msg, "[NA,]"))
+expect_identical(zl[NA],  empty, info = paste(info_msg, "[NA]"))
 
-test.empty_i_NA <- function() {
-  d0 <- as.Date(integer())
-  zl <- xts(, d0)
-  empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+info_msg <- "test.empty_i_NULL"
+d0 <- as.Date(integer())
+zl <- xts(, d0)
+empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+expect_identical(zl[NULL,], empty, info = paste(info_msg, "[NULL,]"))
+expect_identical(zl[NULL],  empty, info = paste(info_msg, "[NULL]"))
 
-  checkIdentical(zl[NA,], empty)
-  checkIdentical(zl[NA],  empty)
-}
+info_msg <- "test.duplicate_index_duplicate_i"
+dates <-
+  structure(c(15770, 16257, 16282, 16291, 16296, 16296, 16298, 16301,
+              16432, 16452), class = "Date")
+x <- xts(c(1, 2, 2, 3, 3, 3, 3, 3, 4, 4), dates)
+dupdates <-
+  structure(c(15770, 16257, 16282, 16291, 16296, 16296, 16296, 16296,
+              16298, 16301, 16432, 16452), class = "Date")
+y <- xts(c(1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4), dupdates)
+expect_identical(x[index(x),],  y, info = info_msg)
 
-test.empty_i_NULL <- function() {
-  d0 <- as.Date(integer())
-  zl <- xts(, d0)
-  empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+### Test dispatch to zoo for yearmon, yearqtr tclass
+info_msg <- "test.window_yearmon_yearqtr_tclass_dispatches_to_zoo"
+i1 <- seq(as.yearmon(2007), by = 1/12, length.out = 36)
+x1 <- xts(1:36, i1)
+i2 <- seq(as.yearqtr(2007), by = 1/4, length.out = 36)
+x2 <- xts(1:36, i2)
+r1 <- x1["2015"]
+r2 <- x2["2015"]
 
-  checkIdentical(zl[NULL,], empty)
-  checkIdentical(zl[NULL],  empty)
-}
+### zoo supports numeric start for yearmon and yearqtr
+w1 <- window(x1, start = 2015.01)  # to window.zoo()
+w2 <- window(x2, start = 2015.1)   # to window.zoo()
+expect_equal(r1, w1, info = paste(info_msg, "window, yearmon, numeric start"))
+expect_equal(r2, w2, info = paste(info_msg, "window, yearqtr, numeric start"))
 
-test.duplicate_index_duplicate_i <- function() {
-  dates <-
-    structure(c(15770, 16257, 16282, 16291, 16296, 16296, 16298, 16301,
-                16432, 16452), class = "Date")
-  x <- xts(c(1, 2, 2, 3, 3, 3, 3, 3, 4, 4), dates)
+w1 <- window(x1, start = "2015-01-01")  # to window.xts()
+w2 <- window(x2, start = "2015Q1")      # to window.zoo()
+expect_equal(r1, w1, info = paste(info_msg, "window, yearmon, character start"))
+expect_equal(r2, w2, info = paste(info_msg, "window, yearqtr, character start"))
 
-  dupdates <-
-    structure(c(15770, 16257, 16282, 16291, 16296, 16296, 16296, 16296,
-                16298, 16301, 16432, 16452), class = "Date")
-  y <- xts(c(1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4), dupdates)
+info_msg <- "test.zero_width_subset_does_not_drop_class"
+target <- c("custom", "xts", "zoo")
+x <- .xts(1:10, 1:10, class = target)
+y <- x[,0]
+expect_equal(target, class(y), info = info_msg)
 
-  checkIdentical(x[index(x),],  y)
-}
+info_msg <- "test.zero_width_subset_does_not_drop_user_attributes"
+x <- .xts(1:10, 1:10, my_attr = "hello")
+y <- x[,0]
+expect_equal("hello", attr(y, "my_attr"), info = info_msg)
 
-test.window_yearmon_yearqtr_tclass_dispatches_to_zoo <- function() {
-  i1 <- seq(as.yearmon(2007), by = 1/12, length.out = 36)
-  x1 <- xts(1:36, i1)
-  i2 <- seq(as.yearqtr(2007), by = 1/4, length.out = 36)
-  x2 <- xts(1:36, i2)
+info_msg <- "test.zero_length_subset_xts_returns_same_tclass"
+x <- .xts(matrix(1)[0,], integer(0), "Date")
+expect_equal(tclass(x[0,]), "Date")
+x <- .xts(matrix(1)[0,], integer(0), "POSIXct", "America/Chicago")
+expect_equal(tclass(x[0,]), "POSIXct")
+expect_equal(tzone(x[0,]), "America/Chicago")
 
-  r1 <- x1["2015"]
-  r2 <- x2["2015"]
+info_msg <- "test.zero_length_subset_returns_same_storage_mode"
+tf <- c(TRUE, FALSE)
+# integer
+sm <- "integer"
+x <- .xts(matrix(integer(0), 0), integer(0))
+expect_equal(storage.mode(x[0, ]),      sm, info = paste(info_msg, ": x[0,]"))
+expect_equal(storage.mode(x[0, 0]),     sm, info = paste(info_msg, ": x[0, 0"))
+expect_equal(storage.mode(x[0, FALSE]), sm, info = paste(info_msg, ": x[0, FALSE]"))
 
-  # zoo supports numeric start for yearmon and yearqtr
-  w1 <- window(x1, start = 2015.01)  # to window.zoo()
-  w2 <- window(x2, start = 2015.1)   # to window.zoo()
-  checkEquals(r1, w1, "window, yearmon, numeric start")
-  checkEquals(r2, w2, "window, yearqtr, numeric start")
+x <- .xts(matrix(integer(0), 0, 2), integer(0))
+expect_equal(storage.mode(x[0,]),    sm, info = paste(info_msg, ": x[0,]"))
+expect_equal(storage.mode(x[0, 1]),  sm, info = paste(info_msg, ": x[0, 1]"))
+expect_equal(storage.mode(x[0, tf]), sm, nfo = paste(info_msg, ": x[0, c(TRUE, FALSE)]"))
 
-  w1 <- window(x1, start = "2015-01-01")  # to window.xts()
-  w2 <- window(x2, start = "2015Q1")      # to window.zoo()
-  checkEquals(r1, w1, "window, yearmon, character start")
-  checkEquals(r2, w2, "window, yearqtr, character start")
-}
+# double
+sm <- "double"
+x <- .xts(matrix(numeric(0), 0), integer(0))
+expect_equal(storage.mode(x[0, ]),      sm, info = paste(info_msg, ": x[0,]"))
+expect_equal(storage.mode(x[0, 0]),     sm, info = paste(info_msg, ": x[0, 0]"))
+expect_equal(storage.mode(x[0, FALSE]), sm, info = paste(info_msg, ": x[0, FALSE]"))
 
-test.zero_width_subset_does_not_drop_class <- function(x) {
-  target <- c("custom", "xts", "zoo")
-  x <- .xts(1:10, 1:10, class = target)
-  y <- x[,0]
-  checkEquals(target, class(y))
-}
-
-test.zero_width_subset_does_not_drop_user_attributes <- function(x) {
-  x <- .xts(1:10, 1:10, my_attr = "hello")
-  y <- x[,0]
-  checkEquals("hello", attr(y, "my_attr"))
-}
-
-test.zero_length_subset_xts_returns_same_tclass <- function() {
-  x <- .xts(matrix(1)[0,], integer(0), "Date")
-  checkTrue(tclass(x[0,]) == "Date")
-  x <- .xts(matrix(1)[0,], integer(0), "POSIXct", "America/Chicago")
-  checkTrue(tclass(x[0,]) == "POSIXct")
-  checkTrue(tzone(x[0,]) == "America/Chicago")
-}
-
-test.zero_length_subset_returns_same_storage_mode <- function() {
-  # integer
-  x <- .xts(matrix(integer(0), 0), integer(0))
-  checkEquals(storage.mode(x), storage.mode(x[0, ]))
-  checkEquals(storage.mode(x), storage.mode(x[0, 0]))
-  checkEquals(storage.mode(x), storage.mode(x[0, FALSE]))
-
-  x <- .xts(matrix(integer(0), 0, 2), integer(0))
-  checkEquals(storage.mode(x), storage.mode(x[0,]))
-  checkEquals(storage.mode(x), storage.mode(x[0, 1]))
-  checkEquals(storage.mode(x), storage.mode(x[0, c(TRUE, FALSE)]))
-
-  # numeric
-  x <- .xts(matrix(numeric(0), 0), integer(0))
-  checkEquals(storage.mode(x), storage.mode(x[0, ]))
-  checkEquals(storage.mode(x), storage.mode(x[0, 0]))
-  checkEquals(storage.mode(x), storage.mode(x[0, FALSE]))
-
-  x <- .xts(matrix(numeric(0), 0, 2), integer(0))
-  checkEquals(storage.mode(x), storage.mode(x[0,]))
-  checkEquals(storage.mode(x), storage.mode(x[0, 1]))
-  checkEquals(storage.mode(x), storage.mode(x[0, c(TRUE, FALSE)]))
-}
+x <- .xts(matrix(numeric(0), 0, 2), integer(0))
+expect_equal(storage.mode(x[0,]),    sm, info = paste(info_msg, ": x[0,]"))
+expect_equal(storage.mode(x[0, 1]),  sm, info = paste(info_msg, ": x[0, 1]"))
+expect_equal(storage.mode(x[0, tf]), sm, info = paste(info_msg, ": x[0, c(TRUE, FALSE)]"))

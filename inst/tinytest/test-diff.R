@@ -1,59 +1,57 @@
-
 # POSIXct index
-test.diff_integer_POSIXt <- function() {
-  x <- .xts(1:5, 1:5 + 0.0)
-  dx <- xts(rbind(NA_integer_, diff(coredata(x))), index(x))
-  checkIdentical(diff(x), dx)
-}
-test.diff_numeric_POSIXt <- function() {
-  x <- .xts(1:5 + 1.0, 1:5 + 0.0)
-  dx <- xts(rbind(NA_real_, diff(coredata(x))), index(x))
-  checkIdentical(diff(x), dx)
-}
-test.diff_logical_POSIXt <- function() {
-  x <- .xts(1:5 > 2, 1:5 + 0.0)
-  dx <- xts(rbind(NA, diff(coredata(x))), index(x))
-  checkIdentical(diff(x), dx)
-}
+info_msg <- "test.diff_integer_POSIXt"
+x <- .xts(1:5, 1:5 + 0.0)
+dx <- xts(rbind(NA_integer_, diff(coredata(x))), index(x))
+expect_identical(diff(x), dx, info_msg)
+
+info_msg <- "test.diff_numeric_POSIXt"
+x <- .xts(1:5 + 1.0, 1:5 + 0.0)
+dx <- xts(rbind(NA_real_, diff(coredata(x))), index(x))
+expect_identical(diff(x), dx, info_msg)
+
+info_msg <- "test.diff_logical_POSIXt"
+x <- .xts(1:5 > 2, 1:5 + 0.0)
+dx <- xts(rbind(NA, diff(coredata(x))), index(x))
+expect_identical(diff(x), dx, info_msg)
+
 
 # Date index
-test.diff_integer_Date <- function() {
-  x <- xts(1:5, as.Date("2016-01-01") - 5:1)
-  dx <- xts(rbind(NA_integer_, diff(coredata(x))), index(x))
-  checkIdentical(diff(x), dx)
-}
-test.diff_numeric_Date <- function() {
-  x <- xts(1:5 + 1.0, as.Date("2016-01-01") - 5:1)
-  dx <- xts(rbind(NA_real_, diff(coredata(x))), index(x))
-  checkIdentical(diff(x), dx)
-}
-test.diff_logical_Date <- function() {
-  x <- xts(1:5 > 2, as.Date("2016-01-01") - 5:1)
-  dx <- xts(rbind(NA, diff(coredata(x))), index(x))
-  checkIdentical(diff(x), dx)
-}
+info_msg <- "test.diff_integer_Date"
+x <- xts(1:5, as.Date("2016-01-01") - 5:1)
+dx <- xts(rbind(NA_integer_, diff(coredata(x))), index(x))
+expect_identical(diff(x), dx, info_msg)
+
+info_msg <- "test.diff_numeric_Date"
+x <- xts(1:5 + 1.0, as.Date("2016-01-01") - 5:1)
+dx <- xts(rbind(NA_real_, diff(coredata(x))), index(x))
+expect_identical(diff(x), dx, info_msg)
+
+info_msg <- "test.diff_logical_Date"
+x <- xts(1:5 > 2, as.Date("2016-01-01") - 5:1)
+dx <- xts(rbind(NA, diff(coredata(x))), index(x))
+expect_identical(diff(x), dx, info_msg)
+
 
 # Type-check failure errors
-test.diff_differences_NA <- function() {
-  x <- .xts(1:5, 1:5)
-  checkException(diff(x, 1L, "a"), "'differences' must be integer")
-}
-test.diff_lag_NA <- function() {
-  x <- .xts(1:5, 1:5)
-  checkException(diff(x, "a", 1L), "'lag' must be integer")
-}
-test.diff_differences_LT1 <- function() {
-  x <- .xts(1:5, 1:5)
-  checkException(diff(x, 1L, -1L), "'diff.xts' defined only for positive lag and differences arguments")
-}
-test.diff_lag_LT1 <- function() {
-  x <- .xts(1:5, 1:5)
-  checkException(diff(x, -1L, 1L), "'diff.xts' defined only for positive lag and differences arguments")
-}
+info_msg <- "diff.xts() 'differences' argument must be integer"
+x <- .xts(1:5, 1:5)
+# (ignore NA introduced by coercion)
+expect_error(suppressWarnings(diff(x, 1L, "a")), info = info_msg)
 
-test.diff_logical_preserves_colnames <- function() {
-  cnames <- c("a", "b")
-  x <- .xts(matrix(rnorm(10) > 0, 5), 1:5, dimnames = list(NULL, cnames))
-  y <- diff(x)
-  checkIdentical(colnames(y), cnames)
-}
+info_msg <- "diff.xts() 'lag' argument must be integer"
+x <- .xts(1:5, 1:5)
+# (ignore NA introduced by coercion)
+expect_error(suppressWarnings(diff(x, "a", 1L)), info = info_msg)
+
+info_msg <- "diff.xts() differences argument must be > 0"
+expect_error(diff(.xts(1:5, 1:5), 1L, -1L), info = info_msg)
+
+info_msg <- "diff.xts() lag argument must be > 0"
+expect_error(diff(.xts(1:5, 1:5), -1L, 1L), info = info_msg)
+
+
+info_msg <- "test.diff_logical_preserves_colnames"
+cnames <- c("a", "b")
+x <- .xts(matrix(rnorm(10) > 0, 5), 1:5, dimnames = list(NULL, cnames))
+y <- diff(x)
+expect_identical(colnames(y), cnames, info = info_msg)
