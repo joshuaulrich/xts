@@ -186,25 +186,25 @@ reg <- window_dbg(x, start = as.Date("2003-02-01"), end = as.Date("2003-03-01"))
 expect_identical(bin, reg, info = paste(info_msg, "- basic window.zoo example"))
 
 # Test index + start
-bin <- window(x, index = x.date[1:6], start = as.Date("2003-02-01"))
-reg <- window_dbg(x, index = x.date[1:6], start = as.Date("2003-02-01"), end = as.Date("2004-01-01"))
+bin <- window(x, index. = x.date[1:6], start = as.Date("2003-02-01"))
+reg <- window_dbg(x, index. = x.date[1:6], start = as.Date("2003-02-01"), end = as.Date("2004-01-01"))
 expect_identical(bin, reg, info = paste(info_msg, "- index + start"))
 
 # Test just index
-bin <- window(x, index = x.date[c(4, 8, 10)])
-reg <- window_dbg(x, index = x.date[c(4, 8, 10)], start = as.Date("2003-01-01"), end = as.Date("2004-01-01"))
+bin <- window(x, index. = x.date[c(4, 8, 10)])
+reg <- window_dbg(x, index. = x.date[c(4, 8, 10)], start = as.Date("2003-01-01"), end = as.Date("2004-01-01"))
 expect_identical(bin, reg, info = paste(info_msg, "- just index"))
 
 # Test decreasing index
-bin <- window(x, index = x.date[c(10, 8, 4)])
-reg <- window_dbg(x, index = x.date[c(10, 8, 4)], start = as.Date("2003-01-01"), end = as.Date("2004-01-01"))
+bin <- window(x, index. = x.date[c(10, 8, 4)])
+reg <- window_dbg(x, index. = x.date[c(10, 8, 4)], start = as.Date("2003-01-01"), end = as.Date("2004-01-01"))
 expect_identical(bin, reg, info = paste(info_msg, "- decreasing index"))
 
 # Test index parameter with repeated dates in xts series
 idx <- sort(rep(1:5, 5))
 x <- xts(1:length(idx), as.Date("1999-12-31")+idx)
-bin <- window(x, index = as.Date("1999-12-31")+c(1,3,5))
-reg <- window_dbg(x, index = as.Date("1999-12-31")+c(1,3,5), start = as.Date("2000-01-01"), end = as.Date("2000-01-05"))
+bin <- window(x, index. = as.Date("1999-12-31")+c(1,3,5))
+reg <- window_dbg(x, index. = as.Date("1999-12-31")+c(1,3,5), start = as.Date("2000-01-01"), end = as.Date("2000-01-05"))
 expect_identical(bin, reg, info = paste(info_msg, "- index parameter with repeated dates in xts series"))
 expect_true(nrow(bin) == 3*5, info = paste(info_msg, "- index parameter with repeated dates in xts series"))
 

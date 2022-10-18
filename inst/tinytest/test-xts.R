@@ -80,18 +80,38 @@ expect_identical(NULL, attr(x, ".indexFORMAT"), info = info_msg)
 y <- .xts(1, 1)
 expect_identical(NULL, attr(y, ".indexFORMAT"), info = info_msg)
 
-# warn if deprecated arguments passed to constructor
-info_msg <- "test.xts_ctor_warns_for_indexCLASS_arg"
-expect_warning(x <- xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"), info = info_msg)
-expect_warning(x <- .xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"), info = info_msg)
+### warn if deprecated arguments passed to constructor
+deprecated_warns <-
+  list(iclass  = "'.indexCLASS' is deprecated.*use tclass instead",
+       izone   = "'.indexTZ' is deprecated.*use tzone instead",
+       iformat = "'.indexFORMAT' is deprecated.*use tformat instead")
 
-info_msg <- "test.xts_ctor_warns_for_indexTZ_arg"
-expect_warning(x <- xts(1, as.Date("2018-05-02"), .indexTZ = "UTC"), info = info_msg)
-expect_warning(x <- .xts(1, as.Date("2018-05-02"), .indexTZ = "UTC"), info = info_msg)
+info_msg <- "xts() warns when .indexCLASS argument is provided"
+expect_warning(x <- xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"),
+               pattern = deprecated_warns$iclass, info = info_msg)
 
-info_msg <- "test.xts_ctor_warns_for_indexFORMAT_arg"
-expect_warning(x <- xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"), info = info_msg)
-expect_warning(x <- .xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"), info = info_msg)
+info_msg <- ".xts() warns when .indexCLASS argument is provided"
+expect_warning(x <- .xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"),
+               pattern = deprecated_warns$iclass, info = info_msg)
+
+
+info_msg <- "xts() warns when .indexTZ argument is provided"
+expect_warning(x <- xts(1, as.Date("2018-05-02"), .indexTZ = "UTC"),
+               pattern = deprecated_warns$izone, info = info_msg)
+
+info_msg <- ".xts() warns when .indexTZ argument is provided"
+expect_warning(x <- .xts(1, as.Date("2018-05-02"), .indexTZ = "UTC"),
+               pattern = deprecated_warns$izone, info = info_msg)
+
+
+info_msg <- "xts() warns when .indexFORMAT is provided"
+expect_warning(x <- xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"),
+               pattern = deprecated_warns$iformat, info = info_msg)
+
+info_msg <- ".xts() warns when .indexFORMAT is provided"
+expect_warning(x <- .xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"),
+               pattern = deprecated_warns$iformat, info = info_msg)
+
 
 info_msg <- "test.xts_and.xts_ctors_add_tformat"
 tf <- "%m/%d/%Y"
@@ -139,20 +159,24 @@ info_msg <- "test..xts_index_format_precedence"
 fmt <- "%Y-%m-%d"
 checkXtsFormat(.xts(1, 1), NULL)
 checkXtsFormat(.xts(1, 1, tformat=fmt), fmt)
-checkXtsFormat(.xts(1, 1, .indexFORMAT=fmt), fmt)
-checkXtsFormat(.xts(1, 1, tformat="%Y", .indexFORMAT=fmt), fmt)
+# silence the warning due to .indexFORMAT It is tested independently.
+checkXtsFormat(suppressWarnings(.xts(1, 1, .indexFORMAT=fmt)), fmt)  # TODO: expect_warnings
+checkXtsFormat(suppressWarnings(.xts(1, 1, tformat="%Y", .indexFORMAT=fmt)), fmt)  # TODO: expect_warnings
 
 ## check constructor arguments override existing index attribute
 idx <- structure(1, tzone="", tclass="yearmon", tformat="%Y-%b")
 fmt <- "%Y-%m"
 checkXtsFormat(.xts(1, idx), "%Y-%b")
 checkXtsFormat(.xts(1, idx, tformat=fmt), fmt)
-checkXtsFormat(.xts(1, idx, .indexFORMAT=fmt), fmt)
-checkXtsFormat(.xts(1, idx, tformat="%b%y", .indexFORMAT=fmt), fmt)
+# silence the warning due to .indexFORMAT It is tested independently.
+checkXtsFormat(suppressWarnings(.xts(1, idx, .indexFORMAT=fmt)), fmt)  # TODO: expect_warnings
+checkXtsFormat(suppressWarnings(.xts(1, idx, tformat="%b%y", .indexFORMAT=fmt)), fmt)  # TODO: expect_warnings
 
 info_msg <- "test..xts_user_attributes"
-x <- .xts(1, 1, tformat = "%Y", .indexCLASS = "Date", .indexTZ = "UTC",
-          user = "attribute", hello = "world", dimnames = list(NULL, "x"))
+suppressWarnings({
+  x <- .xts(1, 1, tformat = "%Y", .indexCLASS = "Date", .indexTZ = "UTC",
+            user = "attribute", hello = "world", dimnames = list(NULL, "x"))
+})
 expect_identical(NULL, attr(x, "tformat"), info = info_msg)
 expect_identical(NULL, attr(x, "tclass"), info = info_msg)
 expect_identical(NULL, attr(x, "tzone"), info = info_msg)
@@ -172,16 +196,24 @@ checkXtsClass <- function(xts, class, msg) {
 info_msg <- ".xts() index class precedence"
 checkXtsClass(.xts(1, 1), c("POSIXct", "POSIXt"), info_msg)
 checkXtsClass(.xts(1, 1, tclass="timeDate"), "timeDate", info_msg)
-checkXtsClass(.xts(1, 1, .indexCLASS="Date"), "Date", info_msg)
-checkXtsClass(.xts(1, 1, tclass="timeDate", .indexCLASS="Date"), "Date", info_msg)
+# silence the warning due to .indexCLASS. It is tested independently.
+suppressWarnings(x <-.xts(1, 1, .indexCLASS="Date"))  # TODO: expect_warnings
+checkXtsClass(x, "Date", info_msg)
+# silence the warning due to .indexCLASS. It is tested independently.
+suppressWarnings(x <- .xts(1, 1, tclass="timeDate", .indexCLASS="Date"))  # TODO: expect_warnings
+checkXtsClass(x, "Date", info_msg)
 
 ## also check that tclass is ignored if specified as part of index
 info_msg <- ".xts() tclass is ignored if it's an index attribute"
 idx <- structure(1, tzone="",tclass="yearmon")
 checkXtsClass(.xts(1, idx), c("POSIXct", "POSIXt"), info_msg)
 checkXtsClass(.xts(1, idx, tclass="timeDate"), "timeDate", info_msg)
-checkXtsClass(.xts(1, idx, .indexCLASS="Date"), "Date", info_msg)
-checkXtsClass(.xts(1, idx, tclass="timeDate", .indexCLASS="Date"), "Date", info_msg)
+# silence .indexCLASS warning because it's tested independently.
+suppressWarnings(x <-.xts(1, 1, .indexCLASS="Date"))  # TODO: expect_warnings
+checkXtsClass(x, "Date", info_msg)
+# silence the warning due to .indexCLASS. It is tested independently.
+suppressWarnings(x <- .xts(1, idx, tclass="timeDate", .indexCLASS="Date"))  # TODO: expect_warnings
+checkXtsClass(x, "Date", info_msg)
 
 checkXtsTz <- function(xts, tzone, msg) {
   expect_equal(tzone(xts), tzone, info = msg)
@@ -199,15 +231,19 @@ Sys.setenv(TZ = "UTC")
 checkXtsTz(.xts(1, 1), "UTC", info_msg)
 checkXtsTz(.xts(1, 1, tzone="Europe/London"), "Europe/London", info_msg)
 ## this case passes in 0.10-2 but looks wrong
-checkXtsTz(.xts(1, 1, .indexTZ="America/New_York"), "UTC", info_msg)
-checkXtsTz(.xts(1, 1, tzone="Europe/London", .indexTZ="America/New_York"), "Europe/London", info_msg)
+suppressWarnings(x <- .xts(1, 1, .indexTZ="America/New_York"))  # TODO: expect_warning
+checkXtsTz(x, "UTC", info_msg)
+suppressWarnings(x <- .xts(1, 1, tzone="Europe/London", .indexTZ="America/New_York"))  # TODO: expect_warning
+checkXtsTz(x, "Europe/London", info_msg)
 
 ## Cases where tzone is specified in the index
 info_msg <- ".xts() index tzone precedence - tzone is an index attribute"
 idx <- structure(1, tzone="Asia/Tokyo",tclass="yearmon")
 checkXtsTz(.xts(1, idx), "Asia/Tokyo", info_msg)
 checkXtsTz(.xts(1, idx, tzone="Europe/London"), "Europe/London", info_msg)
-checkXtsTz(.xts(1, idx, .indexTZ="America/New_York"), "Asia/Tokyo", info_msg)
-checkXtsTz(.xts(1, idx, tzone="Europe/London", .indexTZ="America/New_York"), "Europe/London", info_msg)
+suppressWarnings(x <- .xts(1, idx, .indexTZ="America/New_York"))  # TODO: expect_warnings
+checkXtsTz(x, "Asia/Tokyo", info_msg)
+suppressWarnings(x <- .xts(1, idx, tzone="Europe/London", .indexTZ="America/New_York"))  # TODO: expect_warnings
+checkXtsTz(x, "Europe/London", info_msg)
 
 Sys.setenv(TZ = sysTZ)

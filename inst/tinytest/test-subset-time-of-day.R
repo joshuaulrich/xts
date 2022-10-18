@@ -4,7 +4,7 @@ library(xts)
 
 info_msg <- "test.time_of_day_start_equals_end"
 i <- 0:47
-x <- .xts(i, i * 3600, tz = "UTC")
+x <- .xts(i, i * 3600, tzone = "UTC")
 i1 <- .index(x[c(2L, 26L)])
 expect_identical(.index(x["T01:00/T01:00"]), i1, info = info_msg)
 
@@ -32,27 +32,27 @@ expect_identical(.index(x["T01:00:00/T03:00:00"]), i, info = info_msg)
 
 info_msg <- "test.time_of_day_by_hour_start_equals_end"
 i <- 0:94
-x <- .xts(i, i * 1800, tz = "UTC")
+x <- .xts(i, i * 1800, tzone = "UTC")
 i1 <- .index(x[c(3, 4, 51, 52)])
 expect_identical(.index(x["T01/T01"]), i1, info = info_msg)
 expect_identical(.index(x["T1/T1"]), i1, info = info_msg)
 
 info_msg <- "test.time_of_day_by_minute"
 i <- 0:189
-x <- .xts(i, i * 900, tz = "UTC")
+x <- .xts(i, i * 900, tzone = "UTC")
 i1 <- .index(x[c(5:8, 101:104)])
 expect_identical(.index(x["T01:00/T01:45"]), i1, info = info_msg)
 expect_identical(.index(x["T01/T01:45"]), i1, info = info_msg)
 
 info_msg <- "test.time_of_day_check_time_string"
 i <- 0:10
-x <- .xts(i, i * 1800, tz = "UTC")
+x <- .xts(i, i * 1800, tzone = "UTC")
 # Should work with and without colon separator
 expect_identical(x["T0100/T0115"], x["T01:00/T01:15"], info = info_msg)
 
 info_msg <- "test.time_of_day_by_second"
 i <- 0:500
-x <- .xts(c(i, i), c(i * 15, 86400 + i * 15), tz = "UTC")
+x <- .xts(c(i, i), c(i * 15, 86400 + i * 15), tzone = "UTC")
 i1 <- .index(x[c(474L, 475L, 476L, 477L, 478L, 479L, 480L, 481L, 482L, 483L,
                  484L, 485L, 975L, 976L, 977L, 978L, 979L, 980L, 981L, 982L,
                  983L, 984L, 985L, 986L)])
@@ -66,7 +66,7 @@ info_msg <- "test.time_of_day_end_before_start"
 # Yes, this actually makes sense and is useful for financial markets
 # E.g. some futures markets open at 18:00 and close at 16:00 the next day
 i <- 0:47
-x <- .xts(i, i * 3600, tz = "UTC")
+x <- .xts(i, i * 3600, tzone = "UTC")
 i1 <- .index(x[-c(18L, 42L)])
 expect_identical(.index(x["T18:00/T16:00"]), i1, info = info_msg)
 
@@ -84,7 +84,7 @@ expect_identical(y, .xts(rep(NA, 6), c(0:2, 24:26)*3600, tzone = tz), info = inf
 
 info_msg <- "test.time_of_day_zero_padding"
 i <- 0:189
-x <- .xts(i, i * 900, tz = "UTC")
+x <- .xts(i, i * 900, tzone = "UTC")
 i1 <- .index(x[c(5:8, 101:104)])
 expect_identical(.index(x["T01:00/T01:45"]), i1, info = info_msg)
 # we support un-padded hours, for convenience (it's not in the standard)

@@ -64,7 +64,8 @@ expect_identical(y, UNKNOWN_TIME, info = info_msg)
 ### Fuzz tests
 info_msg <- "test.start_end_dates_are_garbage"
 x <- "0.21/8601.21"
-y <- .parseISO8601(x, START_N, END_N, "UTC")
+expect_warning(y <- .parseISO8601(x, START_N, END_N, "UTC"),
+               pattern = "cannot determine first and last time")
 expect_identical(y, UNKNOWN_TIME, info = info_msg)
 
 info_msg <- "test.start_date_is_garbage"
@@ -72,7 +73,8 @@ out <- list(first.time = START_T,
             last.time = as.POSIXct("2015-02-22", tz = "UTC") - 1e-5)
 
 x <- "garbage/2015-02-21"
-y <- .parseISO8601(x, START_N, END_N, "UTC")
+expect_warning(y <- .parseISO8601(x, START_N, END_N, "UTC"),
+               pattern = "NAs introduced by coercion")
 expect_identical(y, out, info = info_msg)
 
 x <- "0.21/2015-02-21"
@@ -97,6 +99,6 @@ info_msg <- "test.single_date_is_garbage"
 ###  y <- .parseISO8601("garbage", START_N, END_N, "UTC")
 ###  expect_identical(y, UNKNOWN_TIME, info = info_msg)
 
-y <- .parseISO8601("0.21", START_N, END_N, "UTC")
+expect_warning(y <- .parseISO8601("0.21", START_N, END_N, "UTC"),
+               pattern = "cannot determine first and last time")
 expect_identical(y, UNKNOWN_TIME, info = info_msg)
-

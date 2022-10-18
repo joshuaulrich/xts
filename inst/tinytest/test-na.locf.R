@@ -55,7 +55,7 @@ for (type in types) {
   zdat <- as.zoo(xdat)
   zidx <- as.zoo(xidx)
 
-  xidx <- rbind(xidx, .xts(0, 30))
+  xidx <- rbind(xidx, .xts(vector(type, 1), 30))
   zidx <- as.zoo(xidx)
 
   x <- na.locf(xdat, x = index(xidx))
