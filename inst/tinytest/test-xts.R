@@ -5,80 +5,76 @@ library(xts)
 ### NA in order.by {{{
 
 # .xts()
-info_msg <- "test..xts_order.by_NA_integer"
-expect_error(.xts(1:3, c(1L, 2L, NA)), info = info_msg)
-expect_error(.xts(1:3, c(NA, 2L, 3L)), info = info_msg)
-expect_error(.xts(1:3, c(1L, NA, 3L)), info = info_msg)
+expect_error(.xts(1:3, c(1L, 2L, NA)), info = ".xts() order.by ends with NA_integer_")
+expect_error(.xts(1:3, c(NA, 2L, 3L)), info = ".xts() order.by starts with NA_integer_")
+expect_error(.xts(1:3, c(1L, NA, 3L)), info = ".xts() order.by contains NA_integer_")
 
-info_msg <- "test..xts_order.by_NA_double"
-expect_error(.xts(1:3, c(1, 2, NA)), info = info_msg)
-expect_error(.xts(1:3, c(NA, 2, 3)), info = info_msg)
-expect_error(.xts(1:3, c(1, NA, 3)), info = info_msg)
+expect_error(.xts(1:3, c(1, 2, NA)), info = ".xts() order.by ends with NA_real_")
+expect_error(.xts(1:3, c(NA, 2, 3)), info = ".xts() order.by starts with NA_real_")
+expect_error(.xts(1:3, c(1, NA, 3)), info = ".xts() order.by contains NA_real_")
 
-info_msg <- "test..xts_order.by_NaN_double"
-expect_error(.xts(1:3, c(1, 2, NaN)), info = info_msg)
-expect_error(.xts(1:3, c(NaN, 2, 3)), info = info_msg)
-expect_error(.xts(1:3, c(1, NaN, 3)), info = info_msg)
+expect_error(.xts(1:3, c(1, 2, NaN)), info = ".xts() order.by ends with NaN")
+expect_error(.xts(1:3, c(NaN, 2, 3)), info = ".xts() order.by starts with NaN")
+expect_error(.xts(1:3, c(1, NaN, 3)), info = ".xts() order.by contains NaN")
 
-info_msg <- "test..xts_order.by_Inf_double"
-expect_error(.xts(1:3, c(1, 2,  Inf)), info = info_msg)
-expect_error(.xts(1:3, c(-Inf, 2, 3)), info = info_msg)
+expect_error(.xts(1:3, c(1, 2,  Inf)), info = ".xts() order.by ends with Inf")
+expect_error(.xts(1:3, c(-Inf, 2, 3)), info = ".xts() order.by starts with -Inf")
 
 # xts()
-info_msg <- "test.xts_order.by_NA_integer"
-expect_error(xts(1:3, as.Date(c(1L, 2L, NA), origin = "1970-01-01")), info = info_msg)
-expect_error(xts(1:3, as.Date(c(NA, 2L, 3L), origin = "1970-01-01")), info = info_msg)
-expect_error(xts(1:3, as.Date(c(1L, NA, 3L), origin = "1970-01-01")), info = info_msg)
+expect_error(xts(1:3, as.Date(c(1L, 2L, NA), origin = "1970-01-01")), info = "xts() order.by ends with NA_integer_")
+expect_error(xts(1:3, as.Date(c(NA, 2L, 3L), origin = "1970-01-01")), info = "xts() order.by starts with NA_integer_")
+expect_error(xts(1:3, as.Date(c(1L, NA, 3L), origin = "1970-01-01")), info = "xts() order.by contains NA_integer_")
 
-info_msg <- "test.xts_order.by_NA_double"
-expect_error(xts(1:3, .POSIXct(c(1, 2, NA))), info = info_msg)
-expect_error(xts(1:3, .POSIXct(c(NA, 2, 3))), info = info_msg)
-expect_error(xts(1:3, .POSIXct(c(1, NA, 3))), info = info_msg)
+expect_error(xts(1:3, .POSIXct(c(1, 2, NA))), info = "xts() order.by ends with NA_real_")
+expect_error(xts(1:3, .POSIXct(c(NA, 2, 3))), info = "xts() order.by starts with NA_real_")
+expect_error(xts(1:3, .POSIXct(c(1, NA, 3))), info = "xts() order.by contains NA_real_")
 
-info_msg <- "test.xts_order.by_NaN_double"
-expect_error(xts(1:3, .POSIXct(c(1, 2, NaN))), info = info_msg)
-expect_error(xts(1:3, .POSIXct(c(NaN, 2, 3))), info = info_msg)
-expect_error(xts(1:3, .POSIXct(c(1, NaN, 3))), info = info_msg)
+expect_error(xts(1:3, .POSIXct(c(1, 2, NaN))), info = "xts() order.by ends with NaN")
+expect_error(xts(1:3, .POSIXct(c(NaN, 2, 3))), info = "xts() order.by starts with NaN")
+expect_error(xts(1:3, .POSIXct(c(1, NaN, 3))), info = "xts() order.by contains NaN")
 
-info_msg <- "test.xts_order.by_Inf_double"
-expect_error(xts(1:3, .POSIXct(c(1, 2,  Inf))), info = info_msg)
-expect_error(xts(1:3, .POSIXct(c(-Inf, 2, 3))), info = info_msg)
+expect_error(xts(1:3, .POSIXct(c(1, 2,  Inf))), info = "xts() order.by ends with Inf")
+expect_error(xts(1:3, .POSIXct(c(-Inf, 2, 3))), info = "xts() order.by starts with -Inf")
 ### }}}
 
 # Test that only first tzone element is stored
-info_msg <- "test.xts_only_use_first_tzone_element"
 tz <- "America/Chicago"
 i <- as.POSIXlt("2018-01-01", tz = tz)
 y <- xts(1, i)
-expect_identical(tz, tzone(y), info = info_msg)
+expect_identical(tz, tzone(y), info = "xts() only uses the first element of tzone")
 
-info_msg <- "test.xts_no_args_has_index_with_tzone_tclass"
+### constructors add tzone and tclass to the index by default
 x <- xts()
-expect_true(!is.null(attr(.index(x), "tclass")), info = info_msg)
-expect_true(!is.null(attr(.index(x), "tzone")), info = info_msg)
+expect_true(!is.null(attr(attr(x, "index"), "tclass")), info = "xts() with no args adds tclass to the index")
+expect_true(!is.null(attr(attr(x, "index"), "tzone")), info = "xts() with no args adds tzone to the index")
 
-# don't add index attributes to xts object
-info_msg <- "test.ctors_dont_add_tclass_indexCLASS_to_object"
-x <- xts(1, as.Date("2018-05-02"))
-expect_identical(NULL, attr(x, "tclass"), info = info_msg)
-expect_identical(NULL, attr(x, ".indexCLASS"), info = info_msg)
-y <- .xts(1, 1)
-expect_identical(NULL, attr(y, "tclass"), info = info_msg)
-expect_identical(NULL, attr(y, ".indexCLASS"), info = info_msg)
+x <- .xts(, .POSIXct(integer()))
+expect_true(!is.null(attr(attr(x, "index"), "tclass")), info = ".xts() with no args adds tclass to the index")
+expect_true(!is.null(attr(attr(x, "index"), "tzone")), info = ".xts() with no args adds tzone to the index")
 
-info_msg <- "test.ctors_dont_add_tzone_indexTZ_to_object"
-x <- xts(1, as.Date("2018-05-02"))
-expect_identical(NULL, attr(x, "tzone"), info = info_msg)
-expect_identical(NULL, attr(x, ".indexTZ"), info = info_msg)
-y <- .xts(1, 1)
-expect_identical(NULL, attr(y, "tzone"), info = info_msg)
-expect_identical(NULL, attr(y, ".indexTZ"), info = info_msg)
 
-info_msg <- "test.ctors_dont_add_indexFORMAT_to_object"
+### constructor defaults don't add index attributes to the xts object
 x <- xts(1, as.Date("2018-05-02"))
-expect_identical(NULL, attr(x, ".indexFORMAT"), info = info_msg)
+expect_null(attr(x, "tclass"), info = "xts(<defaults>) doesn't add tclass to xts object")
+expect_null(attr(x, ".indexCLASS"), info = "xts(<defaults>) doesn't add .indexCLASS to xts object")
 y <- .xts(1, 1)
-expect_identical(NULL, attr(y, ".indexFORMAT"), info = info_msg)
+expect_null(attr(y, "tclass"), info = ".xts(<defaults>) doesn't add .indexCLASS to xts object")
+expect_null(attr(y, ".indexCLASS"), info = ".xts(<defaults>) doesn't add .indexCLASS to xts object")
+
+x <- xts(1, as.Date("2018-05-02"))
+expect_null(attr(x, "tzone"), info = "xts(<defaults>) doesn't add tzone to xts object")
+expect_null(attr(x, ".indexTZ"), info = "xts(<defaults>) doesn't add .indexTZ to xts object")
+y <- .xts(1, 1)
+expect_null(attr(y, "tzone"), info = ".xts(<defaults>) doesn't add tzone to xts object")
+expect_null(attr(y, ".indexTZ"), info = ".xts(<defaults>) doesn't add .indexTZ to xts object")
+
+x <- xts(1, as.Date("2018-05-02"))
+expect_null(attr(x, "tformat"), info = "xts(<defaults>) doesn't add tformat to xts object")
+expect_null(attr(x, ".indexFORMAT"), info = "xts(<defaults>) doesn't add .indexFORMAT to xts object")
+y <- .xts(1, 1)
+expect_null(attr(y, "tformat"), info = ".xts(<defaults>) doesn't add tformat to xts object")
+expect_null(attr(y, ".indexFORMAT"), info = ".xts(<defaults>) doesn't add .indexFORMAT to xts object")
+
 
 ### warn if deprecated arguments passed to constructor
 deprecated_warns <-
@@ -86,31 +82,31 @@ deprecated_warns <-
        izone   = "'.indexTZ' is deprecated.*use tzone instead",
        iformat = "'.indexFORMAT' is deprecated.*use tformat instead")
 
-info_msg <- "xts() warns when .indexCLASS argument is provided"
 expect_warning(x <- xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"),
-               pattern = deprecated_warns$iclass, info = info_msg)
+               pattern = deprecated_warns$iclass,
+               info = "xts() warns when .indexCLASS argument is provided")
 
-info_msg <- ".xts() warns when .indexCLASS argument is provided"
 expect_warning(x <- .xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"),
-               pattern = deprecated_warns$iclass, info = info_msg)
+               pattern = deprecated_warns$iclass,
+               info = ".xts() warns when .indexCLASS argument is provided")
 
 
-info_msg <- "xts() warns when .indexTZ argument is provided"
 expect_warning(x <- xts(1, as.Date("2018-05-02"), .indexTZ = "UTC"),
-               pattern = deprecated_warns$izone, info = info_msg)
+               pattern = deprecated_warns$izone,
+               info = "xts() warns when .indexTZ argument is provided")
 
-info_msg <- ".xts() warns when .indexTZ argument is provided"
 expect_warning(x <- .xts(1, as.Date("2018-05-02"), .indexTZ = "UTC"),
-               pattern = deprecated_warns$izone, info = info_msg)
+               pattern = deprecated_warns$izone,
+               info = ".xts() warns when .indexTZ argument is provided")
 
 
-info_msg <- "xts() warns when .indexFORMAT is provided"
 expect_warning(x <- xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"),
-               pattern = deprecated_warns$iformat, info = info_msg)
+               pattern = deprecated_warns$iformat,
+               info = "xts() warns when .indexFORMAT is provided")
 
-info_msg <- ".xts() warns when .indexFORMAT is provided"
 expect_warning(x <- .xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"),
-               pattern = deprecated_warns$iformat, info = info_msg)
+               pattern = deprecated_warns$iformat,
+               info = ".xts() warns when .indexFORMAT is provided")
 
 
 info_msg <- "test.xts_and.xts_ctors_add_tformat"
@@ -118,19 +114,21 @@ tf <- "%m/%d/%Y"
 x <- xts(1:3, .Date(1:3), tformat = tf)
 y <- .xts(1:3, .Date(1:3), tformat = tf)
 
-expect_identical(tf, tformat(x), info = info_msg)
-expect_identical(tf, tformat(y), info = info_msg)
+expect_identical(tf, attr(attr(x, "index"), "tformat"),
+                 info = "xts(..., tformat = 'foo') adds tformat to index")
+expect_identical(tf, attr(attr(y, "index"), "tformat"),
+                 info = ".xts(..., tformat = 'foo') adds tformat to index")
 
 # .xts()
 info_msg <- "test..xts_dimnames_in_dots"
 x <- .xts(1:5, 1:5, dimnames = list(NULL, "x"))
 y <- xts(1:5, index(x), dimnames = list(NULL, "x"))
 expect_equal(x, y, info = info_msg)
+expect_null(rownames(x), info = "xts() and .xts() apply dimnames passed via '...'")
 
-info_msg <- "test..xts_ctor_does_not_return_rownames"
 m <- matrix(1, dimnames = list("a", "b"))
 x <- .xts(m, 1)
-expect_equal(rownames(x), NULL, info = info_msg)
+expect_null(rownames(x), info = ".xts() result does not have rownames")
 
 # test..xts_ctor_warns_if_index_tclass_not_NULL_or_POSIXct <- function() {
 #   DEACTIVATED("Warning causes errors in dependencies")
@@ -177,11 +175,11 @@ suppressWarnings({
   x <- .xts(1, 1, tformat = "%Y", .indexCLASS = "Date", .indexTZ = "UTC",
             user = "attribute", hello = "world", dimnames = list(NULL, "x"))
 })
-expect_identical(NULL, attr(x, "tformat"), info = info_msg)
-expect_identical(NULL, attr(x, "tclass"), info = info_msg)
-expect_identical(NULL, attr(x, "tzone"), info = info_msg)
-expect_identical(NULL, attr(x, ".indexCLASS"), info = info_msg)
-expect_identical(NULL, attr(x, ".indexTZ"), info = info_msg)
+expect_null(attr(x, "tformat"), info = info_msg)
+expect_null(attr(x, "tclass"), info = info_msg)
+expect_null(attr(x, "tzone"), info = info_msg)
+expect_null(attr(x, ".indexCLASS"), info = info_msg)
+expect_null(attr(x, ".indexTZ"), info = info_msg)
 expect_identical("attribute", attr(x, "user"), info = info_msg)
 expect_identical("world", attr(x, "hello"), info = info_msg)
 expect_identical("x", colnames(x), info = info_msg)
