@@ -1,3 +1,5 @@
+library(xts)
+
 data(sample_matrix)
 sample.data.frame <- data.frame(sample_matrix)
 sample.xts <- as.xts(sample.data.frame)

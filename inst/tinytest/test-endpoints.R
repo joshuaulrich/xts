@@ -1,3 +1,4 @@
+library(xts)
 
 # index crosses the unix epoch
 info_msg <- "test.double_index_cross_epoch"

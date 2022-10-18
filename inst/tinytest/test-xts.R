@@ -1,5 +1,6 @@
+library(xts)
+
 # Tests for xts constructors
-#
 
 ### NA in order.by {{{
 

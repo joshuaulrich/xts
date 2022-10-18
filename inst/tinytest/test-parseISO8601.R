@@ -1,3 +1,5 @@
+library(xts)
+
 # Constants
 TZ <- "UTC"
 START_N <- 1424390400

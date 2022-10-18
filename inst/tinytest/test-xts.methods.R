@@ -1,5 +1,6 @@
-#
-# RUnit tests for the following 'xts' methods:
+library(xts)
+
+# unit tests for the following 'xts' methods:
 # rbind
 # cbind
 #

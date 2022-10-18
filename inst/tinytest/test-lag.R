@@ -1,3 +1,5 @@
+library(xts)
+
 LAG <- function(x, k=1, na.pad=TRUE) {
   z <- lag(as.zoo(x), -k, na.pad)
   dimnames(z) <- NULL

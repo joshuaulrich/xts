@@ -1,3 +1,5 @@
+library(xts)
+
 nm_minutes <- c("1970-01-01 00:00:00", "1970-01-01 00:01:00")
 
 # 'f' is character, but length(f) > 1

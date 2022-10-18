@@ -1,5 +1,6 @@
 if (requireNamespace("tseries", quietly = TRUE)) {
 
+  library(xts)
   data(sample_matrix)
   
   sample.irts <- tseries::irts(as.POSIXct(rownames(sample_matrix)),sample_matrix)

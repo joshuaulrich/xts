@@ -1,3 +1,5 @@
+library(xts)
+
 xdata <- .xts(c(1, NA, 3, 4, 5, 6), c(0, 4, 10, 19, 24, 29))
 xindex <- .xts(rep(0, 5), c(5, 10, 20, 25, 28))
 types <- c("double", "integer", "character", "logical")

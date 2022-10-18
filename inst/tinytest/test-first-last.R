@@ -1,3 +1,5 @@
+library(xts)
+
 dates <- c("2017-01-01", "2017-01-02", "2017-01-03", "2017-01-04")
 d1 <- data.frame(x = seq_along(dates), row.names = dates)
 d2 <- data.frame(d1, y = rev(seq_along(dates)))

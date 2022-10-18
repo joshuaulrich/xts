@@ -1,3 +1,5 @@
+library(xts)
+
 P <- structure(
   list(difftime = structure(0, units = "secs", class = "difftime"),
        frequency = 0,

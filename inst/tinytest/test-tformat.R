@@ -1,3 +1,5 @@
+library(xts)
+
 # These tests check the 'tformat' attribute is attached to the expected
 # component of the xts object. The xts constructors should no longer add the
 # '.indexFORMAT' attribute to the xts object itself. Only the index should

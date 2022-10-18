@@ -1,4 +1,6 @@
-# Time-of-day subset
+library(xts)
+
+# Time-of-day subset tests
 
 info_msg <- "test.time_of_day_start_equals_end"
 i <- 0:47

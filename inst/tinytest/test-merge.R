@@ -1,3 +1,5 @@
+library(xts)
+
 zero_width_xts <- xts()
 
 info_msg <- "test.merge_empty_xts_with_2_scalars"

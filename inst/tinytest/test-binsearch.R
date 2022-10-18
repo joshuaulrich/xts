@@ -1,3 +1,5 @@
+library(xts)
+
 na <- NA_integer_
 
 # vector with even length, odd length

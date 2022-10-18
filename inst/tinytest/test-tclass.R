@@ -1,3 +1,5 @@
+library(xts)
+
 # These tests check the time class attribute is attached to the expected
 # component of the xts object. The xts constructors should no longer add
 # 'tclass' or '.indexClass' attributes to the xts object itself. Only the index

@@ -1,3 +1,5 @@
+library(xts)
+
 # POSIXct index
 info_msg <- "test.diff_integer_POSIXt"
 x <- .xts(1:5, 1:5 + 0.0)

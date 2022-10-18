@@ -1,3 +1,5 @@
+library(xts)
+
 # ensure first group is included in output
 info_msg <- "test.to.frequency_includes_first_group"
 data(sample_matrix)

@@ -1,5 +1,6 @@
+library(xts)
+
 # Tests for isOrdered()
-#
 
 # Utility functions for tests {{{
 check.isOrdered <- function(x, v = rep(TRUE, 4), msg = "") {

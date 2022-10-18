@@ -1,3 +1,5 @@
+library(xts)
+
 # period.apply() doesn't care what generates the INDEX,
 # but it does care that INDEX has the following characteristics:
 # 1) the first element is zero,

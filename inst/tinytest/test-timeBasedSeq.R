@@ -1,4 +1,6 @@
-# timeBasedSeq test
+library(xts)
+
+# timeBasedSeq tests
 
 # 1999 to 2008 by year, Date
 info_msg <- "test.tbs_1999_to_2008_by_year_Date"

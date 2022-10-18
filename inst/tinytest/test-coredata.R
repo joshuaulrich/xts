@@ -1,3 +1,5 @@
+library(xts)
+
 info_msg <- "test.coredata_vector"
 x <- xts(1, as.Date("2018-03-02"))
 z <- as.zoo(x)

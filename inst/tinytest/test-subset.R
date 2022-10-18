@@ -1,3 +1,5 @@
+library(xts)
+
 ### i = missing, j = NA, object has column names
 ### See #181
 info_msg <- "test.i_missing_j_NA_has_colnames"

@@ -1,3 +1,5 @@
+library(xts)
+
 # Tests for plotting functions
 data(sample_matrix)
 x <- as.xts(sample_matrix, dateFormat = "Date")

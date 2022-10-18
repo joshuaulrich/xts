@@ -1,3 +1,5 @@
+library(xts)
+
 # ensure reclass() preserves index attributes from 'match.to'
 info_msg <- "test.reclass_preserves_match.to_tclass"
 x <- .xts(1:3, 1:3, tclass = "Date")
