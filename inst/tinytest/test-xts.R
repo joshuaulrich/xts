@@ -76,6 +76,54 @@ expect_null(attr(y, "tformat"), info = ".xts(<defaults>) doesn't add tformat to 
 expect_null(attr(y, ".indexFORMAT"), info = ".xts(<defaults>) doesn't add .indexFORMAT to xts object")
 
 
+### constructor with index attributes specified doesn't add them to the xts object
+create_msg <- function(func, attrib) {
+  paste0(func, "(..., ",
+         attrib, " = 'foo' doesn't add ",
+         attrib, " to the xts object")
+}
+suppressWarnings({
+    x <- xts(1, Sys.time(), .indexCLASS = "yearmon")
+    y <- xts(1, Sys.time(), .indexFORMAT = "%Y")
+    z <- xts(1, Sys.time(), .indexTZ = "UTC")
+})
+expect_null(attr(x, ".indexCLASS"), info = create_msg("xts", ".indexCLASS"))
+expect_null(attr(y, ".indexFORMAT"), info = create_msg("xts", ".indexFORMAT"))
+expect_null(attr(z, ".indexTZ"), info = create_msg("xts", ".indexTZ"))
+
+suppressWarnings({
+    x <- .xts(1, Sys.time(), .indexCLASS = "yearmon")
+    y <- .xts(1, Sys.time(), .indexFORMAT = "%Y")
+    z <- .xts(1, Sys.time(), .indexTZ = "UTC")
+})
+expect_null(attr(x, ".indexCLASS"), info = create_msg(".xts", ".indexCLASS"))
+expect_null(attr(y, ".indexFORMAT"), info = create_msg(".xts", ".indexFORMAT"))
+expect_null(attr(z, ".indexTZ"), info = create_msg(".xts", ".indexTZ"))
+
+x <- xts(1, Sys.time(), tclass = "Date")
+y <- xts(1, Sys.time(), tformat = "%Y-%m-%d %H:%M")
+z <- xts(1, Sys.time(), tzone = "UTC")
+expect_null(attr(x, "tclass"), info = create_msg("xts", "tclass"))
+expect_null(attr(y, "tformat"), info = create_msg("xts", "tformat"))
+expect_null(attr(z, "tzone"), info = create_msg("xts", "tzone"))
+
+x <- .xts(1, Sys.time(), tclass = "Date")
+y <- .xts(1, Sys.time(), tformat = "%Y-%m-%d %H:%M")
+z <- .xts(1, Sys.time(), tzone = "UTC")
+expect_null(attr(x, "tclass"), info = create_msg(".xts", "tclass"))
+expect_null(attr(y, "tformat"), info = create_msg(".xts", "tformat"))
+expect_null(attr(z, "tzone"), info = create_msg(".xts", "tzone"))
+
+
+# These error due to `missing("tclass")` instead of `!hasArg("tclass")`
+# missing() expects an argument symbol, not a character string. The error is
+# not caught in expect_warning() as of tinytest_1.3.1
+suppressWarnings(xts(1, as.Date("2018-05-02"), .indexCLASS = "Date"))
+suppressWarnings(xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"))
+suppressWarnings(.xts(1, 1, .indexCLASS = "Date"))
+suppressWarnings(.xts(1, 1, .indexFORMAT = "%Y"))
+
+
 ### warn if deprecated arguments passed to constructor
 deprecated_warns <-
   list(iclass  = "'.indexCLASS' is deprecated.*use tclass instead",

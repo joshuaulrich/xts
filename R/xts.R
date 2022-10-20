@@ -45,8 +45,12 @@ function(x=NULL,
   if(!timeBased(order.by))
     stop("order.by requires an appropriate time-based object")
 
+  # store this result in case `tzone` is assigned later, because that causes
+  # `missing(tzone)` to be TRUE even if it was missing from the initial call.
+  is.tzone.missing <- missing(tzone)
+
   if(inherits(order.by, .classesWithoutTZ)) {
-    if(!missing(tzone))
+    if(!is.tzone.missing)
       warning(paste(sQuote('tzone'),"setting ignored for ",
                     paste(class(order.by), collapse=", "), " indexes"))
     tzone <- "UTC"
@@ -76,10 +80,10 @@ function(x=NULL,
     x <- as.matrix(x)
   } else x <- numeric(0)
 
-  if(orderBy[1L] == "timeDate" && missing(tzone)) {
+  if(orderBy[1L] == "timeDate" && is.tzone.missing) {
     tzone <- order.by@FinCenter
   } else
-  if(!is.null(attr(order.by,"tzone")) && missing(tzone))
+  if(!is.null(attr(order.by,"tzone")) && is.tzone.missing)
     tzone <- attr(order.by, "tzone")
   if(inherits(order.by,'dates'))
     index <- as.numeric(as.POSIXct(strptime(as.character(order.by),"(%m/%d/%y %H:%M:%S)"))) #$format
@@ -96,28 +100,33 @@ function(x=NULL,
             index=structure(index,tzone=tzone,tclass=orderBy),
             class=c('xts','zoo'),
             ...)
+  # remove any index attributes that came through '...'
+  index.attr <- c(".indexFORMAT", "tformat",
+                  ".indexCLASS", "tclass",
+                  ".indexTZ", "tzone")
+  for(iattr in index.attr) {
+    attr(x, iattr) <- NULL
+  }
 
   ctor.call <- match.call(expand.dots = TRUE)
   if(hasArg(".indexFORMAT")) {
     warning(sQuote(".indexFORMAT"), " is deprecated, use tformat instead.")
-    if(missing("tformat")) {
+    if(!hasArg("tformat")) {
       attr(attr(x, "index"), "tformat") <- eval.parent(ctor.call$.indexFORMAT)
     }
   }
   if(hasArg("tformat")) {
     attr(attr(x, "index"), "tformat") <- eval.parent(ctor.call$tformat)
-    # tformat will be an attr on 'x' via '...' in structure()
-    attr(x, "tformat") <- NULL
   }
   if(hasArg(".indexCLASS")) {
     warning(sQuote(".indexCLASS"), " is deprecated, use tclass instead.")
-    if(missing("tclass")) {
+    if(!hasArg("tclass")) {
       attr(attr(x, "index"), "tclass") <- eval.parent(ctor.call$.indexCLASS)
     }
   }
   if(hasArg(".indexTZ")) {
     warning(sQuote(".indexTZ"), " is deprecated, use tzone instead.")
-    if(missing("tzone")) {
+    if(is.tzone.missing) {
       attr(attr(x, "index"), "tzone") <- eval.parent(ctor.call$.indexTZ)
     }
   }
@@ -166,7 +175,7 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   if(hasArg(".indexCLASS")) {
     warning(sQuote(".indexCLASS"), " is deprecated, use tclass instead.")
     tclass <- eval.parent(ctor.call$.indexCLASS)
-  } else if(missing("tclass")) {
+  } else if(!hasArg("tclass")) {
     # compare tclass on the index with tclass argument because the
     # tclass argument will override the index attribute, but it shouldn't...
 ### FIXME:
@@ -186,7 +195,7 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
             " use tzone instead.")
   }
   # don't overwrite index tzone if tzone arg is missing
-  if(missing("tzone")) {
+  if(missing(tzone)) {
     if(!is.null(index.tz <- attr(index,'tzone')))
       tzone <- index.tz
   }
