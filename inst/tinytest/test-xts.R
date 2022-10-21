@@ -165,12 +165,15 @@ expect_identical(tf, attr(attr(x, "index"), "tformat"),
 expect_identical(tf, attr(attr(y, "index"), "tformat"),
                  info = ".xts(..., tformat = 'foo') adds tformat to index")
 
-# .xts()
-info_msg <- "test..xts_dimnames_in_dots"
-x <- .xts(1:5, 1:5, dimnames = list(NULL, "x"))
-y <- xts(1:5, index(x), dimnames = list(NULL, "x"))
-expect_equal(x, y, info = info_msg)
-expect_null(rownames(x), info = "xts() and .xts() apply dimnames passed via '...'")
+
+### dimnames come through '...'
+x <- xts(1:5, .Date(1:5), dimnames = list(NULL, "x"))
+y <- .xts(1:5, 1:5, dimnames = list(NULL, "x"))
+expect_equal(colnames(x), colnames(y), info = "xts() and .xts() apply dimnames passed via '...'")
+x <- xts(1:5, .Date(1:5), dimnames = list(1:5, "x"))
+y <- .xts(1:5, 1:5, dimnames = list(1:5, "x"))
+expect_null(rownames(x), info = "xts() doesn't set rownames when dimnames passed via '...'")
+expect_null(rownames(y), info = ".xts() doesn't set rownames when dimnames passed via '...'")
 
 m <- matrix(1, dimnames = list("a", "b"))
 x <- .xts(m, 1)

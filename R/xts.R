@@ -254,13 +254,6 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   xx <- .Call(C_add_xtsCoreAttributes, x, index_out, tzone., tclass.,
               c('xts','zoo'), tformat.)
 
-  # ensure there are no rownames
-  rn <- dimnames(xx)[[1]]
-  if(!is.null(rn)) {
-    attr(xx, '.ROWNAMES') <- rn
-    dimnames(xx)[1] <- list(NULL)
-  }
-
   # remove any index attributes that came through '...'
   # and set any user attributes (and/or dim, dimnames, etc)
   dots.names <- eval(substitute(alist(...)))
@@ -270,6 +263,14 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
     dot.attrs[drop.attr] <- NULL
     attributes(xx) <- c(attributes(xx), dot.attrs)
   }
+
+  # ensure there are no rownames (they may have come though dimnames)
+  rn <- dimnames(xx)[[1]]
+  if(!is.null(rn)) {
+    attr(xx, '.ROWNAMES') <- rn
+    dimnames(xx)[1] <- list(NULL)
+  }
+
   xx
 }
 
