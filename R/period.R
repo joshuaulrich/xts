@@ -23,11 +23,10 @@
 #
 `is.timeBased` <- `timeBased` <-
 function(x) {
-if (!any(sapply(c("Date", "POSIXt", "chron", "dates", "times", 
-        "timeDate", "yearmon", "yearqtr", "xtime"), function(xx) inherits(x, 
-        xx)))) {
-        FALSE
-    } else TRUE
+  time.classes <-
+    c("Date", "POSIXt", "chron", "dates", "times", "timeDate",
+      "yearmon", "yearqtr", "xtime")
+  inherits(x, time.classes)
 }
 
 make.timeBased <- function(x, class='POSIXct', ...)
