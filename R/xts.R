@@ -84,15 +84,15 @@ function(x=NULL,
     x <- as.matrix(x)
   } else x <- numeric(0)
 
-  if(orderBy[1L] == "timeDate" && is.tzone.missing) {
-    tzone <- order.by@FinCenter
-  } else
-  if(!is.null(attr(order.by,"tzone")) && is.tzone.missing)
-    tzone <- attr(order.by, "tzone")
-  if(inherits(order.by,'dates'))
-    index <- as.numeric(as.POSIXct(strptime(as.character(order.by),"(%m/%d/%y %H:%M:%S)"))) #$format
-  else
-  index <- as.numeric(as.POSIXct(order.by))
+
+  if(inherits(order.by, "dates")) {
+    fmt <- "%m/%d/%y"
+    if(inherits(order.by, "chron")) {
+      fmt <- paste0("(", fmt, " %H:%M:%S)")
+    }
+    order.by_ <- strptime(as.character(order.by_), fmt)  # POSIXlt
+  }
+  index <- as.numeric(as.POSIXct(order.by_))
 
   if(any(!is.finite(index)))
     stop("'order.by' cannot contain 'NA', 'NaN', or 'Inf'")

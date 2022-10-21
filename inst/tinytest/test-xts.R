@@ -299,6 +299,19 @@ for(tz in c("UTC", "GMT", "Etc/UTC", "Etc/GMT", "GMT-0", "GMT+0", "GMT0")) {
   expect_identical(tzone(x), "UTC", info = ".xts() UTC-equivalent tzone is set to UTC (Date)")
   expect_identical(tzone(y), "UTC", info = ".xts() UTC-equivalent tzone is set to UTC (yearmon)")
   expect_identical(tzone(z), "UTC", info = ".xts() UTC-equivalent tzone is set to UTC (yearqtr)")
+
+  if(requireNamespace("chron", quietly = TRUE)) {
+    x <- y <- NULL
+    expect_silent(x <- xts(1, chron::chron(1, 1), tzone = tz), info = create_msg("chron", tz, FALSE))
+    expect_silent(y <- xts(1, chron::dates(1), tzone = tz), info = create_msg("dates", tz, FALSE))
+    expect_identical(tzone(x), "UTC", info = "xts() UTC-equivalent tzone is set to UTC (chron)")
+    expect_identical(tzone(y), "UTC", info = ".xts() UTC-equivalent tzone is set to UTC (dates)")
+    x <- y <- NULL
+    expect_silent(x <- .xts(1, chron::chron(1, 1), tzone = tz), info = create_msg.("chron", tz, FALSE))
+    expect_silent(y <- .xts(1, chron::dates(1), tzone = tz), info = create_msg.("dates", tz, FALSE))
+    expect_identical(tzone(x), "UTC", info = "xts() UTC-equivalent tzone is set to UTC (chron)")
+    expect_identical(tzone(y), "UTC", info = ".xts() UTC-equivalent tzone is set to UTC (dates)")
+  }
 }
 ### constructors warn and ignore non-UTC tzone for index/order.by classes without timezones
 tz <- "America/Chicago"
@@ -326,3 +339,20 @@ expect_warning(z <- .xts(1, yq, tzone = tz),
 expect_identical(tzone(x), "UTC", info = ".xts() non-UTC tzone is set to UTC (Date)")
 expect_identical(tzone(y), "UTC", info = ".xts() non-UTC tzone is set to UTC (yearmon)")
 expect_identical(tzone(z), "UTC", info = ".xts() non-UTC tzone is set to UTC (yearqtr)")
+
+if(requireNamespace("chron", quietly = TRUE)) {
+  x <- y <- NULL
+  expect_warning(x <- xts(1, chron::chron(1, 1), tzone = tz),
+                 pattern = warn_pattern, info = create_msg("chron", tz, TRUE))
+  expect_warning(y <- xts(1, chron::dates(1), tzone = tz),
+                 pattern = warn_pattern, info = create_msg("dates", tz, TRUE))
+  expect_identical(tzone(x), "UTC", info = "xts() non-UTC tzone is set to UTC (chron)")
+  expect_identical(tzone(y), "UTC", info = "xts() non-UTC tzone is set to UTC (dates)")
+  x <- y <- NULL
+  expect_warning(x <- .xts(1, chron::chron(1, 1), tzone = tz),
+                 pattern = warn_pattern, info = create_msg.("chron", tz, TRUE))
+  expect_warning(y <- .xts(1, chron::dates(1), tzone = tz),
+                 pattern = warn_pattern, info = create_msg.("dates", tz, TRUE))
+  expect_identical(tzone(x), "UTC", info = ".xts() non-UTC tzone is set to UTC (chron)")
+  expect_identical(tzone(y), "UTC", info = ".xts() non-UTC tzone is set to UTC (dates)")
+}
