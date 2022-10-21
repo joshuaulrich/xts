@@ -52,7 +52,6 @@ x <- .xts(, .POSIXct(integer()))
 expect_true(!is.null(attr(attr(x, "index"), "tclass")), info = ".xts() with no args adds tclass to the index")
 expect_true(!is.null(attr(attr(x, "index"), "tzone")), info = ".xts() with no args adds tzone to the index")
 
-
 ### constructor defaults don't add index attributes to the xts object
 x <- xts(1, as.Date("2018-05-02"))
 expect_null(attr(x, "tclass"), info = "xts(<defaults>) doesn't add tclass to xts object")
@@ -74,7 +73,6 @@ expect_null(attr(x, ".indexFORMAT"), info = "xts(<defaults>) doesn't add .indexF
 y <- .xts(1, 1)
 expect_null(attr(y, "tformat"), info = ".xts(<defaults>) doesn't add tformat to xts object")
 expect_null(attr(y, ".indexFORMAT"), info = ".xts(<defaults>) doesn't add .indexFORMAT to xts object")
-
 
 ### constructor with index attributes specified doesn't add them to the xts object
 create_msg <- function(func, attrib) {
@@ -194,29 +192,69 @@ expect_null(rownames(x), info = ".xts() result does not have rownames")
 #   expect_warning(.xts(1:3, idx), msg = "tclass = timeDate")
 # }
 
-checkXtsFormat <- function(xts, format) {
-  expect_identical(tformat(xts), format, info = info_msg)
-  expect_identical(attr(attr(xts, "index"), "tformat"), format, info = info_msg)
-}
 
-### Check that index format attribute precedence is:
-### .indexFORMAT argument > tformat argument > tformat index attribute
-info_msg <- "test..xts_index_format_precedence"
-fmt <- "%Y-%m-%d"
-checkXtsFormat(.xts(1, 1), NULL)
-checkXtsFormat(.xts(1, 1, tformat=fmt), fmt)
-# silence the warning due to .indexFORMAT It is tested independently.
-checkXtsFormat(suppressWarnings(.xts(1, 1, .indexFORMAT=fmt)), fmt)  # TODO: expect_warnings
-checkXtsFormat(suppressWarnings(.xts(1, 1, tformat="%Y", .indexFORMAT=fmt)), fmt)  # TODO: expect_warnings
+### xts() index attribute precedence should be:
+###   1. .index* value (e.g. .indexTZ)  # backward compatibility
+###   2. t* value (e.g. tzone)          # current function to override index attribute
+###   3. attribute on order.by          # overridden by either 2 above
 
-## check constructor arguments override existing index attribute
-idx <- structure(1, tzone="", tclass="yearmon", tformat="%Y-%b")
-fmt <- "%Y-%m"
-checkXtsFormat(.xts(1, idx), "%Y-%b")
-checkXtsFormat(.xts(1, idx, tformat=fmt), fmt)
-# silence the warning due to .indexFORMAT It is tested independently.
-checkXtsFormat(suppressWarnings(.xts(1, idx, .indexFORMAT=fmt)), fmt)  # TODO: expect_warnings
-checkXtsFormat(suppressWarnings(.xts(1, idx, tformat="%b%y", .indexFORMAT=fmt)), fmt)  # TODO: expect_warnings
+target_index <- structure(Sys.time(), tzone = "UTC", tclass = "yearmon", tformat = "%Y-%m-%d")
+
+suppressWarnings({
+  x <- xts(1, target_index, .indexCLASS = "Date", tclass = "yearqtr")
+  y <- xts(1, target_index, .indexFORMAT = "%Y-%b", tformat = "%Y-%m")
+  z <- xts(1, target_index, .indexTZ = "Asia/Tokyo", tzone = "Europe/London")
+})
+expect_identical(tclass(x), "Date", info = "xts() .indexCLASS takes precedence over tclass")
+expect_identical(tformat(y), "%Y-%b", info = "xts() .indexFORMAT takes precedence over tformat")
+expect_identical(tzone(z), "Asia/Tokyo", info = "xts() .indexTZ takes precedence over tzone")
+
+x <- xts(1, target_index, tclass = "yearqtr")
+y <- xts(1, target_index, tformat = "%Y-%m")
+z <- xts(1, target_index, tzone = "Europe/London")
+expect_identical(tclass(x), "yearqtr", info = "xts() tclass takes precedence over index tclass")
+expect_identical(tformat(y), "%Y-%m", info = "xts() tformat takes precedence over index tformat")
+expect_identical(tzone(z), "Europe/London", info = "xts() tzone takes precedence over index tzone")
+
+x <- xts(1, target_index)
+y <- xts(1, target_index)
+z <- xts(1, target_index)
+expect_identical(tclass(x), attr(target_index, "tclass"), info = "xts() uses index tclass")
+expect_identical(tformat(y), attr(target_index, "tformat"), info = "xts() uses index tformat")
+expect_identical(tzone(z), attr(target_index, "tzone"), info = "xts() uses index tzone")
+
+### .xts() index attribute precedence is similar. But we cannot override tclass
+### because it's a formal argument with a specific default. Historically .xts()
+### has always set the tclass to POSIXct by default, whether or not the 'index'
+### argument already had a tclass attribute.
+target_index <- structure(as.POSIXlt(Sys.time()), tzone = "UTC", tclass = "yearmon", tformat = "%Y-%m-%d")
+
+suppressWarnings({
+  x <- .xts(1, target_index, .indexCLASS = "Date", tclass = "yearqtr")
+  y <- .xts(1, target_index, .indexFORMAT = "%Y-%b", tformat = "%Y-%m")
+  z <- .xts(1, target_index, .indexTZ = "Asia/Tokyo", tzone = "Europe/London")
+})
+expect_identical(tclass(x), "Date", info = ".xts() .indexCLASS takes precedence over tclass")
+expect_identical(tformat(y), "%Y-%b", info = ".xts() .indexFORMAT takes precedence over tformat")
+expect_identical(tzone(z), "Asia/Tokyo", info = ".xts() .indexTZ takes precedence over tzone")
+
+x <- .xts(1, target_index, tclass = "yearqtr")
+y <- .xts(1, target_index, tformat = "%Y-%m")
+z <- .xts(1, target_index, tzone = "Europe/London")
+expect_identical(tclass(x), "yearqtr", info = ".xts() tclass takes precedence over index tclass")
+expect_identical(tformat(y), "%Y-%m", info = ".xts() tformat takes precedence over index tformat")
+expect_identical(tzone(z), "Europe/London", info = ".xts() tzone takes precedence over index tzone")
+
+x <- .xts(1, target_index)
+y <- .xts(1, target_index)
+z <- .xts(1, target_index)
+# NOTE: as of 0.10-0, .xts() sets tclass on the index to "POSIXct" by default.
+#   It does not keep the index argument's tclass if it has one. So overriding
+#   the default with the index's tclass attribute is a breaking change.
+expect_identical(tclass(x), c("POSIXct", "POSIXt"), info = ".xts() *ignores* index tclass (unlike xts())")
+# tformat and tzone are handled the same as in xts()
+expect_identical(tformat(y), attr(target_index, "tformat"), info = ".xts() uses index tformat")
+expect_identical(tzone(z), attr(target_index, "tzone"), info = ".xts() uses index tzone")
 
 info_msg <- "test..xts_user_attributes"
 suppressWarnings({
@@ -232,64 +270,59 @@ expect_identical("attribute", attr(x, "user"), info = info_msg)
 expect_identical("world", attr(x, "hello"), info = info_msg)
 expect_identical("x", colnames(x), info = info_msg)
 
-checkXtsClass <- function(xts, class, msg) {
-  expect_equal(tclass(xts), class, info = msg)
-  expect_equal(attr(attr(xts, "index"), "tclass"), class, info = msg)
+### constructors should not warn for Date, yearmon, yearqtr, chron::chron, chron::dates
+### and should set tzone to UTC for any UTC-equivalent tzone
+create_msg <- function(klass, tz, warns = TRUE) {
+  warn_part <- if(warns) "warns" else "doesn't warn"
+  sprintf("xts(1, %s(...), tzone = '%s') %s",
+          klass, tz, warn_part)
 }
-
-### Check that index class attribute precedence is:
-### .indexCLASS argument > tclass argument > tclass index attribute
-info_msg <- ".xts() index class precedence"
-checkXtsClass(.xts(1, 1), c("POSIXct", "POSIXt"), info_msg)
-checkXtsClass(.xts(1, 1, tclass="timeDate"), "timeDate", info_msg)
-# silence the warning due to .indexCLASS. It is tested independently.
-suppressWarnings(x <-.xts(1, 1, .indexCLASS="Date"))  # TODO: expect_warnings
-checkXtsClass(x, "Date", info_msg)
-# silence the warning due to .indexCLASS. It is tested independently.
-suppressWarnings(x <- .xts(1, 1, tclass="timeDate", .indexCLASS="Date"))  # TODO: expect_warnings
-checkXtsClass(x, "Date", info_msg)
-
-## also check that tclass is ignored if specified as part of index
-info_msg <- ".xts() tclass is ignored if it's an index attribute"
-idx <- structure(1, tzone="",tclass="yearmon")
-checkXtsClass(.xts(1, idx), c("POSIXct", "POSIXt"), info_msg)
-checkXtsClass(.xts(1, idx, tclass="timeDate"), "timeDate", info_msg)
-# silence .indexCLASS warning because it's tested independently.
-suppressWarnings(x <-.xts(1, 1, .indexCLASS="Date"))  # TODO: expect_warnings
-checkXtsClass(x, "Date", info_msg)
-# silence the warning due to .indexCLASS. It is tested independently.
-suppressWarnings(x <- .xts(1, idx, tclass="timeDate", .indexCLASS="Date"))  # TODO: expect_warnings
-checkXtsClass(x, "Date", info_msg)
-
-checkXtsTz <- function(xts, tzone, msg) {
-  expect_equal(tzone(xts), tzone, info = msg)
-  expect_equal(attr(attr(xts, "index"), "tzone"), tzone, info = msg)
+create_msg. <- function(klass, tz, warns = TRUE) {
+  paste0(".", create_msg(klass, tz, warns))
 }
+ym <- as.yearmon(Sys.Date())
+yq <- as.yearqtr(Sys.Date())
+for(tz in c("UTC", "GMT", "Etc/UTC", "Etc/GMT", "GMT-0", "GMT+0", "GMT0")) {
+  # xts()
+  x <- y <- z <- NULL
+  expect_silent(x <- xts(1, .Date(1), tzone = tz), info = create_msg("Date()", tz, FALSE))
+  expect_silent(y <- xts(1, ym, tzone = tz), info = create_msg("yearmon", tz, FALSE))
+  expect_silent(z <- xts(1, yq, tzone = tz), info = create_msg("yearqtr", tz, FALSE))
+  expect_identical(tzone(x), "UTC", info = "xts() UTC-equivalent tzone is set to UTC (Date)")
+  expect_identical(tzone(y), "UTC", info = "xts() UTC-equivalent tzone is set to UTC (yearmon)")
+  expect_identical(tzone(z), "UTC", info = "xts() UTC-equivalent tzone is set to UTC (yearqtr)")
+  # .xts()
+  x <- y <- z <- NULL
+  expect_silent(x <- .xts(1, .Date(1), tzone = tz), info = create_msg.("Date", tz, FALSE))
+  expect_silent(y <- .xts(1, ym, tzone = tz), info = create_msg.("yearmon", tz, FALSE))
+  expect_silent(z <- .xts(1, yq, tzone = tz), info = create_msg.("yearqtr", tz, FALSE))
+  expect_identical(tzone(x), "UTC", info = ".xts() UTC-equivalent tzone is set to UTC (Date)")
+  expect_identical(tzone(y), "UTC", info = ".xts() UTC-equivalent tzone is set to UTC (yearmon)")
+  expect_identical(tzone(z), "UTC", info = ".xts() UTC-equivalent tzone is set to UTC (yearqtr)")
+}
+### constructors warn and ignore non-UTC tzone for index/order.by classes without timezones
+tz <- "America/Chicago"
+warn_pattern <- "tzone.*setting ignored for.*indexes"
 
-### Check that tzone is honoured and .indexTZ ignored
-### Check that index timezone attribute precedence is:
-### .indexTZ argument > tzone argument > tzone index attribute
-### tzone argument > tzone argument > tzone index attribute
-info_msg <- ".xts() index tzone precedence"
-sysTZ <- Sys.getenv("TZ")
-Sys.setenv(TZ = "UTC")
-
-checkXtsTz(.xts(1, 1), "UTC", info_msg)
-checkXtsTz(.xts(1, 1, tzone="Europe/London"), "Europe/London", info_msg)
-## this case passes in 0.10-2 but looks wrong
-suppressWarnings(x <- .xts(1, 1, .indexTZ="America/New_York"))  # TODO: expect_warning
-checkXtsTz(x, "UTC", info_msg)
-suppressWarnings(x <- .xts(1, 1, tzone="Europe/London", .indexTZ="America/New_York"))  # TODO: expect_warning
-checkXtsTz(x, "Europe/London", info_msg)
-
-## Cases where tzone is specified in the index
-info_msg <- ".xts() index tzone precedence - tzone is an index attribute"
-idx <- structure(1, tzone="Asia/Tokyo",tclass="yearmon")
-checkXtsTz(.xts(1, idx), "Asia/Tokyo", info_msg)
-checkXtsTz(.xts(1, idx, tzone="Europe/London"), "Europe/London", info_msg)
-suppressWarnings(x <- .xts(1, idx, .indexTZ="America/New_York"))  # TODO: expect_warnings
-checkXtsTz(x, "Asia/Tokyo", info_msg)
-suppressWarnings(x <- .xts(1, idx, tzone="Europe/London", .indexTZ="America/New_York"))  # TODO: expect_warnings
-checkXtsTz(x, "Europe/London", info_msg)
-
-Sys.setenv(TZ = sysTZ)
+# xts()
+x <- y <- z <- NULL
+expect_warning(x <- xts(1, .Date(1), tzone = tz),
+               pattern = warn_pattern, info = create_msg("Date", tz, TRUE))
+expect_warning(y <- xts(1, ym, tzone = tz),
+               pattern = warn_pattern, info = create_msg("yearmon", tz, TRUE))
+expect_warning(z <- xts(1, yq, tzone = tz),
+               pattern = warn_pattern, info = create_msg("yearqtr", tz, TRUE))
+expect_identical(tzone(x), "UTC", info = "xts() non-UTC tzone is set to UTC (Date)")
+expect_identical(tzone(y), "UTC", info = "xts() non-UTC tzone is set to UTC (yearmon)")
+expect_identical(tzone(z), "UTC", info = "xts() non-UTC tzone is set to UTC (yearqtr)")
+# .xts()
+x <- y <- z <- NULL
+expect_warning(x <- .xts(1, .Date(1), tzone = tz),
+               pattern = warn_pattern, info = create_msg("yearqtr", tz, TRUE))
+expect_warning(y <- .xts(1, ym, tzone = tz),
+               pattern = warn_pattern, info = create_msg("Date", tz, TRUE))
+expect_warning(z <- .xts(1, yq, tzone = tz),
+               pattern = warn_pattern, info = create_msg("yearmon", tz, TRUE))
+expect_identical(tzone(x), "UTC", info = ".xts() non-UTC tzone is set to UTC (Date)")
+expect_identical(tzone(y), "UTC", info = ".xts() non-UTC tzone is set to UTC (yearmon)")
+expect_identical(tzone(z), "UTC", info = ".xts() non-UTC tzone is set to UTC (yearqtr)")
