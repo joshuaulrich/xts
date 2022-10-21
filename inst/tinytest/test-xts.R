@@ -37,11 +37,11 @@ expect_error(xts(1:3, .POSIXct(c(1, 2,  Inf))), info = "xts() order.by ends with
 expect_error(xts(1:3, .POSIXct(c(-Inf, 2, 3))), info = "xts() order.by starts with -Inf")
 ### }}}
 
-# Test that only first tzone element is stored
+# Test that only first tzone element is stored for POSIXlt
 tz <- "America/Chicago"
 i <- as.POSIXlt("2018-01-01", tz = tz)
 y <- xts(1, i)
-expect_identical(tz, tzone(y), info = "xts() only uses the first element of tzone")
+expect_identical(tz, tzone(y), info = "xts() only uses the first element of tzone for POSIXlt order.by")
 
 ### constructors add tzone and tclass to the index by default
 x <- xts()
@@ -155,7 +155,7 @@ expect_warning(x <- .xts(1, as.Date("2018-05-02"), .indexFORMAT = "%Y"),
                info = ".xts() warns when .indexFORMAT is provided")
 
 
-info_msg <- "test.xts_and.xts_ctors_add_tformat"
+### constructors add tformat to the index when it's specified
 tf <- "%m/%d/%Y"
 x <- xts(1:3, .Date(1:3), tformat = tf)
 y <- .xts(1:3, .Date(1:3), tformat = tf)
@@ -174,7 +174,7 @@ expect_null(rownames(x), info = "xts() and .xts() apply dimnames passed via '...
 
 m <- matrix(1, dimnames = list("a", "b"))
 x <- .xts(m, 1)
-expect_null(rownames(x), info = ".xts() result does not have rownames")
+expect_null(rownames(x), info = ".xts() on a matrix with rownames does not have rownames")
 
 # test..xts_ctor_warns_if_index_tclass_not_NULL_or_POSIXct <- function() {
 #   DEACTIVATED("Warning causes errors in dependencies")

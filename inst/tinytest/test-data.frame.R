@@ -1,7 +1,7 @@
 library(xts)
 
 data(sample_matrix)
-sample.data.frame <- data.frame(sample_matrix)
+sample.data.frame <- data.frame(sample_matrix[1:15,])
 sample.xts <- as.xts(sample.data.frame)
 
 info_msg <- "test.convert_data.frame_to_xts"
