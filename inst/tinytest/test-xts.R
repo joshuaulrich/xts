@@ -256,11 +256,13 @@ expect_identical(tclass(x), c("POSIXct", "POSIXt"), info = ".xts() *ignores* ind
 expect_identical(tformat(y), attr(target_index, "tformat"), info = ".xts() uses index tformat")
 expect_identical(tzone(z), attr(target_index, "tzone"), info = ".xts() uses index tzone")
 
-info_msg <- "test..xts_user_attributes"
 suppressWarnings({
-  x <- .xts(1, 1, tformat = "%Y", .indexCLASS = "Date", .indexTZ = "UTC",
+  x <- xts(1, Sys.Date(), tformat = "%Y", .indexCLASS = "Date", .indexTZ = "UTC",
+            user = "attribute", hello = "world", dimnames = list(NULL, "x"))
+  y <- .xts(1, 1, tformat = "%Y", .indexCLASS = "Date", .indexTZ = "UTC",
             user = "attribute", hello = "world", dimnames = list(NULL, "x"))
 })
+info_msg <- "xts() adds user attributes"
 expect_null(attr(x, "tformat"), info = info_msg)
 expect_null(attr(x, "tclass"), info = info_msg)
 expect_null(attr(x, "tzone"), info = info_msg)
@@ -269,6 +271,15 @@ expect_null(attr(x, ".indexTZ"), info = info_msg)
 expect_identical("attribute", attr(x, "user"), info = info_msg)
 expect_identical("world", attr(x, "hello"), info = info_msg)
 expect_identical("x", colnames(x), info = info_msg)
+info_msg <- ".xts() adds user attributes"
+expect_null(attr(y, "tformat"), info = info_msg)
+expect_null(attr(y, "tclass"), info = info_msg)
+expect_null(attr(y, "tzone"), info = info_msg)
+expect_null(attr(y, ".indexCLASS"), info = info_msg)
+expect_null(attr(y, ".indexTZ"), info = info_msg)
+expect_identical("attribute", attr(y, "user"), info = info_msg)
+expect_identical("world", attr(y, "hello"), info = info_msg)
+expect_identical("x", colnames(y), info = info_msg)
 
 ### constructors should not warn for Date, yearmon, yearqtr, chron::chron, chron::dates
 ### and should set tzone to UTC for any UTC-equivalent tzone
