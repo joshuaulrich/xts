@@ -93,8 +93,9 @@ function(object, ..., ncols = 5)
   }
 
   # Index
-  cat(sprintf("  Index:   class [%s], TZ [%s]\n",
+  cat(sprintf("  Index:   %s [%d] (TZ: \"%s\")\n",
               paste(tclass(object), collapse = ","),
+              length(.index(object)),
               tzone(object)))
 
   if (!is.null(CLASS(object))) {
