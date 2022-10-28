@@ -52,6 +52,45 @@ function(pkg, generic, class, fun = NULL)
   )
 }
 
+.onAttach <- function(libname, pkgname)
+{
+  if (getOption("xts.warn_dplyr_breaks_lag", TRUE)) {
+
+    dplyr_path <- find.package("dplyr", quiet = TRUE, verbose = FALSE)
+
+    is_dplyr_installed <- (length(dplyr_path) > 0)
+    is_dplyr_attached <- "package:dplyr" %in% search()
+
+    if (is_dplyr_installed) {
+
+      msg <- "
+################################### WARNING ###################################
+# We noticed you have dplyr installed. The dplyr lag() function breaks how    #
+# base R's lag() function is supposed to work, which breaks lag(my_xts).      #"
+
+      if (is_dplyr_attached) { msg <- paste0(msg, "
+#                                                                             #
+# Calls to lag(my_xts) that you enter or source() into this session won't     #
+# work correctly.                                                             #")
+      } else {
+          msg <- paste0(msg, "
+#                                                                             #
+# If you call library(dplyr) later in this session, then calls to lag(my_xts) #
+# that you enter or source() into this session won't work correctly.          #")
+      }
+
+      msg <- paste0(msg, "
+#                                                                             #
+# All package code is unaffected because it is protected by the R namespace   #
+# mechanism.                                                                  #
+#                                                                             #
+# Set `options(xts.warn_dplyr_breaks_lag = FALSE)` to suppress this warning.  #
+################################### WARNING ###################################")
+      packageStartupMessage(msg)
+    }
+  }
+}
+
 .onLoad <- function(libname, pkgname)
 {
 #  if(Sys.getenv("TZ") == "") {
