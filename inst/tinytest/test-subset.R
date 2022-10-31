@@ -208,10 +208,10 @@ y <- x["/2015-02-26",]
 expect_identical(y, x[1:7,], info = info_msg)
 
 ### subset empty xts
-info_msg <- "test.empty_xts_i_datetime"
+info_msg <- "empty xts subset by datetime matches zoo"
 d0 <- as.Date(integer())
 zl <- xts(, d0)
-empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+empty <- as.xts(as.zoo(zl)[i,])
 i <- Sys.Date()
 expect_identical(zl[i,], empty, info = paste(info_msg, "i = Date, [i,]"))
 expect_identical(zl[i],  empty, info = paste(info_msg, "i = Date, [i]"))
@@ -219,31 +219,31 @@ i <- Sys.time()
 expect_identical(zl[i,], empty, info = paste(info_msg, "i = POSIXct, [i,]"))
 expect_identical(zl[i],  empty, info = paste(info_msg, "i = POSIXct, [i]"))
 
-info_msg <- "test.empty_xts_i_zero"
+info_msg <- "empty xts subset by 0 matches zoo"
 d0 <- as.Date(integer())
 zl <- xts(, d0)
-empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+empty <- as.xts(as.zoo(zl)[0,])
 expect_identical(zl[0,], empty, info = paste(info_msg, "[i,]"))
 expect_identical(zl[0],  empty, info = paste(info_msg, "[i]"))
 
-info_msg <- "test.empty_i_negative"
+info_msg <- "empty xts subset by -1 matches zoo"
 d0 <- as.Date(integer())
 zl <- xts(, d0)
-empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+empty <- as.xts(as.zoo(zl)[i,])
 expect_identical(zl[-1,], empty, info = paste(info_msg, "[-1,]"))
 expect_identical(zl[-1],  empty, info = paste(info_msg, "[-1]"))
 
-info_msg <- "test.empty_i_NA"
+info_msg <- "empty xts subset by NA matches zoo"
 d0 <- as.Date(integer())
 zl <- xts(, d0)
-empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+empty <- as.xts(as.zoo(zl)[i,])
 expect_identical(zl[NA,], empty, info = paste(info_msg, "[NA,]"))
 expect_identical(zl[NA],  empty, info = paste(info_msg, "[NA]"))
 
-info_msg <- "test.empty_i_NULL"
+info_msg <- "empty xts subset by NULL matches zoo"
 d0 <- as.Date(integer())
 zl <- xts(, d0)
-empty <- .xts(logical(), d0, "Date", "UTC", dim = 0:1, dimnames = list(NULL, NULL))
+empty <- as.xts(as.zoo(zl)[i,])
 expect_identical(zl[NULL,], empty, info = paste(info_msg, "[NULL,]"))
 expect_identical(zl[NULL],  empty, info = paste(info_msg, "[NULL]"))
 

@@ -80,10 +80,13 @@ function(x=NULL,
     order.by_ <- order.by_[indx]
   }
 
-  if(!is.null(x) || length(x) != 0 ) {
+  if(is.null(x)) {
+    x <- numeric(0)
+  } else if (NROW(x) > 0) {
     x <- as.matrix(x)
-  } else x <- numeric(0)
-
+  }
+  # else 'x' is a zero-length vector. Do not *add* dims via as.matrix().
+  # It's okay if 'x' already has dims.
 
   if(inherits(order.by, "dates")) {
     fmt <- "%m/%d/%y"

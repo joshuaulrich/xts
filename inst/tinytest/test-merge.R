@@ -165,3 +165,36 @@ mx <- merge(x1, x2, x3, suffixes = paste0('.', suffixes))
 mz <- merge.zoo(x1, x2, x3, suffixes = suffixes)
 
 expect_equal(mx, as.xts(mz), info = info_msg)
+
+
+### merging zero-width objects
+z1 <- structure(numeric(0),
+  index = structure(1:10, class = "Date"), class = "zoo")
+x1 <- as.xts(z1)
+z2 <- structure(numeric(0),
+  index = structure(5:14, class = "Date"), class = "zoo")
+x2 <- as.xts(z2)
+
+info_msg <- "merge.xts() on zero-width objects and all = TRUE matches merge.zoo()"
+z3 <- merge(z1, z2, all = TRUE)
+x3 <- merge(x1, x2, all = TRUE)
+# use expect_equivalent because xts index has tclass and tzone and zoo doesn't
+expect_equivalent(index(z3), index(x3), info = info_msg)
+
+info_msg <- "merge.xts() zero-width objects and all = FALSE matches merge.zoo()"
+z4 <- merge(z1, z2, all = FALSE)
+x4 <- merge(x1, x2, all = FALSE)
+# use expect_equivalent because xts index has tclass and tzone and zoo doesn't
+expect_equivalent(index(z4), index(x4), info = info_msg)
+
+info_msg <- "merge.xts() on zero-width objects and all = c(TRUE, FALSE) matches merge.zoo()"
+z5 <- merge(z1, z2, all = c(TRUE, FALSE))
+x5 <- merge(x1, x2, all = c(TRUE, FALSE))
+# use expect_equivalent because xts index has tclass and tzone and zoo doesn't
+expect_equivalent(index(z5), index(x5), info = info_msg)
+
+info_msg <- "merge.xts() on zero-width objects and all = c(FALSE, TRUE) matches merge.zoo()"
+z6 <- merge(z1, z2, all = c(FALSE, TRUE))
+x6 <- merge(x1, x2, all = c(FALSE, TRUE))
+# use expect_equivalent because xts index has tclass and tzone and zoo doesn't
+expect_equivalent(index(z6), index(x6), info = info_msg)

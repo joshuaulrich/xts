@@ -111,8 +111,16 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     dimx <- dim(x)
     if(is.null(dimx)) {
       nr <- length(x)
-      if(nr==0 && !which.i)
-        return( xts(rep(NA,length(index(x))), index(x))[i] )
+      if(nr==0 && !which.i) {
+        idx <- index(x)
+        if(length(idx) == 0) {
+          # this is an empty xts object (zero-length index and no columns)
+          # return it unchanged to match [.zoo
+          return(x)
+        } else {
+          return(xts(rep(NA, length(idx)), idx)[i])
+        }
+      }
       nr <- length(.index(x))
       nc <- 1L
     } else {

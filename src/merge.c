@@ -987,8 +987,8 @@ SEXP do_merge_xts (SEXP x, SEXP y,
      isNull(getAttrib(y,R_DimSymbol))) {
      /* retside=c(F,T) AND is.null(dim(y)) */ 
      setAttrib(result, R_DimSymbol, R_NilValue);
-  } else /* set Dim and DimNames */
-  if(num_rows >= 0 && (ncx + ncy) >= 0) {
+  } else /* set Dim and DimNames if there is at least 1 column */
+  if((ncx + ncy) > 0) {
     /* DIM */
     PROTECT(attr = allocVector(INTSXP, 2));
     INTEGER(attr)[0] = num_rows;
@@ -1090,17 +1090,6 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
     }
     args = CDR(args);
     n++;
-  }
-
-  /* return empty xts if all objects have no columns */
-  if(ncs < 1) {
-    SEXP s, t;
-    PROTECT(s = t = allocList(1)); P++;
-    SET_TYPEOF(s, LANGSXP);
-    SETCAR(t, install("xts"));
-    SEXP out = PROTECT(eval(s, env)); P++;
-    UNPROTECT(P);
-    return out;
   }
 
   /* build an index to be used in all subsequent calls */
