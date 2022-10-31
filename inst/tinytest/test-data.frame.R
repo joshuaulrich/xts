@@ -66,3 +66,29 @@ orderby = as.Date(rownames(sample.data.frame))
 x <- as.xts(sample.data.frame, order.by = orderby)
 y <- xts(coredata(sample.xts), as.Date(index(sample.xts), tz = ""))
 expect_identical(y, x, info_msg)
+
+### data.frame with Date/POSIXct column
+
+df_date_col <- data.frame(Date = as.Date(rownames(sample.data.frame)),
+                          sample.data.frame,
+                          row.names = NULL)
+
+info_msg <- "convert data.frame to xts from Date column"
+x <- as.xts(df_date_col)
+y <- xts(coredata(sample.xts), as.Date(index(sample.xts), tz = ""))
+expect_equal(y, x, info = info_msg)
+
+info_msg <- "convert data.frame to xts from POSIXct column"
+dttm <- as.POSIXct(rownames(sample.data.frame), tz = "UTC") + runif(15)*10000
+df_pxct_col <- data.frame(Timestamp = dttm,
+                          sample.data.frame,
+                          row.names = NULL)
+x <- as.xts(df_pxct_col)
+y <- xts(coredata(sample.xts), dttm)
+expect_equal(y, x, info = info_msg)
+
+info_msg <- "convert data.frame to xts errors when no rownames or column"
+df_no_col <- data.frame(sample.data.frame, row.names = NULL)
+expect_error(as.xts(df_no_col),
+             pattern = "could not convert row names to a date-time and could not find a time-based column",
+             info = info_msg)
