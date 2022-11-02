@@ -1,4 +1,87 @@
 ################################################################################
+Changed in xts 0.12.X:
+
+### New Features
+
+o Added a xts method for `na.fill()` to significantly increase performance when
+  'fill' is a scalar. (#259)
+
+o `as.xts()` will look for a time-based column in a data.frame if it cannot
+  create an index from the row names. (#381)
+
+o Change `print()` xts method to only show the first and last 'max' rows if
+  number of rows is > 'trunc.rows'. It will also truncate the number of columns
+  if they would wrap to a new line. (#321)
+
+o Made `str()` output more descriptive for xts objects. It now differentiates
+  between xts objects that are empty, zero-width, or zero-length, and defines
+  each type of object. It also adds column names to the output. (#168, #378)
+
+o Add startup warning that `dplyr::lag()` breaks method dispatch, which means
+  calls to `lag(my_xts)` won't work any more.
+
+o Added open-ended time of day subsetting ranges. This allows users to subset
+  by time of day from the start/end of the day without providing the start/end
+  times (00:00:00.000/23:59:59.999).
+
+  For example:
+      x["/T1800"]  # between the start of the day and 5pm
+      x["T0500/"]  # between 5am and the end of the day
+
+  Thanks to Chris Katsulis for the suggestion! (#243)
+
+o Updated `to.period()` to accept custom 'endpoints' via the 'period' argument.
+  Now you can aggregate on something other than the times that 'endpoints()'
+  supports. Thanks to Ethan B. Smith for the suggestion! (#302)
+
+o Added xts methods for `rowMeans()` and `rowSums()`. Calling `rowSums(my_xts)`
+  now returns an xts object instead of a matrix. Thanks to @harvey131 for the
+  suggestion! (#281)
+
+### Fixes
+
+o Fixed typo and expand `period.apply()` documentation. (#205)
+    The original description has:
+      * "the data from INDEX[k] to INDEX[k+1]"
+    But that's not consistent with the code. It should be:
+      * "the data from INDEX[k]+1 to INDEX[k+1]"
+
+o Calls to `merge.xts()` on zero-width objects now match `merge.zoo()`.
+  Previously, `merge.xts() would return empty xts objects if called on two or
+  more zero-width xts objects. `merge.zoo()` would return a zero-width object
+  with the correct index. (#227, #379)
+
+o Fixed `periodicity()` results when frequency is hours or more. It had used a
+  frequency of seconds and not the 'units' the result specified. Also added
+  special handling for `yearmon` and `yearqtr` index classes, because they
+  have a known frequency per month/quarter. Thanks to Alexander Sergeev for
+  the report. (#54)
+
+o Fixed `Ops.xts()` so it always returned an object with the same class as the
+  first (left-hand side) argument. It previously returned an xts object even
+  if the first argument was a subclass of xts. (#49)
+
+### Other
+
+o Migrated unit tests from RUnit to tinytest. Thanks Mark van der Loo!
+
+o Updated the `endpoints()` documentation to make it clearer that the result
+  is based on the UNIX epoch (midnight 1970, UTC). Thanks to GitHub user
+  Eluvias for the suggestion! (#299)
+
+o Fixed `reclass()` to ensure it always adds index attributes from the
+  'match.to' argument. It was not copying `tclass`, `tzone`, or `tformat` from
+  'match.to' to the result object. (#43)
+
+o Removed an unnecessary check in `na.locf()` (which is not user-facing).
+  Thanks to GitHub user @cgiachalis for the suggestion! (#307)
+
+o Updated C entry points so they're not able to accidentally be found via
+  dynamic lookup (i.e. `.Call("foo", ...)`). This makes each call to the C
+  code a few microseconds faster, which is nice. (#260)
+
+
+################################################################################
 Changed in xts 0.12.2:
 
 o `Ops.xts()` no longer changes column names (via `make.names()`) when the two
