@@ -33,9 +33,6 @@ SEXP xts_set_dimnames (SEXP x, SEXP value) {
       error("invalid 'dimnames' given for xts");
     }
     /* xts objects never have row names */
-    if (MAYBE_SHARED(value)) {
-      value = duplicate(value);
-    }
     SET_VECTOR_ELT(value, 0, R_NilValue);
     setAttrib(x, R_DimNamesSymbol, value);
   }
