@@ -97,9 +97,22 @@ na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE, maxgap=Inf, ...) {
     if(length(object) == 0)
       return(object)
     if(hasArg("x") || hasArg("xout"))
-      return(NextMethod())
+      return(NextMethod(.Generic))
     x <- .Call(C_na_locf, object, fromLast, maxgap, Inf)
     if(na.rm) {
       return(structure(na.omit(x),na.action=NULL))
     } else x
+}
+
+na.fill.xts <- function(object, fill, ix, ...) {
+  if (length(fill) == 1 && missing(ix)) {
+    # na.fill0() may change the storage type of 'object'
+    # make sure 'fill' argument is same type as 'object'
+    fill. <- fill
+    storage.mode(fill.) <- storage.mode(object)
+
+    return(na.fill0(object, fill.))
+  } else {
+    NextMethod(.Generic)
+  }
 }
