@@ -198,3 +198,25 @@ z6 <- merge(z1, z2, all = c(FALSE, TRUE))
 x6 <- merge(x1, x2, all = c(FALSE, TRUE))
 # use expect_equivalent because xts index has tclass and tzone and zoo doesn't
 expect_equivalent(index(z6), index(x6), info = info_msg)
+
+### merge.xts() matches merge.zoo() for various calls on zero-length objects with column names
+x <- xts(matrix(1:9, 3, 3), .Date(17167:17169), dimnames = list(NULL, c("a","b","c")))
+z <- as.zoo(x)
+x0 <- xts(coredata(x), index(x)+5)[FALSE]
+z0 <- zoo(coredata(z), index(z)+5)[FALSE]
+
+xm1 <- coredata(merge(x, x0, all = c(TRUE, FALSE)))
+zm1 <- coredata(merge(z, z0, all = c(TRUE, FALSE)))
+expect_equivalent(zm1, xm1, info = "merge.xts(x, empty_xts_with_names, all = c(TRUE, FALSE)) matches merge.zoo()")
+
+xm2 <- coredata(merge(x0, x, all = c(FALSE, TRUE)))
+zm2 <- coredata(merge(z0, z, all = c(FALSE, TRUE)))
+expect_equivalent(zm2, xm2, info = "merge.xts(empty_xts_with_names, x, all = c(FALSE, TRUE)) matches merge.zoo()")
+
+xm3 <- coredata(merge(x, x0))
+zm3 <- coredata(merge(z, z0))
+expect_equivalent(zm2, xm2, info = "merge.xts(x, empty_xts_with_names) matches merge.zoo()")
+
+xm4 <- coredata(merge(x0, x))
+zm4 <- coredata(merge(z0, z))
+expect_equivalent(zm2, xm2, info = "merge.xts(empty_xts_with_names, x) matches merge.zoo()")

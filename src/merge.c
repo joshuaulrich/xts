@@ -151,10 +151,15 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   if( TYPEOF(retside) != LGLSXP )
     error("retside must be a logical value of TRUE or FALSE");
 
+  int return_x_data = LOGICAL(retside)[0];
+  int return_y_data = LOGICAL(retside)[1];
+  int x_empty_data = isNull(getAttrib(x, R_DimSymbol)) && LENGTH(x) < 1;
+  int y_empty_data = isNull(getAttrib(y, R_DimSymbol)) && LENGTH(y) < 1;
+
   nrx = nrows(x);
   ncx = ncols(x);
-  /* if object is zero-width */
-  if( LENGTH(x)==0 || INTEGER(retside)[0]==0 ) {
+  /* user wanted only the index from 'x', not the data; OR 'x' has no data */
+  if (!return_x_data || x_empty_data) {
     nrx = nrows(xindex);
     ncx = 0;
     PROTECT(x = coerceVector(x, TYPEOF(y))); p++;
@@ -162,8 +167,8 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   
   nry = nrows(y);
   ncy = ncols(y);
-  /* if object is zero-width */
-  if( LENGTH(y)==0 || INTEGER(retside)[1]==0) {
+  /* user wanted only the index from 'y', not the data; OR 'y' has no data */
+  if (!return_y_data || y_empty_data) {
     nry = nrows(yindex);
     ncy = 0;
     PROTECT(y = coerceVector(y, TYPEOF(x))); p++;
