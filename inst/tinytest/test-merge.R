@@ -5,7 +5,8 @@ zero_width_xts <- xts()
 info_msg <- "test.merge_empty_xts_with_2_scalars"
 m1 <- merge(zero_width_xts, 1, 1)
 m2 <- merge(merge(zero_width_xts, 1), 1)
-expect_identical(m1, m2)
+expect_identical(m1, zero_width_xts)
+expect_identical(m2, zero_width_xts)
 
 info_msg <- "test.merge_more_than_2_zero_width_objects"
 m1 <- merge(zero_width_xts, zero_width_xts, zero_width_xts)
@@ -207,16 +208,16 @@ z0 <- zoo(coredata(z), index(z)+5)[FALSE]
 
 xm1 <- coredata(merge(x, x0, all = c(TRUE, FALSE)))
 zm1 <- coredata(merge(z, z0, all = c(TRUE, FALSE)))
-expect_equivalent(zm1, xm1, info = "merge.xts(x, empty_xts_with_names, all = c(TRUE, FALSE)) matches merge.zoo()")
+expect_equivalent(xm1, zm1, info = "merge.xts(x, empty_xts_with_names, all = c(TRUE, FALSE)) matches merge.zoo()")
 
 xm2 <- coredata(merge(x0, x, all = c(FALSE, TRUE)))
 zm2 <- coredata(merge(z0, z, all = c(FALSE, TRUE)))
-expect_equivalent(zm2, xm2, info = "merge.xts(empty_xts_with_names, x, all = c(FALSE, TRUE)) matches merge.zoo()")
+expect_equivalent(xm2, zm2, info = "merge.xts(empty_xts_with_names, x, all = c(FALSE, TRUE)) matches merge.zoo()")
 
 xm3 <- coredata(merge(x, x0))
 zm3 <- coredata(merge(z, z0))
-expect_equivalent(zm2, xm2, info = "merge.xts(x, empty_xts_with_names) matches merge.zoo()")
+expect_equivalent(xm3, zm3, info = "merge.xts(x, empty_xts_with_names) matches merge.zoo()")
 
 xm4 <- coredata(merge(x0, x))
 zm4 <- coredata(merge(z0, z))
-expect_equivalent(zm2, xm2, info = "merge.xts(empty_xts_with_names, x) matches merge.zoo()")
+expect_equivalent(xm4, zm4, info = "merge.xts(empty_xts_with_names, x) matches merge.zoo()")
