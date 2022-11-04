@@ -53,6 +53,8 @@ use.xts <- try.xts <- function(x, ..., error=TRUE)
 }
 
 .merge.xts.scalar <- function(x, length.out, ...) {
+  if( length.out == 0)
+    return(vector(storage.mode(x), 0))
   if( length(x) == 1 )
     return(matrix(rep(x, length.out=length.out)))
   if( NROW(x) == length.out )

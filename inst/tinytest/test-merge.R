@@ -221,3 +221,7 @@ expect_equivalent(xm3, zm3, info = "merge.xts(x, empty_xts_with_names) matches m
 xm4 <- coredata(merge(x0, x))
 zm4 <- coredata(merge(z0, z))
 expect_equivalent(xm4, zm4, info = "merge.xts(empty_xts_with_names, x) matches merge.zoo()")
+
+xz <- xts(integer(0), .Date(integer(0)))
+expect_identical(storage.mode(merge(xz, xz)), "integer",
+    info = "merge.xts() on two empty objects should return an object with the same type")

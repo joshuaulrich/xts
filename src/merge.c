@@ -182,6 +182,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     SET_TYPEOF(s, LANGSXP);
     SETCAR(t, install("xts"));
     SEXP out = PROTECT(eval(s, env)); p++;
+    SET_TYPEOF(out, TYPEOF(x));
     UNPROTECT(p);
     return out;
   }
