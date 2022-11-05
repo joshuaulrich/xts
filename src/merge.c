@@ -69,7 +69,6 @@ SEXP xts_merge_combine_dimnames (SEXP _x, SEXP _y, int ncol_x, int ncol_y, SEXP 
 {
   int p = 0;
   int ncols = ncol_x + ncol_y;
-  SEXP dimnames = PROTECT(allocVector(VECSXP, 2)); p++;
   SEXP colnames = PROTECT(allocVector(STRSXP, ncols)); p++;
 
   SEXP dimnames_x = PROTECT(getAttrib(_x, R_DimNamesSymbol)); p++;
