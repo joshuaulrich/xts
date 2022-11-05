@@ -1170,13 +1170,8 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
 
   // number of columns in the output
   while(args != R_NilValue) {
-    // use dims if possible
-    if (isNull(getAttrib(CAR(args), R_DimSymbol))) {
-      // when xtmp is a zero-length vector, ncols(xtmp) == 1
-      ncs += (0 == LENGTH(CAR(args))) ? 0 : ncols(CAR(args));
-    } else {
-      ncs += INTEGER(getAttrib(CAR(args), R_DimSymbol))[1];
-    }
+
+    ncs += xts_ncols(CAR(args));
 
     if(length(CAR(args)) > 0) {
       /* need to convert all objects if one non-zero-width needs to be converted */
@@ -1300,16 +1295,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                                     coerce), idxtmp);
 
       nr = nrows(xtmp);
-      nc = ncols(xtmp);
-
-      // use dims if possible
-      if (isNull(getAttrib(xtmp, R_DimSymbol))) {
-        // when xtmp is a zero-length vector, ncols(xtmp) == 1
-        nc = (0 == nr) ? 0 : nc;
-      } else {
-        nc = INTEGER(getAttrib(xtmp, R_DimSymbol))[1];
-      }
-
+      nc = xts_ncols(xtmp);
       ncs += nc;
 
       /* Use colnames from merged object, if it has them. Otherwise, use

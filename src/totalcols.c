@@ -25,32 +25,35 @@
 #include <Rdefines.h>
 #include "xts.h"
 
-SEXP number_of_cols (SEXP args)
+int xts_ncols (SEXP _x)
 {
-  SEXP tcols;
-  int P=0;
+  int ncols_x = 0;
 
-  args = CDR(args); // calling function name
-
-  PROTECT(tcols = allocVector(INTSXP, length(args))); P++;
-  int i=0;
-  for(;args != R_NilValue; i++, args=CDR(args)) {
-    SEXP arg_i = CAR(args);
-    // use dims if available
-    if(isNull(getAttrib(arg_i, R_DimSymbol))) {
-      // no dims use number of columns
-      if(length(arg_i) > 0) {
-        INTEGER(tcols)[i] = ncols(arg_i);
-      } else {
-        // when arg_i is zero-length, ncols == 1
-        INTEGER(tcols)[i] = 0;
-      }
-    } else {
-      // have dims
-      INTEGER(tcols)[i] = INTEGER(getAttrib(arg_i, R_DimSymbol))[1];
-    }
+  // use dims if possible
+  if (isNull(getAttrib(_x, R_DimSymbol))) {
+    // no dims, so we want:
+    // * ncols_x == 0 for zero-length vectors, and
+    // * ncols_x == 1 for anything else that doesn't have dims
+    ncols_x = LENGTH(_x) > 0;
+  } else {
+    // use dims
+    ncols_x = INTEGER(getAttrib(_x, R_DimSymbol))[1];
   }
 
-  UNPROTECT(P);
+  return ncols_x;
+}
+
+SEXP number_of_cols (SEXP args)
+{
+  int i = 0;
+  args = CDR(args); // calling function name
+
+  SEXP tcols = PROTECT(allocVector(INTSXP, length(args)));
+
+  for(;args != R_NilValue; i++, args = CDR(args)) {
+    INTEGER(tcols)[i] = xts_ncols(CAR(args));
+  }
+
+  UNPROTECT(1);
   return tcols;
 }
