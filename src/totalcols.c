@@ -35,12 +35,22 @@ SEXP number_of_cols (SEXP args)
   PROTECT(tcols = allocVector(INTSXP, length(args))); P++;
   int i=0;
   for(;args != R_NilValue; i++, args=CDR(args)) {
-/*    if( TAG(args) == R_NilValue ) { */
-      if( length(CAR(args)) > 0) {
-        INTEGER(tcols)[i] = ncols(CAR(args));
-      } else INTEGER(tcols)[i] = (int)0;
-/*    } */
+    SEXP arg_i = CAR(args);
+    // use dims if available
+    if(isNull(getAttrib(arg_i, R_DimSymbol))) {
+      // no dims use number of columns
+      if(length(arg_i) > 0) {
+        INTEGER(tcols)[i] = ncols(arg_i);
+      } else {
+        // when arg_i is zero-length, ncols == 1
+        INTEGER(tcols)[i] = 0;
+      }
+    } else {
+      // have dims
+      INTEGER(tcols)[i] = INTEGER(getAttrib(arg_i, R_DimSymbol))[1];
+    }
   }
+
   UNPROTECT(P);
   return tcols;
 }
