@@ -1173,7 +1173,7 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
     // use dims if possible
     if (isNull(getAttrib(CAR(args), R_DimSymbol))) {
       // when xtmp is a zero-length vector, ncols(xtmp) == 1
-      ncs += (0 == nr) ? 0 : ncols(CAR(args));
+      ncs += (0 == LENGTH(CAR(args))) ? 0 : ncols(CAR(args));
     } else {
       ncs += INTEGER(getAttrib(CAR(args), R_DimSymbol))[1];
     }
