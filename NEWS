@@ -80,6 +80,13 @@ o Updated C entry points so they're not able to accidentally be found via
   dynamic lookup (i.e. `.Call("foo", ...)`). This makes each call to the C
   code a few microseconds faster, which is nice. (#260)
 
+o Made `merge.xts()` results consistent with `merge.zoo()` for zero-length xts
+  objects with columns. The result of `merge.xts()` did not include the
+  columns of any objects that had one or more columns, but zero rows. A join
+  should include all the columns of the joined objects, regardless of the
+  number of rows in the object. This is consistent with `merge.zoo()`. Thanks
+  to Ethan B. Smith for the report and testing! (#222)
+
 
 ################################################################################
 Changed in xts 0.12.2:
