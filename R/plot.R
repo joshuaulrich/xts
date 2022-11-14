@@ -393,17 +393,8 @@ plot.xts <- function(x,
   cs$set_frame(1,FALSE)
   
   # compute the x-axis ticks for the grid
-  if(!isNullOrFalse(grid.ticks.on)) {
-    cs$add(expression(xcoords <- get_xcoords(),
-                      x_index <- get_xcoords(at_posix = TRUE),
-                      atbt <- axTicksByTime(.xts(,x_index)[xsubset], ticks.on=grid.ticks.on),
-                      segments(xcoords[atbt],
-                               get_ylim()[[2]][1],
-                               xcoords[atbt],
-                               get_ylim()[[2]][2],
-                               col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)),
-           clip=FALSE, expr=TRUE)
-  }
+  cs$add(expression(x_grid_lines(xdata[xsubset], grid.ticks.on, get_ylim()[[2]])),
+         clip = FALSE, expr = TRUE)
   
   # Add frame for the chart "header" to display the name and start/end dates
   cs$add_frame(0,ylim=c(0,1),asp=0.5)
@@ -452,33 +443,8 @@ plot.xts <- function(x,
   
   cs$set_frame(2)
   
-  # add y-axis grid lines and labels
-  exp <- expression(segments(xlim[1], 
-                             y_grid_lines(get_ylim()[[2]]), 
-                             xlim[2], 
-                             y_grid_lines(get_ylim()[[2]]), 
-                             col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty))
-  if(yaxis.left){
-    exp <- c(exp, 
-             # left y-axis labels
-             expression(text(xlim[1], y_grid_lines(get_ylim()[[2]]),
-                             noquote(format(y_grid_lines(get_ylim()[[2]]), justify="right")),
-                             col=theme$labels, srt=theme$srt, offset=1, pos=2,
-                             cex=theme$cex.axis, xpd=TRUE)))
-  }
-  if(yaxis.right){
-    exp <- c(exp, 
-             # right y-axis labels
-             expression(text(xlim[2], y_grid_lines(get_ylim()[[2]]),
-                             noquote(format(y_grid_lines(get_ylim()[[2]]), justify="right")),
-                             col=theme$labels, srt=theme$srt, offset=1, pos=4,
-                             cex=theme$cex.axis, xpd=TRUE)))
-  }
-
-  # ylab
-  exp <- c(exp, expression(title(ylab = ylab[1], mgp = c(1, 1, 0))))
-
-  cs$add(exp, env=cs$Env, expr=TRUE)
+  # add y-axis grid and left and/or right labels
+  cs$add(cs$yaxis_expr(get_ylim()[[2]], yaxis.left, yaxis.right, FALSE), env = cs$Env, expr = TRUE)
   
   # add main series
   cs$set_frame(2)
@@ -557,31 +523,12 @@ plot.xts <- function(x,
                                  legend.loc=legend.loc))
         exp <- as.expression(add.par.from.dots(exp, ...))
         
-        # NOTE 'exp' was defined earlier as chart.lines
-        exp <- c(exp, 
-                 # y-axis grid lines
-                 expression(segments(xlim[1],
-                                     y_grid_lines(ylim),
-                                     xlim[2], 
-                                     y_grid_lines(ylim), 
-                                     col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)),
-                 # x-axis grid lines
-                 expression(x_grid_lines(xdata[xsubset], grid.ticks.on, ylim)))
-        if(yaxis.left){
-          exp <- c(exp, 
-                   # y-axis labels/boxes
-                   expression(text(xlim[1], y_grid_lines(ylim),
-                                   noquote(format(y_grid_lines(ylim),justify="right")),
-                                   col=theme$labels, srt=theme$srt, offset=1,
-                                   pos=2, cex=theme$cex.axis, xpd=TRUE)))
-        }
-        if(yaxis.right){
-          exp <- c(exp, 
-                   expression(text(xlim[2], y_grid_lines(ylim),
-                                   noquote(format(y_grid_lines(ylim),justify="right")),
-                                   col=theme$labels, srt=theme$srt, offset=1,
-                                   pos=4, cex=theme$cex.axis, xpd=TRUE)))
-        }
+        # x-axis grid lines
+        exp <- c(exp, expression(x_grid_lines(xdata[xsubset], grid.ticks.on, ylim)))
+
+        # y-axis grid lines and left and/or right labels
+        exp <- c(exp, cs$yaxis_expr(ylim, yaxis.left, yaxis.right, FALSE))
+
         cs$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
         text.exp <- expression(text(x=get_xcoords()[2],
                                     y=ylim[2]*0.9,
@@ -736,31 +683,13 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
     plot_object$next_frame()
     
-    # NOTE 'exp' was defined earlier as chart.lines
-    exp <- c(exp, 
-             # y-axis grid lines
-             expression(segments(xlim[1],
-                                 y_grid_lines(ylim),
-                                 xlim[2], 
-                                 y_grid_lines(ylim), 
-                                 col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)))
-    if(plot_object$Env$theme$lylab){
-      exp <- c(exp, 
-               # y-axis labels/boxes
-               expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim))), 
-                               y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
-                               col=theme$labels, srt=theme$srt, offset=0, 
-                               pos=4, cex=theme$cex.axis, xpd=TRUE)))
-    }
-    if(plot_object$Env$theme$rylab){
-      exp <- c(exp, 
-               expression(text(xlim[2]+xstep*2/3, 
-                               y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
-                               col=theme$labels, srt=theme$srt, offset=0,
-                               pos=4, cex=theme$cex.axis, xpd=TRUE)))
-    }
+    # y-axis grid lines and left and/or right labels
+    exp <- c(exp, plot_object$yaxis_expr(ylim,
+                                         plot_object$Env$theme$lylab,
+                                         plot_object$Env$theme$rylab,
+                                         offset = 0,
+                                         pos_left = 4))
+
     plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
   } else {
     for(i in 1:length(on)) {
@@ -869,31 +798,13 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
     plot_object$next_frame()
     
-    # NOTE 'exp' was defined earlier as chart.lines
-    exp <- c(exp, 
-             # y-axis grid lines
-             expression(segments(xlim[1],
-                                 y_grid_lines(ylim),
-                                 xlim[2], 
-                                 y_grid_lines(ylim), 
-                                 col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)))
-    if(plot_object$Env$theme$lylab){
-      exp <- c(exp, 
-               # y-axis labels/boxes
-               expression(text(xlim[1]-xstep*2/3-max(strwidth(y_grid_lines(ylim))), 
-                               y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
-                               col=theme$labels, srt=theme$srt, offset=0, 
-                               pos=4, cex=theme$cex.axis, xpd=TRUE)))
-    }
-    if(plot_object$Env$theme$rylab){
-      exp <- c(exp, 
-               expression(text(xlim[2]+xstep*2/3, 
-                               y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
-                               col=theme$labels, srt=theme$srt, offset=0,
-                               pos=4, cex=theme$cex.axis, xpd=TRUE)))
-    }
+    # y-axis grid lines and left and/or right labels
+    exp <- c(exp, plot_object$yaxis_expr(ylim,
+                                         plot_object$Env$theme$lylab,
+                                         plot_object$Env$theme$rylab,
+                                         offset = 0,
+                                         pos_left = 4))
+
     plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
   } else {
     for(i in 1:length(on)) {
@@ -1081,29 +992,9 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
     plot_object$next_frame()
     
-    # NOTE 'exp' was defined earlier as plot_lines
-    exp <- c(exp, 
-             # y-axis grid lines
-             expression(segments(xlim[1],
-                                 y_grid_lines(ylim),
-                                 xlim[2], 
-                                 y_grid_lines(ylim), 
-                                 col=theme$grid, lwd=grid.ticks.lwd, lty=grid.ticks.lty)))
-    if(plot_object$Env$theme$lylab){
-      exp <- c(exp, 
-               # y-axis labels/boxes
-               expression(text(xlim[1], y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
-                               col=theme$labels, srt=theme$srt, offset=1,
-                               pos=2, cex=theme$cex.axis, xpd=TRUE)))
-    }
-    if(plot_object$Env$theme$rylab){
-      exp <- c(exp, 
-               expression(text(xlim[2], y_grid_lines(ylim),
-                               noquote(format(y_grid_lines(ylim),justify="right")),
-                               col=theme$labels, srt=theme$srt, offset=1,
-                               pos=4, cex=theme$cex.axis, xpd=TRUE)))
-    }
+    # y-axis grid lines and left and/or right labels
+    exp <- c(exp, yaxis_expr(ylim, plot_object$Env$theme$lylab, plot_object$Env$theme$rylab))
+
     plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
   } else {
     for(i in 1:length(on)) {
@@ -1383,6 +1274,85 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     Env$actions[[length(Env$actions)+1]] <<- a
   }
   
+  yaxis_expr <-
+  function(ylim_expr,
+           yaxis_left,
+           yaxis_right,
+           use_xstep = TRUE,
+           offset = 1,
+           pos_left = 2,
+           pos_right = 4)
+  {
+    # y-axis grid lines and labels
+    exp <- substitute({
+        segments(x0 = xlim[1], y0 = y_grid_lines(ylim_expr),
+                 x1 = xlim[2], y1 = y_grid_lines(ylim_expr),
+                 col = theme$grid,
+                 lwd = grid.ticks.lwd,
+                 lty = grid.ticks.lty)
+    }, list(ylim_expr = substitute(ylim_expr)))
+
+    # addSeries, addPolygon, and addEventLines set xlim using xstep = 1 for
+    # observation.based and xstep = diff(get_xcoords()[1:2]) otherwise
+    if (yaxis_left) {
+      # left y-axis labels
+
+      if (use_xstep) {
+        xlim_expr <- quote(xlim[1] - xstep * 2/3 - max(strwidth(y_grid_lines(ylim))))
+      } else{
+        xlim_expr <- quote(xlim[1])
+      }
+
+      exp <- c(exp,
+          substitute({
+            text(x = xlim_expr,  # may need: - xstep * 2/3 - max(strwidth(y_grid_lines(ylim)))
+                 y = y_grid_lines(ylim_expr),
+                 labels = noquote(format(y_grid_lines(ylim_expr), justify = "right")),
+                 col = theme$labels,
+                 srt = theme$srt,
+                 offset = offset_expr, # offset = 0 in addSeries(), addEventLines()
+                 pos = pos_expr,       # pos = 4 in addSeries(), addEventLines()
+                 cex = theme$cex.axis,
+                 xpd = TRUE)
+          }, list(ylim_expr = substitute(ylim_expr),
+                  xlim_expr = substitute(xlim_expr),
+                  offset_expr = offset,
+                  pos_expr = pos_left))
+      )
+    }
+    if (yaxis_right) {
+      # right y-axis labels
+
+      if (use_xstep) {
+        xlim_expr <- quote(xlim[2] + xstep * 2/3)
+      } else{
+        xlim_expr <- quote(xlim[2])
+      }
+
+      exp <- c(exp,
+          substitute({
+            text(x = xlim_expr,  # may need: + xstep * 2/3
+                 y = y_grid_lines(ylim_expr),
+                 labels = noquote(format(y_grid_lines(ylim_expr), justify = "right")),
+                 col = theme$labels,
+                 srt = theme$srt,
+                 offset = offset_expr,  # offset = 0 in addSeries(), addEventLines()
+                 pos = pos_expr,
+                 cex = theme$cex.axis,
+                 xpd = TRUE)
+          }, list(ylim_expr = substitute(ylim_expr),
+                  xlim_expr = substitute(xlim_expr),
+                  offset_expr = offset,
+                  pos_expr = pos_right))
+      )
+    }
+
+    # y labels
+    exp <- c(exp, expression(title(ylab = ylab[1], mgp = c(1, 1, 0))))
+
+    return(exp)
+  }
+
   # subset function
   subset <- function(x="") {
     Env$xsubset <<- x
@@ -1424,6 +1394,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$Env <- Env
   replot_env$set_window <- set_window
   replot_env$add <- add
+  replot_env$yaxis_expr <- yaxis_expr
   replot_env$replot <- replot
   replot_env$get_actions <- get_actions
   replot_env$subset <- subset
@@ -1461,8 +1432,10 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       invisible()
     } else {
       if (isTRUE(ticks.on)) ticks.on <- "auto"
-      xcoords <- get_xcoords(at_posix = TRUE)
-      atbt <- axTicksByTime(.xts(, xcoords), ticks.on = ticks.on)
+
+      xcoords <- get_xcoords()
+      x_index <- get_xcoords(at_posix = TRUE)
+      atbt <- axTicksByTime(.xts(, x_index), ticks.on = ticks.on)
       segments(xcoords[atbt], ylim[1L],
                xcoords[atbt], ylim[2L],
                col = Env$theme$grid,
