@@ -22,23 +22,70 @@
 current.xts_chob <- function() invisible(get(".xts_chob",.plotxtsEnv))
 
 
+# Current design
+#
+# The code doesn't currently have a distinction between "panels" and "frames".
+# They're always called "frames" and there are implicitly 2 frames/panel.
+# Env$ylim and Env$asp have data for each panel, and they're stored as:
+# list(header1 = c(0, 1), data1 = c(-100, 100),
+#      header2 = c(0, 1), data2 = c(-100, 100), ...)
+#
+# add_frame(n) adds a new "frame" after frame 'n'. It doesn't distinguish
+# between header frames or series frames, so the added frame could be either.
+#
+# Each element in actions has a frame attribute. So functions like add_frame(),
+# update_frames(), etc look at the frame attribute for every action in
+# Env$actions. The list of actions is updated by add()/replot().
+# NOTE: this seems backward: panels contain actions
+#
+# Environments created by new_environment() (e.g. the 'lenv') are children of
+# Env, so expressions evaluated in 'lenv' will look in Env for anything not
+# found in 'lenv'.
+#
+# What does 'clip' do?
+#  * hypothesis: prevents rendering outside of a region
+#
+# -----------------------------------------------------------------------------
+# Target design for refactor
+#
 # * A plot window contains multiple panels
 # * There are 2 frames per panel
 #   * The first frame is a small 'header' frame for titles
-#   * The second frame is larger and where the data series is rendered, including
-#     axis labels
+#   * The second frame is larger and where the data series is rendered,
+#     including axis labels
 #
 # The first panel is where the main series is rendered. Panels added later are
 # plotted below the first panel and are smaller.
 #
 #
-# add_frame(n) adds a new frame after frame 'n'
+#  plot window
+#  |- data
+#  |- subset
+#  |- global settings
+#  |
+#  |- panels
+#  |  |- panel #1
+#  |  |  |- header
+#  |  |  |  |- actions
+#  |  |  |     |- title
+#  |  |  |     |- time span
+#  |  |  |
+#  |  |  |- series
+#  |  |     |- actions
+#  |  |        |- axis major/minor tick marks
+#  |  |        |- axis grid lines
+#  |  |        |- axis labels
+#  |  |        |- plotting
+#  |  |
+#  |  |- panel #2
+#  |  |  |- ...
+#  |  |  |  ...
 #
-# What does 'clip' do?
+#
 #
 #   ____________________________________________________________________________
 #  /                                                                            \
-# |   plot window                                                                |
+# |   plot object / window                                                       |
 # |                                                                              |
 # |    ______________________________________________________________________    |
 # |   /                                                                      \   |
@@ -87,6 +134,13 @@ current.xts_chob <- function() invisible(get(".xts_chob",.plotxtsEnv))
 # |                                                                              |
 #  \____________________________________________________________________________/
 #
+#
+#
+# TODO:
+#  * use Env$x <- append(Env$x, foo) in cases like Env$x[[length(Env$x)+1]] <- foo
+#  * "Do some checks on x" should be is.xts(x), or at least try.xts()
+#  * "reset par" should use on.exit() when par() is set:
+#      orig_par <- par(foo = "x", bar = "y", ...);  on.exit(par(orig_par))
 
 
 # Currently not necessary, but potentially very useful:
@@ -306,27 +360,43 @@ plot.xts <- function(x,
   } else {
     cs$set_asp(3)
   }
+
+  cs$Env$theme <-
+    list(up.col   = up.col,
+         dn.col   = dn.col,
+         col      = col,
+         rylab    = yaxis.right,
+         lylab    = yaxis.left,
+         bg       = bg,
+         grid     = grid.col,
+         grid2    = grid2,
+         labels   = labels.col,
+
+         # String rotation in degrees. See comment about 'crt'. Only supported by text()
+         srt      = if (hasArg("srt")) eval.parent(plot.call$srt) else 0,
+
+         # Rotation of axis labels:
+         #   0: parallel to the axis (default),
+         #   1: horizontal,
+         #   2: perpendicular to the axis,
+         #   3: vertical
+         las      = if (hasArg("las")) eval.parent(plot.call$las) else 0,
+
+         # magnification for axis annotation relative to current 'cex' value
+         cex.axis = if (hasArg("cex.axis")) eval.parent(plot.call$cex.axis) else 0.9)
+  # /theme
+
+  # multiplier to magnify plotting text and symbols
   cs$Env$cex <- if (hasArg("cex")) eval.parent(plot.call$cex) else 0.6
+
+  # lines of margin to the 4 sides of the plot: c(bottom, left, top, right)
   cs$Env$mar <- if (hasArg("mar")) eval.parent(plot.call$mar) else c(3,2,0,2)
-  cs$Env$theme$up.col <- up.col
-  cs$Env$theme$dn.col <- dn.col
   
   # check for colorset or col argument
   # if col has a length of 1, replicate to NCOL(x) so we can keep it simple
   # and color each line by its index in col
   if(hasArg("colorset")) col <- eval.parent(plot.call$colorset)
   if(length(col) < ncol(x)) col <- rep(col, length.out = ncol(x))
-  cs$Env$theme$col <- col
-  
-  cs$Env$theme$rylab <- yaxis.right
-  cs$Env$theme$lylab <- yaxis.left
-  cs$Env$theme$bg <- bg
-  cs$Env$theme$grid <- grid.col
-  cs$Env$theme$grid2 <- grid2
-  cs$Env$theme$labels <- labels.col
-  cs$Env$theme$srt <- if (hasArg("srt")) eval.parent(plot.call$srt) else 0
-  cs$Env$theme$las <- if (hasArg("las")) eval.parent(plot.call$las) else 0
-  cs$Env$theme$cex.axis <- if (hasArg("cex.axis")) eval.parent(plot.call$cex.axis) else 0.9
   cs$Env$format.labels <- format.labels
   cs$Env$yaxis.ticks <- yaxis.ticks
   cs$Env$major.ticks <- if (isTRUE(major.ticks)) "auto" else major.ticks
@@ -983,13 +1053,15 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
 
 new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10),fixed=FALSE))) {
   # global variables
+
+  # 'Env' is mainly the environment for the plot window, but some elements are for panels/frames
   Env <- new.env()
   Env$frame <- frame
-  Env$asp   <- asp
-  Env$xlim  <- xlim
-  Env$ylim  <- ylim
-  Env$pad1 <- -0 # bottom padding per frame
-  Env$pad3 <-  0 # top padding per frame 
+  Env$asp   <- asp   # vector: same length as ylim
+  Env$xlim  <- xlim  # vector: c(min, max) (same for every panel)
+  Env$ylim  <- ylim  # list: 1 element/frame (2 obs/panel, not nested)
+  Env$pad1  <- -0    # scalar: bottom padding per frame
+  Env$pad3  <-  0    # scalar: top padding per frame
   if(length(asp) != length(ylim))
     stop("'ylim' and 'asp' must be the same length")
   
