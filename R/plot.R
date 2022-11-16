@@ -433,13 +433,7 @@ plot.xts <- function(x,
   }
   
   # add main title and date range of data
-  text.exp <- expression(text(xlim[1],0.5,main,font=2,col=theme$labels,offset=0,cex=1.1,pos=4))
-  if(isTRUE(main.timespan)) {
-    text.exp <- c(text.exp, expression(text(xlim[2],0.5,.makeISO8601(xdata[xsubset]),
-                                            col=theme$labels,adj=c(0,0),pos=2)))
-  }
-
-  cs$add(text.exp, env=cs$Env, expr=TRUE)
+  cs$add_header("title", cs$Env, main.timespan)
   
   cs$set_frame(2)
   
@@ -474,12 +468,8 @@ plot.xts <- function(x,
 
     # Add expression for the main plot
     cs$add(exp, env=lenv, expr=TRUE)
-    text.exp <- expression(text(x=get_xcoords()[2],
-                                y=ylim[2]*0.9,
-                                labels=label,
-                                col=theme$labels,
-                                adj=c(0,0),cex=1,offset=0,pos=4))
-    cs$add(text.exp,env=lenv,expr=TRUE)
+    # major header
+    cs$add_header("multi.panel", lenv)
     
     if(NCOL(cs$Env$xdata) > 1){
       for(i in 2:NCOL(cs$Env$xdata)){
@@ -530,12 +520,9 @@ plot.xts <- function(x,
         exp <- c(exp, cs$yaxis_expr(ylim, yaxis.left, yaxis.right, FALSE))
 
         cs$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
-        text.exp <- expression(text(x=get_xcoords()[2],
-                                    y=ylim[2]*0.9,
-                                    labels=label,
-                                    col=theme$labels,
-                                    adj=c(0,0),cex=1,offset=0,pos=4))
-        cs$add(text.exp,env=lenv,expr=TRUE)
+
+        # major header
+        cs$add_header("multi.panel", lenv)
       }
     }
   } else {
@@ -672,12 +659,8 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
   lenv$ylim <- ylim
   
   if(is.na(on[1])){
-    # add the frame for drawdowns info
-    plot_object$add_frame(ylim=c(0,1),asp=0.25)
-    plot_object$next_frame()
-    text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
-                                col=1,adj=c(0,0),cex=0.9,offset=0,pos=4))
-    plot_object$add(text.exp, env=lenv, expr=TRUE)
+    # small header
+    plot_object$add_header("small", lenv)
     
     # add frame for the data
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
@@ -787,12 +770,8 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     ylim <- range(xdata[xsubset], na.rm=TRUE)
     lenv$ylim <- ylim
     
-    # add the frame for drawdowns info
-    plot_object$add_frame(ylim=c(0,1),asp=0.25)
-    plot_object$next_frame()
-    text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
-                                col=1,adj=c(0,0),cex=0.9,offset=0,pos=4))
-    plot_object$add(text.exp, env=lenv, expr=TRUE)
+    # small header
+    plot_object$add_header("small", lenv)
     
     # add frame for the data
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
@@ -873,12 +852,8 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
 
   # if on[1] is NA, then add a new frame for the legend
   if(is.na(on[1])){
-    # add frame for spacing
-    plot_object$add_frame(ylim=c(0,1),asp=0.25)
-    plot_object$next_frame()
-    text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
-                                col=theme$labels,adj=c(0,0),cex=0.9,offset=0,pos=4))
-    plot_object$add(text.exp, env=lenv, expr=TRUE)
+    # small header
+    plot_object$add_header("small", lenv)
     
     # add frame for the legend panel
     plot_object$add_frame(ylim=c(0,1),asp=0.8,fixed=TRUE)
@@ -982,11 +957,8 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   lenv$ylim <- ylim
   
   if(is.na(on[1])){
-    plot_object$add_frame(ylim=c(0,1),asp=0.25)
-    plot_object$next_frame()
-    text.exp <- expression(text(x=xlim[1], y=0.3, labels=main,
-                                col=1,adj=c(0,0),cex=0.9,offset=0,pos=4))
-    plot_object$add(text.exp, env=lenv, expr=TRUE)
+    # small header
+    plot_object$add_header("small", lenv)
     
     # add frame for the data
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
@@ -1273,7 +1245,79 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     a <- structure(x,frame=Env$frame,clip=clip,env=env,...)
     Env$actions[[length(Env$actions)+1]] <<- a
   }
-  
+
+  add_header <-
+  function(type = c("title", "multi.panel", "small"), envir, add_timespan = FALSE)
+  {
+      type <- match.arg(type)
+
+      if (type == "title") {
+          header_expr <-
+              expression({
+                  text(x = xlim[1],
+                       y = 0.5,
+                       labels = main,
+                       adj = NULL,
+                       pos = 4,
+                       offset = 0,
+                       cex = 1.1,
+                       col = theme$labels,
+                       font = 2)
+              })
+          if (isTRUE(add_timespan)) {
+              header_expr <-
+                  c(header_expr,
+                    expression({
+                        text(x = xlim[2],
+                             y = 0.5,
+                             labels = .makeISO8601(xdata[xsubset]),
+                             adj = c(0, 0),
+                             pos = 2,
+                             offset = 0.5,
+                             cex = 1,
+                             col = theme$labels,
+                             font = NULL)
+                    }))
+          }
+      } else {
+
+          if (type == "multi.panel") {
+              header_expr <-
+                  expression({
+                      text(x = get_xcoords()[2],
+                           y = ylim[2] * 0.9,
+                           labels = label,
+                           adj = c(0, 0),
+                           pos = 4,
+                           offset = 0,
+                           cex = 1,
+                           col = theme$labels,
+                           font = NULL)
+                  })
+          } else if (type == "small"){
+              # add a header frame
+              add_frame(ylim = c(0, 1), asp = 0.25)
+              next_frame()
+
+              header_expr <-
+                  expression({
+                      text(x = xlim[1],
+                           y = 0.3,
+                           labels = main,
+                           adj = c(0, 0),
+                           pos = 4,
+                           offset = 0,
+                           cex = 0.9,
+                           col = 1,
+                           font = NULL)
+                  })
+          }
+      }
+
+
+    add(header_expr, env = envir, expr = TRUE)
+  }
+
   yaxis_expr <-
   function(ylim_expr,
            yaxis_left,
@@ -1394,6 +1438,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$Env <- Env
   replot_env$set_window <- set_window
   replot_env$add <- add
+  replot_env$add_header <- add_header
   replot_env$yaxis_expr <- yaxis_expr
   replot_env$replot <- replot
   replot_env$get_actions <- get_actions
