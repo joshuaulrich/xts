@@ -470,38 +470,11 @@ plot.xts <- function(x,
   cs$add_frame(0,ylim=c(0,1),asp=0.5)
   cs$set_frame(1)
   
-  # add observation level ticks on x-axis if < 400 obs.
-  cs$add(expression(if(NROW(xdata[xsubset])<400) 
-  {axis(1,at=get_xcoords(),labels=FALSE,col=theme$grid2,col.axis=theme$grid2,tcl=0.3)}),expr=TRUE)
-  
-  # major x-axis ticks and labels
-  if(!isNullOrFalse(major.ticks)) {
-    cs$add(expression(xcoords <- get_xcoords(),
-                      x_index <- get_xcoords(at_posix = TRUE),
-                      axt <- axTicksByTime(.xts(,x_index)[xsubset], ticks.on=major.ticks, format.labels=format.labels),
-                      axis(1,
-                           at=xcoords[axt],
-                           labels=names(axt),
-                           las=theme$las, lwd.ticks=1.5, mgp=c(3,1.5,0),
-                           tcl=-0.4, cex.axis=theme$cex.axis,
-                           col=theme$labels, col.axis=theme$labels)),
-           expr=TRUE)
-  }
-  
-  # minor x-axis ticks
-  if(!isNullOrFalse(minor.ticks)) {
-    cs$add(expression(xcoords <- get_xcoords(),
-                      x_index <- get_xcoords(at_posix = TRUE),
-                      axt <- axTicksByTime(.xts(,x_index)[xsubset], ticks.on=minor.ticks, format.labels=format.labels),
-                 axis(1,
-                      at=xcoords[axt],
-                      labels=FALSE,
-                      las=theme$las, lwd.ticks=0.75, mgp=c(3,1.5,0),
-                      tcl=-0.4, cex.axis=theme$cex.axis,
-                      col=theme$labels, col.axis=theme$labels)),
-           expr=TRUE)
-  }
-  
+  # always add observation level ticks on x-axis if < 400 obs,
+  # plus major and/or minor x-axis ticks and labels
+  cs$add_xaxis_ticks(use_major = !isNullOrFalse(major.ticks),
+                     use_minor = !isNullOrFalse(minor.ticks))
+
   # add main title and date range of data
   cs$add_header("title", cs$Env, main.timespan)
   
@@ -1469,6 +1442,60 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     return(exp)
   }
 
+  add_xaxis_ticks <-
+  function(use_major, use_minor)
+  {
+      # add observation level ticks on x-axis if < 400 obs.
+      expr <- expression({
+          if (NROW(xdata[xsubset]) < 400) {
+              axis(1,
+                   at = get_xcoords(),
+                   labels = FALSE,
+                   las = theme$las,
+                   lwd.ticks = NULL,
+                   mgp = NULL,
+                   tcl = 0.3,
+                   cex.axis = theme$cex.axis,
+                   col = theme$labels,
+                   col.axis = theme$grid2)
+          }
+      })
+      add(expr, expr = TRUE)
+
+      values <- list()
+      types <- c("major", "minor")[c(use_major, use_minor)]
+      for (type in types) {
+          if (type == "major") {
+              values$.ticks.on <- quote(major.ticks)
+              values$.labels <- quote(names(axt))
+              values$.lwd.ticks <- 1.5
+          } else {
+              values$.ticks.on <- quote(minor.ticks)
+              values$.labels <- FALSE
+              values$.lwd.ticks <- 0.75
+          }
+          expr <- substitute({
+              xcoords <- get_xcoords()
+              x_index <- get_xcoords(at_posix = TRUE)
+              axt <- axTicksByTime(.xts(,x_index)[xsubset],
+                                   ticks.on = .ticks.on,
+                                   format.labels = format.labels)
+              axis(1,
+                   at = xcoords[axt],
+                   labels = .labels,
+                   las = theme$las,
+                   lwd.ticks = .lwd.ticks,
+                   mgp = c(3,1.5,0),
+                   tcl = -0.4,
+                   cex.axis = theme$cex.axis,
+                   col = theme$labels,
+                   col.axis = theme$labels)
+
+          }, values)
+          add(expr, expr = TRUE)
+      }
+  }
+
   # subset function
   subset <- function(x="") {
     Env$xsubset <<- x
@@ -1511,6 +1538,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$set_window <- set_window
   replot_env$add <- add
   replot_env$add_header <- add_header
+  replot_env$add_xaxis_ticks <- add_xaxis_ticks
   replot_env$yaxis_expr <- yaxis_expr
   replot_env$replot <- replot
   replot_env$get_actions <- get_actions
