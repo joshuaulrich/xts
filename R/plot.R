@@ -1033,8 +1033,6 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   Env$asp   <- asp   # vector: same length as ylim
   Env$xlim  <- xlim  # vector: c(min, max) (same for every panel)
   Env$ylim  <- ylim  # list: 1 element/frame (2 obs/panel, not nested)
-  Env$pad1  <- -0    # scalar: bottom padding per frame
-  Env$pad3  <-  0    # scalar: top padding per frame
   if(length(asp) != length(ylim))
     stop("'ylim' and 'asp' must be the same length")
   
@@ -1047,26 +1045,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   set_asp   <- function(asp) { Env$asp <<- asp }
   set_xlim  <- function(xlim) { Env$xlim <<- xlim }
   set_ylim  <- function(ylim) { Env$ylim <<- ylim }
-  set_pad   <- function(pad) { Env$pad1 <<- pad[1]; Env$pad3 <<- pad[2] }
-  reset_ylim <- function() {
-    ylim <- get_ylim()
-    ylim <- rep(list(c(Inf,-Inf)),length(ylim))
 
-    lapply(Env$actions,
-           function(x) {
-             frame <- attr(x, "frame")
-             if(frame > 0) {
-               lenv <- attr(x,"env")
-               if(is.list(lenv)) lenv <- lenv[[1]]
-               ylim[[frame]][1] <<- min(ylim[[frame]][1],range(na.omit(lenv$xdata[Env$xsubset]))[1],na.rm=TRUE)
-               ylim[[frame]][2] <<- max(ylim[[frame]][2],range(na.omit(lenv$xdata[Env$xsubset]))[2],na.rm=TRUE)
-             }
-           })
-    # reset all ylim values, by looking for range(env[[1]]$xdata)
-    # xdata should be either coming from Env or if lenv lenv
-    set_ylim(ylim)
-  }
-  
   # getters
   get_frame <- function(frame) { Env$frame }
   get_asp   <- function(asp) { Env$asp }
@@ -1104,7 +1083,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     frame <- abs(frame)
     asp   <- Env$asp
     xlim  <- Env$xlim
-    ylim  <- lapply(Env$ylim, function(x) structure(x + (diff(x) * c(Env$pad1, Env$pad3)),fixed=attr(x,"fixed")))
+    ylim  <- Env$ylim
     sr <- scale_ranges(frame, asp, ylim)
     if(frame == 1) {
       win <- list(xlim, c((ylim[[frame]][1] - sum(sr[-1])), ylim[[frame]][2]))
@@ -1253,28 +1232,6 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     }
   }
 
-  remove_frame <- function(frame) {
-    rm.frames <- NULL
-    max.frame <- max(abs(sapply(Env$actions, function(x) attr(x,"frame"))))
-    for(i in 1:length(Env$actions)) {
-      cframe <- attr(Env$actions[[i]],"frame")
-      if(abs(attr(Env$actions[[i]],"frame"))==frame)
-        rm.frames <- c(rm.frames, i)
-      if(cframe > 0 && cframe > frame) {
-        attr(Env$actions[[i]], "frame") <- cframe-1L
-      }
-      if(cframe < 0 && cframe < -frame) {
-        attr(Env$actions[[i]], "frame") <- cframe+1L
-      }
-    }
-    if(frame > max.frame) {
-      Env$frame <- max.frame
-    } else Env$frame <- max.frame-1
-    Env$ylim <- Env$ylim[-frame]
-    Env$asp  <- Env$asp[-frame]
-    if(!is.null(rm.frames))
-      Env$actions <- Env$actions[-rm.frames]
-  }
   next_frame <- function() {
     set_frame(max(abs(sapply(Env$actions,function(x) attr(x,"frame"))))+1L)
   }
@@ -1283,8 +1240,8 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   Env$actions <- list()
   
   # aplot
-  add <- replot <- function(x,env=Env,expr=FALSE,clip=TRUE,...) {
-    if(!expr) {
+  add <- function(x,env=Env,expr=FALSE,clip=TRUE,...) {
+    if(!expr) {  # FIXME: replace with !is.expression(x)
       x <- match.call()$x
     } 
     a <- structure(x,frame=Env$frame,clip=clip,env=env,...)
@@ -1496,34 +1453,6 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       }
   }
 
-  # subset function
-  subset <- function(x="") {
-    Env$xsubset <<- x
-    set_xlim(range(get_xcoords(), na.rm=TRUE))
-    ylim <- get_ylim()
-    for(y in seq(2,length(ylim),by=2)) {
-      if(!attr(ylim[[y]],'fixed'))
-        ylim[[y]] <- structure(c(Inf,-Inf),fixed=FALSE)
-    }
-    lapply(Env$actions,
-           function(x) {
-             frame <- abs(attr(x, "frame"))
-             fixed <- attr(ylim[[frame]],'fixed')
-             if(frame %% 2 == 0 && !fixed) {
-               lenv <- attr(x,"env")
-               if(is.list(lenv)) lenv <- lenv[[1]]
-               yrange <- range(lenv$xdata[Env$xsubset], na.rm=TRUE)
-               if(all(yrange == 0)) yrange <- yrange + c(-1,1)
-               min.tmp <- min(ylim[[frame]][1],yrange[1],na.rm=TRUE)
-               max.tmp <- max(ylim[[frame]][2],yrange[2],na.rm=TRUE)
-               ylim[[frame]] <<- structure(c(min.tmp,max.tmp),fixed=fixed)
-             }
-           })
-    # reset all ylim values, by looking for range(env[[1]]$xdata)
-    # xdata should be either coming from Env or if lenv, lenv
-    set_ylim(ylim)
-  }
-
   # calls
   add_call <- function(call.) {
     stopifnot(is.call(call.))
@@ -1540,25 +1469,20 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$add_header <- add_header
   replot_env$add_xaxis_ticks <- add_xaxis_ticks
   replot_env$yaxis_expr <- yaxis_expr
-  replot_env$replot <- replot
   replot_env$get_actions <- get_actions
-  replot_env$subset <- subset
   replot_env$get_xcoords <- get_xcoords
   replot_env$update_frames <- update_frames
   replot_env$set_frame <- set_frame
   replot_env$get_frame <- get_frame
   replot_env$next_frame <- next_frame
   replot_env$add_frame <- add_frame
-  replot_env$remove_frame <- remove_frame
   replot_env$set_asp <- set_asp
   replot_env$get_asp <- get_asp
   replot_env$set_xlim <- set_xlim
   replot_env$get_xlim <- get_xlim
-  replot_env$reset_ylim <- reset_ylim
   replot_env$set_ylim <- set_ylim
   replot_env$get_ylim <- get_ylim
   replot_env$create_ylim <- create_ylim
-  replot_env$set_pad <- set_pad
   replot_env$add_call <- add_call
 
   replot_env$new_environment <- function() { new.env(TRUE, Env) }
