@@ -460,26 +460,30 @@ plot.xts <- function(x,
     cs$Env$constant_ylim <- ylim
   }
   
-  cs$set_frame(1,FALSE)
-  
-  # compute the x-axis ticks for the grid
+  cs$set_frame(1)
+
+  # Add the x-axis ticks for the grid to the "series" frame
+  # NB: This is before adding the header frame because add_frame() needs at
+  #     least one action before it can be called.
   cs$add(expression(x_grid_lines(xdata[xsubset], grid.ticks.on, get_ylim()[[2]])),
          clip = FALSE, expr = TRUE)
-  
+
   # Add frame for the chart "header" to display the name and start/end dates
+  # NB: This adds a frame by appending to Env$ylim and Env$asp. It does *not*
+  #     change the currently active frame.
   cs$add_frame(0,ylim=c(0,1),asp=0.5)
   cs$set_frame(1)
+
+  # add main title and date range of data
+  cs$add_header("title", cs$Env, main.timespan)
+
+  cs$set_frame(2)
   
   # always add observation level ticks on x-axis if < 400 obs,
   # plus major and/or minor x-axis ticks and labels
   cs$add_xaxis_ticks(use_major = !isNullOrFalse(major.ticks),
                      use_minor = !isNullOrFalse(minor.ticks))
 
-  # add main title and date range of data
-  cs$add_header("title", cs$Env, main.timespan)
-  
-  cs$set_frame(2)
-  
   # add y-axis grid and left and/or right labels
   cs$add(cs$yaxis_expr(get_ylim()[[2]], yaxis.left, yaxis.right, FALSE), env = cs$Env, expr = TRUE)
   
@@ -1038,10 +1042,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   
   
   # setters
-  set_frame <- function(frame,clip=TRUE) { 
-    Env$frame <<- frame; 
-    set_window(clip); # change actual window
-  }
+  set_frame <- function(frame) { Env$frame <<- frame; }
   set_asp   <- function(asp) { Env$asp <<- asp }
   set_xlim  <- function(xlim) { Env$xlim <<- xlim }
   set_ylim  <- function(ylim) { Env$ylim <<- ylim }
@@ -1077,9 +1078,8 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     asp/asp[frame] * abs(diff(ranges[[frame]]))
   }
   # set_window prepares window for drawing
-  set_window <- function(clip=TRUE,set=TRUE)
+  set_window <- function(frame, clip)
   {
-    frame <- Env$frame
     frame <- abs(frame)
     asp   <- Env$asp
     xlim  <- Env$xlim
@@ -1094,7 +1094,6 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
         win <- list(xlim, c(ylim[[frame]][1] - sum(sr[-(1:frame)]),
                             ylim[[frame]][2] + sum(sr[-(frame:length(sr))])))
       }
-    if(!set) return(win)
     do.call("plot.window",win)
     if(clip) clip(par("usr")[1],par("usr")[2],ylim[[frame]][1],ylim[[frame]][2])
   }
@@ -1540,7 +1539,7 @@ plot.replot_xts <- function(x, ...) {
 
   plot_action <- function(action)
   {
-    x$set_frame(attr(action,"frame"),attr(action,"clip"))
+    x$set_window(attr(action, "frame"), attr(action, "clip"))
     env <- attr(action,"env")
     if(is.list(env)) {
       env <- unlist(lapply(env, function(x) eapply(x, eval)),recursive=FALSE)
@@ -1556,7 +1555,7 @@ plot.replot_xts <- function(x, ...) {
     plot_action(a)
   }
 
-  x$set_frame(abs(last.frame),clip=FALSE)
+  x$set_window(abs(last.frame), clip = FALSE)
   do.call("clip", as.list(usr))  # reset clipping region
   # reset par
   par(xpd = oxpd$xpd, cex = ocex$cex, mar = omar$mar, bg = obg$bg)
