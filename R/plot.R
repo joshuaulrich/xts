@@ -734,7 +734,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
 # author: Ross Bennett
 lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, pch=1){
   if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- current_panel()
+    if(on[1] == 0) on[1] <- current.xts_chob()$current_panel()
   
   addSeries(x, ...=..., main=main, on=on, type=type, col=col, lty=lty, lwd=lwd, pch=pch)
 }
@@ -743,7 +743,7 @@ lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, p
 # author: Ross Bennett
 points.xts <- function(x, ..., main="", on=0, col=NULL, pch=1){
   if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- current_panel()
+    if(on[1] == 0) on[1] <- current.xts_chob()$current_panel()
   
   addSeries(x, ...=..., main=main, on=on, type="p", col=col, pch=pch)
 }
@@ -752,8 +752,11 @@ points.xts <- function(x, ..., main="", on=0, col=NULL, pch=1){
 # author: Ross Bennett
 addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
   events <- try.xts(events)
+
+  plot_object <- current.xts_chob()
+
   if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- current_panel()
+    if(on[1] == 0) on[1] <- plot_object$current_panel()
   
   if(nrow(events) > 1){
     if(length(lty) == 1) lty <- rep(lty, nrow(events))
@@ -761,7 +764,6 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     if(length(col) == 1) col <- rep(col, nrow(events))
   }
   
-  plot_object <- current.xts_chob()
   lenv <- plot_object$new_environment()
   lenv$main <- main
   lenv$plot_event_lines <- function(x, events, on, lty, lwd, col, ...){
@@ -846,10 +848,12 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
 # Add legend to an existing xts plot
 # author: Ross Bennett
 addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1, on=0, ...){
-  if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- current_panel()
-  
+
   plot_object <- current.xts_chob()
+
+  if(!is.na(on[1]))
+    if(on[1] == 0) on[1] <- plot_object$current_panel()
+  
   lenv <- plot_object$new_environment()
   lenv$plot_legend <- function(x, legend.loc, legend.names, col, ncol, on, bty, text.col, ...){
     if(is.na(on[1])){
@@ -1459,6 +1463,14 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     Env$call_list[[ncalls+1]] <- call.
   }
 
+  current_panel <-
+  function()
+  {
+      act <- Env$actions
+      # we need to divide by 2 because there are 2 frames per panel
+      attr(act[[length(act)]], "frame") / 2
+  }
+
   # return
   replot_env <- new.env()
   class(replot_env) <- c("replot_xts","environment")
@@ -1483,6 +1495,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$get_ylim <- get_ylim
   replot_env$create_ylim <- create_ylim
   replot_env$add_call <- add_call
+  replot_env$current_panel <- current_panel
 
   replot_env$new_environment <- function() { new.env(TRUE, Env) }
 
@@ -1560,13 +1573,4 @@ plot.replot_xts <- function(x, ...) {
   # reset par
   par(xpd = oxpd$xpd, cex = ocex$cex, mar = omar$mar, bg = obg$bg)
   invisible(x$Env$actions)
-}
-
-actions <- function(obj) obj$Env$actions
-chart_actions <- function() actions(current.xts_chob())
-
-current_panel <- function() {
-  act <- chart_actions()
-  # we need to divide by 2 because there are 2 frames per panel
-  attr(act[[length(act)]], "frame") / 2
 }
