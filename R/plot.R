@@ -707,6 +707,8 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
   
   if(is.na(on[1])){
     # small header
+    plot_object$add_frame(ylim = c(0, 1), asp = 0.25)
+    plot_object$next_frame()
     plot_object$add_header("small", lenv)
     
     # add frame for the data
@@ -820,6 +822,8 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     lenv$ylim <- ylim
     
     # small header
+    plot_object$add_frame(ylim = c(0, 1), asp = 0.25)
+    plot_object$next_frame()
     plot_object$add_header("small", lenv)
     
     # add frame for the data
@@ -904,6 +908,8 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
   # if on[1] is NA, then add a new frame for the legend
   if(is.na(on[1])){
     # small header
+    plot_object$add_frame(ylim = c(0, 1), asp = 0.25)
+    plot_object$next_frame()
     plot_object$add_header("small", lenv)
     
     # add frame for the legend panel
@@ -1009,6 +1015,8 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   
   if(is.na(on[1])){
     # small header
+    plot_object$add_frame(ylim = c(0, 1), asp = 0.25)
+    plot_object$next_frame()
     plot_object$add_header("small", lenv)
     
     # add frame for the data
@@ -1300,10 +1308,6 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                            font = NULL)
                   })
           } else if (type == "small"){
-              # add a header frame
-              add_frame(ylim = c(0, 1), asp = 0.25)
-              next_frame()
-
               header_expr <-
                   expression({
                       text(x = xlim[1],
@@ -1319,8 +1323,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           }
       }
 
-
-    add(header_expr, env = envir, expr = TRUE)
+      add(header_expr, env = envir, expr = TRUE)
   }
 
   yaxis_expr <-
