@@ -465,8 +465,8 @@ plot.xts <- function(x,
   # Add the x-axis ticks for the grid to the "series" frame
   # NB: This is before adding the header frame because add_frame() needs at
   #     least one action before it can be called.
-  cs$add(expression(x_grid_lines(xdata[xsubset], grid.ticks.on, get_ylim()[[2]])),
-         clip = FALSE, expr = TRUE)
+  cs$add_action(expression(x_grid_lines(xdata[xsubset], grid.ticks.on, get_ylim()[[2]])),
+         clip = FALSE)
 
   # Add frame for the chart "header" to display the name and start/end dates
   # NB: This adds a frame by appending to Env$ylim and Env$asp. It does *not*
@@ -485,7 +485,7 @@ plot.xts <- function(x,
                      use_minor = !isNullOrFalse(minor.ticks))
 
   # add y-axis grid and left and/or right labels
-  cs$add(cs$yaxis_expr(get_ylim()[[2]], yaxis.left, yaxis.right, FALSE), env = cs$Env, expr = TRUE)
+  cs$add_action(cs$yaxis_expr(get_ylim()[[2]], yaxis.left, yaxis.right, FALSE), env = cs$Env)
   
   # add main series
   cs$set_frame(2)
@@ -514,7 +514,7 @@ plot.xts <- function(x,
     exp <- as.expression(add.par.from.dots(exp, ...))
 
     # Add expression for the main plot
-    cs$add(exp, env=lenv, expr=TRUE)
+    cs$add_action(exp, env = lenv)
     # major header
     cs$add_header("multi.panel", lenv)
     
@@ -543,7 +543,7 @@ plot.xts <- function(x,
                                     y=0.5,
                                     labels="",
                                     adj=c(0,0),cex=0.9,offset=0,pos=4))
-        cs$add(text.exp, env=lenv, expr=TRUE)
+        cs$add_action(text.exp, env = lenv)
         
         # Add the frame for the sub-plots
         cs$add_frame(ylim=lenv$ylim, asp=NCOL(cs$Env$xdata), fixed=TRUE)
@@ -566,7 +566,7 @@ plot.xts <- function(x,
         # y-axis grid lines and left and/or right labels
         exp <- c(exp, cs$yaxis_expr(ylim, yaxis.left, yaxis.right, FALSE))
 
-        cs$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
+        cs$add_action(exp, env = lenv, no.update = TRUE)
 
         # major header
         cs$add_header("multi.panel", lenv)
@@ -586,7 +586,7 @@ plot.xts <- function(x,
                              dn.col=theme$dn.col,
                              legend.loc=legend.loc))
     exp <- as.expression(add.par.from.dots(exp, ...))
-    cs$add(exp, expr=TRUE)
+    cs$add_action(exp)
 
     assign(".xts_chob", cs, .plotxtsEnv)
   }
@@ -695,7 +695,6 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
   
   xdata <- plot_object$Env$xdata
   xsubset <- plot_object$Env$xsubset
-  no.update <- FALSE
   lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
   if(hasArg("ylim")) {
     ylim <- eval.parent(substitute(alist(...))$ylim)
@@ -722,11 +721,11 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
                                          offset = 0,
                                          pos_left = 4))
 
-    plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
+    plot_object$add_action(exp, env = lenv, no.update = TRUE)
   } else {
     for(i in 1:length(on)) {
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add(exp,env=lenv,expr=TRUE,no.update=no.update)
+      plot_object$add_action(exp, env = lenv)
     }
   }
   plot_object
@@ -816,7 +815,6 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
   if(is.na(on[1])){
     xdata <- plot_object$Env$xdata
     xsubset <- plot_object$Env$xsubset
-    no.update <- FALSE
     lenv$xdata <- xdata
     ylim <- range(xdata[xsubset], na.rm=TRUE)
     lenv$ylim <- ylim
@@ -837,13 +835,11 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
                                          offset = 0,
                                          pos_left = 4))
 
-    plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
+    plot_object$add_action(exp, env = lenv, no.update = TRUE)
   } else {
     for(i in 1:length(on)) {
-      no.update <- FALSE
-
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add(exp,env=lenv,expr=TRUE,no.update=no.update)
+      plot_object$add_action(exp, env = lenv)
     }
   }
   plot_object
@@ -917,13 +913,11 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     plot_object$next_frame()
     
     # add plot_legend expression
-    plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
+    plot_object$add_action(exp, env = lenv, no.update = TRUE)
   } else {
     for(i in 1:length(on)) {
-      no.update <- FALSE
-
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add(exp,env=lenv,expr=TRUE,no.update=no.update)
+      plot_object$add_action(exp, env = lenv)
     }
   }
   plot_object
@@ -1003,7 +997,6 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   
   xdata <- plot_object$Env$xdata
   xsubset <- plot_object$Env$xsubset
-  no.update <- FALSE
   lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
   if(hasArg("ylim")) {
     ylim <- eval.parent(substitute(alist(...))$ylim)
@@ -1026,11 +1019,11 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     # y-axis grid lines and left and/or right labels
     exp <- c(exp, yaxis_expr(ylim, plot_object$Env$theme$lylab, plot_object$Env$theme$rylab))
 
-    plot_object$add(exp,env=lenv,expr=TRUE,no.update=TRUE)
+    plot_object$add_action(exp, env = lenv, no.update = TRUE)
   } else {
     for(i in 1:length(on)) {
       plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add(exp,env=lenv,expr=TRUE,no.update=no.update)
+      plot_object$add_action(exp, env = lenv)
     }
   }
   plot_object
@@ -1249,12 +1242,14 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   
   # actions
   Env$actions <- list()
-  
-  # aplot
-  add <- function(x,env=Env,expr=FALSE,clip=TRUE,...) {
-    if(!expr) {  # FIXME: replace with !is.expression(x)
-      x <- match.call()$x
+
+  # adds an action to the currently active frame
+  add_action <- function(x, env = Env, clip = TRUE, ...)
+  {
+    if(!is.expression(x)) {
+      x <- as.expression(x)
     } 
+
     a <- structure(x,frame=Env$frame,clip=clip,env=env,...)
     Env$actions[[length(Env$actions)+1]] <<- a
   }
@@ -1323,7 +1318,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           }
       }
 
-      add(header_expr, env = envir, expr = TRUE)
+      add_action(header_expr, env = envir)
   }
 
   yaxis_expr <-
@@ -1423,7 +1418,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                    col.axis = theme$grid2)
           }
       })
-      add(expr, expr = TRUE)
+      add_action(expr)
 
       values <- list()
       types <- c("major", "minor")[c(use_major, use_minor)]
@@ -1455,7 +1450,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                    col.axis = theme$labels)
 
           }, values)
-          add(expr, expr = TRUE)
+          add_action(expr)
       }
   }
 
@@ -1479,7 +1474,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   class(replot_env) <- c("replot_xts","environment")
   replot_env$Env <- Env
   replot_env$set_window <- set_window
-  replot_env$add <- add
+  replot_env$add_action <- add_action
   replot_env$add_header <- add_header
   replot_env$add_xaxis_ticks <- add_xaxis_ticks
   replot_env$yaxis_expr <- yaxis_expr
