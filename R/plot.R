@@ -352,14 +352,6 @@ plot.xts <- function(x,
 
   # add theme and charting parameters to Env
   plot.call <- match.call(expand.dots=TRUE)
-  if(isTRUE(multi.panel)){
-    if(NCOL(x) == 1)
-      cs$set_asp(3)
-    else
-      cs$set_asp(NCOL(x))
-  } else {
-    cs$set_asp(3)
-  }
 
   cs$Env$theme <-
     list(up.col   = up.col,
@@ -432,63 +424,52 @@ plot.xts <- function(x,
   cs$Env$main <- main
   cs$Env$ylab <- if (hasArg("ylab")) eval.parent(plot.call$ylab) else ""
   
+  # Add the chart "header" to display the name and start/end dates
+  cs$add_frame(ylim = c(0, 1), asp = 0.5, is_header = TRUE)
+  cs$add_header("title", cs$Env, main.timespan)
+
   if(is.null(ylim)){
     if(isTRUE(multi.panel)){
       if(yaxis.same){
         # set the ylim for the first panel based on all the data
         yrange <- cs$create_ylim(cs$Env$xdata[subset,])
         # and recalculate ylim when drawing (fixed=FALSE)
-        cs$set_ylim(list(structure(yrange, fixed=FALSE)))
+        cs$set_ylim(structure(yrange, fixed = FALSE))
       } else {
         # set the ylim for the first panel based on the first column
         yrange <- cs$create_ylim(cs$Env$xdata[subset, 1])
         # but do NOT recalculate ylim when drawing (fixed=TRUE)
-        cs$set_ylim(list(structure(yrange, fixed=TRUE)))
+        cs$set_ylim(structure(yrange, fixed = TRUE))
       }
     } else {
       # set the ylim based on all the data if this is not a multi.panel plot
       yrange <- cs$create_ylim(cs$Env$xdata[subset,])
       # and recalculate ylim when drawing (fixed=FALSE)
-      cs$set_ylim(list(structure(yrange, fixed=FALSE)))
+      cs$set_ylim(structure(yrange, fixed = FALSE))
     }
 
     cs$Env$constant_ylim <- range(cs$Env$xdata[subset], na.rm=TRUE)
   } else {
     # use the ylim arg passed in
     # but do NOT recalculate ylim when drawing (fixed=TRUE)
-    cs$set_ylim(list(structure(ylim, fixed=TRUE)))
+    cs$set_ylim(structure(ylim, fixed = TRUE))
     cs$Env$constant_ylim <- ylim
   }
   
-  cs$set_frame(1)
+  # Add a frame for the series data
+  cs$add_frame(ylim = cs$Env$ylim, asp = 3, fixed = attr(cs$Env$ylim, "fixed"))
 
-  # Add the x-axis ticks for the grid to the "series" frame
-  # NB: This is before adding the header frame because add_frame() needs at
-  #     least one action before it can be called.
-  cs$add_action(expression(x_grid_lines(xdata[xsubset], grid.ticks.on, get_ylim()[[2]])),
-         clip = FALSE)
-
-  # Add frame for the chart "header" to display the name and start/end dates
-  # NB: This adds a frame by appending to Env$ylim and Env$asp. It does *not*
-  #     change the currently active frame.
-  cs$add_frame(0,ylim=c(0,1),asp=0.5)
-  cs$set_frame(1)
-
-  # add main title and date range of data
-  cs$add_header("title", cs$Env, main.timespan)
-
-  cs$set_frame(2)
-  
   # always add observation level ticks on x-axis if < 400 obs,
   # plus major and/or minor x-axis ticks and labels
   cs$add_xaxis_ticks(use_major = !isNullOrFalse(major.ticks),
                      use_minor = !isNullOrFalse(minor.ticks))
 
+  # Add the x-axis ticks for the grid to the "series" frame
+  cs$add_action(expression(x_grid_lines(xdata[xsubset], grid.ticks.on, get_ylim())))
+
   # add y-axis grid and left and/or right labels
-  cs$add_action(cs$yaxis_expr(get_ylim()[[2]], yaxis.left, yaxis.right, FALSE), env = cs$Env)
+  cs$add_action(cs$yaxis_expr(get_ylim(), yaxis.left, yaxis.right, FALSE), env = cs$Env)
   
-  # add main series
-  cs$set_frame(2)
   if(isTRUE(multi.panel)){
     # We need to plot the first "panel" here because the plot area is
     # set up based on the code above
@@ -537,8 +518,8 @@ plot.xts <- function(x,
         lenv$col <- cs$Env$theme$col[i]
         
         # Add a small frame
-        cs$add_frame(ylim=c(0,1),asp=0.25)
-        cs$next_frame()
+        cs$add_frame(ylim = c(0, 1), asp = 0.25, is_header = TRUE)
+
         text.exp <- expression(text(x=xlim[1],
                                     y=0.5,
                                     labels="",
@@ -547,7 +528,6 @@ plot.xts <- function(x,
         
         # Add the frame for the sub-plots
         cs$add_frame(ylim=lenv$ylim, asp=NCOL(cs$Env$xdata), fixed=TRUE)
-        cs$next_frame()
         
         exp <- quote(chart.lines(xdata[xsubset],
                                  type=type, 
@@ -706,13 +686,11 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
   
   if(is.na(on[1])){
     # small header
-    plot_object$add_frame(ylim = c(0, 1), asp = 0.25)
-    plot_object$next_frame()
+    plot_object$add_frame(ylim = c(0, 1), asp = 0.25, is_header = TRUE)
     plot_object$add_header("small", lenv)
     
     # add frame for the data
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
-    plot_object$next_frame()
     
     # y-axis grid lines and left and/or right labels
     exp <- c(exp, plot_object$yaxis_expr(ylim,
@@ -820,13 +798,11 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     lenv$ylim <- ylim
     
     # small header
-    plot_object$add_frame(ylim = c(0, 1), asp = 0.25)
-    plot_object$next_frame()
+    plot_object$add_frame(ylim = c(0, 1), asp = 0.25, is_header = TRUE)
     plot_object$add_header("small", lenv)
     
     # add frame for the data
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
-    plot_object$next_frame()
     
     # y-axis grid lines and left and/or right labels
     exp <- c(exp, plot_object$yaxis_expr(ylim,
@@ -904,13 +880,11 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
   # if on[1] is NA, then add a new frame for the legend
   if(is.na(on[1])){
     # small header
-    plot_object$add_frame(ylim = c(0, 1), asp = 0.25)
-    plot_object$next_frame()
+    plot_object$add_frame(ylim = c(0, 1), asp = 0.25, is_header = TRUE)
     plot_object$add_header("small", lenv)
     
     # add frame for the legend panel
     plot_object$add_frame(ylim=c(0,1),asp=0.8,fixed=TRUE)
-    plot_object$next_frame()
     
     # add plot_legend expression
     plot_object$add_action(exp, env = lenv, no.update = TRUE)
@@ -1008,13 +982,11 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   
   if(is.na(on[1])){
     # small header
-    plot_object$add_frame(ylim = c(0, 1), asp = 0.25)
-    plot_object$next_frame()
+    plot_object$add_frame(ylim = c(0, 1), asp = 0.25, is_header = TRUE)
     plot_object$add_header("small", lenv)
     
     # add frame for the data
     plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
-    plot_object$next_frame()
     
     # y-axis grid lines and left and/or right labels
     exp <- c(exp, yaxis_expr(ylim, plot_object$Env$theme$lylab, plot_object$Env$theme$rylab))
@@ -1039,12 +1011,8 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   # 'Env' is mainly the environment for the plot window, but some elements are for panels/frames
   Env <- new.env()
   Env$frame <- frame
-  Env$asp   <- asp   # vector: same length as ylim
+  Env$asp   <- 1
   Env$xlim  <- xlim  # vector: c(min, max) (same for every panel)
-  Env$ylim  <- ylim  # list: 1 element/frame (2 obs/panel, not nested)
-  if(length(asp) != length(ylim))
-    stop("'ylim' and 'asp' must be the same length")
-  
   
   # setters
   set_frame <- function(frame) { Env$frame <<- frame; }
@@ -1056,7 +1024,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   get_frame <- function(frame) { Env$frame }
   get_asp   <- function(asp) { Env$asp }
   get_xlim  <- function(xlim) { update_frames(); Env$xlim }
-  get_ylim  <- function(ylim) { update_frames(); Env$ylim }
+  get_ylim  <- function() { update_frames(); Env$frames[[Env$frame]][["ylim"]] }
   
   create_ylim <-
   function(x, const_y_mult = 0.2)
@@ -1077,41 +1045,35 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     return(lim)
   }
 
-  # scale ylim based on current frame, and asp values
-  scale_ranges <- function(frame, asp, ranges)
-  {
-    asp/asp[frame] * abs(diff(ranges[[frame]]))
-  }
   # set_window prepares window for drawing
-  set_window <- function(frame, clip)
+  set_window <- function(frame_n, clip)
   {
-    frame <- abs(frame)
-    asp   <- Env$asp
-    xlim  <- Env$xlim
-    ylim  <- Env$ylim
-    sr <- scale_ranges(frame, asp, ylim)
-    if(frame == 1) {
-      win <- list(xlim, c((ylim[[frame]][1] - sum(sr[-1])), ylim[[frame]][2]))
-    } else
-      if(frame == length(ylim)) {
-        win <- list(xlim, c(ylim[[frame]][1], ylim[[frame]][2] + sum(sr[-length(sr)])))
-      } else {
-        win <- list(xlim, c(ylim[[frame]][1] - sum(sr[-(1:frame)]),
-                            ylim[[frame]][2] + sum(sr[-(frame:length(sr))])))
-      }
-    do.call("plot.window",win)
-    if(clip) clip(par("usr")[1],par("usr")[2],ylim[[frame]][1],ylim[[frame]][2])
-  }
-  
-  get_actions <- function(frame) {
-    actions <- NULL
-    for(i in 1:length(Env$actions)) {
-      if(abs(attr(Env$actions[[i]],"frame"))==frame)
-        actions <- c(actions, Env$actions[i])
+    all_asp <- sapply(Env$frames, function(frame) frame[["asp"]])
+    frame <- Env$frames[[frame_n]]
+    asp  <- frame$asp
+    ylim <- frame$ylim
+
+    # set the current frame to frame_n, so get_ylim() will use the correct frame
+    Env$frame <- frame_n
+
+    # scaled ylim
+    ylim_scale <- all_asp / asp * abs(diff(ylim))
+
+    n_frames <- length(Env$frames)
+
+    ymin_adj <- sum(ylim_scale[-seq_len(frame_n)])
+    ymax_adj <- sum(ylim_scale[-(frame_n:n_frames)])
+    win <- list(Env$xlim,
+                c(ylim[1] - ymin_adj,
+                  ylim[2] + ymax_adj))
+
+    do.call("plot.window", win)
+
+    if (clip) {
+        clip(par("usr")[1], par("usr")[2], ylim[1], ylim[2])
     }
-    actions
   }
-  
+
   get_xcoords <- function(xts_object = NULL, at_posix = FALSE) {
     # unique index for all series (always POSIXct)
     xcoords <- Env$xycoords$x
@@ -1146,62 +1108,77 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     return(result)
   }
 
-  # add_frame:
-  #   append a plot frame to the plot window
-  add_frame <- function(after, ylim=c(0,0), asp=0, fixed=FALSE) {
-    if(missing(after))
-      after <- max(abs(sapply(Env$actions, function(x) attr(x,"frame"))))
-    for(i in 1:length(Env$actions)) {
-      cframe <- attr(Env$actions[[i]],"frame")
-      if(cframe > 0 && cframe > after)
-        attr(Env$actions[[i]], "frame") <- cframe+1L
-      if(cframe < 0 && cframe < -after)
-        attr(Env$actions[[i]], "frame") <- cframe-1L
-    }
-    Env$ylim <- append(Env$ylim,list(structure(ylim,fixed=fixed)),after)
-    Env$asp  <- append(Env$asp,asp,after)
+  # append a frame to the plot window
+  Env$frames <- list()
+
+  add_frame <-
+  function(ylim = c(0, 0), asp = 1, fixed = FALSE, is_header = FALSE)
+  {
+      frame <-
+          list(actions = list(),
+               asp = asp,
+               ylim = structure(ylim, fixed = fixed),
+               is_header = is_header)
+      # append a new frame
+      Env$frames <- append(Env$frames, list(frame))
+      # set current frame to the new frame
+      Env$frame <- length(Env$frames)
   }
+
   update_frames <- function(headers=TRUE) {
-    # use subset code here, without the subset part.
-    from_by <- ifelse(headers,2,1)  
-    ylim <- Env$ylim
-    for(y in seq(from_by,length(ylim),by=from_by)) {
-      if(!attr(ylim[[y]],'fixed'))
-        # if fixed=FALSE set ylim to +/-Inf so update_frame() recalculates ylim
-        ylim[[y]] <- structure(c(Inf,-Inf),fixed=FALSE)
+
+    for (frame_n in seq_along(Env$frames)) {
+      frame <- Env$frames[[frame_n]]
+      if (!attr(frame$ylim, "fixed") && !isTRUE(frame$is_header)) {
+        # set ylim to +/-Inf when fixed = FALSE so update_frame() recalculates ylim
+        Env$frames[[frame_n]]$ylim <-
+          structure(c(Inf, -Inf), fixed = FALSE)
+      }
     }
-    update_frame <- function(x)
+
+    update_frame <- function(frame_n)
     {
-      if(!is.null(attr(x,"no.update")) && attr(x, "no.update"))
-        return(NULL)
-      frame <- abs(attr(x, "frame"))
-      fixed <- attr(ylim[[frame]],'fixed')
+      frame <- Env$frames[[frame_n]]
+      is_fixed <- attr(frame$ylim, "fixed")
 
-      if(frame %% from_by == 0 && !fixed) {
-        lenv <- attr(x,"env")
-        if(is.list(lenv)) lenv <- lenv[[1]]
+      if (!is_fixed && !frame$is_header) {
+        for (action in frame$actions) {
 
-        lenv_data <- lenv$xdata
-        if(!is.null(lenv_data)) {
-          # some actions (e.g. addLegend) do not have 'xdata'
-          dat.range <- create_ylim(lenv$xdata[Env$xsubset])
-          min.tmp <- min(ylim[[frame]][1],dat.range,na.rm=TRUE)
-          max.tmp <- max(ylim[[frame]][2],dat.range,na.rm=TRUE)
-          ylim[[frame]] <<- structure(c(min.tmp,max.tmp),fixed=fixed)
+          if (isTRUE(attr(action, "no.update"))) {
+            next
+          }
+
+          lenv <- attr(action, "env")
+          if(is.list(lenv)) lenv <- lenv[[1]]
+
+          lenv_data <- lenv$xdata
+          if (!is.null(lenv_data)) {
+            # some actions (e.g. addLegend) do not have 'xdata'
+            dat.range <- create_ylim(lenv$xdata[Env$xsubset])
+
+            # ylim may be changed by one or more actions
+            frame_ylim <- Env$frames[[frame_n]]$ylim
+
+            new_ylim <-
+              c(min(frame_ylim[1], dat.range, na.rm = TRUE),
+                max(frame_ylim[2], dat.range, na.rm = TRUE))
+            Env$frames[[frame_n]]$ylim <-
+              structure(new_ylim, fixed = is_fixed)
+          }
         }
       }
     }
-    lapply(Env$actions, update_frame)
     # reset all ylim values, by looking for range(env[[1]]$xdata)
     # xdata should be either coming from Env or if lenv, lenv
-    set_ylim(ylim)
+    for (frame_n in seq_along(Env$frames)) {
+        update_frame(frame_n)
+    }
 
     x_axis <- .index(Env$xdata[Env$xsubset][,1])
-    update_xaxis <- function(action)
+    update_xaxis <- function(frame)
     {
       # Create x-axis values using index values from data from all frames
-      action_frame <- abs(attr(action, "frame"))
-      if (action_frame %% from_by == 0) {
+      for (action in frame$actions) {
         lenv <- attr(action, "env")
         if (is.list(lenv)) {
           lenv <- lenv[[1]]
@@ -1222,7 +1199,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
         }
       }
     }
-    lapply(Env$actions, update_xaxis)
+    lapply(Env$frames, update_xaxis)
 
     # Create x/y coordinates using the combined x-axis index
     Env$xycoords <- xy.coords(x_axis, seq_along(x_axis))
@@ -1236,13 +1213,6 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     }
   }
 
-  next_frame <- function() {
-    set_frame(max(abs(sapply(Env$actions,function(x) attr(x,"frame"))))+1L)
-  }
-  
-  # actions
-  Env$actions <- list()
-
   # adds an action to the currently active frame
   add_action <- function(x, env = Env, clip = TRUE, ...)
   {
@@ -1250,8 +1220,9 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       x <- as.expression(x)
     } 
 
-    a <- structure(x,frame=Env$frame,clip=clip,env=env,...)
-    Env$actions[[length(Env$actions)+1]] <<- a
+    action <- structure(x, clip = clip, env = env, ...)
+    frame_actions <- Env$frames[[Env$frame]][["actions"]]
+    Env$frames[[Env$frame]][["actions"]] <- append(frame_actions, list(action))
   }
 
   add_header <-
@@ -1478,12 +1449,10 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$add_header <- add_header
   replot_env$add_xaxis_ticks <- add_xaxis_ticks
   replot_env$yaxis_expr <- yaxis_expr
-  replot_env$get_actions <- get_actions
   replot_env$get_xcoords <- get_xcoords
   replot_env$update_frames <- update_frames
   replot_env$set_frame <- set_frame
   replot_env$get_frame <- get_frame
-  replot_env$next_frame <- next_frame
   replot_env$add_frame <- add_frame
   replot_env$set_asp <- set_asp
   replot_env$get_asp <- get_asp
@@ -1546,25 +1515,26 @@ plot.replot_xts <- function(x, ...) {
   last.frame <- x$get_frame()
   x$update_frames()
 
-  is_underlay_action <- sapply(x$Env$actions, function(a) attr(a, "frame") < 0)
-
-  plot_action <- function(action)
+  # loop over frames and then actions
+  render_frame_actions <-
+  function(frame_n, object)
   {
-    x$set_window(attr(action, "frame"), attr(action, "clip"))
-    env <- attr(action,"env")
-    if(is.list(env)) {
-      env <- unlist(lapply(env, function(x) eapply(x, eval)),recursive=FALSE)
-    }
-    eval(action, env)
+      #is_underlay_action <- sapply(frame$actions, `???`)
+      actions <- object$Env$frames[[frame_n]]$actions
+
+      for (action in actions) {
+          object$set_window(frame_n, attr(action, "clip"))
+          action_env <- attr(action, "env")
+          eval(action, action_env)
+      }
   }
-  # plot negative (underlay) actions first
-  for(a in x$Env$actions[ is_underlay_action]) {
-    plot_action(a)
+
+  for (frame_n in seq_along(x$Env$frames)) {
+      render_frame_actions(frame_n, x)
   }
-  # next, plot positive (overlay) actions
-  for(a in x$Env$actions[!is_underlay_action]) {
-    plot_action(a)
-  }
+
+  # TODO: Handle negative (positive) underlay (overlay) actions
+  #     Maybe add an 'after' argument to add_action()?
 
   x$set_window(abs(last.frame), clip = FALSE)
   do.call("clip", as.list(usr))  # reset clipping region
