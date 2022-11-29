@@ -1148,13 +1148,11 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
             next
           }
 
-          lenv <- attr(action, "env")
-          if(is.list(lenv)) lenv <- lenv[[1]]
-
-          lenv_data <- lenv$xdata
-          if (!is.null(lenv_data)) {
+          action_env <- attr(action, "env")
+          action_data <- action_env$xdata
+          if (!is.null(action_data)) {
             # some actions (e.g. addLegend) do not have 'xdata'
-            dat.range <- create_ylim(lenv$xdata[Env$xsubset])
+            dat.range <- create_ylim(action_data[Env$xsubset])
 
             # ylim may be changed by one or more actions
             frame_ylim <- Env$frames[[frame_n]]$ylim
@@ -1174,32 +1172,35 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
         update_frame(frame_n)
     }
 
-    x_axis <- .index(Env$xdata[Env$xsubset][,1])
-    update_xaxis <- function(frame)
+    update_xaxis <- function(frame, x_axis)
     {
       # Create x-axis values using index values from data from all frames
       for (action in frame$actions) {
-        lenv <- attr(action, "env")
-        if (is.list(lenv)) {
-          lenv <- lenv[[1]]
-        }
-        lenv_data <- lenv$xdata
-        if (!is.null(lenv_data)) {
+        action_env <- attr(action, "env")
+        action_data <- action_env$xdata
+
+        if (!is.null(action_data)) {
           # some actions (e.g. addLegend) do not have 'xdata'
 
-          lenv_xaxis <- .index(lenv_data[Env$xsubset])
-          new_xaxis <- sort(unique(c(x_axis, lenv_xaxis)))
+          action_xaxis <- .index(action_data[Env$xsubset])
+          new_xaxis <- sort(unique(c(x_axis, action_xaxis)))
 
           if (isTRUE(Env$extend.xaxis)) {
-            x_axis <<- new_xaxis
+            result <- new_xaxis
           } else {
             xaxis_rng <- range(x_axis, na.rm = TRUE)
-            x_axis <<- new_xaxis[new_xaxis >= xaxis_rng[1L] & new_xaxis <= xaxis_rng[2L]]
+            result <- new_xaxis[new_xaxis >= xaxis_rng[1L] &
+                                new_xaxis <= xaxis_rng[2L]]
           }
         }
       }
+      return(result)
     }
-    lapply(Env$frames, update_xaxis)
+
+    x_axis <- .index(Env$xdata[Env$xsubset])
+    for (frame in Env$frames) {
+        x_axis <- update_xaxis(frame, x_axis)
+    }
 
     # Create x/y coordinates using the combined x-axis index
     Env$xycoords <- xy.coords(x_axis, seq_along(x_axis))
