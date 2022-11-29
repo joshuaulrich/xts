@@ -224,13 +224,6 @@ add.par.from.dots <- function(call., ...) {
   as.call(c(call.list, dots[pm > 0L]))
 }
 
-
-chart.lines.expression <- function(...) {
-    mc <- match.call()
-    mc[[1]] <- quote(chart.lines)
-    as.expression(mc)
-}
-
 isNullOrFalse <- function(x) {
   is.null(x) || identical(x, FALSE)
 }
@@ -1016,14 +1009,10 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   
   # setters
   set_frame <- function(frame) { Env$frame <<- frame; }
-  set_asp   <- function(asp) { Env$asp <<- asp }
-  set_xlim  <- function(xlim) { Env$xlim <<- xlim }
   set_ylim  <- function(ylim) { Env$ylim <<- ylim }
 
   # getters
   get_frame <- function(frame) { Env$frame }
-  get_asp   <- function(asp) { Env$asp }
-  get_xlim  <- function(xlim) { update_frames(); Env$xlim }
   get_ylim  <- function() { update_frames(); Env$frames[[Env$frame]][["ylim"]] }
   
   create_ylim <-
@@ -1455,10 +1444,6 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$set_frame <- set_frame
   replot_env$get_frame <- get_frame
   replot_env$add_frame <- add_frame
-  replot_env$set_asp <- set_asp
-  replot_env$get_asp <- get_asp
-  replot_env$set_xlim <- set_xlim
-  replot_env$get_xlim <- get_xlim
   replot_env$set_ylim <- set_ylim
   replot_env$get_ylim <- get_ylim
   replot_env$create_ylim <- create_ylim
