@@ -1431,9 +1431,14 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   current_panel <-
   function()
   {
-      act <- Env$actions
-      # we need to divide by 2 because there are 2 frames per panel
-      attr(act[[length(act)]], "frame") / 2
+      p <- Env$frame
+      if (p %% 2 > 0) {
+          # frame is a header if it's not a factor of 2
+          stop("the current panel is a header")
+      }
+      # divide by 2 because there are 2 frames per panel
+      # e.g. the current panel is 2 if the frame is 4
+      return(p %/% 2)
   }
 
   # return
