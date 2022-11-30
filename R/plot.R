@@ -1260,7 +1260,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
               header_expr <-
                   expression({
                       text(x = get_xcoords()[2],
-                           y = ylim[2] * 0.9,
+                           y = 0.9 * ylim[2] + 0.1 * ylim[1],
                            labels = label,
                            adj = c(0, 0),
                            pos = 4,
