@@ -752,7 +752,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
       # Add x-axis grid lines
       x$Env$x_grid_lines(xdata[xsubset], x$Env$grid.ticks.on, par("usr")[3:4])
     }
-    ypos <- x$Env$ylim[[2*on]][2]*0.995
+    ypos <- x$Env$frames[[2*on]]$ylim[2] * 0.995
     # we can add points that are not necessarily at the points on the main series
     subset.range <-
       paste(format(start(xdata[xsubset]), "%Y%m%d %H:%M:%OS6"),
@@ -834,7 +834,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     if(is.na(on[1])){
       yrange <- c(0, 1)
     } else {
-      yrange <- x$Env$ylim[[2*on]]
+      yrange <- x$Env$frames[[2*on]]$ylim
     }
     # this just gets the data of the main plot
     # TODO: get the data of frame[on]
