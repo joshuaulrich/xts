@@ -448,9 +448,15 @@ plot.xts <- function(x,
     cs$set_ylim(structure(ylim, fixed = TRUE))
     cs$Env$constant_ylim <- ylim
   }
+
+  if (isTRUE(multi.panel) && NCOL(x) > 1) {
+    asp <- NCOL(x)
+  } else {
+    asp <- 3
+  }
   
   # Add a frame for the series data
-  cs$add_frame(ylim = cs$Env$ylim, asp = 3, fixed = attr(cs$Env$ylim, "fixed"))
+  cs$add_frame(ylim = cs$Env$ylim, asp = asp, fixed = attr(cs$Env$ylim, "fixed"))
 
   # always add observation level ticks on x-axis if < 400 obs,
   # plus major and/or minor x-axis ticks and labels
