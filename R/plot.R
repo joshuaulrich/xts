@@ -467,7 +467,7 @@ plot.xts <- function(x,
   cs$add_action(expression(x_grid_lines(xdata[xsubset], grid.ticks.on, get_ylim())))
 
   # add y-axis grid and left and/or right labels
-  cs$add_action(cs$yaxis_expr(get_ylim(), yaxis.left, yaxis.right, FALSE), env = cs$Env)
+  cs$add_action(cs$yaxis_expr(get_ylim(), yaxis.left, yaxis.right), env = cs$Env)
   
   if(isTRUE(multi.panel)){
     # We need to plot the first "panel" here because the plot area is
@@ -543,7 +543,7 @@ plot.xts <- function(x,
         exp <- c(exp, expression(x_grid_lines(xdata[xsubset], grid.ticks.on, ylim)))
 
         # y-axis grid lines and left and/or right labels
-        exp <- c(exp, cs$yaxis_expr(ylim, yaxis.left, yaxis.right, FALSE))
+        exp <- c(exp, cs$yaxis_expr(ylim, yaxis.left, yaxis.right))
 
         cs$add_action(exp, env = lenv, no.update = TRUE)
 
@@ -694,9 +694,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     # y-axis grid lines and left and/or right labels
     exp <- c(exp, plot_object$yaxis_expr(ylim,
                                          plot_object$Env$theme$lylab,
-                                         plot_object$Env$theme$rylab,
-                                         offset = 0,
-                                         pos_left = 4))
+                                         plot_object$Env$theme$rylab))
 
     plot_object$add_action(exp, env = lenv, no.update = TRUE)
   } else {
@@ -806,9 +804,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     # y-axis grid lines and left and/or right labels
     exp <- c(exp, plot_object$yaxis_expr(ylim,
                                          plot_object$Env$theme$lylab,
-                                         plot_object$Env$theme$rylab,
-                                         offset = 0,
-                                         pos_left = 4))
+                                         plot_object$Env$theme$rylab))
 
     plot_object$add_action(exp, env = lenv, no.update = TRUE)
   } else {
@@ -1202,10 +1198,8 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
     if (Env$observation.based) {
       Env$xlim <- c(1, length(get_xcoords()))
-      Env$xstep <- 1
     } else {
       Env$xlim <- range(get_xcoords(), na.rm = TRUE)
-      Env$xstep <- diff(get_xcoords()[1:2])
     }
   }
 
@@ -1291,11 +1285,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   yaxis_expr <-
   function(ylim_expr,
            yaxis_left,
-           yaxis_right,
-           use_xstep = TRUE,
-           offset = 1,
-           pos_left = 2,
-           pos_right = 4)
+           yaxis_right)
   {
     # y-axis grid lines and labels
     exp <- substitute({
@@ -1306,58 +1296,37 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                  lty = grid.ticks.lty)
     }, list(ylim_expr = substitute(ylim_expr)))
 
-    # addSeries, addPolygon, and addEventLines set xlim using xstep = 1 for
-    # observation.based and xstep = diff(get_xcoords()[1:2]) otherwise
     if (yaxis_left) {
       # left y-axis labels
-
-      if (use_xstep) {
-        xlim_expr <- quote(xlim[1] - xstep * 2/3 - max(strwidth(y_grid_lines(ylim))))
-      } else{
-        xlim_expr <- quote(xlim[1])
-      }
-
       exp <- c(exp,
           substitute({
-            text(x = xlim_expr,  # may need: - xstep * 2/3 - max(strwidth(y_grid_lines(ylim)))
+            text(x = xlim[1],
                  y = y_grid_lines(ylim_expr),
                  labels = noquote(format(y_grid_lines(ylim_expr), justify = "right")),
                  col = theme$labels,
                  srt = theme$srt,
-                 offset = offset_expr, # offset = 0 in addSeries(), addEventLines()
-                 pos = pos_expr,       # pos = 4 in addSeries(), addEventLines()
+                 offset = 0.5,
+                 pos = 2,
                  cex = theme$cex.axis,
                  xpd = TRUE)
-          }, list(ylim_expr = substitute(ylim_expr),
-                  xlim_expr = substitute(xlim_expr),
-                  offset_expr = offset,
-                  pos_expr = pos_left))
+          }, list(ylim_expr = substitute(ylim_expr)))
       )
     }
+
     if (yaxis_right) {
       # right y-axis labels
-
-      if (use_xstep) {
-        xlim_expr <- quote(xlim[2] + xstep * 2/3)
-      } else{
-        xlim_expr <- quote(xlim[2])
-      }
-
       exp <- c(exp,
           substitute({
-            text(x = xlim_expr,  # may need: + xstep * 2/3
+            text(x = xlim[2],
                  y = y_grid_lines(ylim_expr),
                  labels = noquote(format(y_grid_lines(ylim_expr), justify = "right")),
                  col = theme$labels,
                  srt = theme$srt,
-                 offset = offset_expr,  # offset = 0 in addSeries(), addEventLines()
-                 pos = pos_expr,
+                 offset = 0.5,
+                 pos = 4,
                  cex = theme$cex.axis,
                  xpd = TRUE)
-          }, list(ylim_expr = substitute(ylim_expr),
-                  xlim_expr = substitute(xlim_expr),
-                  offset_expr = offset,
-                  pos_expr = pos_right))
+          }, list(ylim_expr = substitute(ylim_expr)))
       )
     }
 
