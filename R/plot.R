@@ -752,7 +752,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
       # Add x-axis grid lines
       x$Env$x_grid_lines(xdata[xsubset], x$Env$grid.ticks.on, par("usr")[3:4])
     }
-    ypos <- x$Env$frames[[2*on]]$ylim[2] * 0.995
+    ypos <- x$Env$panels[[2*on]]$ylim[2] * 0.995
     # we can add points that are not necessarily at the points on the main series
     subset.range <-
       paste(format(start(xdata[xsubset]), "%Y%m%d %H:%M:%OS6"),
@@ -832,10 +832,10 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     if(is.na(on[1])){
       yrange <- c(0, 1)
     } else {
-      yrange <- x$Env$frames[[2*on]]$ylim
+      yrange <- x$Env$panels[[2*on]]$ylim
     }
     # this just gets the data of the main plot
-    # TODO: get the data of frame[on]
+    # TODO: get the data of panels[on]
     if(is.null(ncol)){
       ncol <- NCOL(x$Env$xdata)
     }
@@ -1002,22 +1002,22 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
 # R/replot.R in quantmod with only minor edits to change class name to
 # replot_xts and use the .plotxtsEnv instead of the .plotEnv in quantmod
 
-new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10),fixed=FALSE))) {
+new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10),fixed=FALSE))) {
   # global variables
 
   # 'Env' is mainly the environment for the plot window, but some elements are for panels/frames
   Env <- new.env()
-  Env$frame <- frame
+  Env$panel <- panel
   Env$asp   <- 1
   Env$xlim  <- xlim  # vector: c(min, max) (same for every panel)
   
   # setters
-  set_frame <- function(frame) { Env$frame <<- frame; }
+  set_panel <- function(panel) { Env$panel <<- panel; }
   set_ylim  <- function(ylim) { Env$ylim <<- ylim }
 
   # getters
-  get_frame <- function(frame) { Env$frame }
-  get_ylim  <- function() { update_frames(); Env$frames[[Env$frame]][["ylim"]] }
+  get_panel <- function(panel) { Env$panel }
+  get_ylim  <- function() { update_panels(); Env$panels[[Env$panel]][["ylim"]] }
   
   create_ylim <-
   function(x, const_y_mult = 0.2)
@@ -1042,19 +1042,19 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   render_panels <-
   function()
   {
-      update_frames()
+      update_panels()
 
-      all_asp <- lapply(Env$frames, function(p) p[["asp"]])
+      all_asp <- lapply(Env$panels, function(p) p[["asp"]])
       # convert list of asp/panel to vector for the entire plot window
       # this contains all the header/series asp pairs
       all_asp <- do.call(c, all_asp)
       n_asp <- length(all_asp)
 
-      for (panel_n in seq_along(Env$frames)) {
+      for (panel_n in seq_along(Env$panels)) {
 
-          panel <- Env$frames[[panel_n]]
+          panel <- Env$panels[[panel_n]]
           # set the current panel to panel_n, so get_ylim() will use the correct panel
-          Env$frame <- panel_n
+          Env$panel <- panel_n
 
           is_header <- TRUE  # header is always the first action
 
@@ -1125,7 +1125,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   }
 
   # panel functionality
-  Env$frames <- list()
+  Env$panels <- list()
   new_panel <-
   function(ylim,
            asp,
@@ -1154,7 +1154,7 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           panel$actions <- append(panel$actions, list(action))
       }
 
-      # process headers
+      # NOTE: the header action must be the 1st action for a panel
       header_type <- match.arg(header_type)
 
       if (header_type == "title") {
@@ -1223,47 +1223,33 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       return(panel)
   }
 
-  add_frame <-
-  function(ylim = c(0, 0), asp = 1, fixed = FALSE, is_header = FALSE)
-  {
-      frame <-
-          list(actions = list(),
-               asp = asp,
-               ylim = structure(ylim, fixed = fixed),
-               is_header = is_header)
-      # append a new frame
-      Env$frames <- append(Env$frames, list(frame))
-      # set current frame to the new frame
-      Env$frame <- length(Env$frames)
-  }
-
-  add_panel <- function(frame)
+  add_panel <- function(panel)
   {
       # append a new panel
-      Env$frames <- append(Env$frames, list(frame))
+      Env$panels <- append(Env$panels, list(panel))
 
-      # set current panel to the new frame
-      Env$frame <- length(Env$frames)
+      # set current panel to the new panel
+      Env$panel <- length(Env$panels)
   }
 
-  update_frames <- function(headers=TRUE) {
+  update_panels <- function(headers=TRUE) {
 
-    for (frame_n in seq_along(Env$frames)) {
-      frame <- Env$frames[[frame_n]]
-      if (!attr(frame$ylim, "fixed") && !isTRUE(frame$is_header)) {
-        # set ylim to +/-Inf when fixed = FALSE so update_frame() recalculates ylim
-        Env$frames[[frame_n]]$ylim <-
+    for (panel_n in seq_along(Env$panels)) {
+      panel <- Env$panels[[panel_n]]
+      if (!attr(panel$ylim, "fixed")) {
+        # set ylim to +/-Inf when fixed = FALSE so update_panel() recalculates ylim
+        Env$panels[[panel_n]]$ylim <-
           structure(c(Inf, -Inf), fixed = FALSE)
       }
     }
 
-    update_frame <- function(frame_n)
+    update_panel <- function(panel_n)
     {
-      frame <- Env$frames[[frame_n]]
-      is_fixed <- attr(frame$ylim, "fixed")
+      panel <- Env$panels[[panel_n]]
+      is_fixed <- attr(panel$ylim, "fixed")
 
-      if (!is_fixed && !frame$is_header) {
-        for (action in frame$actions) {
+      if (!is_fixed) {
+        for (action in panel$actions) {
 
           if (isTRUE(attr(action, "no.update"))) {
             next
@@ -1276,12 +1262,12 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
             dat.range <- create_ylim(action_data[Env$xsubset])
 
             # ylim may be changed by one or more actions
-            frame_ylim <- Env$frames[[frame_n]]$ylim
+            panel_ylim <- Env$panels[[panel_n]]$ylim
 
             new_ylim <-
-              c(min(frame_ylim[1], dat.range, na.rm = TRUE),
-                max(frame_ylim[2], dat.range, na.rm = TRUE))
-            Env$frames[[frame_n]]$ylim <-
+              c(min(panel_ylim[1], dat.range, na.rm = TRUE),
+                max(panel_ylim[2], dat.range, na.rm = TRUE))
+            Env$panels[[panel_n]]$ylim <-
               structure(new_ylim, fixed = is_fixed)
           }
         }
@@ -1289,14 +1275,14 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     }
     # reset all ylim values, by looking for range(env[[1]]$xdata)
     # xdata should be either coming from Env or if lenv, lenv
-    for (frame_n in seq_along(Env$frames)) {
-        update_frame(frame_n)
+    for (panel_n in seq_along(Env$panels)) {
+        update_panel(panel_n)
     }
 
-    update_xaxis <- function(frame, x_axis)
+    update_xaxis <- function(panel, x_axis)
     {
-      # Create x-axis values using index values from data from all frames
-      for (action in frame$actions) {
+      # Create x-axis values using index values from data from all panels
+      for (action in panel$actions) {
         action_env <- attr(action, "env")
         action_data <- action_env$xdata
 
@@ -1319,8 +1305,8 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     }
 
     x_axis <- .index(Env$xdata[Env$xsubset])
-    for (frame in Env$frames) {
-        x_axis <- update_xaxis(frame, x_axis)
+    for (panel in Env$panels) {
+        x_axis <- update_xaxis(panel, x_axis)
     }
 
     # Create x/y coordinates using the combined x-axis index
@@ -1461,11 +1447,10 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$xaxis_expr <- xaxis_expr
   replot_env$yaxis_expr <- yaxis_expr
   replot_env$get_xcoords <- get_xcoords
-  replot_env$update_frames <- update_frames
+  replot_env$update_panels <- update_panels
   replot_env$render_panels <- render_panels
-  replot_env$set_frame <- set_frame
-  replot_env$get_frame <- get_frame
-  replot_env$add_frame <- add_frame
+  replot_env$set_panel <- set_panel
+  replot_env$get_panel <- get_panel
   replot_env$set_ylim <- set_ylim
   replot_env$get_ylim <- get_ylim
   replot_env$create_ylim <- create_ylim
