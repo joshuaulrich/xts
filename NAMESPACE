@@ -28,6 +28,7 @@ importFrom(grDevices,
 
 importFrom(graphics,
   abline,
+  clip,
   legend,
   lines,
   par,
