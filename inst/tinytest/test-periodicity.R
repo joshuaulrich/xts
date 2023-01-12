@@ -10,6 +10,8 @@ P <- structure(
        label = "second"),
   class = "periodicity")
 
+test_date <- as.Date("2022-10-15")
+
 info_msg <- "test.periodicity_on_one_observation_warns"
 x <- xts(1, .POSIXct(1, "UTC"))
 suppressWarnings(p <- periodicity(x))
@@ -114,7 +116,7 @@ check_periodicity_result(p, "days", "weekly", 7*n, info_msg)
 info_msg <- "test.periodicity_on_month_data"
 
 n <- 1
-i <- seq(as.yearmon(Sys.Date()) - 12, by = n/12, length.out = 100)
+i <- seq(as.yearmon(test_date) - 12, by = n/12, length.out = 100)
 x <- xts(i, i)
 p <- periodicity(x)
 check_periodicity_result(p, "days", "monthly", 30, info_msg)
@@ -124,7 +126,7 @@ p <- periodicity(x)
 check_periodicity_result(p, "days", "monthly", 31, info_msg)
 
 n <- 2
-i <- seq(as.yearmon(Sys.Date()) - 12, by = n/12, length.out = 100)
+i <- seq(as.yearmon(test_date) - 12, by = n/12, length.out = 100)
 x <- xts(i, i)
 p <- periodicity(x)
 check_periodicity_result(p, "days", "monthly", 60, info_msg)
@@ -136,7 +138,7 @@ check_periodicity_result(p, "days", "monthly", 61, info_msg)
 info_msg <- "test.periodicity_on_quarter_data"
 
 n <- 1
-i <- seq(as.yearqtr(Sys.Date()) - 24, by = n/4, length.out = 100)
+i <- seq(as.yearqtr(test_date) - 24, by = n/4, length.out = 100)
 x <- xts(i, i)
 p <- periodicity(x)
 check_periodicity_result(p, "days", "quarterly", 91, info_msg)
@@ -146,7 +148,7 @@ p <- periodicity(x)
 check_periodicity_result(p, "days", "quarterly", 91, info_msg)
 
 n <- 2
-i <- seq(as.yearqtr(Sys.Date()) - 48, by = n/4, length.out = 100)
+i <- seq(as.yearqtr(test_date) - 48, by = n/4, length.out = 100)
 p <- periodicity(xts(seq_len(100), i))
 check_periodicity_result(p, "days", "quarterly", 183, info_msg)
 # quarterly POSIXct
@@ -155,7 +157,7 @@ p <- periodicity(x)
 check_periodicity_result(p, "days", "quarterly", 183, info_msg)
 
 n <- 3
-i <- seq(as.yearqtr(Sys.Date()) - 50, by = n/4, length.out = 100)
+i <- seq(as.yearqtr(test_date) - 50, by = n/4, length.out = 100)
 p <- periodicity(xts(seq_len(100), i))
 check_periodicity_result(p, "days", "quarterly", 274, info_msg)
 # quarterly POSIXct
