@@ -40,10 +40,18 @@ x_sec <- .xts(1:120, 1:120 - 1, tzone = "UTC")
 nm_sec <- names(split(x_sec, "minutes"))
 expect_identical(nm_minutes, nm_sec, info = info_msg)
 
-info_msg <- "microsecond data split by milliseconds"
-t1 <- as.POSIXct(nm_minutes[1], tz = "UTC")
-us <- seq(1e-4, 2e-1, 1e-4)
-x_us <- xts(seq_along(us), t1 + us)
-nm_ms <- names(split(x_us, "milliseconds"))
-nm_target <- format(t1 + seq(0, 0.2, 0.001), "%Y-%m-%d %H:%M:%OS3")
-expect_identical(nm_target, nm_ms, info = info_msg)
+if (.Machine$sizeof.pointer == 8) {
+    # only run on 64-bit systems because this fails on 32-bit systems due to
+    # precision issues
+    #
+    # ?.Machine says:
+    # sizeof.pointer: the number of bytes in a C 'SEXP' type. Will be '4' on
+    #     32-bit builds and '8' on 64-bit builds of R.
+    info_msg <- "microsecond data split by milliseconds"
+    t1 <- as.POSIXct(nm_minutes[1], tz = "UTC")
+    us <- seq(1e-4, 2e-1, 1e-4)
+    x_us <- xts(seq_along(us), t1 + us)
+    nm_ms <- names(split(x_us, "milliseconds"))
+    nm_target <- format(t1 + seq(0, 0.2, 0.001), "%Y-%m-%d %H:%M:%OS3")
+    expect_identical(nm_target, nm_ms, info = info_msg)
+}
