@@ -113,6 +113,10 @@ print.xts <-
       }
     }
   } else {
+    # ensure 'y' has dims
+    if (is.null(dim(y))) {
+      dim(y) <- c(length(y), 1)
+    }
     # Create column names as right-justified column indexes. They're left-
     # justified by default, which is different than if there are column names.
     if (is.null(colnames(y))) {

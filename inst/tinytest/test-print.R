@@ -12,3 +12,5 @@ expect_true(length(print_output) == (2 + 2), info = "'max' argument is respected
 print_output <- utils::capture.output(print(x, max = 4, show.nrows = 10))
 expect_true(length(print_output) == (2 + 2),
             info = "'max' takes precedence over 'show.nrows'")
+
+expect_silent(p <- print(drop(x[, 1])), info = "print.xts() does not error when object doesn't have dims")
