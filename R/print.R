@@ -23,8 +23,7 @@ print.xts <-
            fmt,
            ...,
            show.nrows = 10,
-           trunc.rows = 40,
-           trunc.cols = NULL)
+           trunc.rows = 40)
 {
   check.TZ(x)
 
@@ -59,23 +58,6 @@ print.xts <-
   }
   if (!hasArg("right")) {
     right <- TRUE
-  }
-
-  if (!is.null(trunc.cols)) {
-    if (isTRUE(trunc.cols)) {
-      # capture print output until 1 column would wrap
-      capture.printed.cols <-
-        function(i, obj)
-      {
-        o <- utils::capture.output(print.default(obj[, seq_len(i)]))
-        max(nchar(o)) # max characters printed for this number of cols
-      }
-
-      pcols <- sapply(seq_len(nc), capture.printed.cols, obj = x, ...)
-      nc <- which.min(getOption("width") / pcols)
-    } else if (is.numeric(trunc.cols) && is.finite(trunc.cols)) {
-      nc <- trunc.cols
-    }
   }
 
   if (nr > trunc.rows + 1 && nr > 2 * show.nrows) {
