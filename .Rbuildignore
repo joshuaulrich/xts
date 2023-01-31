@@ -5,6 +5,8 @@ LICENSE
 \.gitignore
 \.orig$
 \.md$
+\.Rmd$
+\.notes
 .travis.yml
 ^0.*\.patch$
 ^.*\.tar.gz$
