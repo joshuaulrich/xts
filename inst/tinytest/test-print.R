@@ -14,3 +14,24 @@ expect_true(length(print_output) == (2 + 2),
             info = "'max' takes precedence over 'show.nrows'")
 
 expect_silent(p <- print(drop(x[, 1])), info = "print.xts() does not error when object doesn't have dims")
+
+# 'show.nrows' > 'trunc.rows'
+print_output <- utils::capture.output(print(x, show.nrows = 10, trunc.rows = 4))
+expect_true(length(print_output)-1 == nrow(x),
+            info = "print.xts() shows correct number of rows when show.nrows > trunc.rows")
+
+
+y <- xts(cbind(1:11, 1:11), .Date(1:11))
+
+show_nrows <- floor(nrow(y) / 2)
+print_output <- utils::capture.output(print(y, show.nrows = show_nrows, trunc.rows = nrow(y)-2))
+expect_true(length(print_output)-1 == 2*show_nrows+1,
+            info = "print.xts() shows correct number of rows when show.nrows < trunc.rows / 2")
+
+show_nrows <- ceiling(nrow(y) / 2)
+print_output <- utils::capture.output(print(y, show.nrows = show_nrows, trunc.rows = nrow(y)-2))
+expect_true(length(print_output)-1 == nrow(y),
+            info = "print.xts() shows correct number of rows when show.nrows > trunc.rows / 2")
+
+print_output <- utils::capture.output(p <- print(x))
+expect_identical(p, x, info = "returns input invisibly")

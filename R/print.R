@@ -78,19 +78,27 @@ print.xts <-
     }
   }
 
-  seq.max <- seq_len(max)
-  seq.col <- seq_len(nc)
+  if (nr > trunc.rows + 1 && nr > 2 * show.nrows) {
+    # 'show.n' can't be more than 2*nrow(x) or observations will be printed
+    # twice, once before the "..." and once after.
+    seq.row <- seq_len(show.nrows)
+    seq.col <- seq_len(nc)
+    seq.n <- (nr - show.nrows + 1):nr
 
-  if (nr > trunc.rows + 1) {
     index <- as.character(index(x))
-    index <- c(index[seq.max], "...", index[(nr-max+1):nr])
+    index <- c(index[seq.row], "...", index[seq.n])
+
+    # as.matrix() to ensure we have dims
+    # unclass() avoids as.matrix() method dispatch
+    m <- as.matrix(unclass(x))
+
     y <- rbind(
-      format(as.matrix(x[seq.max, seq.col])),
+      format(m[seq.row, seq.col, drop = FALSE]),
       format(matrix(rep("", nc), nrow = 1)),
-      format(as.matrix(x[(nr-max+1):nr, seq.col]))
+      format(m[seq.n, seq.col, drop = FALSE])
     )
     rownames(y) <- format(index, justify = "right")
-    colnames(y) <- colnames(x[, seq.col])
+    colnames(y) <- colnames(m[, seq.col, drop = FALSE])
   } else {
     y <- coredata(x, fmt)
   }
