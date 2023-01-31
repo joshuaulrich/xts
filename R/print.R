@@ -22,14 +22,29 @@ print.xts <-
   function(x,
            fmt,
            ...,
-           max = NULL,
+           show.nrows = 10,
            trunc.rows = 40,
            trunc.cols = NULL)
 {
   check.TZ(x)
 
-  if (is.null(max)) {
-    max <- getOption("xts.max.print", 10)
+  nr <- NROW(x)
+  nc <- NCOL(x)
+
+  # 'max' in print.default() takes precedence over 'show.nrows'
+  if (hasArg("max")) {
+    # 'max' is the number of *elements* (not rows) to print
+    if (nr < 1) {
+      show.nrows <- 0
+    } else {
+      # convert 'max' to 'show.nrows'
+      max.arg <- match.call()$max
+      if (!is.null(max.arg)) {
+        show.nrows <- trunc(max.arg / nc)
+      }
+    }
+  } else if (missing(show.nrows)) {
+    show.nrows <- getOption("xts.print.show.nrows", 10)
   }
 
   if (missing(fmt)) {
@@ -45,9 +60,6 @@ print.xts <-
   if (!hasArg("right")) {
     right <- TRUE
   }
-  
-  nr <- NROW(x)
-  nc <- NCOL(x)
 
   if (!is.null(trunc.cols)) {
     if (isTRUE(trunc.cols)) {
