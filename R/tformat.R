@@ -20,7 +20,7 @@
 
 
 `tformat` <-
-function(x) {
+function(x, ...) {
   UseMethod('tformat')
 }
 
@@ -30,7 +30,7 @@ function(x, value) {
 }
 
 `tformat.default` <-
-function(x) {
+function(x, ...) {
   attr(x, 'tformat')
 }
 
