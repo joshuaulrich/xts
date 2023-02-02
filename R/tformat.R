@@ -41,7 +41,7 @@ function(x, value) {
 }
 
 `tformat.xts` <-
-function(x) {
+function(x, ...) {
   ix <- .index(x)
   attr(ix, 'tformat')
 }

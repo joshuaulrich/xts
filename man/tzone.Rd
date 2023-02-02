@@ -1,95 +1,99 @@
-\name{indexTZ}
-\alias{TimeZone}
-\alias{indexTZ}
-\alias{indexTZ<-}
+\name{tzone}
 \alias{tzone}
 \alias{tzone<-}
-\title{ Query the TimeZone of an xts object }
+\alias{tzone.xts}
+\alias{tzone<-.xts}
+\alias{indexTZ}
+\alias{indexTZ<-}
+\alias{TimeZone}
+\title{ Get or Replace the Timezone of an xts Object's Index }
 \description{
-Get the TimeZone of an \code{xts} object.
+Generic functions to get or replace the timezone of an xts object's index.
 }
 \usage{
-indexTZ(x, ...)
-tzone(x, ...)
-
-indexTZ(x) <- value
+tzone(x, \dots)
 tzone(x) <- value
+
+\method{tzone}{xts}(x, \dots)
+\method{tzone}{xts}(x) <- value
+
+##### The functions below are DEPRECATED #####
+indexTZ(x, \dots)
+indexTZ(x) <- value
 }
 \arguments{
   \item{x}{ an \code{xts} object }
-  \item{value}{ a valid TZ object }
-  \item{\dots}{ unused }
+  \item{value}{ a valid timezone value (see \code{OlsonNames()}) }
+  \item{\dots}{ arguments passed to other methods }
 }
 \details{
-As of version 0.6-4 all objects carry the time zone
-under which they were created in a hidden
-attribute names \code{.indexTZ}.
+Internally, an xts object's index is a \emph{numeric} value corresponding to
+seconds since the epoch in the UTC timezone. When an xts object is created, all
+time index values are converted internally to \code{\link{POSIXct}} (which is
+also in seconds since the UNIX epoch), using the underlying OS conventions and
+the \env{TZ} environment variable. The \code{xts()} function manages timezone
+information as transparently as possible.
 
-Going forward from 0.7-4, the TZ variable is now
-also stored in the index itself, in the \code{tzone}
-attribute. This is to facilitate the transition to
-removing the xts-specific attributes referenced by
-\code{tzone}, \code{indexFormat}, and \code{indexClass}.
-These accessor functions will continue to behave the
-same under the new internals. Additionally, there is a new
-getter/setter method with \code{tzone} and \code{tzone<-}.
+The \code{tzone<-} function \emph{does not} change the internal index values
+(i.e. the index will remain the same time in the UTC timezone).
+}
+\note{
+Both \code{indexTZ} and \code{indexTZ<-} are deprecated in favor of
+\code{tzone} and \code{tzone<-}, respectively.
 
-Internally, all time indexing is converted to
-POSIXct, seconds since the epoch as defined
-by a combination of the underlying OS
-and the TZ variable setting at creation.  The current
-implementation of xts manages time zone information
-as transparently as possible, delegating all
-management to R, which is in turn managed
-in most instances by the underlying operating system.
-
-During printing, and subsetting by time strings
-the internal POSIX representation is used to
-identify in human-friendly terms the time
-at each position.
-
-This is different than previous versions of \pkg{xts},
-where the index was stored in its native format (i.e. class).
-
-The ability to create an index using any of the supported
-timeBased classes (POSIXct, Date, dates, chron, timeDate,
-yearmon, yearqtr) is managed at the user-interaction point,
-and the class is merely stored in another index attribute,
-which is named \sQuote{tclass}.  This is accessible and changeable
-via the \code{tclass} and \code{tclass(x)<-} functions.
-
-In most cases, all of this makes the subsetting by time strings
-possible, and also allows for consistent and fast manipulation
-of the series internally.
-
-Problems may arise when an object that had been created under
-one TZ (time zone) are used in a session using another TZ. This
-isn't usually a issue, but when it is a warning is given upon printing
-or subsetting. This warning may be controlled with \code{options("xts_check_TZ")}.
+Problems may arise when an object that had been created under one timezone are
+used in a session using another timezone. This isn't usually a issue, but when
+it is a warning is given upon printing or subsetting. This warning may be
+suppressed by setting \code{options(xts_check_TZ = FALSE)}.
 }
 \value{
-A named vector of length one, giving the objects TZ at creation.
+A one element named vector containing the timezone of the object's index.
+}
+\note{
+Both \code{indexTZ} and \code{indexTZ<-} are deprecated in favor of
+\code{tzone} and \code{tzone<-}, respectively.
+
+Timezones are a difficult issue to manage. It's best to set the system \env{TZ}
+environment variable to "GMT" or "UTC" (via \code{Sys.setenv(TZ = "UTC")} at
+the beginning of your scripts if you do not need intra-daily resolution.
+}
+\seealso{ \code{\link{POSIXt}}
+\code{\link{index}} has more information on the xts index,
+\code{\link{tformat}} describes how the index values are formatted when printed,
+and \code{\link{tclass}} provides details how \pkg{xts} handles the class of
+the index.
 }
 \author{ Jeffrey A. Ryan }
-\note{
-Timezones are a difficult issue to manage.  If intraday granularity
-is not needed, it is often best to set the system TZ to "GMT" or
-"UTC".
-}
-\seealso{ \code{\link{POSIXt}} }
 \examples{
-x <- xts(1:10, Sys.Date()+1:10)
-#indexTZ(x)  # Deprecated(?)
-# same, preferred as of 0.9-1
+# Date indexes always have a "UTC" timezone
+x <- xts(1, Sys.Date())
 tzone(x)
 str(x)
-x
-# now set TZ to something different...
-\dontrun{
-Old.TZ <- Sys.getenv("TZ")
-Sys.setenv(TZ="America/Chicago")
-x
-Sys.setenv(TZ=Old.TZ)
+print(x)
+
+# The default 'tzone' is blank -- your machine's local timezone,
+# determined by the 'TZ' environment variable.
+x <- xts(1, Sys.time())
+tzone(x)
+str(x)
+
+# now set 'tzone' to different values
+tzone(x) <- "UTC"
+str(x)
+
+tzone(x) <- "America/Chicago"
+str(x)
+
+y <- timeBasedSeq('2010-01-01/2010-01-03 12:00/H')
+y <- xts(seq_along(y), y, tzone = "America/New_York")
+
+# Changing the tzone does not change the internal index values, but it
+# does change how the index is printed!
+head(y)
+head(.index(y))
+tzone(y) <- "Europe/London"
+head(y)          # the index prints with hours, but
+head(.index(y))  # the internal index is not changed!
 }
-}
-\keyword{ misc }
+\keyword{ts}
+\keyword{utilities}
