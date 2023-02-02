@@ -31,7 +31,7 @@ UNIT_TEST_FILES = $(wildcard ${PKG_PATH}/inst/tinytest/test-*.R)
 
 BENCHMARK_FILE = ${PKG_PATH}/inst/benchmarks/benchmark.subset.R
 
-.PHONY: build install check tests test clean
+.PHONY: build install check tests cran clean
 
 all: check #benchmark
 
@@ -54,38 +54,17 @@ $(PKG_INST_FILE): $(PKG_TARGZ)
 # Run R CMD check
 check: build
 	@_R_CHECK_CRAN_INCOMING_=false \
-	${R_HOME}/bin/R CMD check ${PKG_TARGZ} --as-cran
+	${R_HOME}/bin/R CMD check ${PKG_TARGZ} --as-cran --no-vignettes
 
-# Build for CRAN
-#build-cran: $(PKG_TARGZ)
-#$(PKG_TARGZ): $(PKG_ALL_FILES) $(UNIT_TEST_FILES) $(UNIT_TEST_SUITE)
-#	@${R_HOME}/bin/R CMD build ${PKG_BUILD_OPTS} ${PKG_PATH}
-#
-## Install package for CRAN
-#install-cran: build-cran $(PKG_INST_FILE)
-#$(PKG_INST_FILE): $(PKG_TARGZ)
-#	@${R_HOME}/bin/R CMD INSTALL ${PKG_TARGZ}
-#
-## Run R CMD check for CRAN
-#check-cran: install-cran
-#	${R_HOME}/bin/R CMD check ${PKG_TARGZ}
+# Check for CRAN
+cran:
+	@${R_HOME}/bin/R CMD build ${PKG_PATH} && \
+	_R_CHECK_CRAN_INCOMING_=false ${R_HOME}/bin/R CMD check ${PKG_TARGZ} --as-cran
 
 # Run unit test suite
 tests: install ${UNIT_TEST_FILES}
-	@${R_HOME}/bin/Rscript ${UNIT_TEST_SUITE}
-
-# Run one test file
-### haven't set up running one file with tinytest
-##TEST_FILE = $(wildcard ${PKG_PATH}/inst/unitTests/*${file}*)
-##TEST_CMD = 'suppressMessages({require(xts); require(RUnit)}); \
-##            out <- runTestFile("${TEST_FILE}", verbose = TRUE); \
-##            printTextProtocol(out)'
-
-test: install
-ifndef file
-	$(error "file not defined")
-endif
-	@${R_HOME}/bin/Rscript -e 'tinytest::test_package("xts")'
+	@_XTS_TINYTEST_VERBOSE_=2 _XTS_TINYTEST_COLOR_=TRUE \
+	${R_HOME}/bin/Rscript ${UNIT_TEST_SUITE}
 
 html: $(HTML_FILES)
 
@@ -97,31 +76,3 @@ html: $(HTML_FILES)
 
 clean:
 	$(RM) $(HTML_FILES)
-
-# Run individual unit test file
-#%::
-#	@THING=$(wildcard unitTests/runit*$@*);\
-#	echo $(foreach f, $(THING), $(echo $(f)))
-#	@echo $(value ut)
-
-#% :: unitTests/runit%.R
-#	@echo $<
-
-#runit%.R: runit%.R
-#	@echo "yay!"#${R_HOME}/bin/Rscript -e 'require(RUnit); runTestFile("unitTests/$@")'"
-
-#	@echo "$(filter $(wildcard unitTests/runit*$@*), $(UNIT_TEST_FILES))"
-
-#$(filter $(wildcard unitTests/runit*$@*), $(UNIT_TEST_FILES))"
-
-#.PHONY: runit
-#runit: ;
-#	@echo "$(filter $(wildcard unitTests/runit*$@*), $(UNIT_TEST_FILES))"
-
-#$(filter unitTests/runit.%.R, $(UNIT_TEST_FILES)): runit.%.R
-#	echo "yay!"
-#	@${R_HOME}/bin/Rscript -e 'require(RUnit); runTestFile("unitTests/$@")'
-
-# Run benchmarks
-#benchmark:
-#	@${R_HOME}/bin/Rscript ${BENCHMARK_FILE}
