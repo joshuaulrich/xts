@@ -44,6 +44,7 @@ function(p, units, scale, freq, msg)
   invisible(NULL)
 }
 
+###############################################################################
 info_msg <- "test.periodicity_on_sub_second_data"
 set.seed(Sys.Date())
 for (i in 1:100) {
@@ -60,6 +61,7 @@ for (i in 1:100) {
 #  check_periodicity_result(p, "secs", "seconds", n, info_msg)
 #}
 
+###############################################################################
 info_msg <- "test.periodicity_on_second_data"
 i <- seq_len(100)
 for (n in 1:59) {
@@ -67,6 +69,7 @@ for (n in 1:59) {
   check_periodicity_result(p, "secs", "seconds", 1, info_msg)
 }
 
+###############################################################################
 info_msg <- "test.periodicity_on_minute_data"
 i <- seq_len(100) * 60
 
@@ -75,97 +78,106 @@ for (n in 1:59) {
   check_periodicity_result(p, "mins", "minute", n, info_msg)
 }
 
+###############################################################################
 info_msg <- "test.periodicity_on_hourly_data"
 i <- seq_len(100) * 3600
 
 for (n in 1:23) {
   p <- periodicity(.xts(i, n * i))
-  check_periodicity_result(p, "hours", "hourly", n, info_msg)
+  # NOTE: frequency is in seconds for hourly data (see #54)
+  check_periodicity_result(p, "hours", "hourly", n * 3600, info_msg)
 }
 
+###############################################################################
 info_msg <- "test.periodicity_on_daily_data"
 i <- seq_len(100) * 86400
 
+# NOTE: frequency is in seconds for daily data (see #54)
 n <- 1
 p <- periodicity(.xts(i, n * i))
-check_periodicity_result(p, "days", "daily", n, info_msg)
+check_periodicity_result(p, "days", "daily", n * 86400, info_msg)
 
 n <- 2
 p <- periodicity(.xts(i, n * i))
-check_periodicity_result(p, "days", "daily", n, info_msg)
+check_periodicity_result(p, "days", "weekly", n * 86400, info_msg)
 
 n <- 3
 p <- periodicity(.xts(i, n * i))
-check_periodicity_result(p, "days", "daily", n, info_msg)
+check_periodicity_result(p, "days", "weekly", n * 86400, info_msg)
 
+###############################################################################
 info_msg <- "test.periodicity_on_weekly_data"
 i <- 7 * seq_len(100) * 86400
 
+# NOTE: frequency is in seconds for weekly data (see #54)
 n <- 1
 p <- periodicity(.xts(i, n * i))
-check_periodicity_result(p, "days", "weekly", 7*n, info_msg)
+check_periodicity_result(p, "days", "weekly", n * 86400 * 7, info_msg)
 
 n <- 2
 p <- periodicity(.xts(i, n * i))
-check_periodicity_result(p, "days", "weekly", 7*n, info_msg)
+check_periodicity_result(p, "days", "monthly", n * 86400 * 7, info_msg)
 
 n <- 3
 p <- periodicity(.xts(i, n * i))
-check_periodicity_result(p, "days", "weekly", 7*n, info_msg)
+check_periodicity_result(p, "days", "monthly", n * 86400 * 7, info_msg)
 
+###############################################################################
 info_msg <- "test.periodicity_on_month_data"
 
 n <- 1
 i <- seq(as.yearmon(test_date) - 12, by = n/12, length.out = 100)
 x <- xts(i, i)
 p <- periodicity(x)
-check_periodicity_result(p, "days", "monthly", 30, info_msg)
+check_periodicity_result(p, "days", "monthly", 86400 * 31, info_msg)
 # monthly POSIXct
 index(x) <- as.POSIXct(i)
 p <- periodicity(x)
-check_periodicity_result(p, "days", "monthly", 31, info_msg)
+check_periodicity_result(p, "days", "monthly", 86400 * 31, info_msg)
 
 n <- 2
 i <- seq(as.yearmon(test_date) - 12, by = n/12, length.out = 100)
 x <- xts(i, i)
 p <- periodicity(x)
-check_periodicity_result(p, "days", "monthly", 60, info_msg)
+check_periodicity_result(p, "days", "quarterly", 86400 * 61, info_msg)
 # monthly POSIXct
 index(x) <- as.POSIXct(i)
 p <- periodicity(x)
-check_periodicity_result(p, "days", "monthly", 61, info_msg)
+check_periodicity_result(p, "days", "quarterly", 86400 * 61, info_msg)
 
+###############################################################################
 info_msg <- "test.periodicity_on_quarter_data"
 
 n <- 1
 i <- seq(as.yearqtr(test_date) - 24, by = n/4, length.out = 100)
 x <- xts(i, i)
 p <- periodicity(x)
-check_periodicity_result(p, "days", "quarterly", 91, info_msg)
+check_periodicity_result(p, "days", "quarterly", 86400 * 91, info_msg)
 # quarterly POSIXct
 index(x) <- as.POSIXct(i)
 p <- periodicity(x)
-check_periodicity_result(p, "days", "quarterly", 91, info_msg)
+check_periodicity_result(p, "days", "quarterly", 86400 * 91, info_msg)
 
 n <- 2
 i <- seq(as.yearqtr(test_date) - 48, by = n/4, length.out = 100)
 p <- periodicity(xts(seq_len(100), i))
-check_periodicity_result(p, "days", "quarterly", 183, info_msg)
+check_periodicity_result(p, "days", "yearly", 86400 * 183, info_msg)
 # quarterly POSIXct
 index(x) <- as.POSIXct(i)
 p <- periodicity(x)
-check_periodicity_result(p, "days", "quarterly", 183, info_msg)
+check_periodicity_result(p, "days", "yearly", 86400 * 183, info_msg)
 
 n <- 3
 i <- seq(as.yearqtr(test_date) - 50, by = n/4, length.out = 100)
 p <- periodicity(xts(seq_len(100), i))
-check_periodicity_result(p, "days", "quarterly", 274, info_msg)
+check_periodicity_result(p, "days", "yearly", 86400 * 274, info_msg)
 # quarterly POSIXct
 index(x) <- as.POSIXct(i)
 p <- periodicity(x)
-check_periodicity_result(p, "days", "quarterly", 274, info_msg)
+check_periodicity_result(p, "days", "yearly", 86400 * 274, info_msg)
 
 
+###############################################################################
 ### These are the breakpoints in the code as-of 2022-10
 ### Woe to the soul who breaks backward compatibility!
 info_msg <- "test.correct_units_for_edge_cases"

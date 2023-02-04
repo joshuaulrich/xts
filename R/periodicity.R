@@ -58,42 +58,11 @@ periodicity <- function(x, ...) {
 
   p <- median(diff( .index(x) ))
 
-  if(any(tclass(x) == "yearmon")) {
-    # yearmon median diff is 31 days, which doesn't "feel" like the right
-    # frequency because 365/12 is 30.4166. So set it to 30
-    if (p > 86400 * 31) {
-      # > 1 month -> 2 months
-      # > 2 months is quarterly
-      p <- 30 * 2
-    } else {
-      p <- 30
-    }
-    units <- "days"
-    scale <- "monthly"
-    label <- "month"
-  } else if(any(tclass(x) == "yearqtr")) {
-    #  91 days is median for 1-quarter index
-    # 183 days is median for 2-quarter index)
-    # 274 days is median for 3-quarter index)
-    if (p > 86400 * 183) {
-      # > 2-quarter index -> 3 quarters
-      p <- 274
-    } else
-    if (p > 86400 * 91) {
-      # > 1-quarter index -> 2 quarters
-      p <- 183
-    } else {
-      p <- 91
-    }
-    units <- "days"
-    scale <- "quarterly"
-    label <- "quarter"
-  } else
   # Date and POSIXct
-  if( p < 60 ) {
-    units <- 'secs'
-    scale <- 'seconds'
-    label <- 'second'
+  if(p < 60) {
+    units <- "secs"
+    scale <- "seconds"
+    label <- "second"
   } else
   if(p < 3600) {
     units <- "mins"
@@ -106,40 +75,34 @@ periodicity <- function(x, ...) {
     units <- "hours"
     scale <- "hourly"
     label <- "hour"
-    p <- p/3600L
   } else
-  if(p < 86400 * 7) {
+  if(p == 86400) {
     units <- "days"
     scale <- "daily"
     label <- "day"
-    p <- p/86400L
   } else
-  if(p < 86400 * 31) {
-    # < 1 month (2592000)
+  if(p <= 604800) {
+    # 86400 * 7
     units <- "days"
-    scale <- 'weekly'
+    scale <- "weekly"
     label <- "week"
-    p <- p/86400L
-  } else 
-  if(p < 86400 * 91) {
-    # < 1 quarter (7862400)
-    units <- "days"
-    scale <- 'monthly'
-    label <- "month"
-    p <- p/86400L
   } else
-  if(p < 86400 * 365) {
-    # < 1 year (31536000)
+  if(p <= 2678400) {
+    # 86400 * 31
+    units <- "days"
+    scale <- "monthly"
+    label <- "month"
+  } else
+  if(p <= 7948800) {
+    # 86400 * 92
     units <- "days"
     scale <- "quarterly"
     label <- "quarter"
-    p <- p/86400L
   } else {
     # years
     units <- "days"
     scale <- "yearly"
     label <- "year"
-    p <- p/86400L
   }
 
   structure(list(difftime = as.difftime(p, units = units),
