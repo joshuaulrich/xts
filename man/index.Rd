@@ -84,6 +84,61 @@ The \code{.indexXXX} functions extract time components (similar to
     \item{\code{.indexyear}}{years since 1900 (local time)}
     \item{\code{.indexyday}}{0 - 365: day of the year (local time, 365 only in leap years)}
 }
+
+Changes in timezone, index class, and index format internal structure,
+by \pkg{xts} version:
+
+\describe{
+  \item{Version 0.12.0:}{The \code{.indexTZ}, \code{.indexCLASS} and
+    \code{.indexFORMAT} attributes are no longer stored on xts objects, only
+    on the index itself.
+
+    The \code{indexTZ}, \code{indexClass}, and \code{indexFormat} functions
+    (and their respective replacement methods) are deprecated in favor of their
+    respective \code{tzone}, \code{tclass}, and \code{tformat} versions. The
+    previous versions will throw a warning that they're deprecated, but they
+    will continue to work.  There are no plans to remove them or have them
+    throw an error. Ever.
+
+    The latter versions are careful to look for the old attributes on the xts
+    object, in case they're ever called on an xts object that was created prior
+    to the attributes being added to the index itself.
+
+    There are options to throw a warning if there is no \code{tzone} or
+    \code{tclass} attribute on the index, even if there may be one on the xts
+    object. This gives the user a way to know if an xts object should be
+    updated to use the new structure.
+
+    You can enable the warnings via:
+    \code{options(xts.warn.index.missing.tzone = TRUE, xts.warn.index.missing.tclass = TRUE)}
+    You can identify xts objects with the old structure by printing them. Then
+    you can update them to the new structure using \code{x <- as.xts(x)}.
+  }
+  \item{Version 0.9.8:}{The index timezone is now set to "UTC" for time classes
+    that do not have any intra-day component (e.g. days, months, quarters).
+    Previously the timezone was blank, which meant "local time" as determined
+    by R and the OS.
+  }
+  \item{Version 0.9.2:}{There are new get/set methods for the timezone, index
+    class, and index format attributes: \code{tzone} and, \code{tzone<-},
+    \code{tclass} and \code{tclass<-}, and \code{tformat} and \code{tformat<-}.
+
+    These new functions are aliases to their \code{indexTZ}, \code{indexClass},
+    and \code{indexFormat} counterparts.
+  }
+  \item{Version 0.7.5:}{The timezone, index class, and index format were added
+    as attributes to the index itself, as \code{tzone}, \code{tclass}, and
+    \code{tformat}, respectively. This is in order to remove those three
+    attributes from the xts object, so they're only on the index itself.
+
+    The \code{indexTZ}, \code{indexClass}, and \code{indexFormat} functions
+    (and their respective replacement methods) will continue to work as in
+    prior \pkg{xts} versions. The attributes on the index take priority over
+    their respective counterparts that may be on the xts object.
+  }
+  \item{Versions 0.6.4 and prior:}{Objects track their timezone and index class
+    in their \code{.indexTZ} and \code{.indexCLASS} attributes, respectively.}
+}
 }
 \seealso{
 \code{\link{tformat}} describes how the index values are formatted when printed,
