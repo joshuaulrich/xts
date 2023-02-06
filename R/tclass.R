@@ -42,7 +42,9 @@ function(x, ...) {
 
   # For xts objects created pre-0.10.3
   if (is.null(tclass)) {
-    warning("index does not have a ", sQuote("tclass"), " attribute")
+    if (isTRUE(getOption("xts.warn.index.missing.tclass", FALSE))) {
+      warning("index does not have a ", sQuote("tclass"), " attribute")
+    }
 
     tclass <- attr(x, "tclass")
     if (is.null(tclass)) {

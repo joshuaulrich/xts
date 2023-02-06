@@ -75,7 +75,9 @@ function(x, ...)
 
   # For xts objects created pre-0.10.3
   if (is.null(tzone)) {
-    warning("index does not have a ", sQuote("tzone"), " attribute")
+    if (isTRUE(getOption("xts.warn.index.missing.tzone", FALSE))) {
+      warning("index does not have a ", sQuote("tzone"), " attribute")
+    }
 
     tzone <- attr(x, "tzone")
     if (is.null(tzone)) {
