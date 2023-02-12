@@ -5,7 +5,7 @@
   Method for printing an extensible time-series object.
 }
 \usage{
-\method{print}{xts}(x, fmt, ..., show.nrows = 10, trunc.rows = 40)
+\method{print}{xts}(x, fmt, ..., show.nrows = 10, max.rows = 100)
 }
 
 \arguments{
@@ -14,7 +14,8 @@
   \item{\dots}{ Arguments passed to other methods }
   \item{show.nrows}{ The maximum number of first and last rows to print if the number
       of rows is truncated (default 10, or \code{getOption("xts.print.show.nrows")}) }
-  \item{trunc.rows}{ The output will contain at most \code{trunc.rows} observations }
+  \item{max.rows}{ The output will contain at most \code{max.rows} rows before
+      being truncated (default 100, or \code{getOption("xts.print.max.rows")}) }
 }
 %\details{
 % Add notes about truncated rows, columns, any addition descriptive information we add

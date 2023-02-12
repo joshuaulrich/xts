@@ -23,12 +23,18 @@ print.xts <-
            fmt,
            ...,
            show.nrows = 10,
-           trunc.rows = 40)
+           max.rows = 100)
 {
   check.TZ(x)
 
   nr <- NROW(x)
   nc <- NCOL(x)
+
+  if (missing(max.rows)) {
+    # the user didn't specify a value; use the global option value if it's
+    # set; if it's not set, use the default value
+    max.rows <- getOption("xts.print.max.rows", max.rows)
+  }
 
   # 'max' in print.default() takes precedence over 'show.nrows'
   if (hasArg("max")) {
@@ -60,8 +66,8 @@ print.xts <-
     right <- TRUE
   }
 
-  if (nr > trunc.rows + 1 && nr > 2 * show.nrows) {
-    # 'show.n' can't be more than 2*nrow(x) or observations will be printed
+  if (nr > max.rows && nr > 2 * show.nrows) {
+    # 'show.nrows' can't be more than 2*nrow(x) or observations will be printed
     # twice, once before the "..." and once after.
     seq.row <- seq_len(show.nrows)
     seq.col <- seq_len(nc)
