@@ -111,13 +111,18 @@ print.xts <-
     # justified by default, which is different than if there are column names.
     if (is.null(colnames(y))) {
       cindex <- utils::capture.output(print(y[1,,drop = FALSE]))[1]
-      cindex <- sub("\\s+$", "", cindex)
+      cindex <- sub("\\s+$", "", cindex)  # remove trailing spaces
+
+      # remove the leading spaces caused by the index,
+      # (plus the space between the index and the first column)
+      max_nchar <- max(nchar(rownames(y))) + 1
+      cindex <- substr(cindex, max_nchar, nchar(cindex))
+
+      # split string into vector for each column
       cindex <- paste0(strsplit(cindex, "]")[[1]], "]")
-      cchar <- nchar(cindex)
-      if (NCOL(y) == 1) {
-        cindex <- cindex[1]
-      }
-      cindex[1] <- substring(cindex[1], cchar[1] - min(cchar), cchar[1])
+      # remove leading space
+      cindex <- sub("^\\s", "", cindex)
+
       colnames(y) <- cindex
     }
 
