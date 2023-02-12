@@ -328,7 +328,8 @@ plot.xts <- function(x,
   if(!isNullOrFalse(grid.ticks.on)) {
     cs$add(expression(xcoords <- get_xcoords(),
                       x_index <- get_xcoords(at_posix = TRUE),
-                      atbt <- axTicksByTime(.xts(,x_index)[xsubset], ticks.on=grid.ticks.on),
+                      atbt <- axTicksByTime(.xts(,x_index,tzone=tzone(xdata))[xsubset],
+                                            ticks.on=grid.ticks.on),
                       segments(xcoords[atbt],
                                get_ylim()[[2]][1],
                                xcoords[atbt],
@@ -349,7 +350,9 @@ plot.xts <- function(x,
   if(!isNullOrFalse(major.ticks)) {
     cs$add(expression(xcoords <- get_xcoords(),
                       x_index <- get_xcoords(at_posix = TRUE),
-                      axt <- axTicksByTime(.xts(,x_index)[xsubset], ticks.on=major.ticks, format.labels=format.labels),
+                      axt <- axTicksByTime(.xts(, x_index, tzone=tzone(xdata))[xsubset],
+                                           ticks.on=major.ticks,
+                                           format.labels=format.labels),
                       axis(1,
                            at=xcoords[axt],
                            labels=names(axt),
@@ -363,7 +366,9 @@ plot.xts <- function(x,
   if(!isNullOrFalse(minor.ticks)) {
     cs$add(expression(xcoords <- get_xcoords(),
                       x_index <- get_xcoords(at_posix = TRUE),
-                      axt <- axTicksByTime(.xts(,x_index)[xsubset], ticks.on=minor.ticks, format.labels=format.labels),
+                      axt <- axTicksByTime(.xts(,x_index,tzone=tzone(xdata))[xsubset],
+                                           ticks.on=minor.ticks,
+                                           format.labels=format.labels),
                  axis(1,
                       at=xcoords[axt],
                       labels=FALSE,
@@ -1394,7 +1399,8 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     } else {
       if (isTRUE(ticks.on)) ticks.on <- "auto"
       xcoords <- get_xcoords(at_posix = TRUE)
-      atbt <- axTicksByTime(.xts(, xcoords), ticks.on = ticks.on)
+      atbt <- axTicksByTime(.xts(, xcoords, tzone = tzone(x)),
+                            ticks.on = ticks.on)
       segments(xcoords[atbt], ylim[1L],
                xcoords[atbt], ylim[2L],
                col = Env$theme$grid,
