@@ -1164,7 +1164,8 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
     if (!is.null(xts_object)) {
       # get the x-coordinates for the observations in xts_object
-      xcoords <- merge(.xts(seq_along(xcoords), xcoords), xts_object,
+      temp_xts <- .xts(seq_along(xcoords), xcoords, tzone = tzone(xts_object))
+      xcoords <- merge(temp_xts, xts_object,
                        fill = na.locf,  # for duplicate index values
                        join = "right", retside = c(TRUE, FALSE))
 

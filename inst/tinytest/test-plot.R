@@ -46,3 +46,23 @@ p1 <- plot(x)
 expect_identical(pretty(ylim, 5), p1$Env$y_grid_lines(ylim), info = info_msg)
 p2 <- plot(x, yaxis.ticks = 10) # twice as many y-axis grid lines
 expect_identical(pretty(ylim, 10), p2$Env$y_grid_lines(ylim), info = info_msg)
+
+get_xcoords_respects_object_tzone <-
+function()
+{
+  systz <- Sys.getenv("TZ")
+  on.exit(Sys.setenv(TZ = systz), add = TRUE)
+
+  dates <- seq(as.Date("2023-01-01"), by = 1, length.out = 5)
+  x <- xts(c(5, 1, 2, 4, 3), order.by = dates)
+
+  Sys.setenv(TZ = "UTC")
+  print(p <- plot(x))
+  expect_identical("UTC", tzone(p$get_xcoords(x)),
+                   info = "TZ = UTC")
+
+  Sys.setenv(TZ = "US/Central")
+  expect_identical("UTC", tzone(p$get_xcoords(x)),
+                   info = "TZ = US/Central")
+}
+get_xcoords_respects_object_tzone()
