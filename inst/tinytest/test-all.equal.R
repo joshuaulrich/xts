@@ -1,5 +1,3 @@
-library(xts)
-
 # ensure xts objects with index attributes attached are equal to
 # xts objects with index attributes on the index only
 info_msg <- "test.attr_on_object_equal_to_attr_on_index"

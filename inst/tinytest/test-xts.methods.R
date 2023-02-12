@@ -1,5 +1,3 @@
-library(xts)
-
 # unit tests for the following 'xts' methods:
 # rbind
 # cbind

@@ -1,5 +1,3 @@
-library(xts)
-
 data(sample_matrix)
 sample.matrix <- sample_matrix
 sample.xts <- as.xts(sample.matrix)

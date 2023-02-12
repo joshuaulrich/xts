@@ -1,5 +1,3 @@
-library(xts)
-
 # make.index.unique
 
 info_msg <- "make.index.unique() uses 1 microsecond epsilon by default"

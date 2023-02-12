@@ -1,5 +1,3 @@
-library(xts)
-
 # index crosses the unix epoch
 info_msg <- "test.double_index_cross_epoch"
 x <- .xts(1:22, 1.0*(-10:11), tzone="UTC")

@@ -1,5 +1,3 @@
-library(xts)
-
 info_msg <- "na.fill.xts() matches na.fill.zoo() when object has 1 column and 'fill' is scalar"
 x <- .xts(1:20, 1:20)
 is.na(x) <- sample(20, 10)

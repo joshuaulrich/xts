@@ -1,5 +1,3 @@
-library(xts)
-
 # timeBasedSeq tests
 
 # 1999 to 2008 by year, Date

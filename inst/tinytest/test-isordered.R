@@ -1,5 +1,3 @@
-library(xts)
-
 # Tests for isOrdered()
 
 # Utility functions for tests {{{

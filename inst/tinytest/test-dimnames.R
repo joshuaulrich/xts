@@ -1,5 +1,3 @@
-library(xts)
-
 ### colnames(x) are not removed when 'x' and 'y' are shared and dimnames(y) <- NULL
 orig_names <- c("a", "b")
 x <- .xts(cbind(1:2, 1:2), 1:2, dimnames = list(NULL, orig_names))

@@ -1,5 +1,3 @@
-library(xts)
-
 all.modes <- c("double", "integer", "logical", "character")
 ops.math <- c("+", "-", "*", "/", "^", "%%", "%/%")
 ops.relation <- c(">", ">=", "==", "!=", "<=", "<")

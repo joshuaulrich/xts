@@ -1,5 +1,3 @@
-library(xts)
-
 # These tests check the timezone attribute is attached to the expected
 # component of the xts object. The xts constructors should no longer add
 # 'tzone' or '.indexTZ' attributes to the xts object itself. Only the index

@@ -4,7 +4,6 @@
 ## 
 
 if (requireNamespace("timeSeries", quietly = TRUE)) {
-  library(xts)
   data(sample_matrix)
   
   ###############################################################################

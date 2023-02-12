@@ -1,5 +1,3 @@
-library(xts)
-
 info_msg <- "test.get_index_does_not_error_if_index_has_no_attributes"
 x <- .xts(1:3, 1:3, tzone = "UTC")
 ix <- index(x)

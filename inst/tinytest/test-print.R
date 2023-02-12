@@ -1,6 +1,3 @@
-library(xts)
-
-
 x <- xts(cbind(1:10, 1:10), .Date(1:10))
 
 # NOTE: expected value is (2 + 2) to account for

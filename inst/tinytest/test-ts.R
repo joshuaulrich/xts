@@ -1,4 +1,3 @@
-library(xts)
 data(sample_matrix)
 sample.ts1 <- ts(sample_matrix,start=as.numeric(as.Date(rownames(sample_matrix)[1])))
 sample.xts.ts1 <- as.xts(sample.ts1)
