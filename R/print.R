@@ -22,7 +22,7 @@ print.xts <-
   function(x,
            fmt,
            ...,
-           show.nrows = 10,
+           show.rows = 10,
            max.rows = 100)
 {
   check.TZ(x)
@@ -36,20 +36,22 @@ print.xts <-
     max.rows <- getOption("xts.print.max.rows", max.rows)
   }
 
-  # 'max' in print.default() takes precedence over 'show.nrows'
+  # 'max' in print.default() takes precedence over 'show.rows'
   if (hasArg("max")) {
     # 'max' is the number of *elements* (not rows) to print
     if (nr < 1) {
-      show.nrows <- 0
+      show.rows <- 0
     } else {
-      # convert 'max' to 'show.nrows'
+      # convert 'max' to 'show.rows'
       max.arg <- match.call()$max
       if (!is.null(max.arg)) {
-        show.nrows <- trunc(max.arg / nc)
+        show.rows <- trunc(max.arg / nc)
       }
     }
-  } else if (missing(show.nrows)) {
-    show.nrows <- getOption("xts.print.show.nrows", 10)
+  } else if (missing(show.rows)) {
+    # the user didn't specify a value; use the global option value if it's
+    # set; if it's not set, use the default value
+    show.rows <- getOption("xts.print.show.rows", show.rows)
   }
 
   if (missing(fmt)) {
@@ -66,12 +68,12 @@ print.xts <-
     right <- TRUE
   }
 
-  if (nr > max.rows && nr > 2 * show.nrows) {
-    # 'show.nrows' can't be more than 2*nrow(x) or observations will be printed
+  if (nr > max.rows && nr > 2 * show.rows) {
+    # 'show.rows' can't be more than 2*nrow(x) or observations will be printed
     # twice, once before the "..." and once after.
-    seq.row <- seq_len(show.nrows)
+    seq.row <- seq_len(show.rows)
     seq.col <- seq_len(nc)
-    seq.n <- (nr - show.nrows + 1):nr
+    seq.n <- (nr - show.rows + 1):nr
 
     index <- as.character(index(x))
     index <- c(index[seq.row], "...", index[seq.n])
