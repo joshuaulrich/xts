@@ -54,11 +54,13 @@ $(PKG_INST_FILE): $(PKG_TARGZ)
 # Run R CMD check
 check: build
 	@_R_CHECK_CRAN_INCOMING_=false \
-	${R_HOME}/bin/R CMD check ${PKG_TARGZ} --as-cran --no-vignettes
+	_XTS_TINYTEST_VERBOSE_=1 _XTS_TINYTEST_COLOR_=FALSE \
+	${R_HOME}/bin/R CMD check ${PKG_TARGZ} --no-vignettes
 
 # Check for CRAN
 cran:
 	@${R_HOME}/bin/R CMD build ${PKG_PATH} && \
+	_XTS_TINYTEST_VERBOSE_=1 _XTS_TINYTEST_COLOR_=FALSE \
 	_R_CHECK_CRAN_INCOMING_=false ${R_HOME}/bin/R CMD check ${PKG_TARGZ} --as-cran
 
 # Run unit test suite
