@@ -103,9 +103,10 @@ print.xts <-
       }
     }
   } else {
-    # ensure 'y' has dims
+    # ensure 'y' has dims and row names
     if (is.null(dim(y))) {
-      dim(y) <- c(length(y), 1)
+      y_names <- as.character(index(x))
+      y <- matrix(y, nrow = length(y), dimnames = list(y_names, NULL))
     }
     # Create column names as right-justified column indexes. They're left-
     # justified by default, which is different than if there are column names.

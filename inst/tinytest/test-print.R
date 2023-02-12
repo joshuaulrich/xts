@@ -13,7 +13,12 @@ print_output <- utils::capture.output(print(x, max = 4, show.nrows = 10))
 expect_true(length(print_output) == (2 + 2),
             info = "'max' takes precedence over 'show.nrows'")
 
-expect_silent(p <- print(drop(x[, 1])), info = "print.xts() does not error when object doesn't have dims")
+expect_silent(p <- print(drop(x[, 1])),
+              info = "print.xts() does not error when object doesn't have dims")
+
+print_output <- utils::capture.output(print(drop(x[1:2, 1])))
+expect_true(all(grepl("1970-01", print_output[-1])),
+            info = "print.xts() output shows index when object doesn't have dims")
 
 # 'show.nrows' > 'trunc.rows'
 print_output <- utils::capture.output(print(x, show.nrows = 10, trunc.rows = 4))
