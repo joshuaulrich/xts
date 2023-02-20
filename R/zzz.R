@@ -54,7 +54,16 @@ function(pkg, generic, class, fun = NULL)
 
 .onAttach <- function(libname, pkgname)
 {
-  if (getOption("xts.warn_dplyr_breaks_lag", TRUE)) {
+  warn_dplyr_lag <- getOption("xts.warn_dplyr_breaks_lag", TRUE)
+
+  dplyr_will_mask_lag <- conflictRules("dplyr")
+  if (is.null(dplyr_will_mask_lag)) {
+    dplyr_will_mask_lag <- TRUE
+  } else {
+    dplyr_will_mask_lag <- all(dplyr_will_mask_lag$exclude != "lag")
+  }
+
+  if (warn_dplyr_lag && dplyr_will_mask_lag) {
 
     dplyr_path <- find.package("dplyr", quiet = TRUE, verbose = FALSE)
 
@@ -85,6 +94,10 @@ function(pkg, generic, class, fun = NULL)
 # mechanism.                                                                  #
 #                                                                             #
 # Set `options(xts.warn_dplyr_breaks_lag = FALSE)` to suppress this warning.  #
+#                                                                             #
+# You can use stats::lag() to make sure you're not using dplyr::lag(), or you #
+# can add conflictRules('dplyr', exclude = 'lag') to your .Rprofile to stop   #
+# dplyr from breaking base R's lag() function.                                #
 ################################### WARNING ###################################")
       packageStartupMessage(msg)
     }

@@ -8,7 +8,7 @@ Authors@R: c(
   person(given="Ross", family="Bennett", role="ctb"),
   person(given="Corwin", family="Joy", role="ctb")
   )
-Depends: zoo (>= 1.7-12)
+Depends: R (>= 3.6.0), zoo (>= 1.7-12)
 Imports: methods
 LinkingTo: zoo
 Suggests: timeSeries, timeDate, tseries, chron, tis, tinytest
