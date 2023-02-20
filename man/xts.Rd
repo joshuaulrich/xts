@@ -1,5 +1,6 @@
 \name{xts}
 \alias{xts}
+\alias{.xts}
 \alias{is.xts}
 \title{ Create Or Test For An xts Time-Series Object }
 \description{
@@ -15,21 +16,43 @@ xts(x = NULL,
     tzone = Sys.getenv("TZ"),
     ...)
 
+.xts(x = NULL,
+     index,
+     tclass = c("POSIXct", "POSIXt"),
+     tzone = Sys.getenv("TZ"),
+     check = TRUE,
+     unique = FALSE,
+     ...)
+
 is.xts(x)
 }
 
 \arguments{
   \item{x}{ an object containing the time series data }
-  \item{order.by}{ a corresponding vector of unique times/dates - must be
-of a known time-based class. See details. }
-  \item{frequency}{ numeric indicating frequency of \code{order.by}. See details. }
-  \item{unique}{ should index be checked for unique time-stamps? }
-  \item{tzone}{ time zone of series.  This is ignored for Date indices }
-  \item{\dots}{ additional attributes to be added. See details. }
+  \item{order.by}{ a corresponding vector of dates/times of a known time-based
+      class. See Details. }
+  \item{index}{ a corresponding \emph{numeric} vector specified as seconds
+      since the UNIX epoch (1970-01-01 00:00:00.000) }
+  \item{frequency}{ numeric indicating frequency of \code{order.by}. See Details. }
+  \item{unique}{ check the index for unique timestamps? }
+  \item{check}{ check that the index is ordered? }
+  \item{tclass}{ time class to use for the index. See code{\link{tclass}}. }
+  \item{tzone}{ time zone of the index (ignored indices without a time
+      component, e.g. Date, yearmon, yearqtr). See \code{\link{tzone}}. }
+  \item{\dots}{ additional attributes to be added. See Details. }
 }
 \details{
 An \code{xts} object extends the S3 class \code{zoo} from the package of the
 same name.
+
+The \code{xts()} constructor is the preferred way to create xts objects. It
+performs several checks to ensure it returns a well-formed xts object. The
+\code{.xts()} constructor is mainly for internal use. It is more efficient than
+the regular \code{xts()} constructor because it doesn't perform as many
+validity checks. Use it with caution.
+
+% TODO: add notes here about the differences between 'empty', 'zero-width', and
+%    'zero-length' xts objects.
 
 Similar to zoo objects, xts objects must have an ordered index.  While zoo
 indexes cannot contain duplicate values, xts objects have optionally supported
@@ -51,7 +74,7 @@ incorrect format, non-existent time due to daylight saving time, etc).  Because
 of how non-finite numbers are represented, a missing timestamp will always be
 at the end of the index (except if it is \code{-Inf}, which will be first).
 
-Another difference is that the object may now carry additional
+Another difference from \pkg{zoo} is that xts object may carry additional
 attributes that may be desired in individual time-series handling.
 This includes the ability to augment the objects data with
 meta-data otherwise not cleanly attachable to a standard zoo object.
@@ -68,7 +91,7 @@ the object in a manner required by the user.
 Many xts-specific methods have been written to better handle the
 unique aspects of xts.  These include, \sQuote{"["}, merge, cbind,
 rbind, c, Ops, lag, diff, coredata, head and tail.  Additionally
-there are xts specific methods for converting amongst R's different
+there are xts specific methods for converting to/from R's different
 time-series classes. 
 
 Subsetting via "[" methods offers the ability to specify dates by
@@ -86,8 +109,8 @@ Leading zeros are not necessary.  See the examples for more detail.
 Users may also extend the \code{xts} class to new classes to
 allow for method overloading.
 
-Additional benefits derive from the use of \code{as.xts} and
-\code{reclass}, which allow for lossless two-way conversion
+Additional benefits derive from the use of \code{\link{as.xts}} and
+\code{\link{reclass}}, which allow for lossless two-way conversion
 between common R time-series classes and the \code{xts} object
 structure. See those functions for more detail. 
 
@@ -108,8 +131,8 @@ automagically handle \emph{all} data objects
 as one would handle a \code{zoo} object.
 
 }
-\seealso{ \code{\link{as.xts}}, \code{\link{reclass}},
-          \code{\link{xtsAttributes}} }
+\seealso{ \code{\link{as.xts}}, \code{\link{index}}, \code{\link{tclass}},
+  \code{\link{tformat}}, \code{\link{tzone}}, \code{\link{xtsAttributes}} }
 \examples{
 data(sample_matrix)
 sample.xts <- as.xts(sample_matrix, descr='my new xts object')
