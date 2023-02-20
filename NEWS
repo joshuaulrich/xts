@@ -9,8 +9,8 @@ o Added a xts method for `na.fill()` to significantly increase performance when
 o `as.xts()` will look for a time-based column in a data.frame if it cannot
   create an index from the row names. (#381)
 
-o Change `print()` xts method to only show the first and last 'max' rows if
-  number of rows is > 'trunc.rows'. It will also truncate the number of columns
+o Change `print()` xts method to only show the first and last 'show.rows' rows
+  if number of rows is > 'max.rows'. It will also truncate the number of columns
   if they would wrap to a new line. (#321)
 
 o Made `str()` output more descriptive for xts objects. It now differentiates
@@ -43,7 +43,7 @@ o Fixed typo and expand `period.apply()` documentation. (#205)
       * "the data from INDEX[k]+1 to INDEX[k+1]"
 
 o Calls to `merge.xts()` on zero-width objects now match `merge.zoo()`.
-  Previously, `merge.xts() would return empty xts objects if called on two or
+  Previously, `merge.xts()` would return empty xts objects if called on two or
   more zero-width xts objects. `merge.zoo()` would return a zero-width object
   with the correct index. (#227, #379)
 
