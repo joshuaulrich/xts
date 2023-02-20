@@ -1,5 +1,5 @@
 ################################################################################
-Changed in xts 0.12.X:
+Changed in xts 0.13.0:
 
 ### New Features
 
@@ -33,10 +33,6 @@ o Added open-ended time of day subsetting ranges. This allows users to subset
 o Updated `to.period()` to accept custom 'endpoints' via the 'period' argument.
   Now you can aggregate on something other than the times that 'endpoints()'
   supports. Thanks to Ethan B. Smith for the suggestion! (#302)
-
-o Added xts methods for `rowMeans()` and `rowSums()`. Calling `rowSums(my_xts)`
-  now returns an xts object instead of a matrix. Thanks to @harvey131 for the
-  suggestion! (#281)
 
 ### Fixes
 
