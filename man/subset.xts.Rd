@@ -3,7 +3,7 @@
 \alias{[.xts}
 \alias{subset.xts}
 \alias{.subset.xts}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{.subset_xts}
 \title{
 Extract Subsets of xts Objects
 }

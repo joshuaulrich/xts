@@ -15,6 +15,7 @@
 \alias{.indexwday}
 \alias{.indexweek}
 \alias{.indexmon}
+\alias{.indexisdst}
 \alias{convertIndex}
 \title{ Get and Replace the Class of an xts Index }
 \description{
@@ -44,6 +45,7 @@ convertIndex(x, value)
 .indexyear(x)
 .indexyday(x)
 
+.indexisdst(x)
 }
 \arguments{
   \item{x}{ an \code{xts} object }
@@ -83,6 +85,8 @@ The \code{.indexXXX} functions extract time components (similar to
     \item{\code{.indexmon}}{0 - 11: month of the year (local time)}
     \item{\code{.indexyear}}{years since 1900 (local time)}
     \item{\code{.indexyday}}{0 - 365: day of the year (local time, 365 only in leap years)}
+    \item{\code{.indexisdst}}{1, 0, -1: Daylight Saving Time flag. Positive if Daylight
+      Saving Time is in effect, zero if not, negative if unknown.}
 }
 
 Changes in timezone, index class, and index format internal structure,
