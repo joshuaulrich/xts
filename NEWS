@@ -47,12 +47,6 @@ o Calls to `merge.xts()` on zero-width objects now match `merge.zoo()`.
   more zero-width xts objects. `merge.zoo()` would return a zero-width object
   with the correct index. (#227, #379)
 
-o Fixed `periodicity()` results when frequency is hours or more. It had used a
-  frequency of seconds and not the 'units' the result specified. Also added
-  special handling for `yearmon` and `yearqtr` index classes, because they
-  have a known frequency per month/quarter. Thanks to Alexander Sergeev for
-  the report. (#54)
-
 o Fixed `Ops.xts()` so it always returned an object with the same class as the
   first (left-hand side) argument. It previously returned an xts object even
   if the first argument was a subclass of xts. (#49)
