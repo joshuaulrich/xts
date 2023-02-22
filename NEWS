@@ -10,8 +10,7 @@ o `as.xts()` will look for a time-based column in a data.frame if it cannot
   create an index from the row names. (#381)
 
 o Change `print()` xts method to only show the first and last 'show.rows' rows
-  if number of rows is > 'max.rows'. It will also truncate the number of columns
-  if they would wrap to a new line. (#321)
+  if number of rows is > 'max.rows'. (#321)
 
 o Made `str()` output more descriptive for xts objects. It now differentiates
   between xts objects that are empty, zero-width, or zero-length, and defines
