@@ -150,6 +150,41 @@ bin <- window(x)
 reg <- window_dbg(x, start = start, end = end)
 expect_identical(bin, reg, info = paste(info_msg, "- end = NULL, start = NULL"))
 
+# Test just start, end = NA
+start <- base + 13 * DAY
+end <- base + 30*DAY
+bin <- window(x, start = start, end = NA)
+reg <- window_dbg(x, start = start, end = end)
+expect_identical(bin, reg, info = paste(info_msg, "- just start, end = NA"))
+
+# Test just start, end = NA, empty range
+start <- base + 25 * DAY
+end <- base + 30*DAY
+bin <- window(x, start = start, end = NA)
+reg <- window_dbg(x, start = start, end = end)
+expect_identical(bin, reg, info = paste(info_msg, "- just start, end = NA, empty range"))
+
+# Test just end, start = NA
+end <- base + 13 * DAY
+start <- base
+bin <- window(x, start = NA, end = end)
+reg <- window_dbg(x, start = start, end = end)
+expect_identical(bin, reg, info = paste(info_msg, "- just end, start = NA"))
+
+# Test just end, start = NA, empty range
+end <- base
+start <- base
+bin <- window(x, start = NA, end = end)
+reg <- window_dbg(x, start = start, end = end)
+expect_identical(bin, reg, info = paste(info_msg, "- just end, start = NA, empty range"))
+
+# Test end = NA, start = NA
+start <- base
+end <- base + 30*DAY
+bin <- window(x, start = NA, end = NA)
+reg <- window_dbg(x, start = start, end = end)
+expect_identical(bin, reg, info = paste(info_msg, "- end = NA, start = NA"))
+
 #######################################
 # Test for index. parameter
 start <- base

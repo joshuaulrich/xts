@@ -276,6 +276,9 @@ w2 <- window(x2, start = "2015Q1")      # to window.zoo()
 expect_equal(r1, w1, info = paste(info_msg, "window, yearmon, character start"))
 expect_equal(r2, w2, info = paste(info_msg, "window, yearqtr, character start"))
 
+w1 <- window(x1, start = "2015-01-01", end = NA)  # to window.xts()
+expect_equal(r1, w1, info = paste(info_msg, "window, yearmon, character start with end = NA"))
+
 info_msg <- "test.zero_width_subset_does_not_drop_class"
 target <- c("custom", "xts", "zoo")
 x <- .xts(1:10, 1:10, class = target)

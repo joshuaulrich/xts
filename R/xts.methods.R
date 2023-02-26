@@ -396,6 +396,10 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
 # that is, index. must be time based,
 window.xts <- function(x, index. = NULL, start = NULL, end = NULL, ...)
 {
+  # scalar NA values are treated as NULL
+  if (isTRUE(is.na(start))) start <- NULL
+  if (isTRUE(is.na(end))) end <- NULL
+  
   if(is.null(start) && is.null(end) && is.null(index.)) return(x)
 
   # dispatch to window.zoo() for yearmon and yearqtr
