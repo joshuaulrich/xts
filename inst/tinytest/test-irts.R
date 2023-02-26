@@ -1,4 +1,15 @@
-if (requireNamespace("tseries", quietly = TRUE)) {
+have_tseries <- suppressPackageStartupMessages({
+  # tseries imports quantmod. Silence this message when quantmod is loaded:
+  #
+  #    Registered S3 method overwritten by 'quantmod':
+  #     method            from
+  #     as.zoo.data.frame zoo
+  #
+  # So I don't get confused (again) about why xts' tests load quantmod
+  requireNamespace("tseries", quietly = TRUE)
+})
+
+if (have_tseries) {
 
   library(xts)
   data(sample_matrix)
