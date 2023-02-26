@@ -265,18 +265,36 @@ x2 <- xts(1:36, i2)
 r1 <- x1["2015"]
 r2 <- x2["2015"]
 
+########## results are empty objects ##########
 ### zoo supports numeric start for yearmon and yearqtr
 w1 <- window(x1, start = 2015.01)  # to window.zoo()
 w2 <- window(x2, start = 2015.1)   # to window.zoo()
-expect_equal(r1, w1, info = paste(info_msg, "window, yearmon, numeric start"))
-expect_equal(r2, w2, info = paste(info_msg, "window, yearqtr, numeric start"))
+expect_equal(r1, w1, info = paste(info_msg, "window, yearmon, numeric start, empty range"))
+expect_equal(r2, w2, info = paste(info_msg, "window, yearqtr, numeric start, empty range"))
 
 w1 <- window(x1, start = "2015-01-01")  # to window.xts()
 w2 <- window(x2, start = "2015Q1")      # to window.zoo()
+expect_equal(r1, w1, info = paste(info_msg, "window, yearmon, character start, empty range"))
+expect_equal(r2, w2, info = paste(info_msg, "window, yearqtr, character start, empty range"))
+
+w1 <- window(x1, start = "2015-01-01", end = NA)  # to window.xts()
+expect_equal(r1, w1, info = paste(info_msg, "window, yearmon, character start with end = NA, empty range"))
+
+########## results are *not* empty objects ##########
+r1 <- x1["2011/"]
+r2 <- x2["2011/"]
+
+w1 <- window(x1, start = 2011.01)  # to window.zoo()
+w2 <- window(x2, start = 2011.1)   # to window.zoo()
+expect_equal(r1, w1, info = paste(info_msg, "window, yearmon, numeric start"))
+expect_equal(r2, w2, info = paste(info_msg, "window, yearqtr, numeric start"))
+
+w1 <- window(x1, start = "2011-01-01")  # to window.xts()
+w2 <- window(x2, start = "2011Q1")      # to window.zoo()
 expect_equal(r1, w1, info = paste(info_msg, "window, yearmon, character start"))
 expect_equal(r2, w2, info = paste(info_msg, "window, yearqtr, character start"))
 
-w1 <- window(x1, start = "2015-01-01", end = NA)  # to window.xts()
+w1 <- window(x1, start = "2011-01-01", end = NA)  # to window.xts()
 expect_equal(r1, w1, info = paste(info_msg, "window, yearmon, character start with end = NA"))
 
 info_msg <- "test.zero_width_subset_does_not_drop_class"
