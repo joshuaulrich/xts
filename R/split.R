@@ -36,8 +36,8 @@ function(x, f="months", drop=FALSE, k=1, ...) {
     outnames <-
       switch(f,
              "years"    = format(obs.for.names, "%Y"),
-             "quarters" = as.character(as.yearqtr(obs.for.names)),
-             "months"   = as.character(as.yearmon(obs.for.names)),
+             "quarters" = as.character(as.yearqtr(as.POSIXlt(obs.for.names))),
+             "months"   = format(obs.for.names, "%b %Y"),
              "weeks"    = format(obs.for.names, "%Y-%m-%d"),
              "days"     = format(obs.for.names, "%Y-%m-%d"),
              "hours"    = format(obs.for.names, "%Y-%m-%d %H:00:00"),

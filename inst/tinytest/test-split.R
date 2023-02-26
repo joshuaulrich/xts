@@ -53,3 +53,15 @@ if (.Machine$sizeof.pointer == 8) {
     nm_target <- format(t1 + seq(0, 0.2, 0.001), "%Y-%m-%d %H:%M:%OS3")
     expect_identical(nm_target, nm_ms, info = info_msg)
 }
+
+# names correct when object TZ vs GMT are on different sides of split breaks (#392)
+info_msg <- "yearmon: object TZ and GMT are different days"
+x_tz <- .xts(1:3, c(1632481200, 1633042800, 1635724800), tzone = "Europe/Berlin")
+expect_identical(names(split(x_tz, "months")),
+                 paste(c("Sep", "Oct", "Nov"), "2021"),
+                 info = info_msg)
+
+info_msg <- "yearqtr: object TZ and GMT are different days"
+expect_identical(names(split(x_tz, "quarters")),
+                 c("2021 Q3", "2021 Q4"),
+                 info = info_msg)
