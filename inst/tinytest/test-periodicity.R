@@ -211,3 +211,7 @@ expect_identical(test07$units, result07$units, info = do.call(paste, c(list(info
 expect_identical(test08$units, result08$units, info = do.call(paste, c(list(info_msg), test08)))
 expect_identical(test09$units, result09$units, info = do.call(paste, c(list(info_msg), test09)))
 expect_identical(test10$units, result10$units, info = do.call(paste, c(list(info_msg), test10)))
+
+info_msg <- "periodicity warns when 'x' is time-based and contains NA"
+x <- .Date(c(1:5, NA, 7:10))
+expect_warning(periodicity(x), info = info_msg)
