@@ -90,3 +90,7 @@ df_no_col <- data.frame(sample.data.frame, row.names = NULL)
 expect_error(as.xts(df_no_col),
              pattern = "could not convert row names to a date-time and could not find a time-based column",
              info = info_msg)
+
+info_msg <- "keep column name for data.frame with one non-time-based column"
+x <- as.xts(df_date_col[, 1:2])
+expect_identical(names(x), "Open", info = info_msg)

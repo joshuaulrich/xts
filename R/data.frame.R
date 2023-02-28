@@ -48,7 +48,7 @@ function(x,
         # use the first time-based column
         which.col <- which.max(time.based.col)
         order_by_ <- x[[which.col]]
-        x <- x[, -which.col]
+        x <- x[, -which.col, drop = FALSE]
       } else {
         stop("could not convert row names to a date-time and could not find a time-based column")
       }
