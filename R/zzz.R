@@ -64,42 +64,26 @@ function(pkg, generic, class, fun = NULL)
   }
 
   if (warn_dplyr_lag && dplyr_will_mask_lag) {
-
-    dplyr_path <- find.package("dplyr", quiet = TRUE, verbose = FALSE)
-
-    is_dplyr_installed <- (length(dplyr_path) > 0)
-    is_dplyr_attached <- "package:dplyr" %in% search()
-
-    if (is_dplyr_installed) {
-
-      msg <- "
-################################### WARNING ###################################
-# We noticed you have dplyr installed. The dplyr lag() function breaks how    #
-# base R's lag() function is supposed to work, which breaks lag(my_xts).      #"
-
-      if (is_dplyr_attached) { msg <- paste0(msg, "
+      ugly_message <- "
+######################### Warning from 'xts' package ##########################
 #                                                                             #
-# Calls to lag(my_xts) that you enter or source() into this session won't     #
-# work correctly.                                                             #")
-      } else {
-          msg <- paste0(msg, "
+# The dplyr lag() function breaks how base R's lag() function is supposed to  #
+# work, which breaks lag(my_xts). Calls to lag(my_xts) that you type or       #
+# source() into this session won't work correctly.                            #
 #                                                                             #
-# If you call library(dplyr) later in this session, then calls to lag(my_xts) #
-# that you enter or source() into this session won't work correctly.          #")
-      }
-
-      msg <- paste0(msg, "
+# Use stats::lag() to make sure you're not using dplyr::lag(), or you can add #
+# conflictRules('dplyr', exclude = 'lag') to your .Rprofile to stop           #
+# dplyr from breaking base R's lag() function.                                #
 #                                                                             #
-# All package code is unaffected because it is protected by the R namespace   #
-# mechanism.                                                                  #
-#                                                                             #
+# Code in packages is not affected. It's protected by R's namespace mechanism #
 # Set `options(xts.warn_dplyr_breaks_lag = FALSE)` to suppress this warning.  #
 #                                                                             #
-# You can use stats::lag() to make sure you're not using dplyr::lag(), or you #
-# can add conflictRules('dplyr', exclude = 'lag') to your .Rprofile to stop   #
-# dplyr from breaking base R's lag() function.                                #
-################################### WARNING ###################################")
-      packageStartupMessage(msg)
+###############################################################################"
+    if ("package:dplyr" %in% search()) {
+      packageStartupMessage(ugly_message)
+    } else {
+      setHook(packageEvent("dplyr", "attach"),
+              function(...) packageStartupMessage(ugly_message))
     }
   }
 }
