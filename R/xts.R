@@ -82,6 +82,13 @@ function(x=NULL,
 
   if(is.null(x)) {
     x <- numeric(0)
+  } else if (is.list(x)) {
+    # list or data.frame
+    if (is.data.frame(x)) {
+      x <- as.matrix(x)
+    } else {
+      stop("cannot convert lists to xts objects")
+    }
   } else if (NROW(x) > 0) {
     x <- as.matrix(x)
   }

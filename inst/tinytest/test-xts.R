@@ -368,3 +368,22 @@ if(requireNamespace("chron", quietly = TRUE)) {
   expect_identical(tzone(x), "UTC", info = ".xts() non-UTC tzone is set to UTC (chron)")
   expect_identical(tzone(y), "UTC", info = ".xts() non-UTC tzone is set to UTC (dates)")
 }
+
+### lists and zero-row data.frames
+msg <- "cannot convert lists to xts objects"
+expect_error(xts(list(1, 2), .Date(1:2)), msg, info = msg)
+#expect_error(.xts(list(1, 2), 1:2), msg, info = msg)
+
+zero_row_df <- data.frame(date = .Date(numeric(0)), x = numeric(0), y = numeric(0))
+zero_row_xts <- xts(zero_row_df[, -1], zero_row_df[, 1])
+
+expect_identical(names(zero_row_xts), names(zero_row_df)[-1],
+                 info = "xts() keeps names for zero-row data.frame")
+expect_equal(.Date(numeric(0)), index(zero_row_xts),
+                 info = "xts() has zero-length Date index for zero-row data.frame with Date column")
+
+zero_row_xts. <- .xts(zero_row_df[, -1], zero_row_df[, 1])
+expect_identical(names(zero_row_xts.), names(zero_row_df)[-1],
+                 info = ".xts() keeps names for zero-row data.frame")
+expect_equal(.Date(numeric(0)), index(zero_row_xts.),
+                 info = ".xts() has zero-length Date index for zero-row data.frame with Date column")
