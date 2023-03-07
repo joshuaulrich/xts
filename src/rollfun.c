@@ -37,7 +37,8 @@ void kahan_sum(long double x, long double * c, long double * sum)
 SEXP roll_sum (SEXP x, SEXP n)
 {
   /* Author: Joshua Ulrich, with contributions from Ivan Popivanov */
-  int i, P=0, nrs;
+  int P = 0;
+  R_xlen_t i, nrs;
   nrs = nrows(x);
 
   /* Get values from pointers */
@@ -45,7 +46,7 @@ SEXP roll_sum (SEXP x, SEXP n)
 
   /* Initalize result R object */
   SEXP result;
-  PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
+  PROTECT(result = allocVector(TYPEOF(x), xlength(x))); P++;
   int *int_result=NULL, *int_x=NULL;
   int int_sum = 0;
   double *real_result=NULL, *real_x=NULL;
@@ -115,7 +116,8 @@ SEXP roll_sum (SEXP x, SEXP n)
 SEXP roll_min (SEXP x, SEXP n)
 {
   /* Author: Joshua Ulrich */
-  int i, j, P=0;
+  int P = 0;
+  R_xlen_t i, j;
 
   /* Get values from pointers */
   int int_n = asInteger(n);
@@ -125,12 +127,12 @@ SEXP roll_min (SEXP x, SEXP n)
   int int_min;
   double *real_result=NULL, *real_x=NULL;
   double real_min;
-  int nrs = nrows(x);
-  int loc;
+  R_xlen_t nrs = nrows(x);
+  R_xlen_t loc;
 
   /* Initalize result R object */
   SEXP result;
-  PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
+  PROTECT(result = allocVector(TYPEOF(x), xlength(x))); P++;
 
   /* check for non-leading NAs and get first non-NA location */
   SEXP first;
@@ -245,7 +247,8 @@ SEXP roll_min (SEXP x, SEXP n)
 SEXP roll_max (SEXP x, SEXP n)
 {
   /* Author: Joshua Ulrich */
-  int i, j, P=0;
+  int P = 0;
+  R_xlen_t i, j;
 
   /* Get values from pointers */
   int int_n = asInteger(n);
@@ -255,12 +258,12 @@ SEXP roll_max (SEXP x, SEXP n)
   int int_min;
   double *real_result=NULL, *real_x=NULL;
   double real_max;
-  int nrs = nrows(x);
-  int loc;
+  R_xlen_t nrs = nrows(x);
+  R_xlen_t loc;
 
   /* Initalize result R object */
   SEXP result;
-  PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
+  PROTECT(result = allocVector(TYPEOF(x), xlength(x))); P++;
 
   /* check for non-leading NAs and get first non-NA location */
   SEXP first;
@@ -375,12 +378,13 @@ SEXP roll_max (SEXP x, SEXP n)
 SEXP roll_cov (SEXP x, SEXP y, SEXP n, SEXP samp)
 {
   /* Author: Joshua Ulrich */
-  int i, P=0;
+  int P = 0;
+  R_xlen_t i;
 
   /* ensure x and y have same length in R functions, since it's 
    * easier to throw user-informative errors */
-  int nrx = nrows(x);
-  int nry = nrows(y);
+  R_xlen_t nrx = nrows(x);
+  R_xlen_t nry = nrows(y);
   if(nrx != nry) error("nrx != nry, blame the R function writer");
 
   /* Coerce to REALSXP to ensure roll_sum returns REALSXP */

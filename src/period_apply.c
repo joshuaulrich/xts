@@ -24,7 +24,7 @@
 
 SEXP xts_period_apply(SEXP _data, SEXP _index, SEXP _function, SEXP _env)
 {
-  int i;
+  R_xlen_t i;
   R_xlen_t n = xlength(_index);
   SEXP _result = PROTECT(allocVector(VECSXP, n));
   SEXP _j = PROTECT(allocVector(INTSXP, ncols(_data)));
@@ -50,7 +50,7 @@ SEXP xts_period_apply(SEXP _data, SEXP _index, SEXP _function, SEXP _env)
   /* function call on subset */
   SEXP _subcall = PROTECT(lang3(_function, _subsym, R_DotsSymbol));
 
-  int N = n - 1;
+  R_xlen_t N = n - 1;
 
   switch(TYPEOF(_index)) {
     case REALSXP:

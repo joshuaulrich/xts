@@ -24,8 +24,8 @@
 #include "xts.h" /* for coredata_xts */
 
 SEXP make_unique (SEXP index_, SEXP eps_) {
-  int P = 0, i;
-  int len = length(index_);
+  int P = 0;
+  R_xlen_t i, len = xlength(index_);
   double eps = asReal(eps_);
 
   if (TYPEOF(index_) == INTSXP) {
@@ -63,9 +63,9 @@ SEXP make_index_unique (SEXP x_, SEXP eps_) {
 }
 
 SEXP non_duplicates (SEXP x_, SEXP fromLast_) {
-  int fromLast = asLogical(fromLast_),
-      i, d=0,
-      len   = length(x_);
+  int fromLast = asLogical(fromLast_);
+  R_xlen_t len = xlength(x_);
+  R_xlen_t i, d = 0;
   
   int *x_int;
   double *x_real;

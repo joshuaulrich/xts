@@ -30,9 +30,9 @@ SEXP rbind_append(SEXP, SEXP);
 //SEXP do_rbind_xts (SEXP x, SEXP y, SEXP env) {{{
 SEXP do_rbind_xts (SEXP x, SEXP y, SEXP dup)
 {
-  int nrx, ncx, nry, ncy, truelen, len;
+  R_xlen_t nrx, ncx, nry, ncy, truelen, len;
   int no_duplicate = LOGICAL(dup)[0];
-  int i, j, ij, ij_x, ij_y, xp=1, yp=1, add_y=0;
+  R_xlen_t i, j, ij, ij_x, ij_y, xp=1, yp=1, add_y=0;
   int P=0; // PROTECT counter
   int mode;
   SEXP result, xindex, yindex, newindex;
@@ -89,20 +89,20 @@ SEXP do_rbind_xts (SEXP x, SEXP y, SEXP dup)
 
 #ifdef RBIND_APPEND
 if(TYPEOF(xindex)==REALSXP) {
-  if(REAL(xindex)[length(xindex)-1] < REAL(yindex)[0]) {
+  if(REAL(xindex)[xlength(xindex)-1] < REAL(yindex)[0]) {
     UNPROTECT(P);
     return rbind_append(x,y);
     }
 } else
 if(TYPEOF(xindex)==INTSXP) {
-  if(INTEGER(xindex)[length(xindex)-1] < INTEGER(yindex)[0]) {
+  if(INTEGER(xindex)[xlength(xindex)-1] < INTEGER(yindex)[0]) {
     UNPROTECT(P);
     return rbind_append(x,y);
     }
 }
 #endif
 
-  if(nrx != length(xindex) || nry != length(yindex))
+  if(nrx != xlength(xindex) || nry != xlength(yindex))
     error("zero-length vectors with non-zero-length index are not allowed");
 
   PROTECT(newindex = allocVector(TYPEOF(xindex), len)); P++;
@@ -482,7 +482,7 @@ return(result);
   }
 
   if(truelen != len) {
-    PROTECT(result = lengthgets(result, truelen * ncx)); P++;  /* reset length */
+    PROTECT(result = xlengthgets(result, truelen * ncx)); P++;  /* reset length */
   }
   setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
   SEXP dim;
@@ -494,7 +494,7 @@ return(result);
   setAttrib(result, R_DimNamesSymbol, getAttrib(x, R_DimNamesSymbol));
   
   if(truelen != len) {
-    PROTECT(newindex = lengthgets(newindex, truelen)); P++;
+    PROTECT(newindex = xlengthgets(newindex, truelen)); P++;
   }
   copyMostAttrib(xindex, newindex);
 
@@ -551,8 +551,8 @@ SEXP rbind_append (SEXP x, SEXP y) {
 */
   /*Rprintf("rbind_append called\n");*/
   SEXP result;
-  int nrs_x, nrs_y, ncs_x, ncs_y, nr;
-  int i;
+  R_xlen_t nrs_x, nrs_y, ncs_x, ncs_y, nr;
+  R_xlen_t i;
 
   ncs_x = ncols(x); ncs_y = ncols(y); nrs_x = nrows(x); nrs_y = nrows(y);
 
@@ -654,7 +654,7 @@ SEXP rbind_append (SEXP x, SEXP y) {
 /*
     SEXP dimnames, currentnames, newnames;
     PROTECT(dimnames = allocVector(VECSXP, 2));
-    PROTECT(newnames = allocVector(STRSXP, length(j)));
+    PROTECT(newnames = allocVector(STRSXP, xlength(j)));
     currentnames = getAttrib(x, R_DimNamesSymbol);
 
     if(!isNull(currentnames)) {

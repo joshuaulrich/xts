@@ -33,21 +33,21 @@ SEXP coredata (SEXP x, SEXP copyAttr)
      removing
   */
   SEXP result;
-  int i, j, ncs, nrs;
-  int P=0;
-  PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
+  R_xlen_t i, j, ncs, nrs;
+  int P = 0;
+  PROTECT(result = allocVector(TYPEOF(x), xlength(x))); P++;
   switch( TYPEOF(x)) {
     case REALSXP:
-      memcpy(REAL(result), REAL(x), length(result) * sizeof(double));
+      memcpy(REAL(result), REAL(x), xlength(result) * sizeof(double));
       break;
     case INTSXP:
-      memcpy(INTEGER(result), INTEGER(x), length(result) * sizeof(int));
+      memcpy(INTEGER(result), INTEGER(x), xlength(result) * sizeof(int));
       break;
     case LGLSXP:
-      memcpy(LOGICAL(result), LOGICAL(x), length(result) * sizeof(int));
+      memcpy(LOGICAL(result), LOGICAL(x), xlength(result) * sizeof(int));
       break;
     case CPLXSXP:
-      memcpy(COMPLEX(result), COMPLEX(x), length(result) * sizeof(Rcomplex));
+      memcpy(COMPLEX(result), COMPLEX(x), xlength(result) * sizeof(Rcomplex));
       break;
     case STRSXP:
       ncs = ncols(x); nrs = nrows(x);
@@ -56,7 +56,7 @@ SEXP coredata (SEXP x, SEXP copyAttr)
         SET_STRING_ELT(result, i+j*nrs, STRING_ELT(x, i+j*nrs));
       break;
     case RAWSXP:
-      memcpy(RAW(result), RAW(x), length(result) * sizeof(unsigned char));
+      memcpy(RAW(result), RAW(x), xlength(result) * sizeof(unsigned char));
       break;
     default:
       error("currently unsupported data type");

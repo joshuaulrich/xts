@@ -39,7 +39,7 @@
 
 SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_) {
   SEXP result, index, new_index;
-  int nrs, nrsx, i, ii, jj, first, last;
+  R_xlen_t nrs, nrsx, i, ii, jj, first, last;
 
   nrsx = nrows(x);
 
@@ -50,11 +50,11 @@ SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_) {
   nrs = last - first + 1;
   
 
-  PROTECT(result = allocVector(TYPEOF(x), nrs * length(j)));
+  PROTECT(result = allocVector(TYPEOF(x), nrs * xlength(j)));
 
   switch(TYPEOF(x)) {
     case REALSXP:
-      for(i=0; i<length(j); i++) {
+      for(i=0; i<xlength(j); i++) {
 /*
 Rprintf("j + i*nrs + first=%i\n", (int)(INTEGER(j)[i]-1 + i*nrs + first));
 Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
@@ -71,7 +71,7 @@ Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
       }
       break;
     case INTSXP:
-      for(i=0; i<length(j); i++) {
+      for(i=0; i<xlength(j); i++) {
         if(INTEGER(j)[i] == NA_INTEGER) {
           for(ii=0; ii < nrs; ii++) {
             INTEGER(result)[(i*nrs) + ii] = NA_INTEGER;
@@ -84,7 +84,7 @@ Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
       }
       break;
     case LGLSXP:
-      for(i=0; i<length(j); i++) {
+      for(i=0; i<xlength(j); i++) {
         if(INTEGER(j)[i] == NA_INTEGER) {
           for(ii=0; ii < nrs; ii++) {
             LOGICAL(result)[(i*nrs) + ii] = NA_LOGICAL;
@@ -97,7 +97,7 @@ Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
       }
       break;
     case CPLXSXP:
-      for(i=0; i<length(j); i++) {
+      for(i=0; i<xlength(j); i++) {
         if(INTEGER(j)[i] == NA_INTEGER) {
           for(ii=0; ii < nrs; ii++) {
             COMPLEX(result)[(i*nrs) + ii].r = NA_REAL;
@@ -111,7 +111,7 @@ Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
       }
       break;
     case RAWSXP:
-      for(i=0; i<length(j); i++) {
+      for(i=0; i<xlength(j); i++) {
         if(INTEGER(j)[i] == NA_INTEGER) {
           for(ii=0; ii < nrs; ii++) {
             RAW(result)[(i*nrs) + ii] = 0;
@@ -124,7 +124,7 @@ Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
       }
       break;
     case STRSXP:
-      for(jj=0; jj<length(j); jj++) {
+      for(jj=0; jj<xlength(j); jj++) {
         if(INTEGER(j)[jj] == NA_INTEGER) {
           for(i=0; i< nrs; i++)
             SET_STRING_ELT(result, i+jj*nrs, NA_STRING);
@@ -159,20 +159,20 @@ Rprintf("i=%i, j=%i, nrs=%i, first=%i\n", i, INTEGER(j)[i]-1, nrs, first);
     SEXP dim;
     PROTECT(dim = allocVector(INTSXP, 2));
     INTEGER(dim)[0] = nrs;
-    INTEGER(dim)[1] = length(j);
+    INTEGER(dim)[1] = xlength(j);
     setAttrib(result, R_DimSymbol, dim);
     UNPROTECT(1);
 
     SEXP dimnames, currentnames, newnames;
     PROTECT(dimnames = allocVector(VECSXP, 2));
-    PROTECT(newnames = allocVector(STRSXP, length(j)));
+    PROTECT(newnames = allocVector(STRSXP, xlength(j)));
     currentnames = getAttrib(x, R_DimNamesSymbol);
 
     if(!isNull(currentnames)) {
       SET_VECTOR_ELT(dimnames, 0, VECTOR_ELT(currentnames,0));
       if(!isNull(VECTOR_ELT(currentnames,1))) {
         /* if colnames isn't NULL set */
-        for(i=0; i<length(j); i++) {
+        for(i=0; i<xlength(j); i++) {
           if(INTEGER(j)[i] == NA_INTEGER) {
             SET_STRING_ELT(newnames, i, NA_STRING);
           } else {

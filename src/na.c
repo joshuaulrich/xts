@@ -27,9 +27,9 @@
 /* Internal use only
  * called by: firstNonNA, naCheck, na_locf
  */
-static int firstNonNACol (SEXP x, int col)
+static R_xlen_t firstNonNACol (SEXP x, R_xlen_t col)
 {
-  int i=0, nr;
+  R_xlen_t i=0, nr;
   int *int_x=NULL;
   double *real_x=NULL;
 
@@ -78,7 +78,7 @@ static int firstNonNACol (SEXP x, int col)
 
 /* Should be internal use only (static), but is in xts.h
  */
-int firstNonNA (SEXP x)
+R_xlen_t firstNonNA (SEXP x)
 {
   return firstNonNACol(x, 0);
 }
@@ -89,15 +89,14 @@ SEXP naCheck (SEXP x, SEXP check)
     Check for non-leading NA values, throw error if found
   */
   SEXP first;
-  int _first;
-  _first = firstNonNA(x);
+  R_xlen_t _first = firstNonNA(x);
   PROTECT(first = allocVector(INTSXP, 1));
   INTEGER(first)[0] = _first;
 
 
   if(LOGICAL(check)[0]) {
   /* check for NAs in rest of data */
-  int i, nr;
+  R_xlen_t i, nr;
   int *int_x = NULL;
   double *real_x = NULL;
 
@@ -146,7 +145,8 @@ SEXP na_locf (SEXP x, SEXP fromLast, SEXP _maxgap, SEXP _limit)
 {
   SEXP result;
 
-  int i, ii, j, nr, nc, _first=0, P=0;
+  int P = 0;
+  R_xlen_t i, ii, j, nr, nc, _first=0;
   double gap, maxgap, limit;
 
   int *int_x=NULL, *int_result=NULL;
@@ -407,8 +407,8 @@ SEXP na_omit_xts (SEXP x)
 {
   SEXP na_index, not_na_index, col_index, result;
 
-  int i, j, ij, nr, nc; 
-  int not_NA, NA;
+  R_xlen_t i, j, ij, nr, nc;
+  R_xlen_t not_NA, NA;
 
   nr = nrows(x);
   nc = ncols(x);

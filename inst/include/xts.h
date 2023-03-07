@@ -111,7 +111,7 @@ void copy_xtsAttributes(SEXP x, SEXP y);    // internal only
 void copy_xtsCoreAttributes(SEXP x, SEXP y);// internal only    
 
 SEXP isXts(SEXP x);                         // is.xts analogue
-int firstNonNA(SEXP x);
+R_xlen_t firstNonNA(SEXP x);
 SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_);
 SEXP do_startofyear(SEXP from, SEXP to, SEXP origin);
 int xts_ncols(SEXP x);

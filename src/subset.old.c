@@ -34,11 +34,11 @@ All modification are by Jeffrey A. Ryan 2008
 // xtsExtractSubset {{{
 static SEXP xtsExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
 {
-    int i, ii, n, nx, mode;
+    R_xlen_t i, ii;
     SEXP tmp, tmp2;
-    mode = TYPEOF(x);
-    n = LENGTH(indx);
-    nx = length(x);
+    int mode = TYPEOF(x);
+    R_xlen_t n = xlength(indx);
+    R_xlen_t nx = xlength(x);
     tmp = result;
 
     if (x == R_NilValue)
@@ -119,8 +119,8 @@ static SEXP xtsExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
 SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop) //SEXP s, SEXP call, int drop)
 {
     SEXP attr, result, dim;
-    int nr, nc, nrs, ncs;
-    int i, j, ii, jj, ij, iijj;
+    R_xlen_t nr, nc, nrs, ncs;
+    R_xlen_t i, j, ii, jj, ij, iijj;
     int mode;
     int *int_x=NULL, *int_result=NULL, *int_newindex=NULL, *int_index=NULL;
     double *real_x=NULL, *real_result=NULL, *real_newindex=NULL, *real_index=NULL;
@@ -128,13 +128,13 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop) //SEXP s, SEXP call, int
     nr = nrows(x);
     nc = ncols(x);
 
-    if( length(x)==0 )
+    if( xlength(x)==0 )
       return x;
 
     dim = getAttrib(x, R_DimSymbol);
 
-    nrs = LENGTH(sr);
-    ncs = LENGTH(sc);
+    nrs = xlength(sr);
+    ncs = xlength(sc);
     int *int_sr=NULL, *int_sc=NULL;
     int_sr = INTEGER(sr);
     int_sc = INTEGER(sc);
@@ -162,7 +162,7 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop) //SEXP s, SEXP call, int
     PROTECT(index);
 
     if(TYPEOF(index) == INTSXP) {
-      newindex = allocVector(INTSXP, LENGTH(sr));
+      newindex = allocVector(INTSXP, xlength(sr));
       PROTECT(newindex);
       int_newindex = INTEGER(newindex);
       int_index = INTEGER(index);
@@ -174,7 +174,7 @@ SEXP do_subset_xts(SEXP x, SEXP sr, SEXP sc, SEXP drop) //SEXP s, SEXP call, int
       UNPROTECT(1);
     }
     if(TYPEOF(index) == REALSXP) {
-      newindex = allocVector(REALSXP, LENGTH(sr));
+      newindex = allocVector(REALSXP, xlength(sr));
       PROTECT(newindex);
       real_newindex = REAL(newindex);
       real_index = REAL(index);

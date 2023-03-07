@@ -26,8 +26,8 @@
 
 SEXP do_is_ordered (SEXP x, SEXP increasing, SEXP strictly)
 {
-  int i;
-  int nx = LENGTH(x) - 1;
+  R_xlen_t i;
+  R_xlen_t nx = xlength(x) - 1;
   double *real_x;
   int *int_x;
 

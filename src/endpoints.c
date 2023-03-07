@@ -32,9 +32,10 @@ SEXP endpoints (SEXP _x, SEXP _on, SEXP _k, SEXP _addlast /* TRUE */)
 
         c(0,which(diff(_x%/%on%/%k+1) != 0),NROW(_x))
   */
+  int P = 0;
   int *int_index = NULL;
   double *real_index = NULL;
-  int i=1,j=1, nr, P=0;
+  R_xlen_t i = 1, j = 1, nr;
   int int_tmp[2];
   int64_t int64_tmp[2];
 
@@ -134,7 +135,7 @@ SEXP endpoints (SEXP _x, SEXP _on, SEXP _k, SEXP _addlast /* TRUE */)
     ep[j] = nr;
     j++;
   }
-  PROTECT(_ep = lengthgets(_ep, j)); P++;
+  PROTECT(_ep = xlengthgets(_ep, j)); P++;
   UNPROTECT(P);
   return(_ep);
 }

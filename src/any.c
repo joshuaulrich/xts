@@ -25,8 +25,8 @@
 
 SEXP any_negative (SEXP i_)
 {
-  int i;
-  int len = length(i_);
+  R_xlen_t i;
+  R_xlen_t len = xlength(i_);
 
   int *int_i=NULL;
   double *real_i=NULL;

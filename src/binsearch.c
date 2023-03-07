@@ -76,7 +76,7 @@ SEXP binsearch(SEXP key, SEXP vec, SEXP start)
     error("start must be specified as true or false");
   }
 
-  if (length(vec) < 1 || length(key) < 1) {
+  if (xlength(vec) < 1 || length(key) < 1) {
     return ScalarInteger(NA_INTEGER);
   }
 
@@ -105,9 +105,9 @@ SEXP binsearch(SEXP key, SEXP vec, SEXP start)
       error("unsupported type");
   }
 
-  int mid;
-  int lo = 0;
-  int hi = length(vec) - 1;
+  R_xlen_t mid;
+  R_xlen_t lo = 0;
+  R_xlen_t hi = xlength(vec) - 1;
 
   while (lo < hi) {
     mid = lo + (hi - lo) / 2;
@@ -126,7 +126,7 @@ SEXP binsearch(SEXP key, SEXP vec, SEXP start)
     /* cmp_func() := vector[index] >= key when start == true, and we need
      * to return the smallest index subject to vector[index] >= key.
      */
-    if (!cmp_func(data, length(vec)-1)) {
+    if (!cmp_func(data, xlength(vec)-1)) {
       /* entire vector < key */
       return ScalarInteger(NA_INTEGER);
     }
@@ -158,19 +158,19 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
    * upper bound of the location of the user index in the xts index.
    * This is necessary to handle duplicate dates in the xts index.
    */
-  int n_x = length(_x);
+  R_xlen_t n_x = xlength(_x);
   int *x = INTEGER(_x);
 
-  if (length(_index) < 1) {
+  if (xlength(_index) < 1) {
     return allocVector(INTSXP, 0);
   }
 
   PROTECT_INDEX px;
   SEXP _out;
-  PROTECT_WITH_INDEX(_out = allocVector(INTSXP, length(_index)), &px);
+  PROTECT_WITH_INDEX(_out = allocVector(INTSXP, xlength(_index)), &px);
   int *out = INTEGER(_out);
 
-  int i, xi, j, k = 0, n_out = length(_out);
+  R_xlen_t i, xi, j, k = 0, n_out = xlength(_out);
   switch (TYPEOF(_index)) {
     case REALSXP:
       {
@@ -184,7 +184,7 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
             if (k == n_out) {
               REPROTECT(_out = xlengthgets(_out, k+2*(i+1)), px);
               out = INTEGER(_out);
-              n_out = length(_out);
+              n_out = xlength(_out);
             }
             out[k++] = j--;
           } while (j > 0 && index[xi-1] == index[j-1]);
@@ -203,7 +203,7 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
             if (k == n_out) {
               REPROTECT(_out = xlengthgets(_out, k+2*(i+1)), px);
               out = INTEGER(_out);
-              n_out = length(_out);
+              n_out = xlength(_out);
             }
             out[k++] = j--;
           } while (j > 0 && index[xi-1] == index[j-1]);
@@ -214,7 +214,7 @@ SEXP fill_window_dups_rev(SEXP _x, SEXP _index)
       error("unsupported index type");
   }
 
-  /* truncate so length(_out) = k
+  /* truncate so xlength(_out) = k
    * NB: output is in reverse order!
    */
   REPROTECT(_out = xlengthgets(_out, k), px);

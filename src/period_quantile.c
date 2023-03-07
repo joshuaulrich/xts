@@ -33,8 +33,8 @@ SEXP xts_period_max(SEXP _data, SEXP _index)
     error("data must be double");
   }
 
-  int i, j;
-  int n = length(_index) - 1;
+  R_xlen_t i, j;
+  R_xlen_t n = xlength(_index) - 1;
   SEXP _result = PROTECT(allocVector(REALSXP, n));
   double *result = REAL(_result);
 
@@ -70,8 +70,8 @@ SEXP xts_period_min(SEXP _data, SEXP _index)
     error("data must be double");
   }
 
-  int i, j;
-  int n = length(_index) - 1;
+  R_xlen_t i, j;
+  R_xlen_t n = xlength(_index) - 1;
   SEXP _result = PROTECT(allocVector(REALSXP, n));
   double *result = REAL(_result);
 

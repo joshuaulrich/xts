@@ -33,14 +33,14 @@ SEXP xts_period_prod(SEXP _data, SEXP _index)
     error("data must be double");
   }
 
-  int i, j;
-  int n = length(_index) - 1;
+  R_xlen_t i, j;
+  R_xlen_t n = xlength(_index) - 1;
   SEXP _result = PROTECT(allocVector(REALSXP, n));
   double *result = REAL(_result);
 
   int *index = INTEGER(_index);
   double *data = REAL(_data);
-  int k = 0;
+  R_xlen_t k = 0;
 
   for (i = 0; i < n; i++) {
     int idx0 = index[i];
@@ -68,14 +68,14 @@ SEXP xts_period_sum(SEXP _data, SEXP _index)
     error("data must be double");
   }
 
-  int i, j;
-  int n = length(_index) - 1;
+  R_xlen_t i, j;
+  R_xlen_t n = xlength(_index) - 1;
   SEXP _result = PROTECT(allocVector(REALSXP, n));
   double *result = REAL(_result);
 
   int *index = INTEGER(_index);
   double *data = REAL(_data);
-  int k = 0;
+  R_xlen_t k = 0;
 
   for (i = 0; i < n; i++) {
     int idx0 = index[i];

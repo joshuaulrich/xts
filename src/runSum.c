@@ -57,7 +57,7 @@ SEXP do_run (SEXP x, SEXP n, (*void)FUN)
   double *real_result=NULL, *real_x=NULL;
   double real_sum = 0.0;
 
-  PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
+  PROTECT(result = allocVector(TYPEOF(x), xlength(x))); P++;
 
   int _firstNonNA = firstNonNA(x);
 
@@ -68,7 +68,7 @@ SEXP runSum (SEXP x, SEXP n)
 {
   SEXP result;
   int P=0;
-  int i, nrs;
+  R_xlen_t i, nrs;
   int *int_n=NULL;
   if(TYPEOF(n) != INTSXP) {
     // assure that 'n' is an integer
@@ -81,9 +81,9 @@ SEXP runSum (SEXP x, SEXP n)
   double *real_result=NULL, *real_x=NULL;
   double real_sum = 0.0;
 
-  PROTECT(result = allocVector(TYPEOF(x), length(x))); P++;
+  PROTECT(result = allocVector(TYPEOF(x), xlength(x))); P++;
 
-  int _firstNonNA = firstNonNA(x);
+  R_xlen_t _firstNonNA = firstNonNA(x);
 
   
   switch(TYPEOF(x)) {

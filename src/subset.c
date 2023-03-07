@@ -31,19 +31,19 @@ static SEXP xts_ExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
        This is slated to be reimplemented using the previous method
        in xts to get the correct dimnames
     */
-    int i, ii, n, nx, mode;
     SEXP tmp, tmp2;
-    mode = TYPEOF(x);
-    n = LENGTH(indx); 
-    nx = length(x);
+    int mode = TYPEOF(x);
+    R_xlen_t n = xlength(indx);
+    R_xlen_t nx = xlength(x);
     tmp = result;
     
     /*if (x == R_NilValue)*/
     if (isNull(x))
     return x;
     
+    R_xlen_t i;
     for (i = 0; i < n; i++) {
-    ii = INTEGER(indx)[i];
+    int ii = INTEGER(indx)[i];
     if (ii != NA_INTEGER)
         ii--;
     switch (mode) {
@@ -115,18 +115,19 @@ static SEXP xts_ExtractSubset(SEXP x, SEXP result, SEXP indx) //, SEXP call)
 
 SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
   SEXP result;
-  int i, j, nr, nc, nrs, ncs;
   int P=0;
 
   SEXP Dim = getAttrib(x, R_DimSymbol);
-  nrs = nrows(x);ncs = ncols(x);
-  nr = length(sr); nc = length(sc);
+  R_xlen_t nrs = nrows(x);
+  R_xlen_t ncs = ncols(x);
+  R_xlen_t nr = xlength(sr);
+  R_xlen_t nc = xlength(sc);
 
   SEXP oindex, nindex;
   oindex = getAttrib(x, xts_IndexSymbol);
   PROTECT(nindex = allocVector(TYPEOF(oindex), nr)); P++;
   PROTECT(result = allocVector(TYPEOF(x), nr*nc)); P++;
-  j = 0;
+  R_xlen_t i, j = 0;
 
   double *real_nindex=NULL, *real_oindex, *real_result=NULL, *real_x=NULL; 
   int *int_nindex=NULL, *int_oindex, *int_result=NULL, *int_x=NULL; 

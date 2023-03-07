@@ -34,9 +34,9 @@ SEXP diffXts(SEXP x, SEXP lag, SEXP diff, SEXP arith, SEXP nap, SEXP dots)
 SEXP lagXts(SEXP x, SEXP k, SEXP pad)
 {
   SEXP result;
-  int nrs, ncs;
-  int i, j, ij, iijj, K, NApad;
-  int mode;
+  R_xlen_t nrs, ncs;
+  R_xlen_t i, j, ij, iijj, K;
+  int mode, NApad;
   int P=0; /*PROTECT counter*/
   int *int_result=NULL, *int_x=NULL;
   int *lgl_result=NULL, *lgl_x=NULL;
@@ -169,8 +169,8 @@ SEXP lagXts(SEXP x, SEXP k, SEXP pad)
   setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
   if(!NApad) { /* No NA padding */
     SEXP oindex, nindex, dims;
-    int nRows = (K > 0) ? nrs-K : nrs+K;
-    int incr  = (K > 0) ? K : 0;
+    R_xlen_t nRows = (K > 0) ? nrs-K : nrs+K;
+    R_xlen_t incr  = (K > 0) ? K : 0;
     PROTECT(oindex = getAttrib(x, xts_IndexSymbol));
     PROTECT(nindex = allocVector(TYPEOF(oindex), nRows));
     switch(TYPEOF(oindex)) {
