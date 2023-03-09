@@ -37,3 +37,6 @@ expect_true(length(print_output)-1 == nrow(y),
 
 print_output <- utils::capture.output(p <- print(x))
 expect_identical(p, x, info = "returns input invisibly")
+
+z <- .xts(matrix(0, nrow = 200, ncol = 200), 1:200)
+expect_silent(print(z), info = "print more columns than width doesn't error")

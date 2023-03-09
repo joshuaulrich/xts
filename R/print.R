@@ -116,23 +116,9 @@ print.xts <-
       y_names <- as.character(index(x))
       y <- matrix(y, nrow = length(y), dimnames = list(y_names, NULL))
     }
-    # Create column names as right-justified column indexes. They're left-
-    # justified by default, which is different than if there are column names.
+    # Create column names as column indexes.
     if (is.null(colnames(y))) {
-      cindex <- utils::capture.output(print(y[1,,drop = FALSE]))[1]
-      cindex <- sub("\\s+$", "", cindex)  # remove trailing spaces
-
-      # remove the leading spaces caused by the index,
-      # (plus the space between the index and the first column)
-      max_nchar <- max(nchar(rownames(y))) + 1
-      cindex <- substr(cindex, max_nchar, nchar(cindex))
-
-      # split string into vector for each column
-      cindex <- paste0(strsplit(cindex, "]")[[1]], "]")
-      # remove leading space
-      cindex <- sub("^\\s", "", cindex)
-
-      colnames(y) <- cindex
+      colnames(y) <- paste0("[,", seq_len(ncol(y)), "]")
     }
 
     print(y, quote = quote, right = right, ...)
