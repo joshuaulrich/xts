@@ -75,8 +75,9 @@ print.xts <-
     seq.col <- seq_len(nc)
     seq.n <- (nr - show.rows + 1):nr
 
-    index <- as.character(index(x))
-    index <- c(index[seq.row], "...", index[seq.n])
+    index <- c(as.character(index(x)[seq.row]),
+               "...",
+               as.character(index(x)[seq.n]))
 
     # as.matrix() to ensure we have dims
     # unclass() avoids as.matrix() method dispatch
