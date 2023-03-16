@@ -1413,8 +1413,8 @@ new.replot_xts <- function(frame=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   return(replot_env)
 }
 
-str.replot_xts <- function(x, ...) {
-  print(str(unclass(x)))
+str.replot_xts <- function(object, ...) {
+  print(str(unclass(object)))
 }
 
 print.replot_xts <- function(x, ...) plot(x,...)

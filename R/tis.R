@@ -21,8 +21,9 @@
 
 # functions to support package:tis
 
-as.POSIXct.tis <- function(x, offset=1, tz="", ...)
+as.POSIXct.tis <- function(x, tz="", ..., offset=1) {
   as.numeric(.POSIXct(x,tz))
+}
 
 as.xts.tis <- function(x, offset=1, ...)
 {

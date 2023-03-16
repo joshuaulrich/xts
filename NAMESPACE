@@ -168,6 +168,7 @@ S3method(lines,xts)
 S3method(points,xts)
 S3method(print, replot_xts)
 S3method(plot, replot_xts)
+S3method(str, replot_xts)
 
 #export(lines.xts)
 #S3method(lines,xts)
@@ -240,6 +241,7 @@ S3method('tclass<-', default)
 S3method(tclass,xts)
 S3method('tclass<-',xts)
 
+S3method(tformat,default)
 S3method(tformat,xts)
 S3method('tformat<-',xts)
 
@@ -323,5 +325,9 @@ S3method(as.xts,yearqtr)
 # timeDate specific methods
 S3method(as.xts,timeDate)
 ## currently unexported functions that _may_ be exported at some point
+
+# tis package methods
+S3method(as.POSIXct, tis)
+S3method(as.xts, tis)
 
 #export(startof,endof,firstof,lastof)
