@@ -83,11 +83,16 @@ print.xts <-
     # unclass() avoids as.matrix() method dispatch
     m <- as.matrix(unclass(x))
 
-    y <- rbind(
-      format(m[seq.row, seq.col, drop = FALSE]),
-      format(matrix(rep("", nc), nrow = 1)),
-      format(m[seq.n, seq.col, drop = FALSE])
-    )
+    # convert to data.frame to format each column individually
+    m <- data.frame(m[c(seq.row, seq.n), seq.col, drop = FALSE])
+    m[] <- lapply(m, format)
+    m <- as.matrix(m)
+
+    # insert blank row between top and bottom rows
+    y <- rbind(utils::head(m, show.rows),
+               rep("", nc),
+               utils::tail(m, show.rows))
+
     rownames(y) <- format(index, justify = "right")
     colnames(y) <- colnames(m[, seq.col, drop = FALSE])
   } else {
