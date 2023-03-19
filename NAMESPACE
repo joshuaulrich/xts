@@ -326,8 +326,4 @@ S3method(as.xts,yearqtr)
 S3method(as.xts,timeDate)
 ## currently unexported functions that _may_ be exported at some point
 
-# tis package methods
-S3method(as.POSIXct, tis)
-S3method(as.xts, tis)
-
 #export(startof,endof,firstof,lastof)
