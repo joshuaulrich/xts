@@ -29,6 +29,19 @@ function(target,
             attr(target, aname) <- NULL
             attr(current, aname) <- NULL
         }
+        # Order the object attributes
+        a <- attributes(target)
+        attributes(target) <- a[sort(names(a))]
+
+        a <- attributes(current)
+        attributes(current) <- a[sort(names(a))]
+
+        # Order the index attributes
+        a <- attributes(.index(target))
+        attributes(.index(target)) <- a[sort(names(a))]
+
+        a <- attributes(.index(current))
+        attributes(.index(current)) <- a[sort(names(a))]
     }
     NextMethod("all.equal")
 }
