@@ -100,7 +100,8 @@ rollapply.xts <- function(data, width, FUN, ..., by=1, by.column=TRUE,
   ix <- index(data) %in% index(res)
   tmp <- merge(res, xts(,idx, attr(data, "frequency")))
   if(is.null(colnames(res))) {
-    colnames(tmp) <- colnames(res)
+    # remove dimnames (xts objects don't have rownames)
+    dimnames(tmp) <- NULL
   }
   res <- na.fill(tmp, fill, ix)
 
