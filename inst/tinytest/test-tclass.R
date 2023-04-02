@@ -57,3 +57,7 @@ target <- "Imatclass"
 x <- .xts(1:10, 1:10, tclass = target)
 y <- x[,0]
 expect_equal(target, tclass(y))
+
+info_msg <- "tclass() on object with no tclass/.indexCLASS returns POSIXct"
+x <- structure(1:5, .Dim = c(5L, 1L), index = 1:5, class = c("xts", "zoo"))
+expect_identical(c("POSIXct", "POSIXt"), tclass(x))

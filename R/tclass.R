@@ -51,9 +51,12 @@ function(x, ...) {
       tclass <- attr(x, ".indexCLASS")
     }
     if (is.null(tclass)) {
-      warning("object does not have a ", sQuote("tclass"), " or ",
-              sQuote(".indexCLASS"), " attribute")
-      tclass <- ""
+      # no .indexCLASS on the xts object
+      tc <- c("POSIXct", "POSIXt")
+      warn_msg <- paste0(warn_msg, "\n  and xts object does not have a ",
+                         sq_both, " attribute\n", "  returning ", dQuote(tc))
+      warning(warn_msg)
+      return(tc)
     }
     tclass
   }
