@@ -11,48 +11,51 @@ structure(1:5, .Dim = c(5L, 1L),
           .indexTZ = "UTC", tzone = "UTC",
           class = c("xts", "zoo"))
 
-info_msg <- "test.get_tclass"
+info_msg <- "tclass(x) gets tclass attribute from index, not the xts object"
 expect_identical(tclass(x), c("POSIXct", "POSIXt"), info = info_msg)
 
-info_msg <- "test.get_indexClass_warns"
+info_msg <- "indexClass(x) warns"
 expect_warning(indexClass(x), info = info_msg)
 
-info_msg <- "test.set_indexClass_warns"
+info_msg <- "indexClass(x) <- 'Date'  warns"
 expect_warning(indexClass(x) <- "Date", info = info_msg)
 
-info_msg <- "test.set_tclass_drops_xts_tclass_indexCLASS"
+info_msg <- "tclass(x) <- 'POSIXct' removes tclass and .indexCLASS from xts object"
 y <- x
 tclass(y) <- "POSIXct"
 expect_identical(NULL, attr(y, "tclass"), info = info_msg)
 expect_identical(NULL, attr(y, ".indexCLASS"), info = info_msg)
 
-info_msg <- "test.set_tclass_changes_index_tclass"
+info_msg <- "tclass<- sets tclass attribute on index"
 y <- x
 tclass(y) <- "Date"
 expect_identical("Date", attr(attr(y, "index"), "tclass"), info = info_msg)
 
-info_msg <- "test.get_coredata_drops_xts_tclass_indexCLASS"
+info_msg <- "tclass<- removes .indexCLASS attribute from xts object"
+expect_identical("Date", attr(.index(y), "tclass"), info = info_msg)
+
+info_msg <- "coredata(x) removes tclass and .indexCLASS from xts object"
 y <- coredata(x)
 expect_identical(NULL, attr(y, "tclass"), info = info_msg)
 expect_identical(NULL, attr(y, ".indexCLASS"), info = info_msg)
 
-info_msg <- "test.get_xtsAttributes_excludes_tclass_indexCLASS"
+info_msg <- "xtsAttributes(x) does not include tclass or .indexCLASS"
 y <- xtsAttributes(x)
 expect_identical(NULL, y$tclass, info = info_msg)
 expect_identical(NULL, y$.indexCLASS, info = info_msg)
 
-info_msg <- "test.set_xtsAttributes_removes_tclass_indexClass"
+info_msg <- "xtsAttributes(x) <- 'foo' removes tclass and .indexCLASS"
 y <- x
 xtsAttributes(y) <- xtsAttributes(x)
 expect_identical(NULL, attr(y, "tclass"), info = info_msg)
 expect_identical(NULL, attr(y, ".indexCLASS"), info = info_msg)
 
-info_msg <- "test.set_tclass_default_always_character"
+info_msg <- "tclass(x) <- `foo` always creates a character tclass"
 x <- "hello"
 tclass(x) <- 1
 expect_identical(storage.mode(attr(x, "tclass")), "character")
 
-info_msg <- "test.tclass_matches_input_for_zero_width_subset"
+info_msg <- "zero-width subset has the same tclass as the input"
 target <- "Imatclass"
 x <- .xts(1:10, 1:10, tclass = target)
 y <- x[,0]

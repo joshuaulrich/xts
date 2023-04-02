@@ -166,3 +166,11 @@ function(x, ...) {
   ((.index(x) + (3 * 86400)) %/% 86400 %/% 7) -
     ((startOfYear() * 86400 + (3 * 86400)) %/% 86400 %/% 7)[.indexyear(x) + 1]
 }
+
+.update_index_attributes <- function(x) {
+  suppressWarnings({
+    tclass(x) <- tclass(x)
+    tzone(x) <- tzone(x)
+  })
+  return(x)
+}

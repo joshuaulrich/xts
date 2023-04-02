@@ -14,50 +14,54 @@ structure(1:5, .Dim = c(5L, 1L),
 info_msg <- "test.get_tzone"
 expect_identical(tzone(x), "", info = info_msg)
 
-info_msg <- "test.get_indexTZ_warns"
+info_msg <- "indexTZ(x) warns"
 expect_warning(indexTZ(x))
 
-info_msg <- "test.set_indexTZ_warns"
+info_msg <- "indexTZ(x) <- warns"
 expect_warning(indexTZ(x) <- "GMT")
 
-info_msg <- "test.set_tzone_drops_xts_tzone_indexTZ"
+info_msg <- "tzone(x) <- `foo` removes tzone and .indexTZ from xts object"
 y <- x
 tzone(y) <- "GMT"
 expect_identical(NULL, attr(y, "tzone"), info = info_msg)
 expect_identical(NULL, attr(y, ".indexTZ"), info = info_msg)
 
-info_msg <- "test.set_tzone_changes_index_tzone"
+info_msg <- "tzone(x) <- `foo` sets the tzone attribute on the index"
 y <- x
 tzone(y) <- "GMT"
 expect_identical("GMT", attr(attr(y, "index"), "tzone"), info = info_msg)
+expect_null(attr(y, ".indexTZ"),
+            info = "tzone(x) <- `foo` removes .indexTZ attribute from xts object")
 
-info_msg <- "test.set_tzone_to_NULL_sets_empty_string"
+
+
+info_msg <- "tzone(x) <- NULL sets the tzone attribute on the index to '' (empty string)"
 y <- x
 tzone(y) <- NULL
 expect_identical("", attr(attr(y, "index"), "tzone"), info = info_msg)
 
-info_msg <- "test.get_coredata_drops_xts_tzone_indexTZ"
+info_msg <- "coredata(x) removes tzone and .indexTZ from xts object"
 y <- coredata(x)
 expect_identical(NULL, attr(y, "tzone"), info = info_msg)
 expect_identical(NULL, attr(y, ".indexTZ"), info = info_msg)
 
-info_msg <- "test.get_xtsAttributes_excludes_tzone_indexTZ"
+info_msg <- "xtsAttributes(x) does not include tzone or .indexTZ"
 y <- xtsAttributes(x)
 expect_identical(NULL, y$tzone, info = info_msg)
 expect_identical(NULL, y$.indexTZ, info = info_msg)
 
-info_msg <- "test.set_xtsAttributes_removes_tzone_indexTZ"
+info_msg <- "xtsAttributes(x) <- 'foo' removes tzone and .indexTZ"
 y <- x
 xtsAttributes(y) <- xtsAttributes(x)
 expect_identical(NULL, attr(y, "tzone"), info = info_msg)
 expect_identical(NULL, attr(y, ".indexTZ"), info = info_msg)
 
-info_msg <- "test.set_tzone_default_always_character"
+info_msg <- "tzone(x) <- `foo` always creates a character tzone"
 x <- "hello"
 tzone(x) <- 1
 expect_identical(storage.mode(attr(x, "tzone")), "character", info = info_msg)
 
-info_msg <- "test.tzone_matches_input_for_zero_width_subset"
+info_msg <- "zero-width subset has the same tzone as the input"
 target <- "Ima/Tzone"
 x <- .xts(1:10, 1:10, tzone = target)
 y <- x[,0]
