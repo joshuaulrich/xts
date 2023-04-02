@@ -130,12 +130,13 @@ check.TZ <- function(x, ...)
   }
 
   x_tz <- tzone(x)
+  x_tclass <- tclass(x)
 
-  if (any(tclass(x) %in% .classesWithoutTZ)) {
+  if (any(x_tclass %in% .classesWithoutTZ)) {
     # warn if tzone is not UTC or GMT (GMT is not technically correct, since
     # it *is* a timezone, but it should work for all practical purposes)
     if (!isUTC(x_tz)) {
-      warning(paste0("object index class (", paste(tclass(x), collapse = ", "),
+      warning(paste0("object index class (", paste(x_tclass, collapse = ", "),
         ") does not support timezones.\nExpected 'UTC' timezone, but tzone is ",
         sQuote(x_tz)), call. = FALSE)
     } else {
@@ -146,7 +147,7 @@ check.TZ <- function(x, ...)
   x_tz_str <- as.character(x_tz)
   sys_tz <- Sys.getenv("TZ")
 
-  if (!is.null(tzone(x)) && x_tz_str != "" && !identical(sys_tz, x_tz_str)) {
+  if (!is.null(x_tz) && x_tz_str != "" && !identical(sys_tz, x_tz_str)) {
     msg <- paste0("object timezone (", x_tz, ") is different ",
                   "from system timezone (", sys_tz, ")")
 
