@@ -35,14 +35,20 @@ function(x, INDEX, FUN, ...)
       INDEX <- c(INDEX, NROW(x))
     }
 
-    xx <- sapply(1:(length(INDEX) - 1), function(y) {
-                   FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
-                })
-    if(is.vector(xx))
-      xx <- t(xx)
-    xx <- t(xx)
+    subsetFUN <- function(y, ...) {
+      FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
+    }
+    xx <- lapply(seq_len(length(INDEX) - 1), subsetFUN, ...)
+    xx <- do.call(rbind, xx)
+
+    if(is.xts(x) && !is.xts(xx)) {
+      # convert output to xts because input is xts
+      xx <- .xts(xx, .index(x)[INDEX], tclass(x), tzone(x))
+    }
+
     if(is.null(colnames(xx)) && NCOL(x)==NCOL(xx))
       colnames(xx) <- colnames(x)
+
     reclass(xx, x[INDEX])
 }
 

@@ -118,3 +118,73 @@ x <- xts(rnorm(10000), i - 10000:1 * 60)
 d <- to.daily(x)
 dateseq <- seq(as.Date("2013-01-29"), as.Date("2013-02-05"), "day")
 expect_equivalent(index(d), dateseq, info = info_msg)
+
+
+
+# results when function returns more than one row
+dates <- seq.Date(as.Date("2010-01-01"), as.Date("2013-12-01"), by = "month")
+x <- xts(cbind(seq_along(dates), rev(seq_along(dates))), dates)
+y <- x
+colnames(y) <- c("a", "b")
+sx <- split(x, "years")
+sy <- split(y, "years")
+
+# this should be the same as do.call(rbind, split(x, "years"))
+func <- cumsum  # function returns an xts object
+px <- apply.yearly(x, func)
+py <- apply.yearly(y, func)
+target_x <- do.call(rbind, lapply(sx, func))
+target_y <- do.call(rbind, lapply(sy, func))
+expect_equal(target_x, px, info = "function returns multi-column xts object w/o colnames")
+expect_equal(target_y, py, info = "function returns multi-column xts object w/colnames")
+
+# should return one row per endpoint, where index(output[i]) <- end(input[i]) with a column for each function output.
+func <- range  # function does *not* return an xts object
+px <- apply.yearly(x, range)
+py <- apply.yearly(y, range)
+years <- seq.Date(as.Date("2010-12-01"), as.Date("2013-12-01"), by = "years")
+target_x <- xts(do.call(rbind, lapply(sx, range)), years, dimnames = NULL)
+target_y <- xts(do.call(rbind, lapply(sy, range)), years, dimnames = list(NULL, colnames(y)))
+expect_equal(target_x, px, info = "function returns multi-column non-xts object w/o colnames")
+expect_equal(target_y, py, info = "function returns multi-column non-xts object w/colnames")
+
+## Always rbind() the rollapply() output if it's an xts object
+## TODO: How do we handle if it isn't an xts object?
+#roll_func <- function(x, bycol) {
+#  rollapply(x, 3, sum, fill = NA, by.column = bycol)
+#}
+#p1 <- apply.yearly(x, roll_func, bycol = TRUE)
+#t1 <- xts(do.call(rbind, lapply(sx, roll_func, bycol = TRUE)), dates, dimnames = NULL)
+#expect_equal(t1, p1, info = "rolling function returns multi-column non-xts object w/o colnames")
+#
+#p2 <- apply.yearly(x, roll_func, bycol = FALSE)
+#t2 <- xts(do.call(rbind, lapply(sx, roll_func, bycol = FALSE)), dates, dimnames = NULL)
+#expect_equal(t2, p2, info = "rolling function returns single-column non-xts object w/o colnames")
+#
+#p1 <- apply.yearly(y, roll_func, bycol = TRUE)
+#t1 <- xts(do.call(rbind, lapply(sy, roll_func, bycol = TRUE)), dates)
+#expect_equal(t1, p1, info = "rolling function returns multi-column non-xts object w/colnames")
+#
+#p2 <- apply.yearly(y, roll_func, bycol = FALSE)
+#t2 <- xts(do.call(rbind, lapply(sy, roll_func, bycol = FALSE)), dates, dimnames = NULL)
+#expect_equal(t2, p2, info = "rolling function returns single-column non-xts object w/colnames")
+#
+## rolling function returns multiple columns
+#roll_qtile <- function(x) {
+#    rollapply(x, 5, quantile, fill = NA, by.column = FALSE)
+#}
+#p1 <- apply.yearly(x, roll_qtile)
+#t1 <- xts(do.call(rbind, lapply(sx, roll_qtile)), dates)
+#expect_equal(t1, p1, info = "rolling function returns multi-column non-xts object w/colnames")
+#
+#
+#p1 <- apply.yearly(x, roll_func, bycol = TRUE)
+#p2 <- apply.yearly(y, roll_func, bycol = FALSE)
+#target_x <- xts(do.call(rbind, lapply(sx, roll_func, bycol = TRUE)), dates, dimnames = NULL)
+#target_y <- xts(do.call(rbind, lapply(sy, roll_func, bycol = FALSE)), years, dimnames = list(NULL, colnames(y)))
+#
+## always rbind() the result when FUN returns a 1-row matrix
+## . The index should be set to the last index value in the period.
+##p <- period.apply()
+#
+#
