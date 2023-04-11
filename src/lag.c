@@ -25,12 +25,6 @@
 #include <Rdefines.h>
 #include "xts.h"
 
-SEXP diffXts(SEXP x, SEXP lag, SEXP diff, SEXP arith, SEXP nap, SEXP dots)
-{
-  return R_NilValue;
-}
-
-
 SEXP lagXts(SEXP x, SEXP k, SEXP pad)
 {
   SEXP result;
