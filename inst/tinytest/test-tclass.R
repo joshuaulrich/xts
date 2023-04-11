@@ -63,4 +63,5 @@ expect_equal(target, tclass(y))
 
 info_msg <- "tclass() on object with no tclass/.indexCLASS returns POSIXct"
 x <- structure(1:5, .Dim = c(5L, 1L), index = 1:5, class = c("xts", "zoo"))
-expect_identical(c("POSIXct", "POSIXt"), tclass(x))
+expect_warning(xtc <- tclass(x), "index does not have a 'tclass' attribute")
+expect_identical(c("POSIXct", "POSIXt"), xtc)
