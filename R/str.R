@@ -66,7 +66,8 @@ function(object, ..., ncols = 5)
     } else {
       header <- "An xts object on"
     }
-    header <- paste(header, .makeISO8601(object), "containing:")
+    time.range <- sub("/", " / ", .makeISO8601(object), fixed = TRUE)
+    header <- paste(header, time.range, "containing:")
   }
 
   cat(header, "\n")
