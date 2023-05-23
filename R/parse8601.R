@@ -39,7 +39,7 @@
 # Copyright 2009. Jeffrey A. Ryan. All rights reserved.
 # This is licensed under the GPL version 2 or later
 .makeISO8601 <- function(x) {
-  paste(start(x), end(x), sep = " / ")
+  paste(start(x), end(x), sep = "/")
 }
 
 .parseISO8601 <- function(x, start, end, tz="") {
