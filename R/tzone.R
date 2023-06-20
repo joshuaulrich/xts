@@ -148,13 +148,13 @@ check.TZ <- function(x, ...)
   sys_tz <- Sys.getenv("TZ")
 
   if (!is.null(x_tz) && x_tz_str != "" && !identical(sys_tz, x_tz_str)) {
-    msg <- paste0("object timezone (", x_tz, ") is different ",
-                  "from system timezone (", sys_tz, ")")
+    msg <- paste0("object timezone ('", x_tz, "') is different ",
+                  "from system timezone ('", sys_tz, "')")
 
     if (is.null(check)) {
       # xts_check_TZ is NULL by default
       # set to TRUE after messaging user how to disable the warning
-      msg <- paste0(msg, "\n  NOTE: set 'options(xts_check_TZ = FALSE)'",
+      msg <- paste0(msg, "\n  NOTE: set 'options(xts_check_TZ = FALSE)' ",
                     "to disable this warning\n",
                     "    This note is displayed once per session")
       options(xts_check_TZ = TRUE)
