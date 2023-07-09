@@ -40,3 +40,9 @@ expect_identical(p, x, info = "returns input invisibly")
 
 z <- .xts(matrix(0, nrow = 200, ncol = 200), 1:200)
 expect_silent(print(z), info = "print more columns than width doesn't error")
+
+expect_silent(print(x, quote = TRUE),
+              info = "print.xts() does not error when 'quote' argument is used")
+
+expect_silent(print(x, right = TRUE),
+              info = "print.xts() does not error when 'right' argument is used")

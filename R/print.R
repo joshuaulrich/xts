@@ -30,6 +30,8 @@ print.xts <-
   nr <- NROW(x)
   nc <- NCOL(x)
 
+  dots <- list(...)
+
   if (missing(max.rows)) {
     # the user didn't specify a value; use the global option value if it's
     # set; if it's not set, use the default value
@@ -43,9 +45,8 @@ print.xts <-
       show.rows <- 0
     } else {
       # convert 'max' to 'show.rows'
-      max.arg <- match.call()$max
-      if (!is.null(max.arg)) {
-        show.rows <- trunc(max.arg / nc)
+      if (!is.null(dots$max)) {
+        show.rows <- trunc(dots$max / nc)
       }
     }
   } else if (missing(show.rows)) {
@@ -62,10 +63,10 @@ print.xts <-
   }
 
   if (!hasArg("quote")) {
-    quote <- FALSE
+    dots$quote <- FALSE
   }
   if (!hasArg("right")) {
-    right <- TRUE
+    dots$right <- TRUE
   }
 
   if (nr > max.rows && nr > 2 * show.rows) {
@@ -127,7 +128,7 @@ print.xts <-
       colnames(y) <- paste0("[,", seq_len(ncol(y)), "]")
     }
 
-    print(y, quote = quote, right = right, ...)
+    do.call("print", c(list(y), dots))
   }
 
   invisible(x)
