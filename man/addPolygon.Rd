@@ -21,6 +21,20 @@ addPolygon(x, y = NULL, main = "", on = NA, col = NULL, ...)
   \item{col}{color palette to use, set by default to rational choices.}
   \item{\dots}{passthru parameters to \code{\link{par}}}
 }
+\examples{
+\dontrun{
+library(xts)
+data(sample_matrix)
+x <- as.xts(sample_matrix)[,1]
+ix <- index(x["2007-02"])
+shade <- xts(matrix(rep(range(x), each = length(ix)), ncol = 2), ix)
+
+plot(x)
+
+# set on = -1 to draw the shaded region *behind* the main series
+addPolygon(shade, on = -1, col = "lightgrey")
+}
+}
 \references{
 Based on code by Dirk Eddelbuettel from \url{http://dirk.eddelbuettel.com/blog/2011/01/16/}
 }
