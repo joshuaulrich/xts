@@ -1023,20 +1023,27 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   lenv$plot_lines <- function(x, ta, on, col, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
+    xDataSubset <- xdata[xsubset]
     if(is.null(col)) col <- x$Env$theme$col
     if(all(is.na(on))){
       # Add x-axis grid lines
-      x$Env$x_grid_lines(xdata[xsubset], x$Env$grid.ticks.on, par("usr")[3:4])
+      x$Env$x_grid_lines(xDataSubset, x$Env$grid.ticks.on, par("usr")[3:4])
     }
     # we can add points that are not necessarily at the points
-    # on the main series
-    subset.range <- paste(start(xdata[xsubset]),
-                          end(xdata[xsubset]),sep="/")
-    ta.adj <- merge(n=.xts(1:NROW(xdata[xsubset]),
-                           .index(xdata[xsubset]), 
-                           tzone=tzone(xdata)),ta)[subset.range]
+    # on the main series, but need to ensure the new series only
+    # has index values within the xdata subset
+    if(xsubset == "") {
+      subset.range <- xsubset
+    } else {
+      fmt <- "%Y-%m-%d %H:%M:%OS6"
+      subset.range <- paste(format(start(xDataSubset), fmt),
+                            format(end(xDataSubset), fmt), sep = "/")
+    }
+
+    xds <- .xts(, .index(xDataSubset), tzone=tzone(xdata))
+    ta.y <- merge(ta, xds)[subset.range]
     # NAs in the coordinates break the polygon which is not the behavior we want
-    ta.y <- na.omit(ta.adj[,-1])
+    ta.y <- na.omit(ta.y)
     
     # x coordinates
     n <- seq_len(NROW(ta.y))
