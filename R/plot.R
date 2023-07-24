@@ -1038,9 +1038,10 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     # NAs in the coordinates break the polygon which is not the behavior we want
     ta.y <- na.omit(ta.adj[,-1])
     
-    n <- NROW(ta.y)
     # x coordinates
-    xx <- .index(ta.y)[c(1,1:n,n:1)]
+    n <- seq_len(NROW(ta.y))
+    xx <- x$get_xcoords(ta.y)[c(1, n, rev(n))]
+
     # y coordinates upper and lower
     # assume first column is upper and second column is lower y coords for
     # initial prototype
