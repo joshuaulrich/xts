@@ -18,9 +18,36 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+.mean_by_column_message <-
+function(caller)
+{
+    if (getOption("xts.message.period.apply.mean", TRUE)) {
+        message("NOTE: `", caller, "(..., FUN = mean)` operates by column, unlike other math\n  ",
+                "functions (e.g. median, sum, var, sd). Please use `FUN = colMeans` instead,\n  ",
+                "and use `FUN = function(x) mean(x)` to take the mean of all columns. Set\n  ",
+                "`options(xts.message.period.apply.mean = FALSE)` to suppress this message.")
+    }
+
+    # changing this behavior will break code in the following dependencies:
+    #
+    # ATAforecasting/R/ATA_Find_Multi_Freq.R
+    # bidask/R/utils.R
+    # dsa/R/HelperFunctions.R # {.tomonth}
+    # RavenR/inst/doc/Introduction_to_RavenR.R
+    # RavenR/inst/doc/Introduction_to_RavenR.Rmd
+    # RavenR/R/rvn_apply_wyearly.R
+    # RavenR/R/rvn_monthly_vbias.R
+    # rts/man/apply.monthly.Rd
+    # rts/man/period.apply.Rd
+    # RWDataPlyr/R/xts_helperFunctions.R
+}
+
 `period.apply` <-
 function(x, INDEX, FUN, ...)
 {
+    if (deparse(substitute(FUN)) == "mean") {
+      .mean_by_column_message("period.apply")
+    }
     x <- try.xts(x, error = FALSE)
     FUN <- match.fun(FUN)
 
@@ -74,12 +101,18 @@ function (x, INDEX, FUN, ...)
 `apply.daily` <-
 function(x,FUN, ...)
 {
+  if (deparse(substitute(FUN)) == "mean") {
+    .mean_by_column_message("apply.daily")
+  }
   ep <- endpoints(x,'days')
   period.apply(x,ep,FUN, ...)
 }
 `apply.weekly` <-
 function(x,FUN, ...)
 {
+  if (deparse(substitute(FUN)) == "mean") {
+    .mean_by_column_message("apply.weekly")
+  }
   ep <- endpoints(x,'weeks')
   period.apply(x,ep,FUN, ...)
 }
@@ -87,6 +120,9 @@ function(x,FUN, ...)
 `apply.monthly` <-
 function(x,FUN, ...)
 {
+  if (deparse(substitute(FUN)) == "mean") {
+    .mean_by_column_message("apply.monthly")
+  }
   ep <- endpoints(x,'months')
   period.apply(x,ep,FUN, ...)
 }
@@ -94,6 +130,9 @@ function(x,FUN, ...)
 `apply.quarterly` <-
 function(x,FUN, ...)
 {
+  if (deparse(substitute(FUN)) == "mean") {
+    .mean_by_column_message("apply.quarterly")
+  }
   ep <- endpoints(x,'quarters')
   period.apply(x,ep,FUN, ...)
 }
@@ -101,6 +140,9 @@ function(x,FUN, ...)
 `apply.yearly` <-
 function(x,FUN, ...)
 {
+  if (deparse(substitute(FUN)) == "mean") {
+    .mean_by_column_message("apply.yearly")
+  }
   ep <- endpoints(x,'years')
   period.apply(x,ep,FUN, ...)
 }

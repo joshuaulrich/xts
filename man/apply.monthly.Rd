@@ -34,6 +34,23 @@ Essentially a wrapper to the \pkg{xts} functions
 \code{endpoints} and \code{period.apply}, mainly as
 a convenience.
 }
+\note{
+  When \code{FUN = mean} the results will contain one column for every column
+  in the input, which is different from other math functions (e.g. \code{median},
+  \code{sum}, \code{prod}, \code{sd}, etc.).
+
+  \code{FUN = mean} works by column because the default method \code{stats::mean}
+  used to work by column for matrices and data.frames. R Core changed the
+  behavior of \code{mean} to always return one column in order to be consistent
+  with the other math functions. This broke some \pkg{xts} dependencies and
+  \code{mean.xts} was created to maintain the original behavior.
+
+  Using \code{FUN = mean} will print a message that describes this inconsistency.
+  To avoid the message and confusion, use \code{FUN = colMeans} to calculate
+  means by column and use \code{FUN = function(x) mean} to calculate one mean
+  for all the data. Set \code{options(xts.message.period.apply.mean = FALSE)}
+  to suppress this message.
+}
 \value{
 A vector of results produced by \code{FUN}, corresponding
 to the appropriate periods.
@@ -47,7 +64,7 @@ xts.ts <- xts(rnorm(231),as.Date(13514:13744,origin="1970-01-01"))
 start(xts.ts)
 end(xts.ts)
 
-apply.monthly(xts.ts,mean)
+apply.monthly(xts.ts,colMeans)
 apply.monthly(xts.ts,function(x) var(x))
 }
 \keyword{ utilities }

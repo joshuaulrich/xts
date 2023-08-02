@@ -30,6 +30,23 @@ intervals. For example, when \code{INDEX} is the result of a call to
 0, and ends with \code{NROW(x)}. All those conditions are true of vectors
 returned by \code{endpoints()}.
 }
+\note{
+  When \code{FUN = mean} the results will contain one column for every column
+  in the input, which is different from other math functions (e.g. \code{median},
+  \code{sum}, \code{prod}, \code{sd}, etc.).
+
+  \code{FUN = mean} works by column because the default method \code{stats::mean}
+  used to work by column for matrices and data.frames. R Core changed the
+  behavior of \code{mean} to always return one column in order to be consistent
+  with the other math functions. This broke some \pkg{xts} dependencies and
+  \code{mean.xts} was created to maintain the original behavior.
+
+  Using \code{FUN = mean} will print a message that describes this inconsistency.
+  To avoid the message and confusion, use \code{FUN = colMeans} to calculate
+  means by column and use \code{FUN = function(x) mean} to calculate one mean
+  for all the data. Set \code{options(xts.message.period.apply.mean = FALSE)}
+  to suppress this message.
+}
 \value{
 An object with \code{length(INDEX) - 1} observations (assuming \code{INDEX}
 starts with 0 and ends with \code{NROW(x)}).
@@ -39,8 +56,8 @@ starts with 0 and ends with \code{NROW(x)}).
 \examples{
 zoo.data <- zoo(rnorm(31)+10,as.Date(13514:13744,origin="1970-01-01"))
 ep <- endpoints(zoo.data,'weeks')
-period.apply(zoo.data, INDEX=ep, FUN=function(x) mean(x))
-period.apply(zoo.data, INDEX=ep, FUN=mean)                  #same
+period.apply(zoo.data, INDEX=ep, FUN=function(x) colMeans(x))
+period.apply(zoo.data, INDEX=ep, FUN=colMeans)                  #same
 
 period.apply(letters,c(0,5,7,26), paste0)
 }

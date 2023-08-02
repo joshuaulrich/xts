@@ -9,59 +9,59 @@
 info_msg <- "test.duplicate_INDEX"
 x <- .xts(1:10, 1:10)
 ep <- c(0, 2, 4, 6, 8, 10)
-nodup <- period.apply(x, ep, mean)
-dup <- period.apply(x, c(ep, 10), mean)
+nodup <- period.apply(x, ep, sum)
+dup <- period.apply(x, c(ep, 10), sum)
 expect_identical(nodup, dup, info = info_msg)
 
 info_msg <- "test.duplicate_INDEX_vector"
 x <- 1:10
 ep <- c(0, 2, 4, 6, 8, 10)
-nodup <- period.apply(x, ep, mean)
-dup <- period.apply(x, c(ep, 10), mean)
+nodup <- period.apply(x, ep, sum)
+dup <- period.apply(x, c(ep, 10), sum)
 expect_identical(nodup, dup, info = info_msg)
 
 info_msg <- "test.unsorted_INDEX"
 x <- .xts(1:10, 1:10)
 ep.s <- c(2, 4, 6, 8)
 ep.u <- sample(ep.s)
-s <- period.apply(x, c(0, ep.s, 10), mean)
-u <- period.apply(x, c(0, ep.u, 10), mean)
+s <- period.apply(x, c(0, ep.s, 10), sum)
+u <- period.apply(x, c(0, ep.u, 10), sum)
 expect_identical(s, u, info = info_msg)
 
 info_msg <- "test.unsorted_INDEX_vector"
 x <- 1:10
 ep.s <- c(2, 4, 6, 8)
 ep.u <- sample(ep.s)
-s <- period.apply(x, c(0, ep.s, 10), mean)
-u <- period.apply(x, c(0, ep.u, 10), mean)
+s <- period.apply(x, c(0, ep.s, 10), sum)
+u <- period.apply(x, c(0, ep.u, 10), sum)
 expect_identical(s, u, info = info_msg)
 
 info_msg <- "test.INDEX_starts_with_zero"
 x <- .xts(1:10, 1:10)
 ep <- c(2, 4, 6, 8, 10)
-a <- period.apply(x, ep, mean)
-z <- period.apply(x, c(0, ep), mean)
+a <- period.apply(x, ep, sum)
+z <- period.apply(x, c(0, ep), sum)
 expect_identical(a, z, info = info_msg)
 
 info_msg <- "test.INDEX_starts_with_zero_vector"
 x <- 1:10
 ep <- c(2, 4, 6, 8, 10)
-a <- period.apply(x, ep, mean)
-z <- period.apply(x, c(0, ep), mean)
+a <- period.apply(x, ep, sum)
+z <- period.apply(x, c(0, ep), sum)
 expect_identical(a, z, info = info_msg)
 
 info_msg <- "test.INDEX_ends_with_lengthX"
 x <- .xts(1:10, 1:10)
 ep <- c(0, 2, 4, 6, 8)
-a <- period.apply(x, ep, mean)
-z <- period.apply(x, c(ep, 10), mean)
+a <- period.apply(x, ep, sum)
+z <- period.apply(x, c(ep, 10), sum)
 expect_identical(a, z, info = info_msg)
 
 info_msg <- "test.INDEX_ends_with_lengthX_vector"
 x <- 1:10
 ep <- c(0, 2, 4, 6, 8)
-a <- period.apply(x, ep, mean)
-z <- period.apply(x, c(ep, 10), mean)
+a <- period.apply(x, ep, sum)
+z <- period.apply(x, c(ep, 10), sum)
 expect_identical(a, z, info = info_msg)
 
 # check specific period.* functions
@@ -118,3 +118,10 @@ x <- xts(rnorm(10000), i - 10000:1 * 60)
 d <- to.daily(x)
 dateseq <- seq(as.Date("2013-01-29"), as.Date("2013-02-05"), "day")
 expect_equivalent(index(d), dateseq, info = info_msg)
+
+# message for FUN = mean
+expect_message(period.apply(x, e, mean), pattern = "period\\.apply\\(..., FUN = mean\\)")
+expect_message(apply.daily(x, mean), pattern = "apply\\.daily\\(..., FUN = mean\\)")
+expect_message(apply.monthly(x, mean), pattern = "apply\\.monthly\\(..., FUN = mean\\)")
+expect_message(apply.quarterly(x, mean), pattern = "apply\\.quarterly\\(..., FUN = mean\\)")
+expect_message(apply.yearly(x, mean), pattern = "apply\\.yearly\\(..., FUN = mean\\)")

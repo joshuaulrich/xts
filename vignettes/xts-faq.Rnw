@@ -172,9 +172,9 @@ You can use \code{apply.daily}, or \code{period.apply} more generally:
 <<>>=
 sample.xts <- xts(1:50, seq(as.POSIXct("1970-01-01"),
   as.POSIXct("1970-01-03")-1, length=50))
-apply.daily(sample.xts, mean)
-period.apply(sample.xts, endpoints(sample.xts, "days"), mean)
-period.apply(sample.xts, endpoints(sample.xts, "hours", 6), mean)
+apply.daily(sample.xts, colMeans)
+period.apply(sample.xts, endpoints(sample.xts, "days"), colMeans)
+period.apply(sample.xts, endpoints(sample.xts, "hours", 6), colMeans)
 @
 
 \q{How can I process daily data for a specific time subset?}
@@ -183,7 +183,7 @@ First use time-of-day subsetting to extract the time range you want to work on (
 the leading \code{"T"} and leading zeros are required for each time in the range:
 \code{"T06:00"}), then use \code{apply.daily} to apply your function to the subset:
 <<eval=FALSE>>=
-apply.daily(sample.xts['T06:00/T17:00',], mean)
+apply.daily(sample.xts['T06:00/T17:00',], colMeans)
 @
 
 \q{How can I analyze my irregular data in regular blocks, adding observations
