@@ -119,7 +119,7 @@ function(x, value) {
 
   # all index related meta-data will be stored in the index
   # as attributes
-  if(any(value %in% .classesWithoutTZ)) {
+  if(isClassWithoutTZ(value)) {
     attr(attr(x,'index'), 'tzone') <- 'UTC'
   }
   attr(attr(x,'index'), 'tclass') <- value

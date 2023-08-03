@@ -104,7 +104,19 @@ function(x, ...)
   return(tzone)
 }
 
-.classesWithoutTZ <- c("chron","dates","times","Date","yearmon","yearqtr")
+isClassWithoutTZ <-
+function(tclass, object = NULL)
+{
+  .classesWithoutTZ <- c("chron","dates","times","Date","yearmon","yearqtr")
+  has_no_tz <- FALSE
+
+  if (is.null(object)) {
+    has_no_tz <- any(tclass %in% .classesWithoutTZ)
+  } else {
+    has_no_tz <- inherits(object, .classesWithoutTZ)
+  }
+  return(has_no_tz)
+}
 
 isUTC <- function(tz = NULL) {
   if (is.null(tz)) {
@@ -132,7 +144,7 @@ check.TZ <- function(x, ...)
   x_tz <- tzone(x)
   x_tclass <- tclass(x)
 
-  if (any(x_tclass %in% .classesWithoutTZ)) {
+  if (isClassWithoutTZ(x_tclass)) {
     # warn if tzone is not UTC or GMT (GMT is not technically correct, since
     # it *is* a timezone, but it should work for all practical purposes)
     if (!isUTC(x_tz)) {

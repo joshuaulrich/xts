@@ -145,7 +145,7 @@ function(x=NULL,
       tzone. <- attr(order.by, "tzone")
     }
   }
-  if(inherits(order.by, .classesWithoutTZ)) {
+  if(isClassWithoutTZ(object = order.by)) {
       if((hasArg(".indexTZ") || hasArg("tzone")) && !isUTC(tzone.)) {
         warning(paste(sQuote('tzone'),"setting ignored for ",
                       paste(class(order.by), collapse=", "), " indexes"))
@@ -251,7 +251,7 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
       tzone. <- attr(index, "tzone")
     }
   }
-  if(inherits(index, .classesWithoutTZ)) {
+  if(isClassWithoutTZ(object = index)) {
       if((hasArg(".indexTZ") || hasArg("tzone")) && !isUTC(tzone.)) {
         warning(paste(sQuote('tzone'),"setting ignored for ",
                       paste(class(index), collapse=", "), " indexes"))

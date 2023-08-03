@@ -219,7 +219,7 @@ function(x) {
       index(x) <- as.Date(as.POSIXlt(index(x)))
       tclass(x) <- "Date"  # set tclass to Date
     }
-    if(any(tclass(x) %in% .classesWithoutTZ)) {
+    if(isClassWithoutTZ(tclass(x))) {
       tzone(x) <- "UTC"  # set tzone to UTC
     }
     # force conversion, even if we didn't set tclass to Date

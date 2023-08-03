@@ -91,7 +91,7 @@ function(x, ...) {
   attr(attr(x, 'index'), 'tclass') <- class(value)
 
   # set tzone attribute
-  if(any(class(value) %in% .classesWithoutTZ)) {
+  if(isClassWithoutTZ(object = value)) {
     attr(attr(x, 'index'), 'tzone') <- 'UTC'
   } else {
     if (is.null(attr(value, 'tzone'))) {
