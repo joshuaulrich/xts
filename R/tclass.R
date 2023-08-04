@@ -124,6 +124,12 @@ function(x, value) {
   }
   attr(attr(x,'index'), 'tclass') <- value
 
+  x_has_tz <- !isClassWithoutTZ(x)
+  if(x_has_tz && isClassWithoutTZ(value)) {
+    # update index values to midnight UTC (this also changes the tzone)
+    index(x) <- index(x)
+  }
+
   # Remove class attrs (object created before 0.10-3)
   attr(x, ".indexCLASS") <- NULL
   attr(x, "tclass") <- NULL

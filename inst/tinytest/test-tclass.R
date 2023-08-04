@@ -65,3 +65,9 @@ info_msg <- "tclass() on object with no tclass/.indexCLASS returns POSIXct"
 x <- structure(1:5, .Dim = c(5L, 1L), index = 1:5, class = c("xts", "zoo"))
 expect_warning(xtc <- tclass(x), "index does not have a 'tclass' attribute")
 expect_identical(c("POSIXct", "POSIXt"), xtc)
+
+info_msg <- "tclass<-() updates index"
+x <- xts(1, .POSIXct(14400, tz = "Europe/Berlin"))
+tclass(x) <- "Date"
+expect_identical(as.numeric(.index(x)), 0, info = paste(info_msg, "values"))
+expect_identical(tzone(x), "UTC", info = paste(info_msg, "timezone"))
