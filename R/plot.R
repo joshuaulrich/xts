@@ -668,23 +668,30 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
   lenv$ylim <- ylim
   
   if(is.na(on[1])){
-    # small header
-    plot_object$add_frame(ylim = c(0, 1), asp = 0.25, is_header = TRUE)
-    plot_object$add_header("small", lenv)
-    
-    # add frame for the data
-    plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
-    
-    # y-axis grid lines and left and/or right labels
-    exp <- c(exp, plot_object$yaxis_expr(ylim,
-                                         plot_object$Env$theme$lylab,
-                                         plot_object$Env$theme$rylab))
+    # add series to a new panel
+    this_panel <-
+      plot_object$new_panel(structure(lenv$ylim, fixed = TRUE),
+                            asp = 1,
+                            header_type = "small",
+                            envir = lenv)
 
-    plot_object$add_action(exp, env = lenv, no.update = TRUE)
+    # add y-axis grid lines and left and/or right labels
+    exp <- c(exp,
+             plot_object$yaxis_expr(ylim,
+                                    plot_object$Env$theme$lylab,
+                                    plot_object$Env$theme$rylab))
+
+    # plot data
+    this_panel$add_action(exp, env = lenv, no.update = TRUE)
+
+    # add the panel to the chart
+    plot_object$add_panel(this_panel)
+
   } else {
-    for(i in 1:length(on)) {
-      plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add_action(exp, env = lenv)
+    for(i in seq_along(on)) {
+      # this uses a header by default; should it be optional?
+      this_panel <- plot_object$get_panel(on)
+      this_panel$add_action(exp, env = lenv)
     }
   }
   plot_object
@@ -998,7 +1005,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   set_ylim  <- function(ylim) { Env$ylim <<- ylim }
 
   # getters
-  get_panel <- function(panel) { Env$panel }
+  get_panel <- function(n) { Env$panels[[n]] }
   get_ylim  <- function() { update_panels(); Env$panels[[Env$panel]][["ylim"]] }
   
   create_ylim <-
