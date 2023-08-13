@@ -472,85 +472,67 @@ plot.xts <- function(x,
   cs$add_panel(main_panel)
   
   if(isTRUE(multi.panel)){
-    # We need to plot the first "panel" here because the plot area is
-    # set up based on the code above
-    lenv <- cs$new_environment()
-    lenv$xdata <- cs$Env$xdata[subset,1]
-    lenv$label <- colnames(cs$Env$xdata[,1])
-    lenv$type <- cs$Env$type
-    if(yaxis.same){
-      lenv$ylim <- cs$Env$constant_ylim
-    } else {
-      lenv$ylim <- cs$create_ylim(cs$Env$xdata[subset, 1])
-    }
-    
-    exp <- quote(chart.lines(xdata,
-                             type=type, 
-                             lty=lty,
-                             lwd=lwd,
-                             lend=lend,
-                             col=theme$col, 
-                             up.col=theme$up.col, 
-                             dn.col=theme$dn.col,
-                             legend.loc=legend.loc))
-    exp <- as.expression(add.par.from.dots(exp, ...))
 
-    # Add expression for the main plot
-    cs$add_action(exp, env = lenv)
-    # major header
-    cs$add_header("multi.panel", lenv)
-    
-    if(NCOL(cs$Env$xdata) > 1){
-      for(i in 2:NCOL(cs$Env$xdata)){
-        # create a local environment
-        lenv <- cs$new_environment()
-        lenv$xdata <- cs$Env$xdata[subset,i]
-        lenv$label <- cs$Env$column_names[i]
-        if(yaxis.same){
-          lenv$ylim <- cs$Env$constant_ylim
-        } else {
-          lenv$ylim <- cs$create_ylim(cs$Env$xdata[subset, i])
-        }
-        lenv$type <- cs$Env$type
-        
-        # allow color and line attributes for each panel in a multi.panel plot
-        lenv$lty <- cs$Env$lty[i]
-        lenv$lwd <- cs$Env$lwd[i]
-        lenv$col <- cs$Env$theme$col[i]
-        
-        # Add a small frame
-        cs$add_frame(ylim = c(0, 1), asp = 0.25, is_header = TRUE)
+    n_cols <- NCOL(cs$Env$xdata)
 
-        text.exp <- expression(text(x=xlim[1],
-                                    y=0.5,
-                                    labels="",
-                                    adj=c(0,0),cex=0.9,offset=0,pos=4))
-        cs$add_action(text.exp, env = lenv)
-        
-        # Add the frame for the sub-plots
-        cs$add_frame(ylim=lenv$ylim, asp=NCOL(cs$Env$xdata), fixed=TRUE)
-        
-        exp <- quote(chart.lines(xdata[xsubset],
-                                 type=type, 
-                                 lty=lty,
-                                 lwd=lwd,
-                                 lend=lend,
-                                 col=col, 
-                                 up.col=theme$up.col, 
-                                 dn.col=theme$dn.col,
-                                 legend.loc=legend.loc))
-        exp <- as.expression(add.par.from.dots(exp, ...))
-        
-        # x-axis grid lines
-        exp <- c(exp, expression(x_grid_lines(xdata[xsubset], grid.ticks.on, ylim)))
+    for(i in seq_len(n_cols)) {
+      # create a local environment
+      lenv <- cs$new_environment()
+      lenv$xdata <- cs$Env$xdata[subset,i]
+      lenv$label <- cs$Env$column_names[i]
+      lenv$type <- cs$Env$type
+      if(yaxis.same){
+        yrange <- cs$Env$constant_ylim
+        yrange <- structure(yrange, fixed = FALSE)
+      } else {
+        yrange <- cs$create_ylim(cs$Env$xdata[subset, i])
+        yrange <- structure(yrange, fixed = TRUE)
+      }
+      lenv$ylim <- yrange
 
-        # y-axis grid lines and left and/or right labels
-        exp <- c(exp, cs$yaxis_expr(ylim, yaxis.left, yaxis.right))
+      # allow color and line attributes for each panel in a multi.panel plot
+      lenv$lty <- cs$Env$lty[i]
+      lenv$lwd <- cs$Env$lwd[i]
+      lenv$col <- cs$Env$theme$col[i]
 
-        cs$add_action(exp, env = lenv, no.update = TRUE)
+      exp <- quote(chart.lines(xdata[xsubset],
+                               type=type,
+                               lty=lty,
+                               lwd=lwd,
+                               lend=lend,
+                               col=col,
+                               up.col=theme$up.col,
+                               dn.col=theme$dn.col,
+                               legend.loc=legend.loc))
+      exp <- as.expression(add.par.from.dots(exp, ...))
 
-        # major header
-        cs$add_header("multi.panel", lenv)
+      if (i == 1) {
+        # plot the main panel, which is already set up
+        main_panel$add_action(exp, env = lenv, no.update = TRUE)
+
+      } else {
+        # plot the remaining remaining panels
+        this_panel <-
+          cs$new_panel(lenv$ylim,
+                       asp = n_cols,
+                       header_type = "multi.panel",
+                       title_timespan = main.timespan)
+
+        # add y-axis grid and left and/or right labels to the panel
+        yaxis_expr <- cs$yaxis_expr(get_ylim(), yaxis.left, yaxis.right)
+        this_panel$add_action(yaxis_expr)
+
+        # add x-axis grid, ticks, and labels to the panel
+        xaxis_expr <-
+          cs$xaxis_expr(use_major = !isNullOrFalse(major.ticks),
+                        use_minor = !isNullOrFalse(minor.ticks))
+        this_panel$add_action(xaxis_expr)
+
+        # plot data
+        this_panel$add_action(exp, env = lenv, no.update = TRUE)
+
+        # add the panel to the chart
+        cs$add_panel(this_panel)
       }
     }
   } else {
@@ -1193,12 +1175,12 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
               header_expr <-
                   expression({
                       text(x = get_xcoords()[2],
-                           y = 0.9 * ylim[2] + 0.1 * ylim[1],
-                           labels = label,
+                           y = 0.5,
+                           labels = "",
                            adj = c(0, 0),
                            pos = 4,
                            offset = 0,
-                           cex = 1,
+                           cex = 0.9,
                            col = theme$labels,
                            font = NULL)
                   })
