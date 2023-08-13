@@ -741,7 +741,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
       # Add x-axis grid lines
       x$Env$x_grid_lines(xdata[xsubset], x$Env$grid.ticks.on, par("usr")[3:4])
     }
-    ypos <- x$Env$panels[[2*on]]$ylim[2] * 0.995
+    ypos <- x$get_panel(on)$ylim[2] * 0.995
     # we can add points that are not necessarily at the points on the main series
     subset.range <-
       paste(format(start(xdata[xsubset]), "%Y%m%d %H:%M:%OS6"),
@@ -784,24 +784,30 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     lenv$xdata <- xdata
     ylim <- range(xdata[xsubset], na.rm=TRUE)
     lenv$ylim <- ylim
-    
-    # small header
-    plot_object$add_frame(ylim = c(0, 1), asp = 0.25, is_header = TRUE)
-    plot_object$add_header("small", lenv)
-    
-    # add frame for the data
-    plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
-    
-    # y-axis grid lines and left and/or right labels
-    exp <- c(exp, plot_object$yaxis_expr(ylim,
-                                         plot_object$Env$theme$lylab,
-                                         plot_object$Env$theme$rylab))
 
-    plot_object$add_action(exp, env = lenv, no.update = TRUE)
+    # add series to a new panel
+    this_panel <-
+      plot_object$new_panel(structure(lenv$ylim, fixed = TRUE),
+                            asp = 1,
+                            header_type = "small",
+                            envir = lenv)
+
+    # add y-axis grid lines and left and/or right labels
+    exp <- c(exp,
+             plot_object$yaxis_expr(ylim,
+                                    plot_object$Env$theme$lylab,
+                                    plot_object$Env$theme$rylab))
+
+    # plot data
+    this_panel$add_action(exp, env = lenv, no.update = TRUE)
+
+    # add the panel to the chart
+    plot_object$add_panel(this_panel)
+
   } else {
-    for(i in 1:length(on)) {
-      plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add_action(exp, env = lenv)
+    for(i in seq_along(on)) {
+      this_panel <- plot_object$get_panel(on)
+      this_panel$add_action(exp, env = lenv)
     }
   }
   plot_object
@@ -821,7 +827,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     if(is.na(on[1])){
       yrange <- c(0, 1)
     } else {
-      yrange <- x$Env$panels[[2*on]]$ylim
+      yrange <- x$get_panel(on)$ylim
     }
     # this just gets the data of the main plot
     # TODO: get the data of panels[on]
@@ -865,19 +871,23 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
 
   # if on[1] is NA, then add a new frame for the legend
   if(is.na(on[1])){
-    # small header
-    plot_object$add_frame(ylim = c(0, 1), asp = 0.25, is_header = TRUE)
-    plot_object$add_header("small", lenv)
-    
-    # add frame for the legend panel
-    plot_object$add_frame(ylim=c(0,1),asp=0.8,fixed=TRUE)
-    
-    # add plot_legend expression
-    plot_object$add_action(exp, env = lenv, no.update = TRUE)
+
+    # add legend to a new panel
+    this_panel <-
+      plot_object$new_panel(structure(c(0, 1), fixed = TRUE),
+                            asp = 0.8,
+                            header_type = "small",
+                            envir = lenv)
+
+    # legend data
+    this_panel$add_action(exp, env = lenv, no.update = TRUE)
+
+    # add the panel to the chart
+    plot_object$add_panel(this_panel)
   } else {
-    for(i in 1:length(on)) {
-      plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add_action(exp, env = lenv)
+    for(i in seq_along(on)) {
+      this_panel <- plot_object$get_panel(on)
+      this_panel$add_action(exp, env = lenv)
     }
   }
   plot_object
@@ -967,21 +977,29 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   lenv$ylim <- ylim
   
   if(is.na(on[1])){
-    # small header
-    plot_object$add_frame(ylim = c(0, 1), asp = 0.25, is_header = TRUE)
-    plot_object$add_header("small", lenv)
-    
-    # add frame for the data
-    plot_object$add_frame(ylim=ylim,asp=1,fixed=TRUE)
-    
-    # y-axis grid lines and left and/or right labels
-    exp <- c(exp, yaxis_expr(ylim, plot_object$Env$theme$lylab, plot_object$Env$theme$rylab))
+    # add series to a new panel
+    this_panel <-
+      plot_object$new_panel(structure(lenv$ylim, fixed = TRUE),
+                            asp = 1,
+                            header_type = "small",
+                            envir = lenv)
 
-    plot_object$add_action(exp, env = lenv, no.update = TRUE)
+    # add y-axis grid lines and left and/or right labels
+    exp <- c(exp,
+             plot_object$yaxis_expr(ylim,
+                                    plot_object$Env$theme$lylab,
+                                    plot_object$Env$theme$rylab))
+
+    # plot data
+    this_panel$add_action(exp, env = lenv, no.update = TRUE)
+
+    # add the panel to the chart
+    plot_object$add_panel(this_panel)
+
   } else {
-    for(i in 1:length(on)) {
-      plot_object$set_frame(2*on[i]) # this is defaulting to using headers, should it be optionable?
-      plot_object$add_action(exp, env = lenv)
+    for(i in seq_along(on)) {
+      this_panel <- plot_object$get_panel(on)
+      this_panel$add_action(exp, env = lenv)
     }
   }
   plot_object
