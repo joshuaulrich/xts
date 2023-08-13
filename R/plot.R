@@ -688,9 +688,8 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     plot_object$add_panel(this_panel)
 
   } else {
-    for(i in seq_along(on)) {
-      # this uses a header by default; should it be optional?
-      this_panel <- plot_object$get_panel(on)
+    for(i in on) {
+      this_panel <- plot_object$get_panel(i)
       this_panel$add_action(exp, env = lenv)
     }
   }
@@ -701,7 +700,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
 # author: Ross Bennett
 lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, pch=1){
   if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- current.xts_chob()$get_current_panel()
+    if(on[1] == 0) on[1] <- current.xts_chob()$get_last_action_panel()$id
   
   addSeries(x, ...=..., main=main, on=on, type=type, col=col, lty=lty, lwd=lwd, pch=pch)
 }
@@ -710,7 +709,7 @@ lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, p
 # author: Ross Bennett
 points.xts <- function(x, ..., main="", on=0, col=NULL, pch=1){
   if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- current.xts_chob()$get_current_panel()
+    if(on[1] == 0) on[1] <- current.xts_chob()$get_last_action_panel()$id
   
   addSeries(x, ...=..., main=main, on=on, type="p", col=col, pch=pch)
 }
@@ -723,7 +722,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
   plot_object <- current.xts_chob()
 
   if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- plot_object$get_current_panel()
+    if(on[1] == 0) on[1] <- plot_object$get_last_action_panel()$id
   
   if(nrow(events) > 1){
     if(length(lty) == 1) lty <- rep(lty, nrow(events))
@@ -805,8 +804,8 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     plot_object$add_panel(this_panel)
 
   } else {
-    for(i in seq_along(on)) {
-      this_panel <- plot_object$get_panel(on)
+    for(i in on) {
+      this_panel <- plot_object$get_panel(i)
       this_panel$add_action(exp, env = lenv)
     }
   }
@@ -820,7 +819,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
   plot_object <- current.xts_chob()
 
   if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- plot_object$get_current_panel()
+    if(on[1] == 0) on[1] <- plot_object$get_last_action_panel()$id
   
   lenv <- plot_object$new_environment()
   lenv$plot_legend <- function(x, legend.loc, legend.names, col, ncol, on, bty, text.col, ...){
@@ -885,8 +884,8 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     # add the panel to the chart
     plot_object$add_panel(this_panel)
   } else {
-    for(i in seq_along(on)) {
-      this_panel <- plot_object$get_panel(on)
+    for(i in on) {
+      this_panel <- plot_object$get_panel(i)
       this_panel$add_action(exp, env = lenv)
     }
   }
@@ -997,8 +996,8 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     plot_object$add_panel(this_panel)
 
   } else {
-    for(i in seq_along(on)) {
-      this_panel <- plot_object$get_panel(on)
+    for(i in on) {
+      this_panel <- plot_object$get_panel(i)
       this_panel$add_action(exp, env = lenv)
     }
   }
@@ -1014,18 +1013,20 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
   # 'Env' is mainly the environment for the plot window, but some elements are for panels/frames
   Env <- new.env()
-  Env$panel <- panel
+  Env$active_panel_i <- panel
   Env$asp   <- 1
   Env$xlim  <- xlim  # vector: c(min, max) (same for every panel)
+  Env$last_action_panel_id <- 1
   
   # setters
-  set_panel <- function(panel) { Env$panel <<- panel; }
+  set_panel <- function(n) { Env$active_panel_i <<- n }
   set_ylim  <- function(ylim) { Env$ylim <<- ylim }
 
   # getters
-  get_panel <- function(n) { Env$panels[[n]] }
-  get_ylim  <- function() { update_panels(); Env$panels[[Env$panel]][["ylim"]] }
-  get_current_panel <- function() { Env$panel }
+  get_panel <- function(n) { if (n == 0) get_last_action_panel() else Env$panels[[n]] }
+  get_ylim  <- function() { update_panels(); get_active_panel()[["ylim"]] }
+  get_active_panel <- function() { get_panel(Env$active_panel_i) }
+  get_last_action_panel <- function() { get_panel(Env$last_action_panel_id) }
   
   create_ylim <-
   function(x, const_y_mult = 0.2)
@@ -1061,8 +1062,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       for (panel_n in seq_along(Env$panels)) {
 
           panel <- Env$panels[[panel_n]]
-          # set the current panel to panel_n, so get_ylim() will use the correct panel
-          Env$panel <- panel_n
+          # set the current active panel, so get_ylim() will use it
+          Env$active_panel_i <- panel_n
 
           is_header <- TRUE  # header is always the first action
 
@@ -1148,6 +1149,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           panel <- new.env(TRUE, envir)
       }
 
+      panel$id <- NA
       panel$asp <- c(header = 0.25, series = asp)
       panel$ylim <- ylim
 
@@ -1160,6 +1162,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
           action <- structure(expr, clip = clip, env = env, ...)
           panel$actions <- append(panel$actions, list(action))
+
+          Env$last_action_panel_id <<- panel$id
       }
 
       # NOTE: the header action must be the 1st action for a panel
@@ -1233,11 +1237,15 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
   add_panel <- function(panel)
   {
-      # append a new panel
-      Env$panels <- append(Env$panels, list(panel))
+      if (is.na(panel$id)) {
+          panel$id <- length(Env$panels) + 1
+      } else {
+          warning("ignoring second call to add_panel() for panel ",
+                  panel$id, call. = FALSE)
+      }
 
-      # set current panel to the new panel
-      Env$panel <- length(Env$panels)
+      # append the new panel
+      Env$panels <- append(Env$panels, list(panel))
   }
 
   update_panels <- function(headers=TRUE) {
@@ -1459,11 +1467,11 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$render_panels <- render_panels
   replot_env$set_panel <- set_panel
   replot_env$get_panel <- get_panel
-  replot_env$get_current_panel <- get_current_panel
   replot_env$set_ylim <- set_ylim
   replot_env$get_ylim <- get_ylim
   replot_env$create_ylim <- create_ylim
   replot_env$add_call <- add_call
+  replot_env$get_last_action_panel <- get_last_action_panel
 
   replot_env$new_environment <- function() { new.env(TRUE, Env) }
 
