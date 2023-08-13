@@ -701,7 +701,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
 # author: Ross Bennett
 lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, pch=1){
   if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- current.xts_chob()$current_panel()
+    if(on[1] == 0) on[1] <- current.xts_chob()$get_current_panel()
   
   addSeries(x, ...=..., main=main, on=on, type=type, col=col, lty=lty, lwd=lwd, pch=pch)
 }
@@ -710,7 +710,7 @@ lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, p
 # author: Ross Bennett
 points.xts <- function(x, ..., main="", on=0, col=NULL, pch=1){
   if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- current.xts_chob()$current_panel()
+    if(on[1] == 0) on[1] <- current.xts_chob()$get_current_panel()
   
   addSeries(x, ...=..., main=main, on=on, type="p", col=col, pch=pch)
 }
@@ -723,7 +723,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
   plot_object <- current.xts_chob()
 
   if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- plot_object$current_panel()
+    if(on[1] == 0) on[1] <- plot_object$get_current_panel()
   
   if(nrow(events) > 1){
     if(length(lty) == 1) lty <- rep(lty, nrow(events))
@@ -814,7 +814,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
   plot_object <- current.xts_chob()
 
   if(!is.na(on[1]))
-    if(on[1] == 0) on[1] <- plot_object$current_panel()
+    if(on[1] == 0) on[1] <- plot_object$get_current_panel()
   
   lenv <- plot_object$new_environment()
   lenv$plot_legend <- function(x, legend.loc, legend.names, col, ncol, on, bty, text.col, ...){
@@ -1007,6 +1007,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   # getters
   get_panel <- function(n) { Env$panels[[n]] }
   get_ylim  <- function() { update_panels(); Env$panels[[Env$panel]][["ylim"]] }
+  get_current_panel <- function() { Env$panel }
   
   create_ylim <-
   function(x, const_y_mult = 0.2)
@@ -1440,6 +1441,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$render_panels <- render_panels
   replot_env$set_panel <- set_panel
   replot_env$get_panel <- get_panel
+  replot_env$get_current_panel <- get_current_panel
   replot_env$set_ylim <- set_ylim
   replot_env$get_ylim <- get_ylim
   replot_env$create_ylim <- create_ylim
