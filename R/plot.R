@@ -1200,7 +1200,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           }
       }
 
-      panel$add_action(header_expr)
+      panel$add_action(header_expr, env = panel)
 
       return(panel)
   }
