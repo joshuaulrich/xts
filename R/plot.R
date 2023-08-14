@@ -516,7 +516,7 @@ plot.xts <- function(x,
           cs$new_panel(lenv$ylim,
                        asp = n_cols,
                        header_type = "multi.panel",
-                       title_timespan = main.timespan)
+                       envir = lenv)
 
         # add y-axis grid and left and/or right labels to the panel
         yaxis_expr <- cs$yaxis_expr(get_ylim(), yaxis.left, yaxis.right)
@@ -1205,8 +1205,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
               header_expr <-
                   expression({
                       text(x = get_xcoords()[2],
-                           y = 0.5,
-                           labels = "",
+                           y = 0.9 * ylim[2] + 0.1 * ylim[1],
+                           labels = label,
                            adj = c(0, 0),
                            pos = 4,
                            offset = 0,
