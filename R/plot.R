@@ -423,25 +423,26 @@ plot.xts <- function(x,
         # set the ylim for the first panel based on all the data
         yrange <- cs$create_ylim(cs$Env$xdata[subset,])
         # and recalculate ylim when drawing (fixed=FALSE)
-        yrange <- structure(yrange, fixed = FALSE)
+        yfixed <- FALSE
       } else {
         # set the ylim for the first panel based on the first column
         yrange <- cs$create_ylim(cs$Env$xdata[subset, 1])
         # but do NOT recalculate ylim when drawing (fixed=TRUE)
-        yrange <- structure(yrange, fixed = TRUE)
+        yfixed <- TRUE
       }
     } else {
       # set the ylim based on all the data if this is not a multi.panel plot
       yrange <- cs$create_ylim(cs$Env$xdata[subset,])
       # and recalculate ylim when drawing (fixed=FALSE)
-      yrange <- structure(yrange, fixed = FALSE)
+      yfixed <- FALSE
     }
 
     cs$Env$constant_ylim <- range(cs$Env$xdata[subset], na.rm=TRUE)
   } else {
     # use the ylim arg passed in
     # but do NOT recalculate ylim when drawing (fixed=TRUE)
-    yrange <- structure(ylim, fixed = TRUE)
+    yrange <- ylim
+    yfixed <- TRUE
     cs$Env$constant_ylim <- ylim
   }
 
@@ -455,6 +456,7 @@ plot.xts <- function(x,
   main_panel <-
     cs$new_panel(ylim = yrange,
                  asp = asp,
+                 is_ylim_fixed = yfixed,
                  header_type = "title",
                  title_timespan = main.timespan)
 
@@ -482,13 +484,12 @@ plot.xts <- function(x,
       lenv$label <- cs$Env$column_names[i]
       lenv$type <- cs$Env$type
       if(yaxis.same){
-        yrange <- cs$Env$constant_ylim
-        yrange <- structure(yrange, fixed = FALSE)
+        lenv$ylim <- cs$Env$constant_ylim
+        lenv$is_ylim_fixed <- FALSE
       } else {
-        yrange <- cs$create_ylim(cs$Env$xdata[subset, i])
-        yrange <- structure(yrange, fixed = TRUE)
+        lenv$ylim <- cs$create_ylim(cs$Env$xdata[subset, i])
+        lenv$is_ylim_fixed <- TRUE
       }
-      lenv$ylim <- yrange
 
       # allow color and line attributes for each panel in a multi.panel plot
       lenv$lty <- cs$Env$lty[i]
@@ -515,6 +516,7 @@ plot.xts <- function(x,
         this_panel <-
           cs$new_panel(lenv$ylim,
                        asp = n_cols,
+                       is_ylim_fixed = lenv$is_ylim_fixed,
                        header_type = "multi.panel",
                        envir = lenv)
 
@@ -670,8 +672,9 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
   if(is.na(on[1])){
     # add series to a new panel
     this_panel <-
-      plot_object$new_panel(structure(lenv$ylim, fixed = TRUE),
+      plot_object$new_panel(lenv$ylim,
                             asp = 1,
+                            is_ylim_fixed = TRUE,
                             header_type = "small",
                             envir = lenv)
 
@@ -786,8 +789,9 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
 
     # add series to a new panel
     this_panel <-
-      plot_object$new_panel(structure(lenv$ylim, fixed = TRUE),
+      plot_object$new_panel(lenv$ylim,
                             asp = 1,
+                            is_ylim_fixed = TRUE,
                             header_type = "small",
                             envir = lenv)
 
@@ -873,8 +877,9 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
 
     # add legend to a new panel
     this_panel <-
-      plot_object$new_panel(structure(c(0, 1), fixed = TRUE),
+      plot_object$new_panel(c(0, 1),
                             asp = 0.8,
+                            is_ylim_fixed = TRUE,
                             header_type = "small",
                             envir = lenv)
 
@@ -978,8 +983,9 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   if(is.na(on[1])){
     # add series to a new panel
     this_panel <-
-      plot_object$new_panel(structure(lenv$ylim, fixed = TRUE),
+      plot_object$new_panel(lenv$ylim,
                             asp = 1,
+                            is_ylim_fixed = TRUE,
                             header_type = "small",
                             envir = lenv)
 
@@ -1139,6 +1145,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   function(ylim,
            asp,
            ...,
+           is_ylim_fixed = TRUE,
            header_type = c("small", "title", "multi.panel"),
            title_timespan = FALSE,
            envir = NULL)
@@ -1152,6 +1159,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       panel$id <- NA
       panel$asp <- c(header = 0.25, series = asp)
       panel$ylim <- ylim
+      panel$is_ylim_fixed <- is_ylim_fixed
 
       panel$actions <- list()
       panel$add_action <- function(expr, env = Env, clip = TRUE, ...)
@@ -1252,17 +1260,17 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
     for (panel_n in seq_along(Env$panels)) {
       panel <- Env$panels[[panel_n]]
-      if (!attr(panel$ylim, "fixed")) {
+      if (!panel$is_ylim_fixed) {
         # set ylim to +/-Inf when fixed = FALSE so update_panel() recalculates ylim
-        Env$panels[[panel_n]]$ylim <-
-          structure(c(Inf, -Inf), fixed = FALSE)
+        panel$ylim <- c(Inf, -Inf)
+        panel$is_ylim_fixed <- FALSE
       }
     }
 
     update_panel <- function(panel_n)
     {
-      panel <- Env$panels[[panel_n]]
-      is_fixed <- attr(panel$ylim, "fixed")
+      panel <- get_panel(panel_n)
+      is_fixed <- panel$is_ylim_fixed  # cache original value
 
       if (!is_fixed) {
         for (action in panel$actions) {
@@ -1277,14 +1285,14 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
             # some actions (e.g. addLegend) do not have 'xdata'
             dat.range <- create_ylim(action_data[Env$xsubset])
 
-            # ylim may be changed by one or more actions
-            panel_ylim <- Env$panels[[panel_n]]$ylim
-
+            # re-retrieve ylim; actions may be changed it
             new_ylim <-
-              c(min(panel_ylim[1], dat.range, na.rm = TRUE),
-                max(panel_ylim[2], dat.range, na.rm = TRUE))
-            Env$panels[[panel_n]]$ylim <-
-              structure(new_ylim, fixed = is_fixed)
+              c(min(panel$ylim[1], dat.range, na.rm = TRUE),
+                max(panel$ylim[2], dat.range, na.rm = TRUE))
+
+            # set to new ylim values
+            panel$ylim <- new_ylim
+            panel$is_ylim_fixed <- is_fixed  # use original value
           }
         }
       }
