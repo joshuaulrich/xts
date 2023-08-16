@@ -456,6 +456,7 @@ plot.xts <- function(x,
   main_panel <-
     cs$new_panel(ylim = yrange,
                  asp = asp,
+                 envir = cs$Env,
                  is_ylim_fixed = yfixed,
                  use_get_ylim = TRUE,
                  draw_left_yaxis = yaxis.left,
@@ -521,12 +522,6 @@ plot.xts <- function(x,
                        is_ylim_fixed = lenv$is_ylim_fixed,
                        header_type = "multi.panel",
                        envir = lenv)
-
-        # add x-axis grid, ticks, and labels to the panel
-        xaxis_expr <-
-          cs$xaxis_expr(use_major = !isNullOrFalse(major.ticks),
-                        use_minor = !isNullOrFalse(minor.ticks))
-        this_panel$add_action(xaxis_expr)
 
         # plot data
         this_panel$add_action(exp, env = lenv, no.update = TRUE)
@@ -1104,21 +1099,16 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   new_panel <-
   function(ylim,
            asp,
+           envir,
            ...,
            is_ylim_fixed = TRUE,
            use_get_ylim = FALSE,
            draw_left_yaxis = NULL,
            draw_right_yaxis = NULL,
            header_type = c("small", "title", "multi.panel"),
-           title_timespan = FALSE,
-           envir = NULL)
+           title_timespan = FALSE)
   {
-      if (is.null(envir)) {
-          panel <- new.env(TRUE, Env)
-      } else {
-          panel <- new.env(TRUE, envir)
-      }
-
+      panel <- new.env(TRUE, envir)
       panel$id <- NA
       panel$asp <- c(header = 0.25, series = asp)
       panel$ylim <- ylim
@@ -1218,6 +1208,9 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                                      draw_left_yaxis, draw_right_yaxis)
       }
       panel$add_action(yaxis_action, env = panel, no.update = no_update)
+
+      # need to update ylim values when rendering
+      panel$add_action(expression({get_ylim()}), env = envir)
 
       return(panel)
   }
