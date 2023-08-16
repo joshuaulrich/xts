@@ -509,7 +509,7 @@ plot.xts <- function(x,
 
       if (i == 1) {
         # plot the main panel, which is already set up
-        main_panel$add_action(exp, env = lenv, no.update = TRUE)
+        main_panel$add_action(exp, env = lenv, update_ylim = FALSE)
 
       } else {
         # plot the remaining remaining panels
@@ -524,7 +524,7 @@ plot.xts <- function(x,
                        envir = lenv)
 
         # plot data
-        this_panel$add_action(exp, env = lenv, no.update = TRUE)
+        this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
 
         # add the panel to the chart
         cs$add_panel(this_panel)
@@ -667,7 +667,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     this_panel <- plot_object$new_panel(lenv$ylim, asp = 1, envir = lenv)
 
     # plot data
-    this_panel$add_action(exp, env = lenv, no.update = TRUE)
+    this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
 
     # add the panel to the chart
     plot_object$add_panel(this_panel)
@@ -773,7 +773,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     this_panel <- plot_object$new_panel(lenv$ylim, asp = 1, envir = lenv)
 
     # plot data
-    this_panel$add_action(exp, env = lenv, no.update = TRUE)
+    this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
 
     # add the panel to the chart
     plot_object$add_panel(this_panel)
@@ -850,7 +850,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     this_panel <- plot_object$new_panel(c(0, 1), asp = 0.8, envir = lenv)
 
     # legend data
-    this_panel$add_action(exp, env = lenv, no.update = TRUE)
+    this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
 
     # add the panel to the chart
     plot_object$add_panel(this_panel)
@@ -951,7 +951,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     this_panel <- plot_object$new_panel(lenv$ylim, asp = 1, envir = lenv)
 
     # plot data
-    this_panel$add_action(exp, env = lenv, no.update = TRUE)
+    this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
 
     # add the panel to the chart
     plot_object$add_panel(this_panel)
@@ -1115,13 +1115,19 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       panel$is_ylim_fixed <- is_ylim_fixed
 
       panel$actions <- list()
-      panel$add_action <- function(expr, env = Env, clip = TRUE, ...)
+      panel$add_action <-
+      function(expr,
+               env = Env,
+               clip = TRUE,
+               update_ylim = TRUE,
+               ...)
       {
           if (!is.expression(expr)) {
               expr <- as.expression(expr)
           }
 
-          action <- structure(expr, clip = clip, env = env, ...)
+          action <- structure(expr, clip = clip, env = env,
+                              update_ylim = update_ylim, ...)
           panel$actions <- append(panel$actions, list(action))
 
           Env$last_action_panel_id <<- panel$id
@@ -1207,7 +1213,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           yaxis_action <- yaxis_expr(ylim,
                                      draw_left_yaxis, draw_right_yaxis)
       }
-      panel$add_action(yaxis_action, env = panel, no.update = no_update)
+      panel$add_action(yaxis_action, env = panel, update_ylim = FALSE)
 
       # need to update ylim values when rendering
       panel$add_action(expression({get_ylim()}), env = envir)
@@ -1241,19 +1247,19 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
     update_panel <- function(panel_n)
     {
+      # recalculate the panel's ylim based on actions added to the panel
+
       panel <- get_panel(panel_n)
       is_fixed <- panel$is_ylim_fixed  # cache original value
 
       if (!is_fixed) {
         for (action in panel$actions) {
 
-          if (isTRUE(attr(action, "no.update"))) {
-            next
-          }
-
+          action_update_ylim <- attr(action, "update_ylim")
           action_env <- attr(action, "env")
           action_data <- action_env$xdata
-          if (!is.null(action_data)) {
+
+          if (!is.null(action_data) && action_update_ylim) {
             # some actions (e.g. addLegend) do not have 'xdata'
             dat.range <- create_ylim(action_data[Env$xsubset])
 
