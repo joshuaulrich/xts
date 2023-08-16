@@ -457,12 +457,11 @@ plot.xts <- function(x,
     cs$new_panel(ylim = yrange,
                  asp = asp,
                  is_ylim_fixed = yfixed,
+                 use_get_ylim = TRUE,
+                 draw_left_yaxis = yaxis.left,
+                 draw_right_yaxis = yaxis.right,
                  header_type = "title",
                  title_timespan = main.timespan)
-
-  # add y-axis grid and left and/or right labels to the panel
-  yaxis_expr <- cs$yaxis_expr(get_ylim(), yaxis.left, yaxis.right)
-  main_panel$add_action(yaxis_expr)
 
   # add x-axis grid, ticks, and labels to the panel
   xaxis_expr <-
@@ -516,13 +515,12 @@ plot.xts <- function(x,
         this_panel <-
           cs$new_panel(lenv$ylim,
                        asp = n_cols,
+                       use_get_ylim = TRUE,
+                       draw_left_yaxis = yaxis.left,
+                       draw_right_yaxis = yaxis.right,
                        is_ylim_fixed = lenv$is_ylim_fixed,
                        header_type = "multi.panel",
                        envir = lenv)
-
-        # add y-axis grid and left and/or right labels to the panel
-        yaxis_expr <- cs$yaxis_expr(get_ylim(), yaxis.left, yaxis.right)
-        this_panel$add_action(yaxis_expr)
 
         # add x-axis grid, ticks, and labels to the panel
         xaxis_expr <-
@@ -671,18 +669,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
   
   if(is.na(on[1])){
     # add series to a new panel
-    this_panel <-
-      plot_object$new_panel(lenv$ylim,
-                            asp = 1,
-                            is_ylim_fixed = TRUE,
-                            header_type = "small",
-                            envir = lenv)
-
-    # add y-axis grid lines and left and/or right labels
-    exp <- c(exp,
-             plot_object$yaxis_expr(ylim,
-                                    plot_object$Env$theme$lylab,
-                                    plot_object$Env$theme$rylab))
+    this_panel <- plot_object$new_panel(lenv$ylim, asp = 1, envir = lenv)
 
     # plot data
     this_panel$add_action(exp, env = lenv, no.update = TRUE)
@@ -788,18 +775,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     lenv$ylim <- ylim
 
     # add series to a new panel
-    this_panel <-
-      plot_object$new_panel(lenv$ylim,
-                            asp = 1,
-                            is_ylim_fixed = TRUE,
-                            header_type = "small",
-                            envir = lenv)
-
-    # add y-axis grid lines and left and/or right labels
-    exp <- c(exp,
-             plot_object$yaxis_expr(ylim,
-                                    plot_object$Env$theme$lylab,
-                                    plot_object$Env$theme$rylab))
+    this_panel <- plot_object$new_panel(lenv$ylim, asp = 1, envir = lenv)
 
     # plot data
     this_panel$add_action(exp, env = lenv, no.update = TRUE)
@@ -876,12 +852,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
   if(is.na(on[1])){
 
     # add legend to a new panel
-    this_panel <-
-      plot_object$new_panel(c(0, 1),
-                            asp = 0.8,
-                            is_ylim_fixed = TRUE,
-                            header_type = "small",
-                            envir = lenv)
+    this_panel <- plot_object$new_panel(c(0, 1), asp = 0.8, envir = lenv)
 
     # legend data
     this_panel$add_action(exp, env = lenv, no.update = TRUE)
@@ -982,18 +953,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   
   if(is.na(on[1])){
     # add series to a new panel
-    this_panel <-
-      plot_object$new_panel(lenv$ylim,
-                            asp = 1,
-                            is_ylim_fixed = TRUE,
-                            header_type = "small",
-                            envir = lenv)
-
-    # add y-axis grid lines and left and/or right labels
-    exp <- c(exp,
-             plot_object$yaxis_expr(ylim,
-                                    plot_object$Env$theme$lylab,
-                                    plot_object$Env$theme$rylab))
+    this_panel <- plot_object$new_panel(lenv$ylim, asp = 1, envir = lenv)
 
     # plot data
     this_panel$add_action(exp, env = lenv, no.update = TRUE)
@@ -1146,6 +1106,9 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
            asp,
            ...,
            is_ylim_fixed = TRUE,
+           use_get_ylim = FALSE,
+           draw_left_yaxis = NULL,
+           draw_right_yaxis = NULL,
            header_type = c("small", "title", "multi.panel"),
            title_timespan = FALSE,
            envir = NULL)
@@ -1239,6 +1202,22 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       }
 
       panel$add_action(header_expr, env = panel)
+
+      # y-axis
+      if (is.null(draw_left_yaxis)) {
+        draw_left_yaxis <- Env$theme$lylab
+      }
+      if (is.null(draw_right_yaxis)) {
+        draw_right_yaxis <- Env$theme$rylab
+      }
+      if (use_get_ylim) {
+          yaxis_action <- yaxis_expr(get_ylim(),
+                                     draw_left_yaxis, draw_right_yaxis)
+      } else {
+          yaxis_action <- yaxis_expr(ylim,
+                                     draw_left_yaxis, draw_right_yaxis)
+      }
+      panel$add_action(yaxis_action, env = panel, no.update = no_update)
 
       return(panel)
   }
