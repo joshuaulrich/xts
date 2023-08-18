@@ -1541,11 +1541,11 @@ plot.replot_xts <- function(x, ...) {
   omar <- par(mar = x$Env$mar)
   oxpd <- par(xpd = FALSE)
   usr <- par("usr")
+  on.exit(par(xpd = oxpd$xpd, cex = ocex$cex, mar = omar$mar, bg = obg$bg))
 
   x$render_panels()
 
   do.call("clip", as.list(usr))  # reset clipping region
   # reset par
-  par(xpd = oxpd$xpd, cex = ocex$cex, mar = omar$mar, bg = obg$bg)
   invisible(x$Env$actions)
 }
