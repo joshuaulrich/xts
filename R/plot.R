@@ -1029,20 +1029,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       n_asp <- length(all_asp)
 
       ### main plot header
-      asp <- Env$main_header$asp
-      asp_n <- 1
-      ylim <- c(0, 1)
-
-      # scaled ylim
-      ylim_scale <- all_asp / asp * abs(diff(ylim))
-
-      ymin_adj <- sum(ylim_scale[-seq_len(asp_n)])
-      ymax_adj <- sum(ylim_scale[-(asp_n:n_asp)])
-      scaled_ylim <- c(ylim[1] - ymin_adj, ylim[2] + ymax_adj)
-
-      plot.window(Env$xlim, scaled_ylim)
-
-      clip(par("usr")[1], par("usr")[2], ylim[1], ylim[2])
+      plot.window(Env$xlim, c(0, 1))
+      clip(par("usr")[1], par("usr")[2], 0, 1)
       eval(Env$main_header$expr, Env)
       ### /main plot header
 
@@ -1125,11 +1113,10 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   add_main_header <-
   function(add_timespan = TRUE)
   {
-    Env$main_header$asp <- 0.25
     Env$main_header$expr <-
       expression({
         text(x = xlim[1],
-             y = 0.5,
+             y = 0.98,
              labels = main,
              adj = NULL,
              pos = 4,
@@ -1144,7 +1131,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
         c(Env$main_header$expr,
           expression({
             text(x = xlim[2],
-                 y = 0.5,
+                 y = 0.98,
                  labels = .makeISO8601(xdata[xsubset]),
                  adj = c(0, 0),
                  pos = 2,
