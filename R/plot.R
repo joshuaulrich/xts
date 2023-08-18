@@ -415,6 +415,7 @@ plot.xts <- function(x,
   cs$Env$column_names <- colnames(x)
   cs$Env$nobs <- NROW(cs$Env$xdata)
   cs$Env$main <- main
+  cs$Env$main.timespan <- main.timespan
   cs$Env$ylab <- if (hasArg("ylab")) eval.parent(plot.call$ylab) else ""
   
   if(is.null(ylim)){
@@ -452,6 +453,13 @@ plot.xts <- function(x,
     asp <- 3
   }
   
+  cs$add_main_header(isTRUE(main.timespan))
+  if (isTRUE(multi.panel)) {
+    main_header <- "multi.panel"
+  } else {
+    main_header <- "none"
+  }
+
   # create the chart's main panel
   main_panel <-
     cs$new_panel(ylim = yrange,
@@ -461,8 +469,7 @@ plot.xts <- function(x,
                  use_get_ylim = TRUE,
                  draw_left_yaxis = yaxis.left,
                  draw_right_yaxis = yaxis.right,
-                 header_type = "title",
-                 title_timespan = main.timespan)
+                 header_type = main_header)
 
   # add x-axis grid, ticks, and labels to the panel
   xaxis_expr <-
@@ -510,6 +517,7 @@ plot.xts <- function(x,
       if (i == 1) {
         # plot the main panel, which is already set up
         main_panel$add_action(exp, env = lenv, update_ylim = FALSE)
+        cs$Env$label <- cs$Env$column_names[i]
 
       } else {
         # plot the remaining remaining panels
@@ -1020,6 +1028,24 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       all_asp <- do.call(c, all_asp)
       n_asp <- length(all_asp)
 
+      ### main plot header
+      asp <- Env$main_header$asp
+      asp_n <- 1
+      ylim <- c(0, 1)
+
+      # scaled ylim
+      ylim_scale <- all_asp / asp * abs(diff(ylim))
+
+      ymin_adj <- sum(ylim_scale[-seq_len(asp_n)])
+      ymax_adj <- sum(ylim_scale[-(asp_n:n_asp)])
+      scaled_ylim <- c(ylim[1] - ymin_adj, ylim[2] + ymax_adj)
+
+      plot.window(Env$xlim, scaled_ylim)
+
+      clip(par("usr")[1], par("usr")[2], ylim[1], ylim[2])
+      eval(Env$main_header$expr, Env)
+      ### /main plot header
+
       for (panel_n in seq_along(Env$panels)) {
 
           panel <- Env$panels[[panel_n]]
@@ -1094,6 +1120,42 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     return(result)
   }
 
+  # main header
+  Env$main_header <- list()
+  add_main_header <-
+  function(add_timespan = TRUE)
+  {
+    Env$main_header$asp <- 0.25
+    Env$main_header$expr <-
+      expression({
+        text(x = xlim[1],
+             y = 0.5,
+             labels = main,
+             adj = NULL,
+             pos = 4,
+             offset = 0,
+             cex = 1.1,
+             col = theme$labels,
+             font = 2)
+      })
+
+    if (add_timespan) {
+      Env$main_header$expr <-
+        c(Env$main_header$expr,
+          expression({
+            text(x = xlim[2],
+                 y = 0.5,
+                 labels = .makeISO8601(xdata[xsubset]),
+                 adj = c(0, 0),
+                 pos = 2,
+                 offset = 0.5,
+                 cex = 1,
+                 col = theme$labels,
+                 font = NULL)
+          }))
+    }
+  }
+
   # panel functionality
   Env$panels <- list()
   new_panel <-
@@ -1105,7 +1167,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
            use_get_ylim = FALSE,
            draw_left_yaxis = NULL,
            draw_right_yaxis = NULL,
-           header_type = c("small", "title", "multi.panel"),
+           header_type = c("small", "multi.panel", "none"),
            title_timespan = FALSE)
   {
       panel <- new.env(TRUE, envir)
@@ -1135,6 +1197,11 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
       # NOTE: the header action must be the 1st action for a panel
       header_type <- match.arg(header_type)
+
+      if (header_type == "none") {
+          panel$main <- ""
+          header_type <- "small"
+      }
 
       if (header_type == "title") {
           panel$asp["header"] <- 0.5
@@ -1444,6 +1511,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env <- new.env()
   class(replot_env) <- c("replot_xts","environment")
   replot_env$Env <- Env
+  replot_env$add_main_header <- add_main_header
   replot_env$new_panel <- new_panel
   replot_env$add_panel <- add_panel
   replot_env$xaxis_expr <- xaxis_expr
