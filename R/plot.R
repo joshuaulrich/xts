@@ -1203,65 +1203,32 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           header_type <- "small"
       }
 
-      if (header_type == "title") {
-          panel$asp["header"] <- 0.5
+      if (header_type == "multi.panel") {
+          header_expr <-
+              expression({
+                  text(x = get_xcoords()[2],
+                       y = 0.9 * ylim[2] + 0.1 * ylim[1],
+                       labels = label,
+                       adj = c(0, 0),
+                       pos = 4,
+                       offset = 0,
+                       cex = 0.9,
+                       col = theme$labels,
+                       font = NULL)
+              })
+      } else if (header_type == "small") {
           header_expr <-
               expression({
                   text(x = xlim[1],
-                       y = 0.5,
+                       y = 0.3,
                        labels = main,
-                       adj = NULL,
+                       adj = c(0, 0),
                        pos = 4,
                        offset = 0,
-                       cex = 1.1,
-                       col = theme$labels,
-                       font = 2)
+                       cex = 0.9,
+                       col = 1,
+                       font = NULL)
               })
-          if (isTRUE(title_timespan)) {
-              header_expr <-
-                  c(header_expr,
-                    expression({
-                        text(x = xlim[2],
-                             y = 0.5,
-                             labels = .makeISO8601(xdata[xsubset]),
-                             adj = c(0, 0),
-                             pos = 2,
-                             offset = 0.5,
-                             cex = 1,
-                             col = theme$labels,
-                             font = NULL)
-                    }))
-          }
-      } else {
-          panel$asp["header"] <- 0.25
-
-          if (header_type == "multi.panel") {
-              header_expr <-
-                  expression({
-                      text(x = get_xcoords()[2],
-                           y = 0.9 * ylim[2] + 0.1 * ylim[1],
-                           labels = label,
-                           adj = c(0, 0),
-                           pos = 4,
-                           offset = 0,
-                           cex = 0.9,
-                           col = theme$labels,
-                           font = NULL)
-                  })
-          } else if (header_type == "small") {
-              header_expr <-
-                  expression({
-                      text(x = xlim[1],
-                           y = 0.3,
-                           labels = main,
-                           adj = c(0, 0),
-                           pos = 4,
-                           offset = 0,
-                           cex = 0.9,
-                           col = 1,
-                           font = NULL)
-                  })
-          }
       }
 
       panel$add_action(header_expr, env = panel)
