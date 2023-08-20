@@ -447,47 +447,23 @@ plot.xts <- function(x,
     cs$Env$constant_ylim <- ylim
   }
 
-  if (isTRUE(multi.panel) && NCOL(x) > 1) {
-    asp <- NCOL(x)
-  } else {
-    asp <- 3
-  }
-  
   # main plot header
   cs$add_main_header(isTRUE(main.timespan))
-  if (isTRUE(multi.panel)) {
-    main_header <- "multi.panel"
-  } else {
-    main_header <- "none"
-  }
 
   # main plot x-axis ticks and labels
   cs$add_main_xaxis(use_major = !isNullOrFalse(major.ticks),
                     use_minor = !isNullOrFalse(minor.ticks))
 
-  # create the chart's main panel
-  main_panel <-
-    cs$new_panel(ylim = yrange,
-                 asp = asp,
-                 envir = cs$Env,
-                 is_ylim_fixed = yfixed,
-                 use_get_ylim = TRUE,
-                 draw_left_yaxis = yaxis.left,
-                 draw_right_yaxis = yaxis.right,
-                 header_type = main_header)
-
-  # add the main panel to the chart
-  cs$add_panel(main_panel)
-  
   if(isTRUE(multi.panel)){
 
     n_cols <- NCOL(cs$Env$xdata)
+    asp <- ifelse(n_cols > 1, n_cols, 3)
 
     for(i in seq_len(n_cols)) {
-      # create a local environment
+      # create a local environment for each panel
       lenv <- cs$new_environment()
       lenv$xdata <- cs$Env$xdata[subset,i]
-      lenv$label <- cs$Env$column_names[i]
+      lenv$header <- cs$Env$column_names[i]
       lenv$type <- cs$Env$type
       if(yaxis.same){
         lenv$ylim <- cs$Env$constant_ylim
@@ -513,33 +489,36 @@ plot.xts <- function(x,
                                legend.loc=legend.loc))
       exp <- as.expression(add.par.from.dots(exp, ...))
 
-      if (i == 1) {
-        # plot the main panel, which is already set up
-        main_panel$add_action(exp, env = lenv, update_ylim = TRUE)
-        cs$Env$label <- cs$Env$column_names[i]
+      # create the panels
+      this_panel <-
+        cs$new_panel(lenv$ylim,
+                     asp = asp,
+                     use_get_ylim = TRUE,
+                     draw_left_yaxis = yaxis.left,
+                     draw_right_yaxis = yaxis.right,
+                     is_ylim_fixed = lenv$is_ylim_fixed,
+                     header = lenv$header,
+                     envir = lenv)
 
-      } else {
-        # plot the remaining remaining panels
-        this_panel <-
-          cs$new_panel(lenv$ylim,
-                       asp = n_cols,
-                       use_get_ylim = TRUE,
-                       draw_left_yaxis = yaxis.left,
-                       draw_right_yaxis = yaxis.right,
-                       is_ylim_fixed = lenv$is_ylim_fixed,
-                       header_type = "multi.panel",
-                       envir = lenv)
+      # plot data
+      this_panel$add_action(exp, env = lenv, update_ylim = TRUE)
 
-        # plot data
-        this_panel$add_action(exp, env = lenv, update_ylim = TRUE)
-
-        # add the panel to the chart
-        cs$add_panel(this_panel)
-      }
+      # add the panel to the chart
+      cs$add_panel(this_panel)
     }
   } else {
     if(type == "h" && NCOL(x) > 1) 
       warning("only the univariate series will be plotted")
+
+    # create the chart's main panel
+    main_panel <-
+      cs$new_panel(ylim = yrange,
+                   asp = 3,
+                   envir = cs$Env,
+                   is_ylim_fixed = yfixed,
+                   use_get_ylim = TRUE,
+                   draw_left_yaxis = yaxis.left,
+                   draw_right_yaxis = yaxis.right)
 
     exp <- quote(chart.lines(xdata[xsubset],
                              type=type, 
@@ -552,6 +531,9 @@ plot.xts <- function(x,
                              legend.loc=legend.loc))
     exp <- as.expression(add.par.from.dots(exp, ...))
     main_panel$add_action(exp)
+
+    # add the main panel to the chart
+    cs$add_panel(main_panel)
 
     assign(".xts_chob", cs, .plotxtsEnv)
   }
@@ -607,7 +589,7 @@ addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=
 addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1, ...){
   plot_object <- current.xts_chob()
   lenv <- plot_object$new_environment()
-  lenv$main <- main
+  lenv$header <- main
   lenv$plot_lines <- function(x, ta, on, type, col, lty, lwd, pch, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
@@ -668,7 +650,10 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
   
   if(is.na(on[1])){
     # add series to a new panel
-    this_panel <- plot_object$new_panel(lenv$ylim, asp = 1, envir = lenv)
+    this_panel <- plot_object$new_panel(lenv$ylim,
+                                        asp = 1,
+                                        envir = lenv,
+                                        header = lenv$header)
 
     # plot data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
@@ -720,7 +705,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
   }
   
   lenv <- plot_object$new_environment()
-  lenv$main <- main
+  lenv$header <- main
   lenv$plot_event_lines <- function(x, events, on, lty, lwd, col, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
@@ -770,7 +755,10 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     lenv$ylim <- ylim
 
     # add series to a new panel
-    this_panel <- plot_object$new_panel(lenv$ylim, asp = 1, envir = lenv)
+    this_panel <- plot_object$new_panel(lenv$ylim,
+                                        asp = 1,
+                                        envir = lenv,
+                                        header = lenv$header)
 
     # plot data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
@@ -891,7 +879,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   
   plot_object <- current.xts_chob()
   lenv <- plot_object$new_environment()
-  lenv$main <- main
+  lenv$header <- main
   lenv$plot_lines <- function(x, ta, on, col, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
@@ -945,7 +933,10 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   
   if(is.na(on[1])){
     # add series to a new panel
-    this_panel <- plot_object$new_panel(lenv$ylim, asp = 1, envir = lenv)
+    this_panel <- plot_object$new_panel(ylim = lenv$ylim,
+                                        asp = 1,
+                                        envir = lenv,
+                                        header = lenv$header)
 
     # plot data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
@@ -1214,7 +1205,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
            use_get_ylim = FALSE,
            draw_left_yaxis = NULL,
            draw_right_yaxis = NULL,
-           header_type = c("small", "multi.panel", "none"),
+           header = "",
            title_timespan = FALSE)
   {
       panel <- new.env(TRUE, envir)
@@ -1223,6 +1214,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       panel$ylim <- ylim
       panel$ylim_render <- ylim
       panel$is_ylim_fixed <- is_ylim_fixed
+      panel$header <- header
 
       panel$actions <- list()
       panel$add_action <-
@@ -1244,41 +1236,18 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       }
 
       # NOTE: the header action must be the 1st action for a panel
-      header_type <- match.arg(header_type)
-
-      if (header_type == "none") {
-          panel$main <- ""
-          header_type <- "small"
-      }
-
-      if (header_type == "multi.panel") {
-          header_expr <-
-              expression({
-                  text(x = get_xcoords()[2],
-                       y = 0.9 * ylim[2] + 0.1 * ylim[1],
-                       labels = label,
-                       adj = c(0, 0),
-                       pos = 4,
-                       offset = 0,
-                       cex = 0.9,
-                       col = theme$labels,
-                       font = NULL)
-              })
-      } else if (header_type == "small") {
-          header_expr <-
-              expression({
-                  text(x = xlim[1],
-                       y = 0.3,
-                       labels = main,
-                       adj = c(0, 0),
-                       pos = 4,
-                       offset = 0,
-                       cex = 0.9,
-                       col = 1,
-                       font = NULL)
-              })
-      }
-
+      header_expr <-
+          expression({
+              text(x = xlim[1],
+                   y = 0.3,
+                   labels = header,
+                   adj = c(0, 0),
+                   pos = 4,
+                   offset = 0,
+                   cex = 0.9,
+                   col = theme$labels,
+                   font = NULL)
+          })
       panel$add_action(header_expr, env = panel)
 
       # y-axis
