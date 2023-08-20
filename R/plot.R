@@ -613,10 +613,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
     xDataSubset <- xdata[xsubset]
-    if(all(is.na(on))){
-      # Add x-axis grid lines
-      x$Env$x_grid_lines(xDataSubset, x$Env$grid.ticks.on, par("usr")[3:4])
-    }
+
     # we can add points that are not necessarily at the points
     # on the main series, but need to ensure the new series only
     # has index values within the xdata subset
@@ -729,10 +726,6 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
 
-    if(all(is.na(on))){
-      # Add x-axis grid lines
-      x$Env$x_grid_lines(xdata[xsubset], x$Env$grid.ticks.on, par("usr")[3:4])
-    }
     ypos <- x$get_panel(on)$ylim[2] * 0.995
     # we can add points that are not necessarily at the points on the main series
     subset.range <-
@@ -904,10 +897,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
     if(is.null(col)) col <- x$Env$theme$col
-    if(all(is.na(on))){
-      # Add x-axis grid lines
-      x$Env$x_grid_lines(xdata[xsubset], x$Env$grid.ticks.on, par("usr")[3:4])
-    }
+
     # we can add points that are not necessarily at the points
     # on the main series
     subset.range <- paste(start(xdata[xsubset]),
@@ -1237,6 +1227,10 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       }
       panel$add_action(yaxis_action, env = panel, update_ylim = FALSE)
 
+      # x-axis grid
+      xaxis_action <- expression(x_grid_lines(xdata, grid.ticks.on, par("usr")[3:4]))
+      panel$add_action(xaxis_action, env = panel, update_ylim = FALSE)
+
       return(panel)
   }
 
@@ -1445,9 +1439,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
           }, values))
       }
-
-      # Add the x-axis ticks for the grid to the plot
-      expr <- c(expr, expression(x_grid_lines(xdata[xsubset], grid.ticks.on, get_ylim())))
 
       return(expr)
   }
