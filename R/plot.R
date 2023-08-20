@@ -463,7 +463,6 @@ plot.xts <- function(x,
       # create a local environment for each panel
       lenv <- cs$new_environment()
       lenv$xdata <- cs$Env$xdata[subset,i]
-      lenv$header <- cs$Env$column_names[i]
       lenv$type <- cs$Env$type
       if(yaxis.same){
         lenv$ylim <- cs$Env$constant_ylim
@@ -493,12 +492,12 @@ plot.xts <- function(x,
       this_panel <-
         cs$new_panel(lenv$ylim,
                      asp = asp,
+                     envir = lenv,
+                     header = cs$Env$column_names[i],
                      use_get_ylim = TRUE,
                      draw_left_yaxis = yaxis.left,
                      draw_right_yaxis = yaxis.right,
-                     is_ylim_fixed = lenv$is_ylim_fixed,
-                     header = lenv$header,
-                     envir = lenv)
+                     is_ylim_fixed = lenv$is_ylim_fixed)
 
       # plot data
       this_panel$add_action(exp, env = lenv, update_ylim = TRUE)
@@ -515,6 +514,7 @@ plot.xts <- function(x,
       cs$new_panel(ylim = yrange,
                    asp = 3,
                    envir = cs$Env,
+                   header = "",
                    is_ylim_fixed = yfixed,
                    use_get_ylim = TRUE,
                    draw_left_yaxis = yaxis.left,
@@ -589,7 +589,6 @@ addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=
 addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1, ...){
   plot_object <- current.xts_chob()
   lenv <- plot_object$new_environment()
-  lenv$header <- main
   lenv$plot_lines <- function(x, ta, on, type, col, lty, lwd, pch, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
@@ -653,7 +652,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     this_panel <- plot_object$new_panel(lenv$ylim,
                                         asp = 1,
                                         envir = lenv,
-                                        header = lenv$header)
+                                        header = main)
 
     # plot data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
@@ -705,7 +704,6 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
   }
   
   lenv <- plot_object$new_environment()
-  lenv$header <- main
   lenv$plot_event_lines <- function(x, events, on, lty, lwd, col, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
@@ -758,7 +756,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     this_panel <- plot_object$new_panel(lenv$ylim,
                                         asp = 1,
                                         envir = lenv,
-                                        header = lenv$header)
+                                        header = main)
 
     # plot data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
@@ -835,7 +833,10 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
   if(is.na(on[1])){
 
     # add legend to a new panel
-    this_panel <- plot_object$new_panel(c(0, 1), asp = 0.8, envir = lenv)
+    this_panel <- plot_object$new_panel(ylim = c(0, 1),
+                                        asp = 0.8,
+                                        envir = lenv,
+                                        header = "")
 
     # legend data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
@@ -879,7 +880,6 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   
   plot_object <- current.xts_chob()
   lenv <- plot_object$new_environment()
-  lenv$header <- main
   lenv$plot_lines <- function(x, ta, on, col, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
@@ -936,7 +936,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     this_panel <- plot_object$new_panel(ylim = lenv$ylim,
                                         asp = 1,
                                         envir = lenv,
-                                        header = lenv$header)
+                                        header = main)
 
     # plot data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
@@ -1200,12 +1200,12 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   function(ylim,
            asp,
            envir,
+           header,
            ...,
            is_ylim_fixed = TRUE,
            use_get_ylim = FALSE,
            draw_left_yaxis = NULL,
            draw_right_yaxis = NULL,
-           header = "",
            title_timespan = FALSE)
   {
       panel <- new.env(TRUE, envir)
