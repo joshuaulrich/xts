@@ -1012,10 +1012,21 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   {
       update_panels()
 
+      # all panel header/series asp pairs
       all_asp <- lapply(Env$panels, function(p) p[["asp"]])
-      # convert list of asp/panel to vector for the entire plot window
-      # this contains all the header/series asp pairs
       all_asp <- do.call(c, all_asp)
+
+      # panel header asp is always 5% of the total asp
+      panel_header_asp <- 0.05 * sum(all_asp)
+
+      # update panel header asp values
+      header_loc <- seq(1, length(all_asp), by = 2)
+      all_asp[header_loc] <- panel_header_asp
+
+      # main header asp is always 7% of the grand total asp
+      main_title_asp <- 0.07 * sum(all_asp)
+
+      all_asp <- c(main_title_asp, all_asp)
       n_asp <- length(all_asp)
 
       ### main plot header
@@ -1031,17 +1042,18 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           Env$active_panel_i <- panel_n
 
           is_header <- TRUE  # header is always the first action
+          #panel$render_header(Env$xlim, panel_ymax[panel_n])
 
           for (action in panel$actions) {
 
               if (is_header) {
                   is_header <- FALSE
-                  asp <- panel$asp["header"]
-                  asp_n <- 2 * panel_n - 1
+                  asp <- panel_header_asp
+                  asp_n <- 2 * panel_n
                   ylim <- c(0, 1)
               } else {
                   asp <- panel$asp["series"]
-                  asp_n <- 2 * panel_n
+                  asp_n <- 2 * panel_n + 1
                   ylim <- panel$ylim_render
               }
 
