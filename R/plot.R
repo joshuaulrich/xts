@@ -516,7 +516,7 @@ plot.xts <- function(x,
 
       if (i == 1) {
         # plot the main panel, which is already set up
-        main_panel$add_action(exp, env = lenv, update_ylim = FALSE)
+        main_panel$add_action(exp, env = lenv, update_ylim = TRUE)
         cs$Env$label <- cs$Env$column_names[i]
 
       } else {
@@ -532,7 +532,7 @@ plot.xts <- function(x,
                        envir = lenv)
 
         # plot data
-        this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
+        this_panel$add_action(exp, env = lenv, update_ylim = TRUE)
 
         # add the panel to the chart
         cs$add_panel(this_panel)
@@ -993,7 +993,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
   # getters
   get_panel <- function(n) { if (n == 0) get_last_action_panel() else Env$panels[[n]] }
-  get_ylim  <- function() { update_panels(); get_active_panel()[["ylim"]] }
+  get_ylim  <- function() { update_panels(); get_active_panel()[["ylim_render"]] }
   get_active_panel <- function() { get_panel(Env$active_panel_i) }
   get_last_action_panel <- function() { get_panel(Env$last_action_panel_id) }
   
@@ -1052,7 +1052,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
               } else {
                   asp <- panel$asp["series"]
                   asp_n <- 2 * panel_n
-                  ylim <- panel$ylim
+                  ylim <- panel$ylim_render
               }
 
               # scaled ylim
@@ -1161,6 +1161,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       panel$id <- NA
       panel$asp <- c(header = 0.25, series = asp)
       panel$ylim <- ylim
+      panel$ylim_render <- ylim
       panel$is_ylim_fixed <- is_ylim_fixed
 
       panel$actions <- list()
@@ -1236,9 +1237,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       }
       panel$add_action(yaxis_action, env = panel, update_ylim = FALSE)
 
-      # need to update ylim values when rendering
-      panel$add_action(expression({get_ylim()}), env = envir)
-
       return(panel)
   }
 
@@ -1261,7 +1259,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       panel <- Env$panels[[panel_n]]
       if (!panel$is_ylim_fixed) {
         # set ylim to +/-Inf when fixed = FALSE so update_panel() recalculates ylim
-        panel$ylim <- c(Inf, -Inf)
+        panel$ylim_render <- c(Inf, -Inf)
         panel$is_ylim_fixed <- FALSE
       }
     }
@@ -1290,7 +1288,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                 max(panel$ylim[2], dat.range, na.rm = TRUE))
 
             # set to new ylim values
-            panel$ylim <- new_ylim
+            panel$ylim_render <- new_ylim
             panel$is_ylim_fixed <- is_fixed  # use original value
           }
         }
