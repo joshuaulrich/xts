@@ -453,12 +453,17 @@ plot.xts <- function(x,
     asp <- 3
   }
   
+  # main plot header
   cs$add_main_header(isTRUE(main.timespan))
   if (isTRUE(multi.panel)) {
     main_header <- "multi.panel"
   } else {
     main_header <- "none"
   }
+
+  # main plot x-axis ticks and labels
+  cs$add_main_xaxis(use_major = !isNullOrFalse(major.ticks),
+                    use_minor = !isNullOrFalse(minor.ticks))
 
   # create the chart's main panel
   main_panel <-
@@ -470,12 +475,6 @@ plot.xts <- function(x,
                  draw_left_yaxis = yaxis.left,
                  draw_right_yaxis = yaxis.right,
                  header_type = main_header)
-
-  # add x-axis grid, ticks, and labels to the panel
-  xaxis_expr <-
-    cs$xaxis_expr(use_major = !isNullOrFalse(major.ticks),
-                  use_minor = !isNullOrFalse(minor.ticks))
-  main_panel$add_action(xaxis_expr)
 
   # add the main panel to the chart
   cs$add_panel(main_panel)
@@ -1029,12 +1028,13 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       all_asp <- c(main_title_asp, all_asp)
       n_asp <- length(all_asp)
 
-      ### main plot header
+      # render main plot header and x-axis
       plot.window(Env$xlim, c(0, 1))
       clip(par("usr")[1], par("usr")[2], 0, 1)
-      eval(Env$main_header$expr, Env)
-      ### /main plot header
+      eval(Env$main_header_expr, Env)  # header
+      eval(Env$main_xaxis_expr,  Env)  # x-axis
 
+      # render each panel
       for (panel_n in seq_along(Env$panels)) {
 
           panel <- Env$panels[[panel_n]]
@@ -1110,12 +1110,12 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     return(result)
   }
 
-  # main header
-  Env$main_header <- list()
+  # main plot header
+  Env$main_header_expr <- NULL
   add_main_header <-
   function(add_timespan = TRUE)
   {
-    Env$main_header$expr <-
+    Env$main_header_expr <-
       expression({
         text(x = xlim[1],
              y = 0.98,
@@ -1129,8 +1129,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       })
 
     if (add_timespan) {
-      Env$main_header$expr <-
-        c(Env$main_header$expr,
+      Env$main_header_expr <-
+        c(Env$main_header_expr,
           expression({
             text(x = xlim[2],
                  y = 0.98,
@@ -1143,6 +1143,64 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                  font = NULL)
           }))
     }
+  }
+
+  # main plot x-axis
+  Env$main_xaxis_expr <- NULL
+  add_main_xaxis <-
+  function(use_major, use_minor)
+  {
+      # add observation level ticks on x-axis if < 400 obs.
+      expr <- expression({
+          if (NROW(xdata[xsubset]) < 400) {
+              axis(1,
+                   at = get_xcoords(),
+                   labels = FALSE,
+                   las = theme$las,
+                   lwd.ticks = NULL,
+                   mgp = NULL,
+                   tcl = 0.3,
+                   cex.axis = theme$cex.axis,
+                   col = theme$labels,
+                   col.axis = theme$grid2)
+          }
+      })
+
+      # and major and/or minor x-axis ticks and labels
+      values <- list()
+      types <- c("major", "minor")[c(use_major, use_minor)]
+      for (type in types) {
+          if (type == "major") {
+              values$.ticks.on <- quote(major.ticks)
+              values$.labels <- quote(names(axt))
+              values$.lwd.ticks <- 1.5
+          } else {
+              values$.ticks.on <- quote(minor.ticks)
+              values$.labels <- FALSE
+              values$.lwd.ticks <- 0.75
+          }
+          expr <- c(expr, substitute({
+              xcoords <- get_xcoords()
+              x_index <- get_xcoords(at_posix = TRUE)
+              axt <- axTicksByTime(.xts(,x_index)[xsubset],
+                                   ticks.on = .ticks.on,
+                                   format.labels = format.labels)
+              axis(1,
+                   at = xcoords[axt],
+                   labels = .labels,
+                   las = theme$las,
+                   lwd.ticks = .lwd.ticks,
+                   mgp = c(3,1.5,0),
+                   tcl = -0.4,
+                   cex.axis = theme$cex.axis,
+                   col = theme$labels,
+                   col.axis = theme$labels)
+
+          }, values))
+      }
+
+      Env$main_xaxis_expr <- expr
+      return(expr)
   }
 
   # panel functionality
@@ -1400,61 +1458,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     return(exp)
   }
 
-  xaxis_expr <-
-  function(use_major, use_minor)
-  {
-      # add observation level ticks on x-axis if < 400 obs.
-      expr <- expression({
-          if (NROW(xdata[xsubset]) < 400) {
-              axis(1,
-                   at = get_xcoords(),
-                   labels = FALSE,
-                   las = theme$las,
-                   lwd.ticks = NULL,
-                   mgp = NULL,
-                   tcl = 0.3,
-                   cex.axis = theme$cex.axis,
-                   col = theme$labels,
-                   col.axis = theme$grid2)
-          }
-      })
-
-      # and major and/or minor x-axis ticks and labels
-      values <- list()
-      types <- c("major", "minor")[c(use_major, use_minor)]
-      for (type in types) {
-          if (type == "major") {
-              values$.ticks.on <- quote(major.ticks)
-              values$.labels <- quote(names(axt))
-              values$.lwd.ticks <- 1.5
-          } else {
-              values$.ticks.on <- quote(minor.ticks)
-              values$.labels <- FALSE
-              values$.lwd.ticks <- 0.75
-          }
-          expr <- c(expr, substitute({
-              xcoords <- get_xcoords()
-              x_index <- get_xcoords(at_posix = TRUE)
-              axt <- axTicksByTime(.xts(,x_index)[xsubset],
-                                   ticks.on = .ticks.on,
-                                   format.labels = format.labels)
-              axis(1,
-                   at = xcoords[axt],
-                   labels = .labels,
-                   las = theme$las,
-                   lwd.ticks = .lwd.ticks,
-                   mgp = c(3,1.5,0),
-                   tcl = -0.4,
-                   cex.axis = theme$cex.axis,
-                   col = theme$labels,
-                   col.axis = theme$labels)
-
-          }, values))
-      }
-
-      return(expr)
-  }
-
   # calls
   add_call <- function(call.) {
     stopifnot(is.call(call.))
@@ -1467,9 +1470,9 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   class(replot_env) <- c("replot_xts","environment")
   replot_env$Env <- Env
   replot_env$add_main_header <- add_main_header
+  replot_env$add_main_xaxis <- add_main_xaxis
   replot_env$new_panel <- new_panel
   replot_env$add_panel <- add_panel
-  replot_env$xaxis_expr <- xaxis_expr
   replot_env$yaxis_expr <- yaxis_expr
   replot_env$get_xcoords <- get_xcoords
   replot_env$update_panels <- update_panels
