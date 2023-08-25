@@ -967,10 +967,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   Env$xlim  <- xlim  # vector: c(min, max) (same for every panel)
   Env$last_action_panel_id <- 1
   
-  # setters
-  set_panel <- function(n) { Env$active_panel_i <<- n }
-  set_ylim  <- function(ylim) { Env$ylim <<- ylim }
-
   # getters
   get_panel <- function(n) { if (n == 0) get_last_action_panel() else Env$panels[[n]] }
   get_ylim  <- function() { update_panels(); get_active_panel()[["ylim_render"]] }
@@ -1446,9 +1442,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$get_xcoords <- get_xcoords
   replot_env$update_panels <- update_panels
   replot_env$render_panels <- render_panels
-  replot_env$set_panel <- set_panel
   replot_env$get_panel <- get_panel
-  replot_env$set_ylim <- set_ylim
   replot_env$get_ylim <- get_ylim
   replot_env$create_ylim <- create_ylim
   replot_env$add_call <- add_call
