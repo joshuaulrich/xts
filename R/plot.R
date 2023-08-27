@@ -1156,7 +1156,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
            title_timespan = FALSE)
   {
       panel <- new.env(TRUE, envir)
-      panel$id <- NA
+      panel$id <- length(Env$panels) + 1
       panel$asp <- c(header = 0.25, series = asp)
       panel$ylim <- ylim
       panel$ylim_render <- ylim
