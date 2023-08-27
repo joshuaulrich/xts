@@ -24,64 +24,52 @@ current.xts_chob <- function() invisible(get(".xts_chob",.plotxtsEnv))
 
 # Current design
 #
-# The code doesn't currently have a distinction between "panels" and "frames".
-# They're always called "frames" and there are implicitly 2 frames/panel.
-# Env$ylim and Env$asp have data for each panel, and they're stored as:
-# list(header1 = c(0, 1), data1 = c(-100, 100),
-#      header2 = c(0, 1), data2 = c(-100, 100), ...)
+# There is a main plot object that contains the plot title (and optional
+# timespan), the x-axis labels and tick marks, and a list of 'panel' objects.
+# The main plot object contains the objects/functions below.
 #
-# add_frame(n) adds a new "frame" after frame 'n'. It doesn't distinguish
-# between header frames or series frames, so the added frame could be either.
+#   * Env: an environment holds all the plot information.
+#   * add_main_header(): add the main plot header
+#   * add_main_xaxis(): add the x-axis labels and ticks to the main plot.
+#   * new_panel(): create a new panel and add it to the plot.
+#   * get_xcoords(): get the x-coordinate values for the plot.
+#   * get_panel(): get a specific panel.
+#   * get_last_action_panel(): get the panel that had the last rendered action.
+#   * new_environment: create a new environment with 'Env' as its parent.
+
+# Functions that aren't intended to be called externally:
 #
-# Each element in actions has a frame attribute. So functions like add_frame(),
-# update_frames(), etc look at the frame attribute for every action in
-# Env$actions. The list of actions is updated by add()/replot().
-# NOTE: this seems backward: panels contain actions
+#   * update_panels(): re-calculate the x-axis and y-axis values.
+#   * render_panels(): render all the plot panels.
+#   * get_ylim(): recalculate the ylim for a specific panel.
+#   * y_grid_lines: function to plot the y-axis grid lines.
+#   * x_grid_lines: function to plot the x-axis grid lines.
+#   * yaxis_expr(): create the expression to render the y-axis ticks and labels.
+
+# The panel object is composed of the following fields:
+#
+#   * id: the numeric index of the panel in the plot's list of panels.
+#   * asp: the x/y aspect ratio for the panel (relative vertical size).
+#   * ylim: the ylim of the panel when it was created.
+#   * ylim_render: the ylim of the panel to use when rendering.
+#   * is_ylim_fixed: can the ylim of the panel change based on other panels?
+#   * header: the panel title.
+#   * actions: a list of expressions used to render the panel.
+#   * add_action(): a function to add an action to the list.
+#
+# The panel also has expressions for rendering the y-axis min/max values,
+# labels, and grid lines/ticks. It also contains an x-axis grid line expression
+# because we need the y-axis min/max values to know where to draw the x-axis
+# grid lines.
+
+# Other notes
 #
 # Environments created by new_environment() (e.g. the 'lenv') are children of
 # Env, so expressions evaluated in 'lenv' will look in Env for anything not
 # found in 'lenv'.
 #
-# What does 'clip' do?
-#  * hypothesis: prevents rendering outside of a region
-#
-# -----------------------------------------------------------------------------
-# Target design for refactor
-#
-# * A plot window contains multiple panels
-# * There are 2 frames per panel
-#   * The first frame is a small 'header' frame for titles
-#   * The second frame is larger and where the data series is rendered,
-#     including axis labels
-#
-# The first panel is where the main series is rendered. Panels added later are
-# plotted below the first panel and are smaller.
-#
-#
-#  plot window
-#  |- data
-#  |- subset
-#  |- global settings
-#  |
-#  |- panels
-#  |  |- panel #1
-#  |  |  |- header
-#  |  |  |  |- actions
-#  |  |  |     |- title
-#  |  |  |     |- time span
-#  |  |  |
-#  |  |  |- series
-#  |  |     |- actions
-#  |  |        |- axis major/minor tick marks
-#  |  |        |- axis grid lines
-#  |  |        |- axis labels
-#  |  |        |- plotting
-#  |  |
-#  |  |- panel #2
-#  |  |  |- ...
-#  |  |  |  ...
-#
-#
+
+# Visual representation of plot structure
 #
 #   ____________________________________________________________________________
 #  /                                                                            \
@@ -134,13 +122,6 @@ current.xts_chob <- function() invisible(get(".xts_chob",.plotxtsEnv))
 # |                                                                              |
 #  \____________________________________________________________________________/
 #
-#
-#
-# TODO:
-#  * use Env$x <- append(Env$x, foo) in cases like Env$x[[length(Env$x)+1]] <- foo
-#  * "Do some checks on x" should be is.xts(x), or at least try.xts()
-#  * "reset par" should use on.exit() when par() is set:
-#      orig_par <- par(foo = "x", bar = "y", ...);  on.exit(par(orig_par))
 
 
 # Currently not necessary, but potentially very useful:
@@ -926,9 +907,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
 }# polygon
 
 
-# R/replot.R in quantmod with only minor edits to change class name to
-# replot_xts and use the .plotxtsEnv instead of the .plotEnv in quantmod
-
+# Based on quantmod/R/replot.R
 new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10),fixed=FALSE))) {
   # global variables
 
