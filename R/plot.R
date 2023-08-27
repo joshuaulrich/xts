@@ -499,9 +499,6 @@ plot.xts <- function(x,
 
       # plot data
       this_panel$add_action(exp, env = lenv, update_ylim = TRUE)
-
-      # add the panel to the chart
-      cs$add_panel(this_panel)
     }
   } else {
     if(type == "h" && NCOL(x) > 1) 
@@ -529,9 +526,6 @@ plot.xts <- function(x,
                              legend.loc=legend.loc))
     exp <- as.expression(add.par.from.dots(exp, ...))
     main_panel$add_action(exp)
-
-    # add the main panel to the chart
-    cs$add_panel(main_panel)
 
     assign(".xts_chob", cs, .plotxtsEnv)
   }
@@ -653,9 +647,6 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
     # plot data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
 
-    # add the panel to the chart
-    plot_object$add_panel(this_panel)
-
   } else {
     for(i in on) {
       this_panel <- plot_object$get_panel(i)
@@ -755,9 +746,6 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     # plot data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
 
-    # add the panel to the chart
-    plot_object$add_panel(this_panel)
-
   } else {
     for(i in on) {
       this_panel <- plot_object$get_panel(i)
@@ -832,8 +820,6 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     # legend data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
 
-    # add the panel to the chart
-    plot_object$add_panel(this_panel)
   } else {
     for(i in on) {
       this_panel <- plot_object$get_panel(i)
@@ -929,9 +915,6 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
 
     # plot data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
-
-    # add the panel to the chart
-    plot_object$add_panel(this_panel)
 
   } else {
     for(i in on) {
@@ -1255,20 +1238,10 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       xaxis_action <- expression(x_grid_lines(xdata, grid.ticks.on, par("usr")[3:4]))
       panel$add_action(xaxis_action, env = panel, update_ylim = FALSE)
 
-      return(panel)
-  }
-
-  add_panel <- function(panel)
-  {
-      if (is.na(panel$id)) {
-          panel$id <- length(Env$panels) + 1
-      } else {
-          warning("ignoring second call to add_panel() for panel ",
-                  panel$id, call. = FALSE)
-      }
-
-      # append the new panel
+      # append the new panel to the panel list
       Env$panels <- append(Env$panels, list(panel))
+
+      return(panel)
   }
 
   update_panels <- function(headers=TRUE) {
@@ -1419,7 +1392,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$add_main_header <- add_main_header
   replot_env$add_main_xaxis <- add_main_xaxis
   replot_env$new_panel <- new_panel
-  replot_env$add_panel <- add_panel
   replot_env$yaxis_expr <- yaxis_expr
   replot_env$get_xcoords <- get_xcoords
   replot_env$update_panels <- update_panels
