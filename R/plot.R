@@ -401,8 +401,6 @@ plot.xts <- function(x,
   cs$Env$lend <- lend
   cs$Env$legend.loc <- legend.loc
   cs$Env$extend.xaxis <- extend.xaxis
-  cs$Env$call_list <- list()
-  cs$Env$call_list[[1]] <- plot.call
   cs$Env$observation.based <- observation.based
   
   # Do some checks on x
@@ -634,8 +632,6 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
                    x = quote(current.xts_chob()),
                    expargs))
 
-  plot_object$add_call(match.call())
-  
   xdata <- plot_object$Env$xdata
   xsubset <- plot_object$Env$xsubset
   lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
@@ -743,8 +739,6 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
                    x = quote(current.xts_chob()),
                    expargs))
 
-  plot_object$add_call(match.call())
-  
   if(is.na(on[1])){
     xdata <- plot_object$Env$xdata
     xsubset <- plot_object$Env$xsubset
@@ -810,9 +804,6 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     legend(x=lc$x, y=lc$y, legend=legend.names, xjust=lc$xjust, yjust=lc$yjust,
            ncol=ncol, col=col, bty=bty, text.col=text.col, ...)
   }
-  
-  # store the call
-  plot_object$add_call(match.call())
   
   # get tag/value from dots
   expargs <- substitute(alist(legend.loc=legend.loc,
@@ -918,8 +909,6 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
                    x = quote(current.xts_chob()),
                    expargs))
 
-  plot_object$add_call(match.call())
-  
   xdata <- plot_object$Env$xdata
   xsubset <- plot_object$Env$xsubset
   lenv$xdata <- merge(x,xdata,retside=c(TRUE,FALSE))
@@ -1423,13 +1412,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     return(exp)
   }
 
-  # calls
-  add_call <- function(call.) {
-    stopifnot(is.call(call.))
-    ncalls <- length(Env$call_list)
-    Env$call_list[[ncalls+1]] <- call.
-  }
-
   # return
   replot_env <- new.env()
   class(replot_env) <- c("replot_xts","environment")
@@ -1445,7 +1427,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$get_panel <- get_panel
   replot_env$get_ylim <- get_ylim
   replot_env$create_ylim <- create_ylim
-  replot_env$add_call <- add_call
   replot_env$get_last_action_panel <- get_last_action_panel
 
   replot_env$new_environment <- function() { new.env(TRUE, Env) }
