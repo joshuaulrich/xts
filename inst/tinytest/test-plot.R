@@ -35,7 +35,7 @@ expect_equivalent(target, p$get_xlim(), info = info_msg)
 info_msg <- "test.ylim_set_before_rendering"
 x <- rnorm(10)
 p <- plot(xts(x, .Date(1:10)))
-expect_equivalent(range(x), p$get_ylim()[[2]], info = info_msg)
+expect_equivalent(range(x), p$get_ylim(), info = info_msg)
 
 info_msg <- "test.yaxis.ticks"
 x <- xts(rnorm(50), .Date(1:50))
