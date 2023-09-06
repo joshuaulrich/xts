@@ -76,9 +76,11 @@ print.xts <-
     seq.col <- seq_len(nc)
     seq.n <- (nr - show.rows + 1):nr
 
-    index <- c(as.character(index(x)[seq.row]),
-               "...",
-               as.character(index(x)[seq.n]))
+    # format all the index values that will be printed,
+    # so every row will have the same number of characters
+    index <- format(index(x)[c(seq.row, seq.n)])
+    # combine the index values with the '...' separator
+    index <- c(index[seq.row], "...", index[-c(seq.row, tail(seq.row, 1))])
 
     # as.matrix() to ensure we have dims
     # unclass() avoids as.matrix() method dispatch
