@@ -1130,7 +1130,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           expr <- c(expr, substitute({
               xcoords <- get_xcoords()
               x_index <- get_xcoords(at_posix = TRUE)
-              axt <- axTicksByTime(.xts(,x_index)[xsubset],
+              axt <- axTicksByTime(.xts(, x_index, tzone = tzone(xdata))[xsubset],
                                    ticks.on = .ticks.on,
                                    format.labels = format.labels)
               axis(1,
