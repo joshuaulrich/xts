@@ -969,8 +969,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       header_loc <- seq(1, length(all_asp), by = 2)
       all_asp[header_loc] <- panel_header_asp
 
-      # main header asp is always 7% of the grand total asp
-      main_title_asp <- 0.07 * sum(all_asp)
+      # main header asp is always 4% of the grand total asp
+      main_title_asp <- 0.04 * sum(all_asp)
 
       all_asp <- c(main_title_asp, all_asp)
       n_asp <- length(all_asp)
