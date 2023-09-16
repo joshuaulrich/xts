@@ -1082,7 +1082,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           expression({
             text(x = xlim[2],
                  y = 0.98,
-                 labels = .makeISO8601(xdata[xsubset]),
+                 labels = paste(start(xdata[xsubset]),
+                                end(xdata[xsubset]), sep = " / "),
                  adj = c(0, 0),
                  pos = 2,
                  offset = 0.5,
