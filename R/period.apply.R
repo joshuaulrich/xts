@@ -45,7 +45,7 @@ function(caller)
 `period.apply` <-
 function(x, INDEX, FUN, ...)
 {
-    if (deparse(substitute(FUN)) == "mean") {
+    if (deparse(substitute(FUN))[1] == "mean") {
       .mean_by_column_message("period.apply")
     }
     x <- try.xts(x, error = FALSE)
@@ -101,7 +101,7 @@ function (x, INDEX, FUN, ...)
 `apply.daily` <-
 function(x,FUN, ...)
 {
-  if (deparse(substitute(FUN)) == "mean") {
+  if (deparse(substitute(FUN))[1] == "mean") {
     .mean_by_column_message("apply.daily")
   }
   ep <- endpoints(x,'days')
@@ -110,7 +110,7 @@ function(x,FUN, ...)
 `apply.weekly` <-
 function(x,FUN, ...)
 {
-  if (deparse(substitute(FUN)) == "mean") {
+  if (deparse(substitute(FUN))[1] == "mean") {
     .mean_by_column_message("apply.weekly")
   }
   ep <- endpoints(x,'weeks')
@@ -120,7 +120,7 @@ function(x,FUN, ...)
 `apply.monthly` <-
 function(x,FUN, ...)
 {
-  if (deparse(substitute(FUN)) == "mean") {
+  if (deparse(substitute(FUN))[1] == "mean") {
     .mean_by_column_message("apply.monthly")
   }
   ep <- endpoints(x,'months')
@@ -130,7 +130,7 @@ function(x,FUN, ...)
 `apply.quarterly` <-
 function(x,FUN, ...)
 {
-  if (deparse(substitute(FUN)) == "mean") {
+  if (deparse(substitute(FUN))[1] == "mean") {
     .mean_by_column_message("apply.quarterly")
   }
   ep <- endpoints(x,'quarters')
@@ -140,7 +140,7 @@ function(x,FUN, ...)
 `apply.yearly` <-
 function(x,FUN, ...)
 {
-  if (deparse(substitute(FUN)) == "mean") {
+  if (deparse(substitute(FUN))[1] == "mean") {
     .mean_by_column_message("apply.yearly")
   }
   ep <- endpoints(x,'years')
