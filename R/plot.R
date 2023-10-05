@@ -1221,26 +1221,22 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
               ylim <- get_ylim()
           }
 
-          y_grid_lines <-
-          function(ylim)
-          {
-              p <- pretty(ylim, Env$yaxis.ticks)
-              p <- p[p >= ylim[1] & p <= ylim[2]]
-              return(p)
-          }
+          # y-axis grid line locations
+          grid_loc <- pretty(ylim, Env$yaxis.ticks)
+          grid_loc <- grid_loc[grid_loc >= ylim[1] & grid_loc <= ylim[2]]
 
-          # y-axis grid lines
-          segments(x0 = xlim[1], y0 = y_grid_lines(ylim),
-                   x1 = xlim[2], y1 = y_grid_lines(ylim),
+          # draw y-axis grid lines
+          segments(x0 = xlim[1], y0 = grid_loc,
+                   x1 = xlim[2], y1 = grid_loc,
                    col = theme$grid,
                    lwd = grid.ticks.lwd,
                    lty = grid.ticks.lty)
 
-          # left y-axis grid labels
+          # draw left y-axis grid labels
           if (draw_left_yaxis) {
               text(x = xlim[1],
-                   y = y_grid_lines(ylim),
-                   labels = format(y_grid_lines(ylim), justify = "right"),
+                   y = grid_loc,
+                   labels = format(grid_loc, justify = "right"),
                    col = theme$labels,
                    srt = theme$srt,
                    offset = 0.5,
@@ -1249,11 +1245,11 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                    xpd = TRUE)
           }
 
-          # right y-axis grid labels
+          # draw right y-axis grid labels
           if (draw_right_yaxis) {
               text(x = xlim[2],
-                   y = y_grid_lines(ylim),
-                   labels = format(y_grid_lines(ylim), justify = "right"),
+                   y = grid_loc,
+                   labels = format(grid_loc, justify = "right"),
                    col = theme$labels,
                    srt = theme$srt,
                    offset = 0.5,
@@ -1262,7 +1258,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                    xpd = TRUE)
           }
 
-          # y-axis label
+          # draw y-axis label
           title(ylab = ylab[1], mgp = c(1, 1, 0))
       })
       panel$add_action(yaxis_expr, env = panel, update_ylim = FALSE)
