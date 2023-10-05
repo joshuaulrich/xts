@@ -1172,6 +1172,9 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       panel$ylim <- ylim
       panel$ylim_render <- ylim
       panel$is_ylim_fixed <- is_ylim_fixed
+      panel$use_get_ylim <- use_get_ylim
+      panel$draw_left_yaxis  <- ifelse(is.null(draw_left_yaxis),  Env$theme$lylab, draw_left_yaxis)
+      panel$draw_right_yaxis <- ifelse(is.null(draw_right_yaxis), Env$theme$rylab, draw_right_yaxis)
       panel$header <- header
 
       ### actions
@@ -1211,84 +1214,58 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       panel$add_action(header_expr, env = panel)
 
       ### y-axis
-      panel$y_grid_lines <-
-      function(ylim)
-      {
-          p <- pretty(ylim, Env$yaxis.ticks)
-          p <- p[p >= ylim[1] & p <= ylim[2]]
-          return(p)
-      }
+      yaxis_expr <- expression({
 
-      yaxis_expr <-
-      function(ylim_expr,
-               yaxis_left,
-               yaxis_right)
-      {
+          if (use_get_ylim) {
+              # re-calculate and override panel ylim
+              ylim <- get_ylim()
+          }
+
+          y_grid_lines <-
+          function(ylim)
+          {
+              p <- pretty(ylim, Env$yaxis.ticks)
+              p <- p[p >= ylim[1] & p <= ylim[2]]
+              return(p)
+          }
 
           # y-axis grid lines
-          exp <- substitute({
-              segments(x0 = xlim[1], y0 = y_grid_lines(ylim_expr),
-                       x1 = xlim[2], y1 = y_grid_lines(ylim_expr),
-                       col = theme$grid,
-                       lwd = grid.ticks.lwd,
-                       lty = grid.ticks.lty)
-          }, list(ylim_expr = substitute(ylim_expr)))
+          segments(x0 = xlim[1], y0 = y_grid_lines(ylim),
+                   x1 = xlim[2], y1 = y_grid_lines(ylim),
+                   col = theme$grid,
+                   lwd = grid.ticks.lwd,
+                   lty = grid.ticks.lty)
 
-          # y-axis grid labels
-          if (yaxis_left) {
-              # left y-axis labels
-              exp <- c(exp,
-                  substitute({
-                      text(x = xlim[1],
-                           y = y_grid_lines(ylim_expr),
-                           labels = noquote(format(y_grid_lines(ylim_expr), justify = "right")),
-                           col = theme$labels,
-                           srt = theme$srt,
-                           offset = 0.5,
-                           pos = 2,
-                           cex = theme$cex.axis,
-                           xpd = TRUE)
-                  }, list(ylim_expr = substitute(ylim_expr)))
-              )
+          # left y-axis grid labels
+          if (draw_left_yaxis) {
+              text(x = xlim[1],
+                   y = y_grid_lines(ylim),
+                   labels = format(y_grid_lines(ylim), justify = "right"),
+                   col = theme$labels,
+                   srt = theme$srt,
+                   offset = 0.5,
+                   pos = 2,
+                   cex = theme$cex.axis,
+                   xpd = TRUE)
           }
 
-          if (yaxis_right) {
-              # right y-axis labels
-              exp <- c(exp,
-                  substitute({
-                      text(x = xlim[2],
-                           y = y_grid_lines(ylim_expr),
-                           labels = noquote(format(y_grid_lines(ylim_expr), justify = "right")),
-                           col = theme$labels,
-                           srt = theme$srt,
-                           offset = 0.5,
-                           pos = 4,
-                           cex = theme$cex.axis,
-                           xpd = TRUE)
-                  }, list(ylim_expr = substitute(ylim_expr)))
-              )
+          # right y-axis grid labels
+          if (draw_right_yaxis) {
+              text(x = xlim[2],
+                   y = y_grid_lines(ylim),
+                   labels = format(y_grid_lines(ylim), justify = "right"),
+                   col = theme$labels,
+                   srt = theme$srt,
+                   offset = 0.5,
+                   pos = 4,
+                   cex = theme$cex.axis,
+                   xpd = TRUE)
           }
 
-        ### y-axis labels
-        exp <- c(exp, expression(title(ylab = ylab[1], mgp = c(1, 1, 0))))
-
-        return(exp)
-      }
-
-      if (is.null(draw_left_yaxis)) {
-        draw_left_yaxis <- Env$theme$lylab
-      }
-      if (is.null(draw_right_yaxis)) {
-        draw_right_yaxis <- Env$theme$rylab
-      }
-      if (use_get_ylim) {
-          yaxis_action <- yaxis_expr(get_ylim(),
-                                     draw_left_yaxis, draw_right_yaxis)
-      } else {
-          yaxis_action <- yaxis_expr(ylim,
-                                     draw_left_yaxis, draw_right_yaxis)
-      }
-      panel$add_action(yaxis_action, env = panel, update_ylim = FALSE)
+          # y-axis label
+          title(ylab = ylab[1], mgp = c(1, 1, 0))
+      })
+      panel$add_action(yaxis_expr, env = panel, update_ylim = FALSE)
 
       # x-axis grid
       xaxis_action <- expression(x_grid_lines(xdata, grid.ticks.on, par("usr")[3:4]))
