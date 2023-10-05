@@ -1174,6 +1174,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       panel$is_ylim_fixed <- is_ylim_fixed
       panel$header <- header
 
+      ### actions
       panel$actions <- list()
       panel$add_action <-
       function(expr,
@@ -1193,7 +1194,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           Env$last_action_panel_id <<- panel$id
       }
 
-      # NOTE: the header action must be the 1st action for a panel
+      ### header
+      # NOTE: this must be the 1st action for a panel
       header_expr <-
           expression({
               text(x = xlim[1],
@@ -1208,7 +1210,71 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           })
       panel$add_action(header_expr, env = panel)
 
-      # y-axis
+      ### y-axis
+      panel$y_grid_lines <-
+      function(ylim)
+      {
+          p <- pretty(ylim, Env$yaxis.ticks)
+          p <- p[p >= ylim[1] & p <= ylim[2]]
+          return(p)
+      }
+
+      yaxis_expr <-
+      function(ylim_expr,
+               yaxis_left,
+               yaxis_right)
+      {
+
+          # y-axis grid lines
+          exp <- substitute({
+              segments(x0 = xlim[1], y0 = y_grid_lines(ylim_expr),
+                       x1 = xlim[2], y1 = y_grid_lines(ylim_expr),
+                       col = theme$grid,
+                       lwd = grid.ticks.lwd,
+                       lty = grid.ticks.lty)
+          }, list(ylim_expr = substitute(ylim_expr)))
+
+          # y-axis grid labels
+          if (yaxis_left) {
+              # left y-axis labels
+              exp <- c(exp,
+                  substitute({
+                      text(x = xlim[1],
+                           y = y_grid_lines(ylim_expr),
+                           labels = noquote(format(y_grid_lines(ylim_expr), justify = "right")),
+                           col = theme$labels,
+                           srt = theme$srt,
+                           offset = 0.5,
+                           pos = 2,
+                           cex = theme$cex.axis,
+                           xpd = TRUE)
+                  }, list(ylim_expr = substitute(ylim_expr)))
+              )
+          }
+
+          if (yaxis_right) {
+              # right y-axis labels
+              exp <- c(exp,
+                  substitute({
+                      text(x = xlim[2],
+                           y = y_grid_lines(ylim_expr),
+                           labels = noquote(format(y_grid_lines(ylim_expr), justify = "right")),
+                           col = theme$labels,
+                           srt = theme$srt,
+                           offset = 0.5,
+                           pos = 4,
+                           cex = theme$cex.axis,
+                           xpd = TRUE)
+                  }, list(ylim_expr = substitute(ylim_expr)))
+              )
+          }
+
+        ### y-axis labels
+        exp <- c(exp, expression(title(ylab = ylab[1], mgp = c(1, 1, 0))))
+
+        return(exp)
+      }
+
       if (is.null(draw_left_yaxis)) {
         draw_left_yaxis <- Env$theme$lylab
       }
@@ -1321,59 +1387,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     }
   }
 
-  yaxis_expr <-
-  function(ylim_expr,
-           yaxis_left,
-           yaxis_right)
-  {
-    # y-axis grid lines and labels
-    exp <- substitute({
-        segments(x0 = xlim[1], y0 = y_grid_lines(ylim_expr),
-                 x1 = xlim[2], y1 = y_grid_lines(ylim_expr),
-                 col = theme$grid,
-                 lwd = grid.ticks.lwd,
-                 lty = grid.ticks.lty)
-    }, list(ylim_expr = substitute(ylim_expr)))
-
-    if (yaxis_left) {
-      # left y-axis labels
-      exp <- c(exp,
-          substitute({
-            text(x = xlim[1],
-                 y = y_grid_lines(ylim_expr),
-                 labels = noquote(format(y_grid_lines(ylim_expr), justify = "right")),
-                 col = theme$labels,
-                 srt = theme$srt,
-                 offset = 0.5,
-                 pos = 2,
-                 cex = theme$cex.axis,
-                 xpd = TRUE)
-          }, list(ylim_expr = substitute(ylim_expr)))
-      )
-    }
-
-    if (yaxis_right) {
-      # right y-axis labels
-      exp <- c(exp,
-          substitute({
-            text(x = xlim[2],
-                 y = y_grid_lines(ylim_expr),
-                 labels = noquote(format(y_grid_lines(ylim_expr), justify = "right")),
-                 col = theme$labels,
-                 srt = theme$srt,
-                 offset = 0.5,
-                 pos = 4,
-                 cex = theme$cex.axis,
-                 xpd = TRUE)
-          }, list(ylim_expr = substitute(ylim_expr)))
-      )
-    }
-
-    # y labels
-    exp <- c(exp, expression(title(ylab = ylab[1], mgp = c(1, 1, 0))))
-
-    return(exp)
-  }
 
   # return
   replot_env <- new.env()
@@ -1382,7 +1395,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$add_main_header <- add_main_header
   replot_env$add_main_xaxis <- add_main_xaxis
   replot_env$new_panel <- new_panel
-  replot_env$yaxis_expr <- yaxis_expr
   replot_env$get_xcoords <- get_xcoords
   replot_env$update_panels <- update_panels
   replot_env$render_panels <- render_panels
@@ -1393,13 +1405,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$get_last_action_panel <- get_last_action_panel
 
   replot_env$new_environment <- function() { new.env(TRUE, Env) }
-
-  # function to plot the y-axis grid lines
-  replot_env$Env$y_grid_lines <- function(ylim) {
-    p <- pretty(ylim, Env$yaxis.ticks)
-    p <- p[p >= ylim[1] & p <= ylim[2]]
-    return(p)
-  }
 
   # function to plot the x-axis grid lines
   replot_env$Env$x_grid_lines <- function(x, ticks.on, ylim)
@@ -1441,11 +1446,12 @@ plot.replot_xts <- function(x, ...) {
   omar <- par(mar = x$Env$mar)
   oxpd <- par(xpd = FALSE)
   usr <- par("usr")
+  # reset par
   on.exit(par(xpd = oxpd$xpd, cex = ocex$cex, mar = omar$mar, bg = obg$bg))
 
   x$render_panels()
 
   do.call("clip", as.list(usr))  # reset clipping region
-  # reset par
+
   invisible(x$Env$actions)
 }
