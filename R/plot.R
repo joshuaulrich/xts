@@ -52,7 +52,7 @@ current.xts_chob <- function() invisible(get(".xts_chob",.plotxtsEnv))
 #   * asp: the x/y aspect ratio for the panel (relative vertical size).
 #   * ylim: the ylim of the panel when it was created.
 #   * ylim_render: the ylim of the panel to use when rendering.
-#   * is_ylim_fixed: can the ylim of the panel change based on other panels?
+#   * use_global_ylim: update the panel ylim based on other panels.
 #   * header: the panel title.
 #   * actions: a list of expressions used to render the panel.
 #   * add_action(): a function to add an action to the list.
@@ -402,27 +402,27 @@ plot.xts <- function(x,
       if(yaxis.same){
         # set the ylim for the first panel based on all the data
         yrange <- cs$create_ylim(cs$Env$xdata[subset,])
-        # and recalculate ylim when drawing (fixed=FALSE)
-        yfixed <- FALSE
+        # and recalculate ylim when rendering
+        use_global_ylim <- TRUE
       } else {
         # set the ylim for the first panel based on the first column
         yrange <- cs$create_ylim(cs$Env$xdata[subset, 1])
-        # but do NOT recalculate ylim when drawing (fixed=TRUE)
-        yfixed <- TRUE
+        # but do NOT recalculate ylim when rendering
+        use_global_ylim <- FALSE
       }
     } else {
       # set the ylim based on all the data if this is not a multi.panel plot
       yrange <- cs$create_ylim(cs$Env$xdata[subset,])
-      # and recalculate ylim when drawing (fixed=FALSE)
-      yfixed <- FALSE
+      # and recalculate ylim when rendering
+      use_global_ylim <- TRUE
     }
 
     cs$Env$constant_ylim <- range(cs$Env$xdata[subset], na.rm=TRUE)
   } else {
     # use the ylim arg passed in
-    # but do NOT recalculate ylim when drawing (fixed=TRUE)
+    # but do NOT recalculate ylim when rendering
     yrange <- ylim
-    yfixed <- TRUE
+    use_global_ylim <- FALSE
     cs$Env$constant_ylim <- ylim
   }
 
@@ -445,10 +445,10 @@ plot.xts <- function(x,
       lenv$type <- cs$Env$type
       if(yaxis.same){
         lenv$ylim <- cs$Env$constant_ylim
-        lenv$is_ylim_fixed <- FALSE
+        lenv$use_global_ylim <- TRUE
       } else {
         lenv$ylim <- cs$create_ylim(cs$Env$xdata[subset, i])
-        lenv$is_ylim_fixed <- TRUE
+        lenv$use_global_ylim <- FALSE
       }
 
       # allow color and line attributes for each panel in a multi.panel plot
@@ -475,7 +475,7 @@ plot.xts <- function(x,
                      header = cs$Env$column_names[i],
                      draw_left_yaxis = yaxis.left,
                      draw_right_yaxis = yaxis.right,
-                     is_ylim_fixed = lenv$is_ylim_fixed)
+                     use_global_ylim = lenv$use_global_ylim)
 
       # plot data
       this_panel$add_action(exp, env = lenv, update_ylim = TRUE)
@@ -490,7 +490,7 @@ plot.xts <- function(x,
                    asp = 3,
                    envir = cs$Env,
                    header = "",
-                   is_ylim_fixed = yfixed,
+                   use_global_ylim = use_global_ylim,
                    draw_left_yaxis = yaxis.left,
                    draw_right_yaxis = yaxis.right)
 
@@ -1158,7 +1158,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
            envir,
            header,
            ...,
-           is_ylim_fixed = TRUE,
+           use_global_ylim = FALSE,
            draw_left_yaxis = NULL,
            draw_right_yaxis = NULL,
            title_timespan = FALSE)
@@ -1168,7 +1168,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       panel$asp <- c(header = 0.25, series = asp)
       panel$ylim <- ylim
       panel$ylim_render <- ylim
-      panel$is_ylim_fixed <- is_ylim_fixed
+      panel$use_global_ylim <- use_global_ylim
       panel$draw_left_yaxis  <- ifelse(is.null(draw_left_yaxis),  Env$theme$lylab, draw_left_yaxis)
       panel$draw_right_yaxis <- ifelse(is.null(draw_right_yaxis), Env$theme$rylab, draw_right_yaxis)
       panel$header <- header
@@ -1212,7 +1212,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       ### y-axis
       yaxis_expr <- expression({
 
-          if (!is_ylim_fixed) {
+          if (use_global_ylim) {
               # use the ylim based on all panels' data
               ylim <- ylim_render
           }
@@ -1273,7 +1273,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
     for (panel_n in seq_along(Env$panels)) {
       panel <- Env$panels[[panel_n]]
-      if (!panel$is_ylim_fixed) {
+      if (panel$use_global_ylim) {
         # set ylim to +/-Inf when fixed = FALSE so update_panel() recalculates ylim
         panel$ylim_render <- c(Inf, -Inf)
       }
@@ -1284,7 +1284,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
     for (panel_n in seq_along(Env$panels)) {
       panel <- get_panel(panel_n)
 
-      if (!panel$is_ylim_fixed) {
+      if (panel$use_global_ylim) {
         for (action in panel$actions) {
 
           action_update_ylim <- attr(action, "update_ylim")
