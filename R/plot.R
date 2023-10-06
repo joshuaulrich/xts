@@ -473,7 +473,6 @@ plot.xts <- function(x,
                      asp = asp,
                      envir = lenv,
                      header = cs$Env$column_names[i],
-                     use_get_ylim = TRUE,
                      draw_left_yaxis = yaxis.left,
                      draw_right_yaxis = yaxis.right,
                      is_ylim_fixed = lenv$is_ylim_fixed)
@@ -492,7 +491,6 @@ plot.xts <- function(x,
                    envir = cs$Env,
                    header = "",
                    is_ylim_fixed = yfixed,
-                   use_get_ylim = TRUE,
                    draw_left_yaxis = yaxis.left,
                    draw_right_yaxis = yaxis.right)
 
@@ -1161,7 +1159,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
            header,
            ...,
            is_ylim_fixed = TRUE,
-           use_get_ylim = FALSE,
            draw_left_yaxis = NULL,
            draw_right_yaxis = NULL,
            title_timespan = FALSE)
@@ -1172,7 +1169,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       panel$ylim <- ylim
       panel$ylim_render <- ylim
       panel$is_ylim_fixed <- is_ylim_fixed
-      panel$use_get_ylim <- use_get_ylim
       panel$draw_left_yaxis  <- ifelse(is.null(draw_left_yaxis),  Env$theme$lylab, draw_left_yaxis)
       panel$draw_right_yaxis <- ifelse(is.null(draw_right_yaxis), Env$theme$rylab, draw_right_yaxis)
       panel$header <- header
@@ -1216,9 +1212,9 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       ### y-axis
       yaxis_expr <- expression({
 
-          if (use_get_ylim) {
-              # re-calculate and override panel ylim
-              ylim <- get_ylim()
+          if (!is_ylim_fixed) {
+              # use the ylim based on all panels' data
+              ylim <- ylim_render
           }
 
           # y-axis grid line locations
@@ -1280,18 +1276,15 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       if (!panel$is_ylim_fixed) {
         # set ylim to +/-Inf when fixed = FALSE so update_panel() recalculates ylim
         panel$ylim_render <- c(Inf, -Inf)
-        panel$is_ylim_fixed <- FALSE
       }
     }
 
-    update_panel <- function(panel_n)
-    {
-      # recalculate the panel's ylim based on actions added to the panel
-
+    # reset all ylim values, by looking for range(env[[1]]$xdata)
+    # xdata should be either coming from Env or if lenv, lenv
+    for (panel_n in seq_along(Env$panels)) {
       panel <- get_panel(panel_n)
-      is_fixed <- panel$is_ylim_fixed  # cache original value
 
-      if (!is_fixed) {
+      if (!panel$is_ylim_fixed) {
         for (action in panel$actions) {
 
           action_update_ylim <- attr(action, "update_ylim")
@@ -1309,15 +1302,9 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
             # set to new ylim values
             panel$ylim_render <- new_ylim
-            panel$is_ylim_fixed <- is_fixed  # use original value
           }
         }
       }
-    }
-    # reset all ylim values, by looking for range(env[[1]]$xdata)
-    # xdata should be either coming from Env or if lenv, lenv
-    for (panel_n in seq_along(Env$panels)) {
-        update_panel(panel_n)
     }
 
     update_xaxis <- function(panel, x_axis)
