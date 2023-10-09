@@ -135,6 +135,7 @@ chart.lines <- function(x,
                         up.col=NULL, 
                         dn.col=NULL,
                         legend.loc=NULL,
+                        log=FALSE,
                         ...){
   xx <- current.xts_chob()
   switch(type,
@@ -162,7 +163,9 @@ chart.lines <- function(x,
            for(i in NCOL(x):1) {
              # x-coordinates for this column
              xcoords <- xx$get_xcoords(x[,i])
-             lines(xcoords, x[,i], type=type, lend=lend, col=col[i],
+             xi <- x[,i]
+             if (isTRUE(log)) xi <- log(xi)
+             lines(xcoords, xi, type=type, lend=lend, col=col[i],
                    lty=lty[i], lwd=lwd[i], ...)
            }
          },
@@ -228,6 +231,7 @@ plot.xts <- function(x,
                      main=deparse(substitute(x)),
                      main.timespan=TRUE,
                      observation.based=FALSE,
+                     log=FALSE,
                      ylim=NULL,
                      yaxis.same=TRUE,
                      yaxis.left=TRUE,
@@ -291,6 +295,7 @@ plot.xts <- function(x,
                     lend=lend,
                     main=main,
                     observation.based=observation.based,
+                    log=log,
                     ylim=ylim,
                     yaxis.same=yaxis.same,
                     yaxis.left=yaxis.left,
@@ -383,6 +388,7 @@ plot.xts <- function(x,
   cs$Env$legend.loc <- legend.loc
   cs$Env$extend.xaxis <- extend.xaxis
   cs$Env$observation.based <- observation.based
+  cs$Env$log <- isTRUE(log)
   
   # Do some checks on x
   if(is.character(x))
@@ -455,6 +461,7 @@ plot.xts <- function(x,
       lenv$lty <- cs$Env$lty[i]
       lenv$lwd <- cs$Env$lwd[i]
       lenv$col <- cs$Env$theme$col[i]
+      lenv$log <- isTRUE(log)
 
       exp <- quote(chart.lines(xdata[xsubset],
                                type=type,
@@ -462,6 +469,7 @@ plot.xts <- function(x,
                                lwd=lwd,
                                lend=lend,
                                col=col,
+                               log=log,
                                up.col=theme$up.col,
                                dn.col=theme$dn.col,
                                legend.loc=legend.loc))
@@ -475,7 +483,8 @@ plot.xts <- function(x,
                      header = cs$Env$column_names[i],
                      draw_left_yaxis = yaxis.left,
                      draw_right_yaxis = yaxis.right,
-                     use_global_ylim = lenv$use_global_ylim)
+                     use_global_ylim = lenv$use_global_ylim,
+                     use_log_yaxis = log)
 
       # plot data
       this_panel$add_action(exp, env = lenv, update_ylim = TRUE)
@@ -492,7 +501,8 @@ plot.xts <- function(x,
                    header = "",
                    use_global_ylim = use_global_ylim,
                    draw_left_yaxis = yaxis.left,
-                   draw_right_yaxis = yaxis.right)
+                   draw_right_yaxis = yaxis.right,
+                   use_log_yaxis = log)
 
     exp <- quote(chart.lines(xdata[xsubset],
                              type=type, 
@@ -500,6 +510,7 @@ plot.xts <- function(x,
                              lwd=lwd,
                              lend=lend,
                              col=theme$col,
+                             log=log,
                              up.col=theme$up.col, 
                              dn.col=theme$dn.col,
                              legend.loc=legend.loc))
@@ -1161,6 +1172,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
            use_global_ylim = FALSE,
            draw_left_yaxis = NULL,
            draw_right_yaxis = NULL,
+           use_log_yaxis = FALSE,
            title_timespan = FALSE)
   {
       panel <- new.env(TRUE, envir)
@@ -1171,6 +1183,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       panel$use_global_ylim <- use_global_ylim
       panel$draw_left_yaxis  <- ifelse(is.null(draw_left_yaxis),  Env$theme$lylab, draw_left_yaxis)
       panel$draw_right_yaxis <- ifelse(is.null(draw_right_yaxis), Env$theme$rylab, draw_right_yaxis)
+      panel$use_log_yaxis <- isTRUE(use_log_yaxis)
       panel$header <- header
 
       ### actions
@@ -1299,6 +1312,10 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
             new_ylim <-
               c(min(panel$ylim[1], dat.range, na.rm = TRUE),
                 max(panel$ylim[2], dat.range, na.rm = TRUE))
+
+            if (panel$use_log_yaxis) {
+                new_ylim <- log(new_ylim)
+            }
 
             # set to new ylim values
             panel$ylim_render <- new_ylim
