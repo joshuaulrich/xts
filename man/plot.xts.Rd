@@ -8,7 +8,7 @@
   panels = NULL, multi.panel = FALSE, col = 1:8, up.col = NULL,
   dn.col = NULL, bg = "#FFFFFF", type = "l", lty = 1, lwd = 2, lend = 1,
   main = deparse(substitute(x)), main.timespan = TRUE, observation.based = FALSE,
-  ylim = NULL, yaxis.same = TRUE, yaxis.left = TRUE, yaxis.right = TRUE,
+  log = FALSE, ylim = NULL, yaxis.same = TRUE, yaxis.left = TRUE, yaxis.right = TRUE,
   yaxis.ticks = 5, major.ticks = "auto", minor.ticks = NULL,
   grid.ticks.on = "auto", grid.ticks.lwd = 1, grid.ticks.lty = 1,
   grid.col = "darkgray", labels.col = "#333333", format.labels = TRUE,
@@ -55,6 +55,8 @@ separate panel.}
 \item{main.timespan}{include the timespan of the series on the plot? (default \code{TRUE})}
 
 \item{observation.based}{TRUE/FALSE (default FALSE). If \code{TRUE}, the x-axis is drawn based on observations in the data. If \code{FALSE}, the x-axis is drawn based on the time index of the data.}
+
+\item{log}{TRUE/FALSE (default FALSE). If \code{TRUE}, the y-axis is drawn in log-scale}
 
 \item{ylim}{the range of the y axis}
 
