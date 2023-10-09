@@ -1233,8 +1233,18 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           }
 
           # y-axis grid line labels and locations
-          grid_loc <- pretty(yl, Env$yaxis.ticks)
-          grid_loc <- grid_loc[grid_loc >= yl[1] & grid_loc <= yl[2]]
+          if (use_log_yaxis) {
+              # labels are based on the raw series values
+              ylim_series <- exp(yl)
+              grid_lbl <- pretty(ylim_series, Env$yaxis.ticks)
+              grid_lbl <- grid_lbl[grid_lbl >= ylim_series[1] & grid_lbl <= ylim_series[2]]
+              # locations are based on the log series values
+              grid_loc <- log(grid_lbl)
+          } else {
+              grid_loc <- pretty(yl, Env$yaxis.ticks)
+              grid_loc <- grid_loc[grid_loc >= yl[1] & grid_loc <= yl[2]]
+              grid_lbl <- grid_loc
+          }
 
           # draw y-axis grid lines
           segments(x0 = xlim[1], y0 = grid_loc,
@@ -1247,7 +1257,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           if (draw_left_yaxis) {
               text(x = xlim[1],
                    y = grid_loc,
-                   labels = format(grid_loc, justify = "right"),
+                   labels = format(grid_lbl, justify = "right"),
                    col = theme$labels,
                    srt = theme$srt,
                    offset = 0.5,
@@ -1260,7 +1270,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           if (draw_right_yaxis) {
               text(x = xlim[2],
                    y = grid_loc,
-                   labels = format(grid_loc, justify = "right"),
+                   labels = format(grid_lbl, justify = "right"),
                    col = theme$labels,
                    srt = theme$srt,
                    offset = 0.5,
