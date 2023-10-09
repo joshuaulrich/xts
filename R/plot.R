@@ -41,10 +41,8 @@ current.xts_chob <- function() invisible(get(".xts_chob",.plotxtsEnv))
 #
 #   * update_panels(): re-calculate the x-axis and y-axis values.
 #   * render_panels(): render all the plot panels.
-#   * get_ylim(): recalculate the ylim for a specific panel.
-#   * y_grid_lines: function to plot the y-axis grid lines.
-#   * x_grid_lines: function to plot the x-axis grid lines.
-#   * yaxis_expr(): create the expression to render the y-axis ticks and labels.
+#   * x_grid_lines(): plot the x-axis grid lines.
+#   * create_ylim(): create y-axis max/min, handling when max(x) == min(x).
 
 # The panel object is composed of the following fields:
 #
@@ -57,10 +55,10 @@ current.xts_chob <- function() invisible(get(".xts_chob",.plotxtsEnv))
 #   * actions: a list of expressions used to render the panel.
 #   * add_action(): a function to add an action to the list.
 #
-# The panel also has expressions for rendering the y-axis min/max values,
-# labels, and grid lines/ticks. It also contains an x-axis grid line expression
-# because we need the y-axis min/max values to know where to draw the x-axis
-# grid lines.
+# The panel has the 'yaxis_expr' expression for rendering the y-axis min/max
+# values, labels, and grid lines/ticks. It also contains the x-axis grid
+# expression because we need the y-axis min/max values to know where to draw
+# the x-axis grid lines on the panel.
 
 # Other notes
 #
@@ -994,11 +992,10 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       for (panel_n in seq_along(Env$panels)) {
 
           panel <- Env$panels[[panel_n]]
-          # set the current active panel, so get_ylim() will use it
+          # set the current active panel for the entire plot
           Env$active_panel_i <- panel_n
 
           is_header <- TRUE  # header is always the first action
-          #panel$render_header(Env$xlim, panel_ymax[panel_n])
 
           for (action in panel$actions) {
 
@@ -1320,7 +1317,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
             # some actions (e.g. addLegend) do not have 'xdata'
             dat.range <- create_ylim(action_data[Env$xsubset])
 
-            # re-retrieve ylim; actions may be changed it
+            # re-retrieve ylim; actions may have changed it
             new_ylim <-
               c(min(panel$ylim[1], dat.range, na.rm = TRUE),
                 max(panel$ylim[2], dat.range, na.rm = TRUE))
