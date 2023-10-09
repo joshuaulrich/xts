@@ -1227,12 +1227,14 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
           if (use_global_ylim) {
               # use the ylim based on all panels' data
-              ylim <- ylim_render
+              yl <- ylim_render
+          } else {
+              yl <- ylim
           }
 
-          # y-axis grid line locations
-          grid_loc <- pretty(ylim, Env$yaxis.ticks)
-          grid_loc <- grid_loc[grid_loc >= ylim[1] & grid_loc <= ylim[2]]
+          # y-axis grid line labels and locations
+          grid_loc <- pretty(yl, Env$yaxis.ticks)
+          grid_loc <- grid_loc[grid_loc >= yl[1] & grid_loc <= yl[2]]
 
           # draw y-axis grid lines
           segments(x0 = xlim[1], y0 = grid_loc,
