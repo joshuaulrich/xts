@@ -34,12 +34,14 @@ importFrom(graphics,
   par,
   plot,
   plot.new,
+  plot.window,
   polygon,
   segments,
   text)
 
 importFrom(utils,
-  str)
+  str,
+  tail)
 
 # xts exports
 export(.parseISO8601)
