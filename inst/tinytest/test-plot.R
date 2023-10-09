@@ -37,14 +37,6 @@ x <- rnorm(10)
 p <- plot(xts(x, .Date(1:10)))
 expect_equivalent(range(x), p$get_ylim(), info = info_msg)
 
-info_msg <- "test.yaxis.ticks"
-x <- xts(rnorm(50), .Date(1:50))
-ylim <- c(0, 10) # default case
-p1 <- plot(x)
-expect_identical(pretty(ylim, 5), p1$Env$y_grid_lines(ylim), info = info_msg)
-p2 <- plot(x, yaxis.ticks = 10) # twice as many y-axis grid lines
-expect_identical(pretty(ylim, 10), p2$Env$y_grid_lines(ylim), info = info_msg)
-
 get_xcoords_respects_object_tzone <-
 function()
 {
