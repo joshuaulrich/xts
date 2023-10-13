@@ -430,13 +430,6 @@ plot.xts <- function(x,
     cs$Env$constant_ylim <- ylim
   }
 
-  # main plot header
-  cs$add_main_header(isTRUE(main.timespan))
-
-  # main plot x-axis ticks and labels
-  cs$add_main_xaxis(use_major = !isNullOrFalse(major.ticks),
-                    use_minor = !isNullOrFalse(minor.ticks))
-
   if(isTRUE(multi.panel)){
 
     n_cols <- NCOL(cs$Env$xdata)
@@ -1065,98 +1058,84 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   }
 
   # main plot header
-  Env$main_header_expr <- NULL
-  add_main_header <-
-  function(add_timespan = TRUE)
-  {
-    Env$main_header_expr <-
-      expression({
-        text(x = xlim[1],
-             y = 0.98,
-             labels = main,
-             adj = NULL,
-             pos = 4,
-             offset = 0,
-             cex = 1.1,
-             col = theme$labels,
-             font = 2)
-      })
+  Env$main_header_expr <- expression({
+      text(x = xlim[1],
+           y = 0.98,
+           labels = main,
+           adj = NULL,
+           pos = 4,
+           offset = 0,
+           cex = 1.1,
+           col = theme$labels,
+           font = 2)
 
-    if (add_timespan) {
-      Env$main_header_expr <-
-        c(Env$main_header_expr,
-          expression({
-            text(x = xlim[2],
-                 y = 0.98,
-                 labels = paste(start(xdata[xsubset]),
-                                end(xdata[xsubset]), sep = " / "),
-                 adj = c(0, 0),
-                 pos = 2,
-                 offset = 0.5,
-                 cex = 1,
-                 col = theme$labels,
-                 font = NULL)
-          }))
-    }
-  }
+      if (main.timespan) {
+          text(x = xlim[2],
+               y = 0.98,
+               labels = paste(start(xdata[xsubset]),
+                              end(xdata[xsubset]), sep = " / "),
+               adj = c(0, 0),
+               pos = 2,
+               offset = 0.5,
+               cex = 1,
+               col = theme$labels,
+               font = NULL)
+      }
+  })
 
   # main plot x-axis
-  Env$main_xaxis_expr <- NULL
-  add_main_xaxis <-
-  function(use_major, use_minor)
-  {
+  Env$main_xaxis_expr <- expression({
       # add observation level ticks on x-axis if < 400 obs.
-      expr <- expression({
-          if (NROW(xdata[xsubset]) < 400) {
-              axis(1,
-                   at = get_xcoords(),
-                   labels = FALSE,
-                   las = theme$las,
-                   lwd.ticks = NULL,
-                   mgp = NULL,
-                   tcl = 0.3,
-                   cex.axis = theme$cex.axis,
-                   col = theme$labels,
-                   col.axis = theme$grid2)
-          }
-      })
-
-      # and major and/or minor x-axis ticks and labels
-      values <- list()
-      types <- c("major", "minor")[c(use_major, use_minor)]
-      for (type in types) {
-          if (type == "major") {
-              values$.ticks.on <- quote(major.ticks)
-              values$.labels <- quote(names(axt))
-              values$.lwd.ticks <- 1.5
-          } else {
-              values$.ticks.on <- quote(minor.ticks)
-              values$.labels <- FALSE
-              values$.lwd.ticks <- 0.75
-          }
-          expr <- c(expr, substitute({
-              xcoords <- get_xcoords()
-              x_index <- get_xcoords(at_posix = TRUE)
-              axt <- axTicksByTime(.xts(, x_index, tzone = tzone(xdata))[xsubset],
-                                   ticks.on = .ticks.on,
-                                   format.labels = format.labels)
-              axis(1,
-                   at = xcoords[axt],
-                   labels = .labels,
-                   las = theme$las,
-                   lwd.ticks = .lwd.ticks,
-                   mgp = c(3,1.5,0),
-                   tcl = -0.4,
-                   cex.axis = theme$cex.axis,
-                   col = theme$labels,
-                   col.axis = theme$labels)
-
-          }, values))
+      if (NROW(xdata[xsubset]) < 400) {
+          axis(1,
+               at = get_xcoords(),
+               labels = FALSE,
+               las = theme$las,
+               lwd.ticks = NULL,
+               mgp = NULL,
+               tcl = 0.3,
+               cex.axis = theme$cex.axis,
+               col = theme$labels,
+               col.axis = theme$grid2)
       }
 
-      Env$main_xaxis_expr <- expr
-      return(expr)
-  }
+      # and major and/or minor x-axis ticks and labels
+      xcoords <- get_xcoords()
+      x_index <- get_xcoords(at_posix = TRUE)
+      x_data <- .xts(, x_index, tzone = tzone(xdata))[xsubset]
+
+      use_major <- !isNullOrFalse(major.ticks)
+      use_minor <- !isNullOrFalse(minor.ticks)
+
+      types <- c("major", "minor")[c(use_major, use_minor)]
+      for (type in types) {
+          if (type== "major") {
+              axt <- axTicksByTime(x_data,
+                                    ticks.on = major.ticks,
+                                    format.labels = format.labels)
+              labels <- names(axt)
+              lwd.ticks <- 1.5
+          } else {
+              axt <- axTicksByTime(x_data,
+                                    ticks.on = minor.ticks,
+                                    format.labels = format.labels)
+              labels <- FALSE
+              lwd.ticks <- 0.75
+          }
+
+
+          axis(1,
+               at = xcoords[axt],
+               labels = labels,
+               las = theme$las,
+               lwd.ticks = lwd.ticks,
+               mgp = c(3,1.5,0),
+               tcl = -0.4,
+               cex.axis = theme$cex.axis,
+               col = theme$labels,
+               col.axis = theme$labels)
+      }
+  })
 
   # panel functionality
   Env$panels <- list()
@@ -1378,8 +1357,6 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env <- new.env()
   class(replot_env) <- c("replot_xts","environment")
   replot_env$Env <- Env
-  replot_env$add_main_header <- add_main_header
-  replot_env$add_main_xaxis <- add_main_xaxis
   replot_env$new_panel <- new_panel
   replot_env$get_xcoords <- get_xcoords
   replot_env$update_panels <- update_panels
