@@ -1059,6 +1059,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
   # main plot header
   Env$main_header_expr <- expression({
+      local({
       text(x = xlim[1],
            y = 0.98,
            labels = main,
@@ -1081,10 +1082,12 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                col = theme$labels,
                font = NULL)
       }
+      }, new.env(TRUE, Env))
   })
 
   # main plot x-axis
   Env$main_xaxis_expr <- expression({
+      local({
       # add observation level ticks on x-axis if < 400 obs.
       if (NROW(xdata[xsubset]) < 400) {
           axis(1,
@@ -1135,6 +1138,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
                col = theme$labels,
                col.axis = theme$labels)
       }
+      }, new.env(TRUE, Env))
   })
 
   # panel functionality
