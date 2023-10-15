@@ -620,10 +620,12 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
   
   if(is.na(on[1])){
     # add series to a new panel
+    use_log <- isTRUE(eval.parent(substitute(alist(...))$log))
     this_panel <- plot_object$new_panel(lenv$ylim,
                                         asp = 1,
                                         envir = lenv,
-                                        header = main)
+                                        header = main,
+                                        use_log_yaxis = use_log)
 
     # plot data
     this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
@@ -1214,8 +1216,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
           # y-axis grid line labels and locations
           if (use_log_yaxis) {
+              ylim_series <- exp(ylim_render)
               # labels are based on the raw series values
-              ylim_series <- exp(yl)
               grid_lbl <- pretty(ylim_series, Env$yaxis.ticks)
               grid_lbl <- grid_lbl[grid_lbl >= ylim_series[1] & grid_lbl <= ylim_series[2]]
               # locations are based on the log series values
@@ -1305,14 +1307,14 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
               c(min(panel$ylim[1], dat.range, na.rm = TRUE),
                 max(panel$ylim[2], dat.range, na.rm = TRUE))
 
-            if (panel$use_log_yaxis) {
-                new_ylim <- log(new_ylim)
-            }
-
             # set to new ylim values
             panel$ylim_render <- new_ylim
           }
         }
+      }
+
+      if (panel$use_log_yaxis) {
+          panel$ylim_render <- log(panel$ylim_render)
       }
     }
 
