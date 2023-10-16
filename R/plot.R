@@ -401,51 +401,35 @@ plot.xts <- function(x,
   cs$Env$main.timespan <- main.timespan
   cs$Env$ylab <- if (hasArg("ylab")) eval.parent(plot.call$ylab) else ""
   
-  if(is.null(ylim)){
-    if(isTRUE(multi.panel)){
-      if(yaxis.same){
-        # set the ylim for the first panel based on all the data
-        yrange <- cs$create_ylim(cs$Env$xdata[subset,])
-        # and recalculate ylim when rendering
-        use_global_ylim <- TRUE
-      } else {
-        # set the ylim for the first panel based on the first column
-        yrange <- cs$create_ylim(cs$Env$xdata[subset, 1])
-        # but do NOT recalculate ylim when rendering
-        use_global_ylim <- FALSE
-      }
-    } else {
-      # set the ylim based on all the data if this is not a multi.panel plot
-      yrange <- cs$create_ylim(cs$Env$xdata[subset,])
-      # and recalculate ylim when rendering
-      use_global_ylim <- TRUE
-    }
-
-    cs$Env$constant_ylim <- range(cs$Env$xdata[subset], na.rm=TRUE)
-  } else {
-    # use the ylim arg passed in
-    # but do NOT recalculate ylim when rendering
-    yrange <- ylim
-    use_global_ylim <- FALSE
-    cs$Env$constant_ylim <- ylim
-  }
+  xdata_ylim <- cs$create_ylim(cs$Env$xdata[subset,])
 
   if(isTRUE(multi.panel)){
 
     n_cols <- NCOL(cs$Env$xdata)
     asp <- ifelse(n_cols > 1, n_cols, 3)
 
+    if (hasArg("yaxis.same") && hasArg("ylim") && !is.null(ylim)) {
+      warning("only 'ylim' or 'yaxis.same' should be provided; using 'ylim'")
+    }
+
     for(i in seq_len(n_cols)) {
       # create a local environment for each panel
       lenv <- cs$new_environment()
       lenv$xdata <- cs$Env$xdata[subset,i]
       lenv$type <- cs$Env$type
-      if(yaxis.same){
-        lenv$ylim <- cs$Env$constant_ylim
-        lenv$use_global_ylim <- TRUE
+
+      if (is.null(ylim)) {
+        if (yaxis.same) {
+          lenv$ylim <- xdata_ylim       # set panel ylim using all columns
+          lenv$use_global_ylim <- TRUE  # update panel ylim when rendering
+        } else {
+          panel_ylim <- cs$create_ylim(lenv$xdata)
+          lenv$ylim <- panel_ylim        # set panel ylim using this column
+          lenv$use_global_ylim <- FALSE  # do NOT recalculate ylim
+        }
       } else {
-        lenv$ylim <- cs$create_ylim(cs$Env$xdata[subset, i])
-        lenv$use_global_ylim <- FALSE
+        lenv$ylim <- ylim              # use the ylim argument value
+        lenv$use_global_ylim <- FALSE  # do NOT recalculate ylim
       }
 
       # allow color and line attributes for each panel in a multi.panel plot
@@ -483,6 +467,14 @@ plot.xts <- function(x,
   } else {
     if(type == "h" && NCOL(x) > 1) 
       warning("only the univariate series will be plotted")
+
+    if (is.null(ylim)) {
+      yrange <- xdata_ylim      # set ylim using all columns
+      use_global_ylim <- TRUE   # update panel ylim when rendering
+    } else {
+      yrange <- ylim            # use the ylim argument value
+      use_global_ylim <- FALSE  # do NOT recalculate ylim
+    }
 
     # create the chart's main panel
     main_panel <-
