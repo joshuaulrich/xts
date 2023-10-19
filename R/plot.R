@@ -1271,21 +1271,18 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
 
   update_panels <- function(headers=TRUE) {
 
+    # Recalculate each panel's 'ylim_render' value based on the
+    # 'xdata' of every action in the panel
     for (panel_n in seq_along(Env$panels)) {
-      panel <- Env$panels[[panel_n]]
-      if (!panel$use_fixed_ylim) {
-        # set ylim to +/-Inf when use_fixed_ylim is FALSE
-        # it will be updated to include all the panel's data
-        panel$ylim_render <- c(Inf, -Inf)
-      }
-    }
 
-    # reset all ylim values, by looking for range(env[[1]]$xdata)
-    # xdata should be either coming from Env or if lenv, lenv
-    for (panel_n in seq_along(Env$panels)) {
       panel <- get_panel(panel_n)
 
       if (!panel$use_fixed_ylim) {
+        # set 'ylim_render' to +/-Inf when ylim is NOT fixed, so
+        # it will be updated to include all the panel's data
+        panel$ylim_render <- c(Inf, -Inf)
+
+        # calculate a new ylim based on all the panel's data
         for (action in panel$actions) {
 
           action_update_ylim <- attr(action, "update_ylim")
@@ -1296,7 +1293,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
             # some actions (e.g. addLegend) do not have 'xdata'
             dat.range <- create_ylim(action_data[Env$xsubset])
 
-            # re-retrieve ylim; actions may have changed it
+            # calculate new ylim based on the combination of the panel's
+            # original ylim and the action's 'xdata' ylim
             new_ylim <-
               c(min(panel$ylim[1], dat.range, na.rm = TRUE),
                 max(panel$ylim[2], dat.range, na.rm = TRUE))
