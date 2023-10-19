@@ -462,7 +462,7 @@ plot.xts <- function(x,
                      use_log_yaxis = log)
 
       # plot data
-      this_panel$add_action(exp, env = lenv, update_ylim = TRUE)
+      this_panel$add_action(exp, env = lenv)
     }
   } else {
     if(type == "h" && NCOL(x) > 1) 
@@ -620,7 +620,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
                                         use_log_yaxis = use_log)
 
     # plot data
-    this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
+    this_panel$add_action(exp, env = lenv)
 
   } else {
     for(i in on) {
@@ -719,7 +719,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
                                         header = main)
 
     # plot data
-    this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
+    this_panel$add_action(exp, env = lenv)
 
   } else {
     for(i in on) {
@@ -793,7 +793,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
                                         header = "")
 
     # legend data
-    this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
+    this_panel$add_action(exp, env = lenv)
 
   } else {
     for(i in on) {
@@ -897,7 +897,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
                                         header = main)
 
     # plot data
-    this_panel$add_action(exp, env = lenv, update_ylim = FALSE)
+    this_panel$add_action(exp, env = lenv)
 
   } else {
     for(i in on) {
@@ -1166,15 +1166,13 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       function(expr,
                env = Env,
                clip = TRUE,
-               update_ylim = TRUE,
                ...)
       {
           if (!is.expression(expr)) {
               expr <- as.expression(expr)
           }
 
-          action <- structure(expr, clip = clip, env = env,
-                              update_ylim = update_ylim, ...)
+          action <- structure(expr, clip = clip, env = env, ...)
           panel$actions <- append(panel$actions, list(action))
 
           Env$last_action_panel_id <<- panel$id
@@ -1257,11 +1255,11 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           # draw y-axis label
           title(ylab = ylab[1], mgp = c(1, 1, 0))
       })
-      panel$add_action(yaxis_expr, env = panel, update_ylim = FALSE)
+      panel$add_action(yaxis_expr, env = panel)
 
       # x-axis grid
       xaxis_action <- expression(x_grid_lines(xdata, grid.ticks.on, par("usr")[3:4]))
-      panel$add_action(xaxis_action, env = panel, update_ylim = FALSE)
+      panel$add_action(xaxis_action, env = panel)
 
       # append the new panel to the panel list
       Env$panels <- append(Env$panels, list(panel))
@@ -1285,11 +1283,10 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
         # calculate a new ylim based on all the panel's data
         for (action in panel$actions) {
 
-          action_update_ylim <- attr(action, "update_ylim")
           action_env <- attr(action, "env")
           action_data <- action_env$xdata
 
-          if (!is.null(action_data) && action_update_ylim) {
+          if (!is.null(action_data)) {
             # some actions (e.g. addLegend) do not have 'xdata'
             dat.range <- create_ylim(action_data[Env$xsubset])
 
