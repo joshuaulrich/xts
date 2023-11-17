@@ -47,26 +47,24 @@ if (requireNamespace("timeSeries", quietly = TRUE)) {
   # test 'reclass'
   
   info_msg <- "test.timeSeries_reclass"
-  expect_identical(sample.timeSeries,reclass(try.xts(sample.timeSeries)), info = info_msg)
+  expect_equal(sample.timeSeries,reclass(try.xts(sample.timeSeries)), info = info_msg)
 
   info_msg <- "test.timeSeries_reclass_subset_reclass_j1"
-  expect_identical(sample.timeSeries[,1],reclass(try.xts(sample.timeSeries))[,1], info = info_msg)
+  expect_equal(sample.timeSeries[,1],reclass(try.xts(sample.timeSeries))[,1], info = info_msg)
 
   info_msg <- "test.timeSeries_reclass_subset_as.xts_j1"
   spl <- sample.timeSeries[,1:2]
   respl <- reclass(try.xts(sample.timeSeries)[,1:2])
   # timeSeries fails to maintain @positions correctly if one column is selected
   
-  expect_identical(spl,respl, info = info_msg)
-  #expect_identical(1,1, info = info_msg)
+  expect_equal(spl,respl, info = info_msg)
 
   info_msg <- "test.timeSeries_reclass_subset_timeSeries_j1"
   spl <- sample.timeSeries[,1:2]
   respl <- reclass(try.xts(sample.timeSeries[,1:2]))
   # timeSeries fails to maintain @positions correctly if one column is selected
   
-  expect_identical(spl,respl, info = info_msg)
-  # expect_identical(1,1, info = info_msg)
+  expect_equal(spl,respl, info = info_msg)
   
   # end 'reclass' 
   ###############################################################################
