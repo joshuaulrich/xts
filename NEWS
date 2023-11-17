@@ -1,4 +1,31 @@
 ################################################################################
+Changed in xts 0.13.2:
+
+o Print a message when `period.apply()` is called with `FUN = mean` because it
+  calculates the mean for each column, not all the data in the subset like it
+  does for all other functions. The message says to use `FUN = colMeans` for
+  current behavior and `FUN = function(x) mean(x)` to calculate the mean for
+  all the data. This information is also included in the help files. The option
+  `xts.message.period.apply.mean = FALSE` suppresses the message. (#124)
+
+o Fix error when `print.xts()` is called 'quote' or 'right' arguments. (#401)
+
+o Fix `addPolygon()` so it renders when `observation.based = TRUE`. (#403)
+
+o Print trailing zeros for index value with fractional seconds, so every index
+  value has the same number of characters. (#404)
+
+o Add ability to log scale the y-axis in `plot.xts()`. (#103)
+
+o Actually change the underlying index values when 'tclass' is changed from a
+  class with a timezone (e.g. POSIXct) to one without a timezone (e.g. Date).
+  Add a warning when this happens, with a global option to always suppress the
+  warning. (#311).
+
+o Significantly refactor the internals of `plot.xts()`. (#408)
+
+
+################################################################################
 Changed in xts 0.13.1:
 
 o Ignore attribute order in `all.equal()`. Attribute order shouldn't matter.
