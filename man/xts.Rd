@@ -36,7 +36,7 @@ is.xts(x)
   \item{frequency}{ numeric indicating frequency of \code{order.by}. See Details. }
   \item{unique}{ check the index for unique timestamps? }
   \item{check}{ check that the index is ordered? }
-  \item{tclass}{ time class to use for the index. See code{\link{tclass}}. }
+  \item{tclass}{ time class to use for the index. See \code{\link{tclass}}. }
   \item{tzone}{ time zone of the index (ignored indices without a time
       component, e.g. Date, yearmon, yearqtr). See \code{\link{tzone}}. }
   \item{\dots}{ additional attributes to be added. See Details. }
