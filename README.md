@@ -163,7 +163,7 @@ mailing list (you must subscribe to post).
 
 ### Contributing
 
-Please see the [contributing guide](.github/CONTRIBUTING.md).
+Please see the [Contributing Guide](https://github.com/joshuaulrich/xts/wiki/Contributing-Guide).
 
 ### See Also
 
