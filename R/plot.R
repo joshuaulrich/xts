@@ -624,8 +624,7 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
 
   } else {
     for(i in on) {
-      this_panel <- plot_object$get_panel(i)
-      this_panel$add_action(exp, env = lenv)
+      plot_object$add_panel_action(i, exp, lenv)
     }
   }
   plot_object
@@ -723,8 +722,7 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
 
   } else {
     for(i in on) {
-      this_panel <- plot_object$get_panel(i)
-      this_panel$add_action(exp, env = lenv)
+      plot_object$add_panel_action(i, exp, lenv)
     }
   }
   plot_object
@@ -797,8 +795,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
 
   } else {
     for(i in on) {
-      this_panel <- plot_object$get_panel(i)
-      this_panel$add_action(exp, env = lenv)
+      plot_object$add_panel_action(i, exp, lenv)
     }
   }
   plot_object
@@ -901,8 +898,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
 
   } else {
     for(i in on) {
-      this_panel <- plot_object$get_panel(i)
-      this_panel$add_action(exp, env = lenv)
+      plot_object$add_panel_action(i, exp, lenv)
     }
   }
   plot_object
@@ -921,12 +917,38 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   Env$last_action_panel_id <- 1
   
   # getters
-  get_panel <- function(n) { if (n == 0) get_last_action_panel() else Env$panels[[n]] }
   get_ylim  <- function() { update_panels(); get_active_panel()[["ylim_render"]] }
   get_xlim  <- function() { update_panels(); Env$xlim }
   get_active_panel <- function() { get_panel(Env$active_panel_i) }
   get_last_action_panel <- function() { get_panel(Env$last_action_panel_id) }
-  
+  get_panel <- function(n)
+  {
+      if (n == 0) {
+          get_last_action_panel()
+      } else if (n > 0) {
+          Env$panels[[n]]
+      } else {
+          stop("'n' must be a positive integer")
+      }
+  }
+
+  add_panel_action <-
+  function(id,
+           expr,
+           env,
+           clip = TRUE,
+           where = c("last", "first", "background"),
+           ...)
+  {
+      if (id < 0) {
+          where <- "first"
+      } else {
+          where <- match.arg(where)
+      }
+      this_panel <- get_panel(abs(id))
+      this_panel$add_action(expr, env, clip, where, ...)
+  }
+
   create_ylim <-
   function(x, const_y_mult = 0.2)
   {
@@ -1166,6 +1188,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       function(expr,
                env = Env,
                clip = TRUE,
+               where = c("last", "first", "background"),
                ...)
       {
           if (!is.expression(expr)) {
@@ -1173,7 +1196,20 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
           }
 
           action <- structure(expr, clip = clip, env = env, ...)
-          panel$actions <- append(panel$actions, list(action))
+          panel$actions <-
+              switch(match.arg(where),
+                     last = {
+                         # after all the existing actions
+                         append(panel$actions, list(action))
+                     },
+                     first = {
+                         # after the header and grid lines
+                         append(panel$actions, list(action), after = 3)
+                     },
+                     background = {
+                         # after the header (which must be the 1st panel action)
+                         append(panel$actions, list(action), after = 1)
+                     })
 
           Env$last_action_panel_id <<- panel$id
       }
@@ -1357,6 +1393,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$update_panels <- update_panels
   replot_env$render_panels <- render_panels
   replot_env$get_panel <- get_panel
+  replot_env$add_panel_action <- add_panel_action
   replot_env$get_xlim <- get_xlim
   replot_env$get_ylim <- get_ylim
   replot_env$create_ylim <- create_ylim
