@@ -15,5 +15,5 @@ Suggests: timeSeries, timeDate, tseries, chron, tinytest
 LazyLoad: yes
 Description: Provide for uniform handling of R's different time-based data classes by extending zoo, maximizing native format information preservation and allowing for user level customization and extension, while simplifying cross-class interoperability.
 License: GPL (>= 2)
-URL: https://github.com/joshuaulrich/xts
+URL: https://joshuaulrich.github.io/xts/, https://github.com/joshuaulrich/xts
 BugReports: https://github.com/joshuaulrich/xts/issues
