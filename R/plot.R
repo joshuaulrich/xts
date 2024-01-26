@@ -1077,23 +1077,19 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   Env$main_header_expr <- expression({
       local({
       text(x = xlim[1],
-           y = 0.98,
+           y = 1.0,
            labels = main,
-           adj = NULL,
-           pos = 4,
-           offset = 0,
+           adj = c(0, 1),
            cex = 1.1,
            col = theme$labels,
            font = 2)
 
       if (main.timespan) {
           text(x = xlim[2],
-               y = 0.98,
+               y = 1.0,
                labels = paste(start(xdata[xsubset]),
                               end(xdata[xsubset]), sep = " / "),
-               adj = c(0, 0),
-               pos = 2,
-               offset = 0.5,
+               adj = c(1, 1),
                cex = 1,
                col = theme$labels,
                font = NULL)
