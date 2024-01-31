@@ -742,7 +742,8 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     if(is.na(on[1])){
       yrange <- c(0, 1)
     } else {
-      yrange <- x$get_panel(on)$ylim
+      panel <- x$get_panel(on)
+      yrange <- panel$ylim_render
     }
     # this just gets the data of the main plot
     # TODO: get the data of panels[on]
