@@ -238,6 +238,11 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       }
       if(max(j,na.rm=TRUE) > nc)
         stop('subscript out of bounds')
+      # warn and convert if 'j' is not integer-like
+      if(sum(abs(j)-abs(as.integer(j))) > .Machine$double.eps) {
+        warning("converting 'j' to integer because it appears to contain fractions")
+        j <- as.integer(j)
+      }
     } else
     if(is.logical(j)) {
       if(length(j) == 1) {

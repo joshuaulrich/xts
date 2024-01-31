@@ -41,6 +41,14 @@ SEXP extract_col (SEXP x, SEXP j, SEXP drop, SEXP first_, SEXP last_) {
   SEXP result, index, new_index;
   int nrs, nrsx, i, ii, jj, first, last;
 
+  /* ensure 'j' is integer with length > 0 */
+  if(length(j) == 0) {
+    error("'j' cannot have zero length");
+  }
+  if(asInteger(j) == 0) {
+    error("'j' cannot equal 0");
+  }
+
   nrsx = nrows(x);
 
   first = asInteger(first_)-1;
