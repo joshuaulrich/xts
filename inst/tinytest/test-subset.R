@@ -343,6 +343,10 @@ expect_equal(storage.mode(x[0, tf]), sm, info = paste(info_msg, ": x[0, c(TRUE, 
 
 # non-integer subset
 x <- .xts(matrix(1:20, 10, 2), 1:10)
+# subset by non-integer-like 'i' warns
+#expect_warning(x[-1.5, ])
+expect_warning(x[ 0.5, ])
+expect_warning(x[ 1.5, ])
 # subset by non-integer-like 'j' warns
 #expect_warning(x[, -1.5])
 expect_warning(x[,  0.5])

@@ -143,6 +143,12 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       if(length(i) > 0 && max(i) > nr)
         stop('subscript out of bounds')
       #i <- i[-which(i == 0)]
+
+      # warn and convert if 'i' is not integer-like
+      if(sum(abs(i)-abs(as.integer(i))) > .Machine$double.eps) {
+        warning("converting 'i' to integer because it appears to contain fractions")
+        i <- as.integer(i)
+      }
     } else
     if (timeBased(i) || (inherits(i, "AsIs") && is.character(i)) ) {
       # Fast binary search on set of dates
