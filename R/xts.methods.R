@@ -131,6 +131,14 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     if(!missing(i)) {
     # test for negative subscripting in i
     if (is.numeric(i)) {
+
+      # warn and convert if 'i' is not integer-like
+      i_int <- as.integer(i)
+      i_eps <- abs(i) - abs(i_int)
+      if (isTRUE(any(i_eps > sqrt(.Machine$double.eps)))) {
+        warning("converting 'i' to integer because it appears to contain fractions")
+        i <- i_int
+      }
       #if(any(i < 0)) {
       if(.Call(C_any_negative, i)) {
         if(!all(i <= 0))
@@ -143,12 +151,6 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       if(length(i) > 0 && max(i) > nr)
         stop('subscript out of bounds')
       #i <- i[-which(i == 0)]
-
-      # warn and convert if 'i' is not integer-like
-      if(sum(abs(i)-abs(as.integer(i))) > .Machine$double.eps) {
-        warning("converting 'i' to integer because it appears to contain fractions")
-        i <- as.integer(i)
-      }
     } else
     if (timeBased(i) || (inherits(i, "AsIs") && is.character(i)) ) {
       # Fast binary search on set of dates
@@ -237,6 +239,15 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     } else
     # test for negative subscripting in j
     if (is.numeric(j)) {
+
+      # warn and convert if 'j' is not integer-like
+      j_int <- as.integer(j)
+      j_eps <- abs(j) - abs(j_int)
+      if (isTRUE(any(j_eps > sqrt(.Machine$double.eps)))) {
+        warning("converting 'j' to integer because it appears to contain fractions")
+        j <- j_int
+      }
+
       if(min(j,na.rm=TRUE) < 0) {
         if(max(j,na.rm=TRUE) > 0)
           stop('only zeros may be mixed with negative subscripts')
@@ -244,11 +255,6 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
       }
       if(max(j,na.rm=TRUE) > nc)
         stop('subscript out of bounds')
-      # warn and convert if 'j' is not integer-like
-      if(sum(abs(j)-abs(as.integer(j))) > .Machine$double.eps) {
-        warning("converting 'j' to integer because it appears to contain fractions")
-        j <- as.integer(j)
-      }
     } else
     if(is.logical(j)) {
       if(length(j) == 1) {
