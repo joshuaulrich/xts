@@ -285,82 +285,88 @@ SEXP do_merge_xts (SEXP x, SEXP y,
 
      We also check the index type and use the appropriate macros
    */
-  
-  if( TYPEOF(xindex) == REALSXP ) { 
-  real_xindex = REAL(xindex);
-  real_yindex = REAL(yindex);
+  int index_type = TYPEOF(xindex); // xindex and yindex have same TYPEOF now
+  if (index_type == REALSXP) {
+    real_xindex = REAL(xindex);
+    real_yindex = REAL(yindex);
 
-  /* Check for illegal values before looping. Due to ordered index,
-   * -Inf must be first, while NA, Inf, and NaN must be last. */
-  if (!R_FINITE(real_xindex[0]) || !R_FINITE(real_xindex[nrx-1])
-   || !R_FINITE(real_yindex[0]) || !R_FINITE(real_yindex[nry-1])) {
-    error("'index' cannot contain 'NA', 'NaN', or '+/-Inf'");
-  }
+    /* Check for illegal values before looping. Due to ordered index,
+     * -Inf must be first, while NA, Inf, and NaN must be last. */
+    if (!R_FINITE(real_xindex[0]) || !R_FINITE(real_xindex[nrx-1]) ||
+        !R_FINITE(real_yindex[0]) || !R_FINITE(real_yindex[nry-1])) {
+      error("'index' cannot contain 'NA', 'NaN', or '+/-Inf'");
+    }
 
-  while( (xp + yp) <= (len + 1) ) {
-    if( xp > nrx ) {
-      yp++;
-      if(right_join) i++;
-    } else
-    if( yp > nry ) {
-      xp++;
-      if(left_join) i++;
-    } else
-    if( real_xindex[ xp-1 ] == real_yindex[ yp-1 ] ) {
-      /* INNER JOIN  --- only result if all=FALSE */
-      yp++;
-      xp++;
-      i++;
-    } else
-    if( real_xindex[ xp-1 ] < real_yindex[ yp-1 ] ) {
-      /* LEFT JOIN */
-      xp++;
-      if(left_join) i++;
-    } else
-    if( real_xindex[ xp-1 ] > real_yindex[ yp-1 ] ) {
-      /* RIGHT JOIN */
-      yp++;
-      if(right_join) i++;
-    } else
-      error("Invalid index element comparison (should never happen)");
-  } 
-  } else
-  if( TYPEOF(xindex) == INTSXP ) {
-  int_xindex = INTEGER(xindex);
-  int_yindex = INTEGER(yindex);
+    while ((xp + yp) <= (len + 1)) {
+      if (xp > nrx) {
+        yp++;
+        if (right_join) i++;
+      } else if (yp > nry) {
+        xp++;
+        if (left_join) i++;
+      } else {
+        double xi = real_xindex[xp-1];
+        double yi = real_yindex[yp-1];
+        if (xi == yi) {
+          /* INNER JOIN  --- only result if all=FALSE */
+          yp++;
+          xp++;
+          i++;
+        } else if (xi < yi) {
+          /* LEFT JOIN */
+          xp++;
+          if (left_join) i++;
+        } else if (xi > yi) {
+          /* RIGHT JOIN */
+          yp++;
+          if (right_join) i++;
+        } else {
+          error("Invalid index element comparison (should never happen)");
+        }
+      }
+    }
+  } else if (index_type == INTSXP) {
+    int_xindex = INTEGER(xindex);
+    int_yindex = INTEGER(yindex);
 
-  /* Check for NA before looping; logical ops on NA may yield surprising
-   * results. Note that the NA_integer_ will appear in the last value of
-   * the index because of sorting at the R level, even though NA_INTEGER
-   * equals INT_MIN at the C level. */
-  if (int_xindex[nrx-1] == NA_INTEGER || int_yindex[nry-1] == NA_INTEGER) {
-     error("'index' cannot contain 'NA'");
-  }
+    /* Check for NA before looping; logical ops on NA may yield surprising
+     * results. Note that the NA_integer_ will appear in the last value of
+     * the index because of sorting at the R level, even though NA_INTEGER
+     * equals INT_MIN at the C level. */
+    if (int_xindex[nrx-1] == NA_INTEGER || int_yindex[nry-1] == NA_INTEGER) {
+      error("'index' cannot contain 'NA'");
+    }
 
-  while( (xp + yp) <= (len + 1) ) {
-    if( xp > nrx ) {
-      yp++;
-      if(right_join) i++;
-    } else
-    if( yp > nry ) {
-      xp++;
-      if(left_join) i++;
-    } else
-    if( int_xindex[ xp-1 ] == int_yindex[ yp-1 ] ) {
-      yp++;
-      xp++;
-      i++;
-    } else
-    if( int_xindex[ xp-1 ] < int_yindex[ yp-1 ] ) {
-      xp++;
-      if(left_join) i++;
-    } else
-    if( int_xindex[ xp-1 ] > int_yindex[ yp-1 ] ) {
-      yp++;
-      if(right_join) i++;
-    } else
-      error("Invalid index element comparison (should never happen)");
-  } 
+    while ((xp + yp) <= (len + 1)) {
+      if (xp > nrx) {
+        yp++;
+        if (right_join) i++;
+      } else if (yp > nry) {
+        xp++;
+        if (left_join) i++;
+      } else {
+        int xi = int_xindex[xp-1];
+        int yi = int_yindex[yp-1];
+        if (xi == yi) {
+          /* INNER JOIN  --- only result if all=FALSE */
+          yp++;
+          xp++;
+          i++;
+        } else if (xi < yi) {
+          /* LEFT JOIN */
+          xp++;
+          if (left_join) i++;
+        } else if (xi > yi) {
+          /* RIGHT JOIN */
+          yp++;
+          if (right_join) i++;
+        } else {
+          error("Invalid index element comparison (should never happen)");
+        }
+      }
+    }
+  } else {
+      error("'index' must be either double or integer");
   }
 
   if(i == 0) {
