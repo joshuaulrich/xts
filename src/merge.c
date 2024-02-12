@@ -65,7 +65,8 @@ SEXP xts_merge_make_colnames (SEXP colnames, SEXP suffixes, SEXP check_names, SE
   return(newcolnames);
 }
 
-SEXP xts_merge_combine_dimnames (SEXP _x, SEXP _y, int ncol_x, int ncol_y, SEXP _orig_colnames)
+SEXP xts_merge_make_dimnames (SEXP _x, SEXP _y, int ncol_x, int ncol_y,
+    SEXP _orig_colnames, SEXP _suffixes, SEXP _check_names, SEXP _env)
 {
   int p = 0;
   int ncols = ncol_x + ncol_y;
@@ -103,10 +104,15 @@ SEXP xts_merge_combine_dimnames (SEXP _x, SEXP _y, int ncol_x, int ncol_y, SEXP 
     }
   }
 
-  UNPROTECT(p);
-  return(colnames);
-}
+  colnames = PROTECT(xts_merge_make_colnames(colnames, _suffixes, _check_names, _env)); p++;
 
+  SEXP dimnames = PROTECT(allocVector(VECSXP, 2)); p++;
+  SET_VECTOR_ELT(dimnames, 0, R_NilValue);
+  SET_VECTOR_ELT(dimnames, 1, colnames);
+
+  UNPROTECT(p);
+  return(dimnames);
+}
 
 /*
  * These macros allow _XTS_DO_MERGE_ to handle character xts objects as well
@@ -491,13 +497,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     /* dimnames */
     if (!isNull(colnames)) {
       /* only set DimNamesSymbol if passed colnames is not NULL */
-      SEXP newcolnames = PROTECT(xts_merge_combine_dimnames(x, y, ncx, ncy, colnames)); p++;
-      newcolnames = PROTECT(xts_merge_make_colnames(newcolnames, suffixes, check_names, env)); p++;
-
-      SEXP dimnames = PROTECT(allocVector(VECSXP, 2)); p++;
-      SET_VECTOR_ELT(dimnames, 0, R_NilValue);
-      SET_VECTOR_ELT(dimnames, 1, newcolnames);
-
+      SEXP dimnames = PROTECT(xts_merge_make_dimnames(x, y, ncx, ncy, colnames, suffixes, check_names, env)); p++;
       setAttrib(result, R_DimNamesSymbol, dimnames);
     }
 
@@ -672,13 +672,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
     /* DIMNAMES */
     if (!isNull(colnames)) {
       /* only set DimNamesSymbol if passed colnames is not NULL */
-      SEXP newcolnames = PROTECT(xts_merge_combine_dimnames(x, y, ncx, ncy, colnames)); p++;
-      newcolnames = PROTECT(xts_merge_make_colnames(newcolnames, suffixes, check_names, env)); p++;
-
-      SEXP dimnames = PROTECT(allocVector(VECSXP, 2)); p++;
-      SET_VECTOR_ELT(dimnames, 0, R_NilValue);
-      SET_VECTOR_ELT(dimnames, 1, newcolnames);
-
+      SEXP dimnames = PROTECT(xts_merge_make_dimnames(x, y, ncx, ncy, colnames, suffixes, check_names, env)); p++;
       setAttrib(result, R_DimNamesSymbol, dimnames);
     }
   } else {
