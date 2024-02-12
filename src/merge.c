@@ -107,6 +107,117 @@ SEXP xts_merge_combine_dimnames (SEXP _x, SEXP _y, int ncol_x, int ncol_y, SEXP 
   return(colnames);
 }
 
+/*
+ * This is the core merge algorithm. It is implemented as a macro so it can be
+ * called inside a switch() statement for each coredata storage type. Moving
+ * the switch() statement outside the main loop improves performance by ~10%.
+ *
+ * This macro does (and should) not use any variables that aren't arguments or
+ * defined within its scope. This isn't enforceable by the compiler, so all the
+ * local variables have an underscore prefix and suffix to avoid referencing a
+ * value outside of the macro's scope.
+ */
+#define _XTS_DO_MERGE_(_RESULT_, _X_, _Y_, _FILL_, _R_JOIN_, _L_JOIN_,         \
+    _INDEX_, _X_INDEX_, _Y_INDEX_, _NROWS_, _X_NR_, _Y_NR_, _X_NC_, _Y_NC_)    \
+int _xp_ = 1;                                                                  \
+int _yp_ = 1;                                                                  \
+int _i_, _j_, _ij_in_, _ij_out_;                                               \
+                                                                               \
+for (_i_ = 0; _i_ < _NROWS_; _i_++) {                                          \
+  /* If we are past the last row in x, assign NA to merged data                \
+     and copy the y column values to the second side of result                 \
+  */                                                                           \
+  if (_xp_ > _X_NR_) {                                                         \
+    /* past the last row of x */                                               \
+    if (_R_JOIN_) {                                                            \
+      _INDEX_[_i_] = _Y_INDEX_[_yp_-1];                                        \
+      /* we are out of x-values, so fill merged result with NAs */             \
+      for (_j_ = 0; _j_ < _X_NC_; _j_++) { /* x-values */                      \
+        _ij_out_ = _i_ + _j_ * _NROWS_;                                        \
+        _RESULT_[_ij_out_] = _FILL_;                                           \
+      }                                                                        \
+      for (_j_ = 0; _j_ < _Y_NC_; _j_++) { /* y-values */                      \
+        _ij_out_ = _i_ + (_j_+_X_NC_) * _NROWS_;                               \
+        _ij_in_ = (_yp_-1) + _j_ * _Y_NR_;                                     \
+        _RESULT_[_ij_out_] = _Y_[_ij_in_];                                     \
+      }                                                                        \
+    } else {                                                                   \
+      _i_--;  /* if all=FALSE, we must decrement i for each non-match */       \
+    }                                                                          \
+    _yp_++;                                                                    \
+  } else if (_yp_ > _Y_NR_) {                                                  \
+    /* past the last row of y */                                               \
+    if (_L_JOIN_) {                                                            \
+      _INDEX_[_i_] = _X_INDEX_[_xp_-1];                                        \
+                                                                               \
+      for (_j_ = 0; _j_ < _X_NC_; _j_++) { /* x-values */                      \
+        _ij_out_ = _i_ + _j_ * _NROWS_;                                        \
+        _ij_in_ = (_xp_-1) + _j_ * _X_NR_;                                     \
+        _RESULT_[_ij_out_] = _X_[_ij_in_];                                     \
+      }                                                                        \
+                                                                               \
+      /* we are out of y-values, so fill merged result with NAs */             \
+      for (_j_ = 0; _j_ < _Y_NC_; _j_++) { /* y-values */                      \
+        _ij_out_ = _i_ + (_j_+_X_NC_) * _NROWS_;                               \
+        _RESULT_[_ij_out_] = _FILL_;                                           \
+      }                                                                        \
+    } else {                                                                   \
+      _i_--;  /* if all=FALSE, we must decrement i for each non-match */       \
+    }                                                                          \
+    _xp_++;                                                                    \
+  } else if (_X_INDEX_[_xp_-1] == _Y_INDEX_[_yp_-1]) {                         \
+    /* matching index values copy all column values from x and y to results */ \
+    _INDEX_[_i_] = _X_INDEX_[_xp_-1];                                          \
+                                                                               \
+    for (_j_ = 0; _j_ < _X_NC_; _j_++) { /* x-values */                        \
+      _ij_out_ = _i_ + _j_ * _NROWS_;                                          \
+      _ij_in_ = (_xp_-1) + _j_ * _X_NR_;                                       \
+      _RESULT_[_ij_out_] = _X_[_ij_in_];                                       \
+    }                                                                          \
+    for (_j_ = 0; _j_ < _Y_NC_; _j_++) { /* y-values */                        \
+      _ij_out_ = _i_ + (_j_+_X_NC_) * _NROWS_;                                 \
+      _ij_in_ = (_yp_-1) + _j_ * _Y_NR_;                                       \
+      _RESULT_[_ij_out_] = _Y_[_ij_in_];                                       \
+    }                                                                          \
+    _xp_++;                                                                    \
+    _yp_++;                                                                    \
+  } else if (_X_INDEX_[_xp_-1] < _Y_INDEX_[_yp_-1]) {                          \
+    if (_L_JOIN_) {                                                            \
+      _INDEX_[_i_] = _X_INDEX_[_xp_-1];                                        \
+                                                                               \
+      for (_j_ = 0; _j_ < _X_NC_; _j_++) { /* x-values */                      \
+        _ij_out_ = _i_ + _j_ * _NROWS_;                                        \
+        _ij_in_ = (_xp_-1) + _j_ * _X_NR_;                                     \
+        _RESULT_[_ij_out_] = _X_[_ij_in_];                                     \
+      }                                                                        \
+      for (_j_ = 0; _j_ < _Y_NC_; _j_++) { /* y-values */                      \
+        _ij_out_ = _i_ + (_j_+_X_NC_) * _NROWS_;                               \
+        _RESULT_[_ij_out_] = _FILL_;                                           \
+      }                                                                        \
+    } else {                                                                   \
+      _i_--;                                                                   \
+    }                                                                          \
+    _xp_++;                                                                    \
+  } else if (_X_INDEX_[_xp_-1] > _Y_INDEX_[_yp_-1]) {                          \
+    if (_R_JOIN_) {                                                            \
+      _INDEX_[_i_] = _Y_INDEX_[_yp_-1];                                        \
+                                                                               \
+      for (_j_ = 0; _j_ < _X_NC_; _j_++) { /* x-values */                      \
+        _ij_out_ = _i_ + _j_ * _NROWS_;                                        \
+        _RESULT_[_ij_out_] = _FILL_;                                           \
+      }                                                                        \
+      for (_j_ = 0; _j_ < _Y_NC_; _j_++) { /* y-values */                      \
+        _ij_out_ = _i_ + (_j_+_X_NC_) * _NROWS_;                               \
+        _ij_in_ = (_yp_-1) + _j_ * _Y_NR_;                                     \
+        _RESULT_[_ij_out_] = _Y_[_ij_in_];                                     \
+      }                                                                        \
+    } else {                                                                   \
+      _i_--;                                                                   \
+    }                                                                          \
+    _yp_++;                                                                    \
+  }                                                                            \
+}                                                                              \
+
 /* 
 
   This is a merge_join algorithm used to
@@ -144,7 +255,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
 
   int *int_result=NULL, *int_x=NULL, *int_y=NULL, int_fill=0;
   int *int_index=NULL, *int_xindex=NULL, *int_yindex=NULL;
-  double *real_result=NULL, *real_x=NULL, *real_y=NULL;
+  double *real_result=NULL, *real_x=NULL, *real_y=NULL, real_fill=0;
   double *real_index=NULL, *real_xindex=NULL, *real_yindex=NULL;
 
   /* we do not check that 'x' is an xts object.  Dispatch and mergeXts
@@ -456,307 +567,154 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   /* There are two type of supported index types, each branched from here */
   if( TYPEOF(xindex) == REALSXP ) {
 
-  /* REAL INDEXING */
-  for(i = 0; i < num_rows; i++) {
-    /* If we are past the last row in x, assign NA to merged data 
-       and copy the y column values to the second side of result
-    */
-    if( xp > nrx ) {
-      if(right_join) {
-        real_index[ i ] = real_yindex[ yp-1 ];
-        for(j = 0; j < ncx; j++) { /* x-values */
-          ij_result = i + j * num_rows;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
-              break;
-            case INTSXP:
-              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];*/
-              int_result[ ij_result ] = int_fill;
-              break;
-            case REALSXP:
-              REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ].r = COMPLEX(fill)[ 0 ].r;
-              COMPLEX(result)[ ij_result ].i = COMPLEX(fill)[ 0 ].i;
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
-              break;
-            default:
-              error("unsupported data type");
-              break;
+    if (mode != STRSXP) {
+      switch (mode) {
+        case LGLSXP: {
+            int *lgl_r = LOGICAL(result);
+            int *lgl_x = LOGICAL(x);
+            int *lgl_y = LOGICAL(y);
+            int lgl_fill = LOGICAL(fill)[0];
+            _XTS_DO_MERGE_(lgl_r, lgl_x, lgl_y, lgl_fill, right_join, left_join,
+                real_index, real_xindex, real_yindex, num_rows, nrx, nry, ncx, ncy);
           }
-        }
-        for(j = 0; j < ncy; j++) { /* y-values */
-          ij_result = i + (j+ncx) * num_rows;
-          ij_original = (yp-1) + j * nry;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
-              break;
-            case INTSXP:
-              int_result[ ij_result ] = int_y[ ij_original ];
-              break;
-            case REALSXP:
-              real_result[ ij_result ] = real_y[ ij_original ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(y, ij_original));
-              break;
-            default:
-              error("unsupported data type");
-              break;
+          break;
+        case INTSXP: {
+            int *int_r = INTEGER(result);
+            int *int_x = INTEGER(x);
+            int *int_y = INTEGER(y);
+            int int_fill = INTEGER(fill)[0];
+            _XTS_DO_MERGE_(int_r, int_x, int_y, int_fill, right_join, left_join,
+                real_index, real_xindex, real_yindex, num_rows, nrx, nry, ncx, ncy);
           }
-        }
+          break;
+        case REALSXP: {
+            double *real_r = REAL(result);
+            double *real_x = REAL(x);
+            double *real_y = REAL(y);
+            double real_fill = REAL(fill)[0];
+            _XTS_DO_MERGE_(real_r, real_x, real_y, real_fill, right_join, left_join,
+                real_index, real_xindex, real_yindex, num_rows, nrx, nry, ncx, ncy);
+          }
+          break;
+        case CPLXSXP: {
+            Rcomplex *cplx_r = COMPLEX(result);
+            Rcomplex *cplx_x = COMPLEX(x);
+            Rcomplex *cplx_y = COMPLEX(y);
+            Rcomplex cplx_fill = COMPLEX(fill)[0];
+            _XTS_DO_MERGE_(cplx_r, cplx_x, cplx_y, cplx_fill, right_join, left_join,
+                real_index, real_xindex, real_yindex, num_rows, nrx, nry, ncx, ncy);
+          }
+          break;
+        default:
+          error("unsupported data type");
+          break;
       }
-      yp++;
-      if(!right_join) i--;  /* if all=FALSE, we must decrement i for each non-match */
     } else
 
-    /* past the last row of y */
-    if( yp > nry ) {
-      if(left_join) {
+    /* REAL INDEXING */
+    for (i = 0; i < num_rows; i++) {
+      /* If we are past the last row in x, assign NA to merged data 
+         and copy the y column values to the second side of result
+         */
+      if (xp > nrx) {
+        if(right_join) {
+          real_index[ i ] = real_yindex[ yp-1 ];
+          for(j = 0; j < ncx; j++) { /* x-values */
+            ij_result = i + j * num_rows;
+            SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
+          }
+          for(j = 0; j < ncy; j++) { /* y-values */
+            ij_result = i + (j+ncx) * num_rows;
+            ij_original = (yp-1) + j * nry;
+            SET_STRING_ELT(result, ij_result, STRING_ELT(y, ij_original));
+          }
+        }
+        yp++;
+        if(!right_join) i--;  /* if all=FALSE, we must decrement i for each non-match */
+      } else
 
-        /* record new index value */
-        real_index[ i ] = real_xindex[ xp-1 ];
+        /* past the last row of y */
+        if( yp > nry ) {
+          if(left_join) {
 
-        /* copy values from x and y to result */
-        for(j = 0; j < ncx; j++) { /* x-values */
-          ij_result = i + j * num_rows;
-          ij_original = (xp-1) + j * nrx; 
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
-              break;
-            case INTSXP:
-              int_result[ ij_result ] = int_x[ ij_original ];
-              break;
-            case REALSXP:
-              real_result[ ij_result ] = real_x[ ij_original ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
-              break;
-            case STRSXP:
+            /* record new index value */
+            real_index[ i ] = real_xindex[ xp-1 ];
+
+            /* copy values from x and y to result */
+            for(j = 0; j < ncx; j++) { /* x-values */
+              ij_result = i + j * num_rows;
+              ij_original = (xp-1) + j * nrx; 
               SET_STRING_ELT(result, ij_result, STRING_ELT(x, ij_original));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
-        }
+            }
 
-        /* we are out of y-values, so fill merged result with NAs */
-        for(j = 0; j < ncy; j++) { /* y-values */
-          ij_result = i + (j+ncx) * num_rows;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
-              break;
-            case INTSXP:
-              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];*/
-              int_result[ ij_result ] = int_fill;
-              break;
-            case REALSXP:
-              REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ].r = COMPLEX(fill)[ 0 ].r;
-              COMPLEX(result)[ ij_result ].i = COMPLEX(fill)[ 0 ].i;
-              break;
-            case STRSXP:
+            /* we are out of y-values, so fill merged result with NAs */
+            for(j = 0; j < ncy; j++) { /* y-values */
+              ij_result = i + (j+ncx) * num_rows;
               SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
-              break;
-            default:
-              error("unsupported data type");
-              break;
+            }
           }
-        }
-      }
-      xp++;
-      if(!left_join) i--;
-    } else
+          xp++;
+          if(!left_join) i--;
+        } else
 
-    /* matching index values copy all column values from x and y to results */
-    if( real_xindex[ xp-1 ] == real_yindex[ yp-1 ] ) {
-      real_index[ i ] = real_xindex[ xp-1 ];
-      /* copy x-values to result */
-      for(j = 0; j < ncx; j++) { /* x-values */
-        ij_result = i + j * num_rows;
-        ij_original = (xp-1) + j * nrx;
-        switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
-              break;
-            case INTSXP:
-              int_result[ ij_result ] = int_x[ ij_original ];
-              break;
-            case REALSXP:
-              real_result[ ij_result ] = real_x[ ij_original ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(x, ij_original));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
-      }
+          /* matching index values copy all column values from x and y to results */
+          if( real_xindex[ xp-1 ] == real_yindex[ yp-1 ] ) {
+            real_index[ i ] = real_xindex[ xp-1 ];
+            /* copy x-values to result */
+            for(j = 0; j < ncx; j++) { /* x-values */
+              ij_result = i + j * num_rows;
+              ij_original = (xp-1) + j * nrx;
+                  SET_STRING_ELT(result, ij_result, STRING_ELT(x, ij_original));
+            }
 
-      /* copy y-values to result */
-      for(j = 0; j < ncy; j++) { /* y-values */
-        ij_result = i + (j+ncx) * num_rows;
-        ij_original = (yp-1) + j * nry;
-        switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
-              break;
-            case INTSXP:
-              int_result[ ij_result ] = int_y[ ij_original ];
-              break;
-            case REALSXP:
-              real_result[ ij_result ] = real_y[ ij_original ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(y, ij_original));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
-      }
-      xp++;
-      yp++;
-    } else
+            /* copy y-values to result */
+            for(j = 0; j < ncy; j++) { /* y-values */
+              ij_result = i + (j+ncx) * num_rows;
+              ij_original = (yp-1) + j * nry;
+                  SET_STRING_ELT(result, ij_result, STRING_ELT(y, ij_original));
+            }
+            xp++;
+            yp++;
+          } else
 
-    if( real_xindex[ xp-1 ] < real_yindex[ yp-1 ] ) {
-      if(left_join) {
-        real_index[ i ] = real_xindex[ xp-1 ];
-        for(j = 0; j < ncx; j++) { /* x-values */
-          ij_result = i + j * num_rows;
-          ij_original = (xp-1) + j * nrx;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(x)[ ij_original ];
-              break;
-            case INTSXP:
-              int_result[ ij_result ] = int_x[ ij_original ];
-              break;
-            case REALSXP:
-              real_result[ ij_result ] = real_x[ ij_original ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ] = COMPLEX(x)[ ij_original ];
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(x, ij_original));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
-        }
-        for(j = 0; j < ncy; j++) { /* y-values */
-          ij_result = i + (j+ncx) * num_rows;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ]; 
-              break;
-            case INTSXP:
-              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ]; */
-              int_result[ ij_result ] = int_fill;
-              break;
-            case REALSXP:
-              REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ].r = COMPLEX(fill)[ 0 ].r;
-              COMPLEX(result)[ ij_result ].i = COMPLEX(fill)[ 0 ].i;
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
-        }
-      }
-      xp++;
-      if(!left_join) i--;
-    } else
+            if( real_xindex[ xp-1 ] < real_yindex[ yp-1 ] ) {
+              if(left_join) {
+                real_index[ i ] = real_xindex[ xp-1 ];
+                for(j = 0; j < ncx; j++) { /* x-values */
+                  ij_result = i + j * num_rows;
+                  ij_original = (xp-1) + j * nrx;
+                      SET_STRING_ELT(result, ij_result, STRING_ELT(x, ij_original));
+                }
+                for(j = 0; j < ncy; j++) { /* y-values */
+                  ij_result = i + (j+ncx) * num_rows;
+                      SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
+                }
+              }
+              xp++;
+              if(!left_join) i--;
+            } else
 
-    if( real_xindex[ xp-1 ] > real_yindex[ yp-1 ] ) {
-      if(right_join) {
-        real_index[ i ] = real_yindex[ yp-1 ];
-        for(j = 0; j < ncx; j++) { /* x-values */
-          ij_result = i + j * num_rows;
-          switch( mode ) {
-            case LGLSXP:
-              LOGICAL(result)[ ij_result ] = LOGICAL(fill)[ 0 ];
-              break;
-            case INTSXP:
-              /*INTEGER(result)[ ij_result ] = INTEGER(fill)[ 0 ];*/
-              int_result[ ij_result ] = int_fill;
-              break;
-            case REALSXP:
-              REAL(result)[ ij_result ] = REAL(fill)[ 0 ];
-              break;
-            case CPLXSXP:
-              COMPLEX(result)[ ij_result ].r = COMPLEX(fill)[ 0 ].r;
-              COMPLEX(result)[ ij_result ].i = COMPLEX(fill)[ 0 ].i;
-              break;
-            case STRSXP:
-              SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
-              break;
-            default:
-              error("unsupported data type");
-              break;
-          }
-        }
-        for(j = 0; j < ncy; j++) { /* y-values */
-          ij_result = i + (j+ncx) * num_rows;
-          ij_original = (yp-1) + j * nry;
-          switch( mode ) {
-              case LGLSXP:
-                LOGICAL(result)[ ij_result ] = LOGICAL(y)[ ij_original ];
-                break;
-              case INTSXP:
-                int_result[ ij_result ] = int_y[ ij_original ];
-                break;
-              case REALSXP:
-                real_result[ ij_result ] = real_y[ ij_original ];
-                break;
-              case CPLXSXP:
-                COMPLEX(result)[ ij_result ] = COMPLEX(y)[ ij_original ];
-                break;
-              case STRSXP:
-                SET_STRING_ELT(result, ij_result, STRING_ELT(y, ij_original));
-                break;
-              default:
-                error("unsupported data type");
-                break;
-          }
-        }
-      }
-      yp++;
-      if(!right_join) i--;
+              if( real_xindex[ xp-1 ] > real_yindex[ yp-1 ] ) {
+                if(right_join) {
+                  real_index[ i ] = real_yindex[ yp-1 ];
+                  for(j = 0; j < ncx; j++) { /* x-values */
+                    ij_result = i + j * num_rows;
+                        SET_STRING_ELT(result, ij_result, STRING_ELT(fill, 0));
+                  }
+                  for(j = 0; j < ncy; j++) { /* y-values */
+                    ij_result = i + (j+ncx) * num_rows;
+                    ij_original = (yp-1) + j * nry;
+                        SET_STRING_ELT(result, ij_result, STRING_ELT(y, ij_original));
+                  }
+                }
+                yp++;
+                if(!right_join) i--;
+              }
     }
-  }
 
   } else
   if( TYPEOF(xindex) == INTSXP ) {
+  int_index = INTEGER(index);
   for(i = 0; i < num_rows; i++) {
     /* If we are past the last row in x, assign NA to merged data 
        and copy the y column values to the second side of result
