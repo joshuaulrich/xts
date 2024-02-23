@@ -20,10 +20,11 @@ PKG_INST_FILE = $(R_LIB)/${PKG_NAME}/DESCRIPTION
 
 PKG_R_FILES := $(wildcard ${PKG_PATH}/R/*.R)
 PKG_RD_FILES := $(wildcard ${PKG_PATH}/man/*.Rd)
+PKG_DATA_FILES := $(wildcard ${PKG_PATH}/data/*)
 PKG_SRC_FILES := $(wildcard ${PKG_PATH}/src/*)
 PKG_HEADER_FILES := $(wildcard ${PKG_PATH}/inst/include/*h)
 PKG_ALL_FILES := ${PKG_PATH}/DESCRIPTION ${PKG_PATH}/NAMESPACE ${PKG_HEADER_FILES} \
-  $(PKG_R_FILES) $(PKG_RD_FILES) $(PKG_SRC_FILES) ${PKG_PATH}/.Rbuildignore
+  $(PKG_R_FILES) $(PKG_RD_FILES)  $(PKG_DATA_FILES) $(PKG_SRC_FILES) ${PKG_PATH}/.Rbuildignore
 
 HTML_FILES := $(patsubst %.Rmd, %.html, $(wildcard *.Rmd)) \
               $(patsubst %.md, %.html, $(wildcard *.md))
