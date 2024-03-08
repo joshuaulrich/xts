@@ -1,55 +1,52 @@
-################################################################################
-Changed in xts 0.13.2:
+# Changes in xts 0.13.2:
 
-o Print a message when `period.apply()` is called with `FUN = mean` because it
+* Print a message when `period.apply()` is called with `FUN = mean` because it
   calculates the mean for each column, not all the data in the subset like it
   does for all other functions. The message says to use `FUN = colMeans` for
   current behavior and `FUN = function(x) mean(x)` to calculate the mean for
   all the data. This information is also included in the help files. The option
   `xts.message.period.apply.mean = FALSE` suppresses the message. (#124)
 
-o Fix error when `print.xts()` is called 'quote' or 'right' arguments. (#401)
+* Fix error when `print.xts()` is called 'quote' or 'right' arguments. (#401)
 
-o Fix `addPolygon()` so it renders when `observation.based = TRUE`. (#403)
+* Fix `addPolygon()` so it renders when `observation.based = TRUE`. (#403)
 
-o Print trailing zeros for index value with fractional seconds, so every index
+* Print trailing zeros for index value with fractional seconds, so every index
   value has the same number of characters. (#404)
 
-o Add ability to log scale the y-axis in `plot.xts()`. (#103)
+* Add ability to log scale the y-axis in `plot.xts()`. (#103)
 
-o Actually change the underlying index values when 'tclass' is changed from a
+* Actually change the underlying index values when 'tclass' is changed from a
   class with a timezone (e.g. POSIXct) to one without a timezone (e.g. Date).
   Add a warning when this happens, with a global option to always suppress the
   warning. (#311).
 
-o Significantly refactor the internals of `plot.xts()`. (#408)
+* Significantly refactor the internals of `plot.xts()`. (#408)
 
+# Changes in xts 0.13.1:
 
-################################################################################
-Changed in xts 0.13.1:
-
-o Ignore attribute order in `all.equal()`. Attribute order shouldn't matter.
+* Ignore attribute order in `all.equal()`. Attribute order shouldn't matter.
   That can be checked with `identical()`.
 
-o Only call `tzone()` and `tclass()` once in `check.TZ()`. Calling these
+* Only call `tzone()` and `tclass()` once in `check.TZ()`. Calling these
   functions multiple times throws multiple warnings for xts objects created
   before the tclass and tzone were attached to the index instead of the xts
   object. (#306)
 
-o Add instructions to update old objects. Old xts objects do not have tclass
+* Add instructions to update old objects. Old xts objects do not have tclass
   and tzone attributes on the index. Add a function to update the object
   attributes and add a note to the warning to show how to use it. (#306)
 
-o Return 'POSIXct' if object has no 'tclass'. An empty string is not a valid
+* Return 'POSIXct' if object has no 'tclass'. An empty string is not a valid
   'tclass', so it can cause an error.
 
-o Add notes on `plot.xts()` nomenclature and structure. Also add ASCII art to
+* Add notes on `plot.xts()` nomenclature and structure. Also add ASCII art to
   illustrate definitions and layout. (#103)
 
-o Remove 'tis' support. The implementation was not even a bare minimum, and
+* Remove 'tis' support. The implementation was not even a bare minimum, and
   it's not clear it even worked correctly. (#398)
 
-o Register missing S3 methods and update signatures. With R-devel (83995-ish),
+* Register missing S3 methods and update signatures. With R-devel (83995-ish),
   `R CMD check` notes these S3 methods are not registered. It also notes that
   the signatures for `as.POSIXct.tis()` and `str.replot_xts()` do not match
   the respective generics.
@@ -58,7 +55,7 @@ o Register missing S3 methods and update signatures. With R-devel (83995-ish),
   generic. The function isn't exported, so renaming won't break any external
   code. Thanks to Kurt Hornik for the report. (#398)
 
-o Format each column individually before printing. The top/bottom rows could
+* Format each column individually before printing. The top/bottom rows could
   have a different number of decimal places and there are often multiple
   variying spaces between columns. For example:
 
@@ -79,44 +76,44 @@ o Format each column individually before printing. The top/bottom rows could
   The top rows have 3 decimals and the bottom rows have 4. These should also be
   the same. (#321)
 
-o Only convert printed index values to character. Converting the entire index
+* Only convert printed index values to character. Converting the entire index
   to character is time-consuming for xts objects with many observations. It can
   take more than a second to print an xts object with 1mm observations.
 
-o Make column names based on number of columns. The original code was a lot
+* Make column names based on number of columns. The original code was a lot
   more complicated because it tried to account for truncating the number of
   printed columns. That functionality was removed because of how complicated
   it was. So now we can simply create printed column names from the number of
   columns. (#395)
 
-o Fix `xts()` for zero-row data.frame. The `xts()` constructor would create an
+* Fix `xts()` for zero-row data.frame. The `xts()` constructor would create an
   object with a list for coredata when 'x' is a data.frame with no rows. It
   needs to convert 'x' to a matrix and throw an error if 'x' is a list. (#394)
 
-o Reduce instances when `dplyr::lag()` warning is shown. The warning was shown
+* Reduce instances when `dplyr::lag()` warning is shown. The warning was shown
   whenever it detected dplyr is installed, even if the user wasn't actively
   using dplyr. That caused an excessive amount of noise when other packages
   attached xts (e.g. quantmod). Thanks to Duncan Murdoch for the report and
   suggested fix! (#393)
 
-o Keep colname when only one non-time-based column. The subset `x[, -which.col]`
+* Keep colname when only one non-time-based column. The subset `x[, -which.col]`
   would return a vector when the data frame has a time-based column and only
   one additional column. Do not drop dimensions, so 'x' will still be a
   data.frame in this case. (#391)
 
-o Treat NA the same as NULL for start or end values. NULL represents an
+* Treat NA the same as NULL for start or end values. NULL represents an
   undefined index value. NA represents an unknown or missing index value. xts
   does not allow NA as index values. Subsetting an xts or zoo object by NA
   returns a zero-length object. So a NA (unknown) index value is essentially
   the same as an undefined index value. (#383, #345)
 
-o Warn and remove NA when `periodicity()` called on date-time with NA.
+* Warn and remove NA when `periodicity()` called on date-time with NA.
   Otherwise the uninformative error below will be thrown. (#289)
     
       Error in try.xts(x, error = "'x' needs to be timeBased or xtsible") :
         'x' needs to be timeBased or xtsible
 
-o Account for TZ when making names for `split.xts()`. `as.yearmon.POSIXct()`
+* Account for TZ when making names for `split.xts()`. `as.yearmon.POSIXct()`
   always sets `tz = "GMT"` when calling `as.POSIXlt()`, regardless of the xts'
   index tzone.  That can cause the `as.yearmon()` results to be different days
   for GMT and the index's timezone.
@@ -128,29 +125,27 @@ o Account for TZ when making names for `split.xts()`. `as.yearmon.POSIXct()`
   `tz = "GMT"` setting in `as.yearmon()`. This is also the reason for calling
   `as.POSIXlt()` before calling `as.yearqtr()`. (#392)
 
+# Changes in xts 0.13.0:
 
-################################################################################
-Changed in xts 0.13.0:
+## New Features
 
-### New Features
-
-o Added a xts method for `na.fill()` to significantly increase performance when
+* Added a xts method for `na.fill()` to significantly increase performance when
   'fill' is a scalar. (#259)
 
-o `as.xts()` will look for a time-based column in a data.frame if it cannot
+* `as.xts()` will look for a time-based column in a data.frame if it cannot
   create an index from the row names. (#381)
 
-o Change `print()` xts method to only show the first and last 'show.rows' rows
+* Change `print()` xts method to only show the first and last 'show.rows' rows
   if number of rows is > 'max.rows'. (#321)
 
-o Made `str()` output more descriptive for xts objects. It now differentiates
+* Made `str()` output more descriptive for xts objects. It now differentiates
   between xts objects that are empty, zero-width, or zero-length, and defines
   each type of object. It also adds column names to the output. (#168, #378)
 
-o Add startup warning that `dplyr::lag()` breaks method dispatch, which means
+* Add startup warning that `dplyr::lag()` breaks method dispatch, which means
   calls to `lag(my_xts)` won't work any more.
 
-o Added open-ended time of day subsetting ranges. This allows users to subset
+* Added open-ended time of day subsetting ranges. This allows users to subset
   by time of day from the start/end of the day without providing the start/end
   times (00:00:00.000/23:59:59.999).
 
@@ -160,523 +155,517 @@ o Added open-ended time of day subsetting ranges. This allows users to subset
 
   Thanks to Chris Katsulis for the suggestion! (#243)
 
-o Updated `to.period()` to accept custom 'endpoints' via the 'period' argument.
+* Updated `to.period()` to accept custom 'endpoints' via the 'period' argument.
   Now you can aggregate on something other than the times that 'endpoints()'
   supports. Thanks to Ethan B. Smith for the suggestion! (#302)
 
-### Fixes
+## Fixes
 
-o Fixed typo and expand `period.apply()` documentation. (#205)
+* Fixed typo and expand `period.apply()` documentation. (#205)
     The original description has:
       * "the data from INDEX[k] to INDEX[k+1]"
     But that's not consistent with the code. It should be:
       * "the data from INDEX[k]+1 to INDEX[k+1]"
 
-o Calls to `merge.xts()` on zero-width objects now match `merge.zoo()`.
+* Calls to `merge.xts()` on zero-width objects now match `merge.zoo()`.
   Previously, `merge.xts()` would return empty xts objects if called on two or
   more zero-width xts objects. `merge.zoo()` would return a zero-width object
   with the correct index. (#227, #379)
 
-o Fixed `Ops.xts()` so it always returned an object with the same class as the
+* Fixed `Ops.xts()` so it always returned an object with the same class as the
   first (left-hand side) argument. It previously returned an xts object even
   if the first argument was a subclass of xts. (#49)
 
-### Other
+## Other
 
-o Migrated unit tests from RUnit to tinytest. Thanks Mark van der Loo!
+* Migrated unit tests from RUnit to tinytest. Thanks Mark van der Loo!
 
-o Updated the `endpoints()` documentation to make it clearer that the result
+* Updated the `endpoints()` documentation to make it clearer that the result
   is based on the UNIX epoch (midnight 1970, UTC). Thanks to GitHub user
   Eluvias for the suggestion! (#299)
 
-o Fixed `reclass()` to ensure it always adds index attributes from the
+* Fixed `reclass()` to ensure it always adds index attributes from the
   'match.to' argument. It was not copying `tclass`, `tzone`, or `tformat` from
   'match.to' to the result object. (#43)
 
-o Removed an unnecessary check in `na.locf()` (which is not user-facing).
+* Removed an unnecessary check in `na.locf()` (which is not user-facing).
   Thanks to GitHub user @cgiachalis for the suggestion! (#307)
 
-o Updated C entry points so they're not able to accidentally be found via
+* Updated C entry points so they're not able to accidentally be found via
   dynamic lookup (i.e. `.Call("foo", ...)`). This makes each call to the C
   code a few microseconds faster, which is nice. (#260)
 
-o Made `merge.xts()` results consistent with `merge.zoo()` for zero-length xts
+* Made `merge.xts()` results consistent with `merge.zoo()` for zero-length xts
   objects with columns. The result of `merge.xts()` did not include the
   columns of any objects that had one or more columns, but zero rows. A join
   should include all the columns of the joined objects, regardless of the
   number of rows in the object. This is consistent with `merge.zoo()`. Thanks
   to Ethan B. Smith for the report and testing! (#222)
 
+# Changes in xts 0.12.2:
 
-################################################################################
-Changed in xts 0.12.2:
-
-o `Ops.xts()` no longer changes column names (via `make.names()`) when the two
+* `Ops.xts()` no longer changes column names (via `make.names()`) when the two
   objects do not have identical indexes. This makes it consistent with
   `Ops.zoo()`. (#114)
 
-o Subsetting a zero-length xts object now returns an object with the same
+* Subsetting a zero-length xts object now returns an object with the same
   storage type as the input. It previously always returned a 'logical' xts
   object. (#376)
 
-o `tclass()` and `tzone()` now return the correct values for zero-length xts
+* `tclass()` and `tzone()` now return the correct values for zero-length xts
   objects, instead of the defaults in the `.xts()` constructor. Thanks to Andre
   Mikulec for the report and suggested patch! (#255)
 
-o `first()` and `last()` now return a zero-length xts object when `n = 0`. They
+* `first()` and `last()` now return a zero-length xts object when `n = 0`. They
   previously returned the entire object. This is consistent with the default
   `head()` and `tail()` functions, and data.table's `first()` and `last()`
   functions. Thanks to Ethan B. Smith for the report and patch! (#350)
 
-o `plot.xts()` now has a `yaxis.ticks` argument to control the number of y-axis
+* `plot.xts()` now has a `yaxis.ticks` argument to control the number of y-axis
   grid lines, instead of always drawing 5 grid lines. Thanks to Fredrik
   Wartenberg for the feature request and patch! (#374)
 
-o Subsetting a zero-width xts now returns an object with the same class, tclass,
+* Subsetting a zero-width xts now returns an object with the same class, tclass,
   tzone, and xtsAttributes as the input. Thanks to @shikokuchuo for the report!
   (#359)
 
-o `endpoints()` now always returns last observation. Thanks to GitHub user
+* `endpoints()` now always returns last observation. Thanks to GitHub user
   Eluvias for the report. (#300)
 
-o Ensure `endpoints()` errors for every 'on' value when `k < 1`. It was not
+* Ensure `endpoints()` errors for every 'on' value when `k < 1`. It was not
   throwing an error for `k < 1` for `on` of "years", "quarters", or "months".
   Thanks to Eluvias for the report. (#301)
 
-o Fix `window()` for yearmon and yearqtr indexes. In xts < 0.11-0, `window.zoo()`
+* Fix `window()` for yearmon and yearqtr indexes. In xts < 0.11-0, `window.zoo()`
   was dispatched when `window()` was called on a xts object because there was no
   `window.xts()` method. `window.zoo()` supports additional types of values for the
   `start` argument, and possibly other features. So this fixes a breaking change
   in xts >= 0.11-0. Thanks to @annaymj for the report. (#312)
 
-o Clarify whether `axTicksByTime()` returns index timestamps or locations (e.g.
+* Clarify whether `axTicksByTime()` returns index timestamps or locations (e.g.
   1, 2, 3). Thanks to @ggrothendieck for the suggestion and feedback. (#354)
 
-o Fix merge on complex types when 'fill' is needed. `merge()` would throw an
+* Fix merge on complex types when 'fill' is needed. `merge()` would throw an
   error because it treated 'fill' as double instead of complex. Thanks to
   @ggrothendieck for the report. (#346)
 
-o Add a message to tell the user how to disable 'xts_check_TZ' warning. Thanks
+* Add a message to tell the user how to disable 'xts_check_TZ' warning. Thanks
   to Jerzy Pawlowski for the nudge. (#113)
 
-o Update `rbind()` to handle xts objects without dim attribute. `rbind()` threw
+* Update `rbind()` to handle xts objects without dim attribute. `rbind()` threw
   an obscure error if one of the xts objects does not have a dim attribute. We
   can handle this case even though all xts objects should always have a dim
   attribute. (#361)
 
-o `split.xts()` now always return a named list, which makes it consistent with
+* `split.xts()` now always return a named list, which makes it consistent with
   `split.zoo()`. Thanks to Gabor Grothendieck for the report. (#357)
 
-o xts objects with a zero-length POSIXct index now return a zero-length POSIXct
+* xts objects with a zero-length POSIXct index now return a zero-length POSIXct
   vector instead of a zero-length integer vector. Thanks to Jasper Schelfhout
   for the report and PR! (#363, #364)
 
-o Add suffixes to output of `merge.xts()`. The suffixes are consistent with
+* Add suffixes to output of `merge.xts()`. The suffixes are consistent with
   `merge.default()` and not `merge.zoo()`, because `merge.zoo()` automatically
   uses "." as a separator between column names, but the default method doesn't.
   Thanks to Pierre Lamarche for the nudge. Better late than never? (#38, #371)
 
+## Changes to plotting functionality
 
-Changes to plotting functionality
---------------------------------------------------------------------------------
-
-o You can now omit the data time range from the upper-right portion of a plot
+* You can now omit the data time range from the upper-right portion of a plot
   by setting `main.timespan = FALSE`. (#247)
 
-o Fix `addEventLines()` when plotted objects have a 'yearmon' index. The ISO-8601
+* Fix `addEventLines()` when plotted objects have a 'yearmon' index. The ISO-8601
   range string was not created correctly. Thanks to @paessens for the report.
   (#353)
 
-o Make 'ylim' robust against numerical precision issues by replacing `==` with
+* Make 'ylim' robust against numerical precision issues by replacing `==` with
   `all.equal()`. Thanks to @bollard for the report, PR, and a ton of help
   debugging intermediate solutions! (#368)
 
-o Series added to a panel now extend the panel's y-axis. Previously the y-axis
+* Series added to a panel now extend the panel's y-axis. Previously the y-axis
   limits were based on the first series' values and not updated when new series
   were added. So values of the new series did not appear on the plot if they
   were outside of the original series' min/max. Thanks to Vitalie Spinu for the
   report and help debugging and testing! (#360)
 
-o All series added to any panel of a plot now update the x-axis of all panels.
+* All series added to any panel of a plot now update the x-axis of all panels.
   So the entire plot's x-axis will include every series' time index values
   within the original plot's time range. This behavior is consistent with
   `chart_Series()`. Thanks to Vitalie Spinu for the report and help debugging
   and testing! (#360, #216)
 
-o All y-values are now plotted for series that have duplicate index values, but
+* All y-values are now plotted for series that have duplicate index values, but
   different data values. Thanks to Vitalie Spinu for the report and help
   debugging and testing! (#360)
 
-o Adding a series can now extend the x-axis before/after the plot's existing
+* Adding a series can now extend the x-axis before/after the plot's existing
   time index range, so all of the new series' time index values are included in
   the plot. This is FALSE by default to maintain backward compatibility. Thanks
   to Vitalie Spinu for the report and help debugging and testing! (#360)
 
+# Changes in xts 0.12.1:
 
-################################################################################
-Changed in xts 0.12.1:
-
-o  Various function could change the tclass of xts objects. This would happen
+*  Various function could change the tclass of xts objects. This would happen
    in calls to reclass(), period.apply(), and for logical operations on
    POSIXct indexes. Thanks to Tom Andrews for the report and testing, and to
    Panagiotis Cheilaris for contributing test cases (#322, #323).
 
-o  plot.xts() now supports y-axis labels via 'ylab'. Thanks to Jasen Mackie
+*  plot.xts() now supports y-axis labels via 'ylab'. Thanks to Jasen Mackie
    for the suggestion and PR (#333, #334).
 
-o  The API header has been updated to fix the signatures of do_merge_xts() and
+*  The API header has been updated to fix the signatures of do_merge_xts() and
    is_xts, which did not return a SEXP as required of functions callable by
    .Call(). Thanks to Tomas Kalibera for the report (#317), and Dirk
    Eddelbuettel for the PR (#337). This is a breaking change, but is required
    to avoid the potential for a segfault.
 
-o  Michael Chirico added an internal isUTC() function to recognize many UTC-
+*  Michael Chirico added an internal isUTC() function to recognize many UTC-
    equivalent time zones (#319).
 
-o  first() now operates correctly on non-xts objects when 'n = -1'. Previously
+*  first() now operates correctly on non-xts objects when 'n = -1'. Previously
    it would always return the last two values. Thanks to GitHub user vxg20
    for the report (#325).
 
-o  The .xts() constructor would create an xts object with row names if 'x' had
+*  The .xts() constructor would create an xts object with row names if 'x' had
    row names. This shouldn't happen, because xts objects do not have or
    support row names (#298).
 
-o  Claymore Marshall added many examples of time-of-day subsetting to
+*  Claymore Marshall added many examples of time-of-day subsetting to
    ?subset.xts. He also fixed a bug in time-of-day subsetting where subsetting
    by hour only returned wrong results (#304, #326, #328).
 
-Changed in xts 0.12-0:
+# Changes in xts 0.12-0:
 
-o  All the index-attributes have been removed from the xts object and are now
+*  All the index-attributes have been removed from the xts object and are now
    only attached to the index itself (#245). We took great care to maintain
    backward compatibility, and throw warnings when deprecated functions are
    called and when index-attributes are found on the xts object. But there
    still may be some breaking changes lurking in edge cases.
 
-   o @SamoPP found one edge case (#297) where an error was thrown when index()
+   * @SamoPP found one edge case (#297) where an error was thrown when index()
      was called on an xts object with an index that had no tclass attribute.
-   o ...which led Joshua to find that the index setting functions did not
+   * ...which led Joshua to find that the index setting functions did not
      always copy index attributes (#305).
 
-o  Several binary operations (e.g. +, -, !=, <, etc.) on variations of
+*  Several binary operations (e.g. +, -, !=, <, etc.) on variations of
    uncommon xts objects with other xts, matrix, or vector objects, could
    result in malformed xts objects (#295). Some examples of the types of
    uncommon xts objects: no dim attribute, zero-width, zero-length.
 
-o  Calling as.matrix() on an xts object without a dim attribute no longer
+*  Calling as.matrix() on an xts object without a dim attribute no longer
    throws an error (#294).
 
-o  merge.xts() now honors check.names = FALSE (#293).
+*  merge.xts() now honors check.names = FALSE (#293).
 
-o  The possible values for major.ticks, minor.ticks, and grid.ticks.on in the
+*  The possible values for major.ticks, minor.ticks, and grid.ticks.on in the
    Details section of ?plot.xts have been corrected. Thanks to Harvey Smith
    (@harvey131) for the report and patch (#291).
 
-o  as.zoo.xts() is now only registered for zoo versions prior to 1.8-5. Methods
+*  as.zoo.xts() is now only registered for zoo versions prior to 1.8-5. Methods
    to convert an object to another class should reside in the package that
    implements the target class. Thanks to Kurt Hornik for the report (#287).
 
-o  .parseISO8601() no longer has a potential length-1 logical error. Thanks to
+*  .parseISO8601() no longer has a potential length-1 logical error. Thanks to
    Kurt Hornik for the report (#280).
 
-o  endpoints() now honors k > 0 when on = "quarters". Thanks to @alkment for
+*  endpoints() now honors k > 0 when on = "quarters". Thanks to @alkment for
    the report (#279).
 
-o  Performance for the period.XYZ() functions (sum, prod, min, max) is much
+*  Performance for the period.XYZ() functions (sum, prod, min, max) is much
    faster (#278). Thanks to Chris Katsulis for the report, and Harvey Smith
    (@harvey131) for several examples.
 
-o  merge.xts() now creates shorter column names when passed unnamed objects.
+*  merge.xts() now creates shorter column names when passed unnamed objects.
    This is now consistent with zoo (#248).
 
-o  Time-of-day performance is ~200x faster, thanks to StackOverflow
+*  Time-of-day performance is ~200x faster, thanks to StackOverflow
    user3226167 (#193).
 
-Changed in xts 0.11-2:
+# Changes in xts 0.11-2:
 
-o  The to.period() family of functions now use the index timezone when
+*  The to.period() family of functions now use the index timezone when
    converting intraday index values to daily values (or lower frequency).
    Thanks to Garrett See and Gabor Grothendieck for the reports (#53, #277).
 
-o  Make column names for merge() results with unnamed objects shorter and more
+*  Make column names for merge() results with unnamed objects shorter and more
    like zoo (#248). This also makes na.fill() much faster (#259).
    BREAKING: This may break existing code for integer unnamed objects.
 
-o  Fix subset when 'index(x)' and 'i' contain duplicates. Thanks to Stack
+*  Fix subset when 'index(x)' and 'i' contain duplicates. Thanks to Stack
    Overflow user 'scs' (https://stackoverflow.com/users/4024268/scs) for the
    report, and Philippe Verspeelt for debugging (#275).
 
-o  Fix if-statement in xts constructor that may use a logical with length > 1.
+*  Fix if-statement in xts constructor that may use a logical with length > 1.
    Thanks to @HughParsonage for the report and PR (#270, #272).
 
-o  Register shift.time.xts() method. Thanks to Philippe Verspeelt for the
+*  Register shift.time.xts() method. Thanks to Philippe Verspeelt for the
    report and PR (#268, #273).
 
-o  Conditionally register S3 methods for as.timeSeries.xts() and as.fts.xts()
+*  Conditionally register S3 methods for as.timeSeries.xts() and as.fts.xts()
    when their respective packages are available (as requested by CRAN). Note
    that this means these two functions are no longer exported. This may break
    some existing code that calls the methods directly, though 'best practice'
    is to let method dispatch determine which method to invoke.
 
-Changed in xts 0.11-1:
+# Changes in xts 0.11-1:
 
-o  Fix regression in .xts() that caused 'tclass' argument/attribute to be
+*  Fix regression in .xts() that caused 'tclass' argument/attribute to be
    incorrectly set to POSIXct regardless of user-provided value. Thanks to
    @Eluvias for the report and Tom Andrews for the PR (#249, #250).
 
-o  Fix performance regression when xts object is subset by a date-time vector.
+*  Fix performance regression when xts object is subset by a date-time vector.
    Thanks to Tom Andrews for the report, and the PR to fix the bug in my patch
    (#251, #263, #264).
 
-o  Restore behavior from 0.10-2 so subsetting an empty xts object by a date-
+*  Restore behavior from 0.10-2 so subsetting an empty xts object by a date-
    time vector returns an empty xts object instead of throwing an error.
    Thanks to @alkment for the report (#252).
 
-o  Add ability for merge.xts() to handle multiple character or complex xts
+*  Add ability for merge.xts() to handle multiple character or complex xts
    objects. Thanks to Ken Williams for the report (#44).
 
-o  Add ability to use "quarters" to specify tick/grid mark locations on plots.
+*  Add ability to use "quarters" to specify tick/grid mark locations on plots.
    This ran but produced an incorrect result in 0.10-2 and threw an error in
    0.11-0. Thanks to Marc Weibel for the report (#256).
 
-o  Fix illegal read reported by valgrind. Thanks to Tom Andrews for the report
+*  Fix illegal read reported by valgrind. Thanks to Tom Andrews for the report
    and PR (#236, #264).
 
-Changed in xts 0.11-0:
+# Changes in xts 0.11-0:
 
-o  Fix make.index.unique() to always return a unique and sorted index. Thanks
+*  Fix make.index.unique() to always return a unique and sorted index. Thanks
    to Chris Katsulis for the report and example (#241).
 
-o  Add window.xts() method and completely refactor the internal binary search
+*  Add window.xts() method and completely refactor the internal binary search
    function it depends on. Thanks to Corwin Joy for the PR, tests, review, and
    patience (#100, #240).
 
-o  Better axis tick mark locations for plots. Thanks to Dirk Eddelbuettel for
+*  Better axis tick mark locations for plots. Thanks to Dirk Eddelbuettel for
    the report (#246). Also incorporate axTicksByTime2() into axTicksByTime() to
    reduce code duplication from the migration of quantmod::chart_Series() to
    xts::plot.xts() (#74).
 
-o  Add details to plot.xts() parameters that are periodicity, now that RStudio
+*  Add details to plot.xts() parameters that are periodicity, now that RStudio
    has argument completion. Thanks to Evelyn Mitchell for the PR (#154).
 
-o  periodicity() now warns instead of errors if the xts object contains less
+*  periodicity() now warns instead of errors if the xts object contains less
    than 2 observations (#230).
 
-o  first() and last() now keep dims when they would otherwise be dropped by a
+*  first() and last() now keep dims when they would otherwise be dropped by a
    regular row subset. This is consistent with head() and tail(). Thanks to
    Davis Vaughan for the report (#226).
 
-o  Fix subset when ISO8601 string is outside the valid range, so it returns no
+*  Fix subset when ISO8601 string is outside the valid range, so it returns no
    data instead of all rows (#96).
 
-o  Avoid partial name matches from parse.side() (inside .parseISO8601())
+*  Avoid partial name matches from parse.side() (inside .parseISO8601())
    results that are passed to firstof() and lastof(). Thanks to @gp2x for the
    report and the patch (#231).
 
-o  na.locf.xts() now loops over columns of multivariate objects in C code,
+*  na.locf.xts() now loops over columns of multivariate objects in C code,
    instead of in R. This should improve speed and memory performance. Thanks to
    Chris Katsulis and Tom Andrews for their reports and patches (#232, #233,
    #234, #235, #237).
 
-o  Change plot.xts() default 'pch = 0' (rectangles) to 'pch = 1' (circles) so
+*  Change plot.xts() default 'pch = 0' (rectangles) to 'pch = 1' (circles) so
    it looks more like base and zoo plots (#203).
 
-Changed in xts 0.10-2:
+# Changes in xts 0.10-2:
 
-o  na.locf.xts() and na.omit.xts() now support character xts objects. Thanks to
+*  na.locf.xts() and na.omit.xts() now support character xts objects. Thanks to
    Ken Williams and Samo Pahor for the reports (#42).
 
-o  na.locf.xts() now honors 'x' and 'xout' arguments by dispatching to the next
+*  na.locf.xts() now honors 'x' and 'xout' arguments by dispatching to the next
    method (#215). Thanks to Morten Grum for the report.
 
-o  coredata.xts() now functions the same as coredata.zoo() on zero-length
+*  coredata.xts() now functions the same as coredata.zoo() on zero-length
    objects, and only removes xts-related attributes (#223). Thanks to Vincent
    Guyader for the report.
 
-o  plot.xts() no longer ignores 'col.up' and 'col.dn' when 'type="h"' (#224).
+*  plot.xts() no longer ignores 'col.up' and 'col.dn' when 'type="h"' (#224).
    Thanks to Charlie Friedemann for the report. This was inadvertently broken
    as part of the fix for #210.
 
-Changed in xts 0.10-1:
+# Changes in xts 0.10-1:
 
-o  'ylim' values passed to 'addSeries' and 'addPolygon' via '...' are now
+*  'ylim' values passed to 'addSeries' and 'addPolygon' via '...' are now
    captured and honored (#220).
 
-o  'addPolygon' now checks for ylim of zeros, as 'addSeries' does (#164).
+*  'addPolygon' now checks for ylim of zeros, as 'addSeries' does (#164).
 
-o  The 'base::as.Date.numeric' method is no longer over-ridden. The exported,
+*  The 'base::as.Date.numeric' method is no longer over-ridden. The exported,
    but not registered, method in zoo should prevent any change in behavior.
 
-o  Series added to an existing plot are now given the same index values as
+*  Series added to an existing plot are now given the same index values as
    the main panel (#216). There still may be some weird behavior if the new
    data does not have observations within the timespan of the main panel data,
    but no observations on the same timestamps.
 
-o  Existing 'par' values are now captured and reset before returning from
+*  Existing 'par' values are now captured and reset before returning from
    plotting functions (#217).
 
-o  User-defined 'col' values are now honored when 'type="h"' (#210).
+*  User-defined 'col' values are now honored when 'type="h"' (#210).
 
-o  Values passed to plotting functions are now copied from the calling
+*  Values passed to plotting functions are now copied from the calling
    environment. This enables plotting arguments to be objects passed
    through multiple layers of function calls.
 
-o  indexFormat is now generic, consistent with indexFormat<- (#188).
+*  indexFormat is now generic, consistent with indexFormat<- (#188).
 
-o  Calling as.matrix() on a zero-width xts object now behaves consistently
+*  Calling as.matrix() on a zero-width xts object now behaves consistently
    with zoo, and no longer throws an error (#130).
 
-o  Fix weird result in merge.xts() when 'fill' argument is NULL or a zero-
+*  Fix weird result in merge.xts() when 'fill' argument is NULL or a zero-
    length vector (#261).
 
-o  Fixed bug in endpoints() due to sub-second representation error via using
+*  Fixed bug in endpoints() due to sub-second representation error via using
    integer division (%/%) with non- integer arguments (#202).
 
-o  endpoints() gained sub-second accuracy on Windows (#202).
+*  endpoints() gained sub-second accuracy on Windows (#202).
 
-o  plot.xts() no longer errors when called on an object containing a constant
+*  plot.xts() no longer errors when called on an object containing a constant
    value. It chooses ylim values +/-20% from the series value (#156).
 
-o  plot.xts() now places y-axis labels in the same location on the plot,
+*  plot.xts() now places y-axis labels in the same location on the plot,
    regardless of data periodicity (#85).
 
-o  rbind.xts() now throws an error if passed an xts object with different
+*  rbind.xts() now throws an error if passed an xts object with different
    number of observations in the index and data (e.g., zero-width) (#98).
 
-Changed in xts 0.10-0:
+# Changes in xts 0.10-0:
 
 Major changes include:
-o  A new plot.xts() that is incompatible with earlier versions of plot.xts().
-o  Moved development from R-Forge to GitHub.
-o  New xts FAQ.
+*  A new plot.xts() that is incompatible with earlier versions of plot.xts().
+*  Moved development from R-Forge to GitHub.
+*  New xts FAQ.
 
 Other, less disruptive changes include:
 
-o  merge.xts() now throws an error if the index contains non-finite values
+*  merge.xts() now throws an error if the index contains non-finite values
    (#174).
 
-o  Constructors xts() and .xts() now ensure order.by and index arguments do not
+*  Constructors xts() and .xts() now ensure order.by and index arguments do not
    contain non-finite values. Many xts functions, most notably merge.xts(),
    expect all index values to be finite. Missing index values usually indicate
    an error, and always occurred at the end of the index (#173, #194, #199).
 
-o  Fixed bug in endpoints() when called on sparse data that have the same month
+*  Fixed bug in endpoints() when called on sparse data that have the same month
    and day, but different years (#169).
 
-o  Fixed bug in [.xts did not do the same checks on logical xts objects as it
+*  Fixed bug in [.xts did not do the same checks on logical xts objects as it
    does for all other data types (#163).
 
-o  Fixed bug that caused split.xts() to error if 'f' is a character vector with
+*  Fixed bug that caused split.xts() to error if 'f' is a character vector with
    more than 1 element (#134).
 
-o  Fixed bug that crashed R if 'k' argument to lag.xts() was not an integer and
+*  Fixed bug that crashed R if 'k' argument to lag.xts() was not an integer and
    would be NA when coerced to integer (#152).
 
-o  period.apply() now checks to ensure the object's index is unique and sorted,
+*  period.apply() now checks to ensure the object's index is unique and sorted,
    and sets INDEX <- sort(unique(INDEX)) if it is not. It also ensures INDEX
    starts with 0 and ends with NROW(x) (#171).
 
-o  All references to the 'its' package have been removed, since it is now
+*  All references to the 'its' package have been removed, since it is now
    archived on CRAN at the request of its maintainer.
 
-o  Fixed bug that crashed R when merge.xts() was called on an empty xts object
+*  Fixed bug that crashed R when merge.xts() was called on an empty xts object
    and more than one non-xts object (#157).
 
-o  Fixed bug that did not set the index's tzone attribute to UTC when
+*  Fixed bug that did not set the index's tzone attribute to UTC when
    index<-.xts or indexClass<- were called and 'value' did not have a tzone
    attribute (#148).
 
-o  Fixed a bug in endpoints() that caused incorrect results if the index was
+*  Fixed a bug in endpoints() that caused incorrect results if the index was
    less than the epoch (#144).
 
-o  Fixed a bug that caused diff.xts() on a logical xts object to return an
+*  Fixed a bug that caused diff.xts() on a logical xts object to return an
    object with a POSIXct index.
 
-o  index.xts() works even if the package containing the class for the index
+*  index.xts() works even if the package containing the class for the index
    is not attached (it needs to be loaded, however).
 
-o  [.xts now returns NA if a one-column xts object is subsect by NA, instead
+*  [.xts now returns NA if a one-column xts object is subsect by NA, instead
    of throwing an uninformative error (#97).
 
-o  Fixed bugs that would crash R when [.xts was called a certain way and 'j'
+*  Fixed bugs that would crash R when [.xts was called a certain way and 'j'
    contained NA values (#97, #181).
 
-o  Fixed a bug in endpoints() where 1 second would be subtracted for any date
+*  Fixed a bug in endpoints() where 1 second would be subtracted for any date
    in the year 1969. The subtraction is only supposed to occur on
    1969-12-31 23:59:59.9... to work around behavior in strptime().
 
-o  timeBasedSeq() now honors hour/min/sec 'BY' values (#91).
+*  timeBasedSeq() now honors hour/min/sec 'BY' values (#91).
 
-o  [.xts now throws an error if 'j' is character and not one of the column
+*  [.xts now throws an error if 'j' is character and not one of the column
    names. This is consistent with [.zoo and [.matrix (#48).
 
-o  timeBasedSeq() now works correctly when resolution is "days" the sequence
+*  timeBasedSeq() now works correctly when resolution is "days" the sequence
    includes a daylight saving time change (#67).
 
-o  Explicitly set indexTZ="UTC" for all index classes that do not have a TZ
+*  Explicitly set indexTZ="UTC" for all index classes that do not have a TZ
    (#66).  indexTZ="GMT" is also allowed.
 
-o  Fixed as.xts() when called on an 'mts' object (#64).
+*  Fixed as.xts() when called on an 'mts' object (#64).
 
-o  Moved development from R-Forge to GitHub.
+*  Moved development from R-Forge to GitHub.
 
-o  Fixed bug in to.period() that errored when name=NULL (#5937).
+*  Fixed bug in to.period() that errored when name=NULL (#5937).
 
-o  Fixed bug in .index* functions that did not account for timezones (#5891).
+*  Fixed bug in .index* functions that did not account for timezones (#5891).
 
-o  Fixed bug that allowed index<-.xts to produce an unsorted index (#5893).
+*  Fixed bug that allowed index<-.xts to produce an unsorted index (#5893).
 
-o  Fixed bug so subsetting a zero-width xts object with a zero-length 'i'
+*  Fixed bug so subsetting a zero-width xts object with a zero-length 'i'
    vector no longer returns an object with column names (#5885).
 
-o  Updated [.xts to handle 'i' containing multiple zeros (e.g. subsetting by a
+*  Updated [.xts to handle 'i' containing multiple zeros (e.g. subsetting by a
    "logical" column of an integer xts object).
 
-o  endpoints() now errors if k < 0.
+*  endpoints() now errors if k < 0.
 
-Changed in xts 0.9-7:
+# Changes in xts 0.9-7:
 
-o  Fixed bug that caused logical operators on xts objects to drop the 'tzone'
+*  Fixed bug that caused logical operators on xts objects to drop the 'tzone'
    attribute (#2750).
 
-o  Fixed bug that ignored 'which.i' argument to [.xts on zero-width xts
+*  Fixed bug that ignored 'which.i' argument to [.xts on zero-width xts
    objects (#2753).
 
-o  Fixed bug where xts() does not sort 'order.by' if x is missing (#4775).
+*  Fixed bug where xts() does not sort 'order.by' if x is missing (#4775).
 
-Changed in xts 0.9-6:
+# Changes in xts 0.9-6:
 
-o  Fixed bug where setting dimnames to NULL would break as.xts() (#4794).
+*  Fixed bug where setting dimnames to NULL would break as.xts() (#4794).
 
-o  Added checks to period.sum/prod/min/max to ensure INDEX is in [0,nrow(x)].
+*  Added checks to period.sum/prod/min/max to ensure INDEX is in [0,nrow(x)].
 
-o  Fixed missing argument to na_locf() in the C/C++ xtsAPI (Dirk Eddelbuettel).
+*  Fixed missing argument to na_locf() in the C/C++ xtsAPI (Dirk Eddelbuettel).
 
-Changed in xts 0.9-5:
+# Changes in xts 0.9-5:
 
-o  Increased zoo dependency version to 1.7-10 for changes in C code.
+*  Increased zoo dependency version to 1.7-10 for changes in C code.
 
-o  Fixed several minor issues in the C/C++ xtsAPI (Dirk Eddelbuettel).
+*  Fixed several minor issues in the C/C++ xtsAPI (Dirk Eddelbuettel).
 
-Changed in xts 0.9-4:
+# Changes in xts 0.9-4:
 
-o  Fixed bug where the index was missing the 'tzone' attribute.
+*  Fixed bug where the index was missing the 'tzone' attribute.
 
-o  Fixed to.period() bug when 'indexAt' is "firstof" or "lastof". (bug #2691,
+*  Fixed to.period() bug when 'indexAt' is "firstof" or "lastof". (bug #2691,
    patch #2710, thanks to Garrett See)
 
-o  Fixed subsetting bug on zero-width xts objects that returned NA data and an
+*  Fixed subsetting bug on zero-width xts objects that returned NA data and an
    NA index (#2669).
 
-o  xts' merge() method now has 'drop' and 'check.names' arguments to match
+*  xts' merge() method now has 'drop' and 'check.names' arguments to match
    the zoo merge() method.
 
-o  'index<-' now correctly handles UTC Date objects when resetting index
+*  'index<-' now correctly handles UTC Date objects when resetting index
    values. '.index<-' behaved correctly.
 
-o  xts' rollapply() method now handles the 'fill' argument.
+*  xts' rollapply() method now handles the 'fill' argument.
 
-o  Added several functions to the C/C++ API:
+*  Added several functions to the C/C++ API:
    - make_index_unique
    - make_unique
    - endpoints
@@ -684,202 +673,202 @@ o  Added several functions to the C/C++ API:
    - na_omit_xts
    - na_locf
 
-o  Fixed xts' rollapply() method when input has one column, but function
+*  Fixed xts' rollapply() method when input has one column, but function
    output has more than one column.
 
-Changed in xts 0.9-3:
+# Changes in xts 0.9-3:
 
-o  No user-visible changes.
+*  No user-visible changes.
 
-Changed in xts 0.9-2:
+# Changes in xts 0.9-2:
 
-o  Added C/C++ xtsAPI (Dirk Eddelbuettel)
+*  Added C/C++ xtsAPI (Dirk Eddelbuettel)
 
-o  Added tzone() and tclass() functions as aliases to indexTZ() and
+*  Added tzone() and tclass() functions as aliases to indexTZ() and
    indexClass(), respectively. Eventually will Deprecate/Defunct the former.
 
-Changed in xts 0.9-1:
+# Changes in xts 0.9-1:
 
-o  xts() now ignores timezone arguments when order.by is Date class, with a
+*  xts() now ignores timezone arguments when order.by is Date class, with a
    warning.
 
-Changed in xts 0.8-8:
+# Changes in xts 0.8-8:
 
-o  Modified str() output to make use of proper ISO-8601 range formating
+*  Modified str() output to make use of proper ISO-8601 range formating
 
-o  Fixed bug in reclass() when 'tzone' of object is different than system TZ.
+*  Fixed bug in reclass() when 'tzone' of object is different than system TZ.
 
-o  Fixed bug in xts() that dropped dims when 'x' is a 1-column matrix or
+*  Fixed bug in xts() that dropped dims when 'x' is a 1-column matrix or
    data.frame.
 
-o  [.xts no longer warns if 'i' is zero-length.
+*  [.xts no longer warns if 'i' is zero-length.
 
-o  to.period() now checks that 'x' is not zero-length/width.
+*  to.period() now checks that 'x' is not zero-length/width.
 
-o  Fixed edge case in Ops.xts where two objects with no common index create
+*  Fixed edge case in Ops.xts where two objects with no common index create
    an invalid 'xts' object with no index.
 
-o  to.monthly() and to.quarterly() now default to drop.time=TRUE.
+*  to.monthly() and to.quarterly() now default to drop.time=TRUE.
 
-o  Internal .drop.time() now changes the index class to Date. This affects
+*  Internal .drop.time() now changes the index class to Date. This affects
    the to.period() family of functions.
 
-o  Restore Date index/tclass conversion to POSIXct with a UTC timezone via
+*  Restore Date index/tclass conversion to POSIXct with a UTC timezone via
    integer division instead of double-precision division.
 
-Changed in xts 0.8-6:
+# Changes in xts 0.8-6:
 
-o  Revert Date index/tclass conversion to POSIXct with a UTC timezone to
+*  Revert Date index/tclass conversion to POSIXct with a UTC timezone to
    previous behavior as in 0.8-2.
 
-Changed in xts 0.8-5:
+# Changes in xts 0.8-5:
 
-o  A Date index/tclass is now internally converted to POSIXct with a UTC
+*  A Date index/tclass is now internally converted to POSIXct with a UTC
    timezone ensure proper conversion regardless of user TZ settings.
 
-o  tclass is now an argument to .xts()
+*  tclass is now an argument to .xts()
 
-o  Fix endpoints() properly handles millisecond time stamps (and microsecond
+*  Fix endpoints() properly handles millisecond time stamps (and microsecond
    on not Windows).
 
-o  Subsetting zero-width xts objects now behaves like zoo, with NA values
+*  Subsetting zero-width xts objects now behaves like zoo, with NA values
    returned for valid row requests.
 
-Changed in xts 0.8-2:
+# Changes in xts 0.8-2:
 
-o  Fixed bug in lag() and diff() for character coredata.
+*  Fixed bug in lag() and diff() for character coredata.
 
-o  Fixed subsetting bug that returned a contiguous chunk of data even when
+*  Fixed subsetting bug that returned a contiguous chunk of data even when
    a non-contiguous 'i' was provided.
 
-o  Fixed bug that ignored FinCenter/TZ for timeDate index
+*  Fixed bug that ignored FinCenter/TZ for timeDate index
 
-o  period.apply() now only sets colnames if the number of columns in the input
+*  period.apply() now only sets colnames if the number of columns in the input
    and output are equal.
 
-o  Fixed periodicity() when scale = "yearly"
+*  Fixed periodicity() when scale = "yearly"
 
-o  Fixed [.xts when row-subsetting via a POSIXct vector, which returned an
+*  Fixed [.xts when row-subsetting via a POSIXct vector, which returned an
    object full of NA.
 
-o  Added '...' to axis() call inside of plot.xts() to allow for 'cex.axis'
+*  Added '...' to axis() call inside of plot.xts() to allow for 'cex.axis'
    and 'cex.lab' to be passed in.
 
-o  Fixed axes=FALSE issue in plot.xts().
+*  Fixed axes=FALSE issue in plot.xts().
 
-o  Dependency now on 1.7-0 or better of zoo (R-forge at present)
+*  Dependency now on 1.7-0 or better of zoo (R-forge at present)
    This build now links to C code moved from xts to zoo. At present
    this is only for zoo_lag (used in lag and lagts)
 
-o  Added 'drop' and 'fromLast' arguments to make.index.unique().
+*  Added 'drop' and 'fromLast' arguments to make.index.unique().
 
-o  Added adj.time() and shift.time()
+*  Added adj.time() and shift.time()
 
-o  Fixed na.locf() bug that would fill trailing NA larger than 'maxgap'
+*  Fixed na.locf() bug that would fill trailing NA larger than 'maxgap'
    observations (#1319)
 
-o  Updated indexFormat() documentation and add an example
+*  Updated indexFormat() documentation and add an example
 
-Changed in xts 0.8-0:
+# Changes in xts 0.8-0:
 
-o  Fix print formatting (#1080)
+*  Fix print formatting (#1080)
 
-o  Fix bug related to na.locf() and zero-width objects (#1079)
+*  Fix bug related to na.locf() and zero-width objects (#1079)
 
-o  Add .RECLASS = FALSE after '...' for as.xts.*() methods. This makes all
+*  Add .RECLASS = FALSE after '...' for as.xts.*() methods. This makes all
    as.xts.*() methods one-way (i.e. not reclass-able). Objects converted to
    xts via try.xts() can still be converted back to their original class
    via relcass().
 
-o  Fix bug that caused colnames to be dropped if object is subset by time
+*  Fix bug that caused colnames to be dropped if object is subset by time
    that is not in the index.
 
-Changes in xts 0.7-5:
+# Changes in xts 0.7-5:
 
-o  try.xts and reclass now are more efficient on xts objects,
+*  try.xts and reclass now are more efficient on xts objects,
    no longer appending a .RECLASS attribute. This penalty 
    (copying) is shifted to classes that are internally converted
    to xts.
 
-Changes in xts 0.7-4:
+# Changes in xts 0.7-4:
 
-o  internal attributes of index are now maintaining
+*  internal attributes of index are now maintaining
    timezone (tzone), time class (tclass) information.
 
-o  `[.xts` method is now using new C code. This may revert
+*  `[.xts` method is now using new C code. This may revert
    back as character-based objects are not supported. Changed
    for future code refactoring into zoo, as well as performance
    gains on integer, double and logical values. Also added in
    checks for NAs.  drop=TRUE now works correctly in all known
    applications.
 
-o  (cbind)merge.xts and rbind.xts now copy index attributes
+*  (cbind)merge.xts and rbind.xts now copy index attributes
    to handle internal changes to index characteristics (in C code)
 
-o  indexTZ.Rd updated to provide information regarding internal
+*  indexTZ.Rd updated to provide information regarding internal
    changes.  Also indexTZ<- is now exported to facilitate 
    timezone changing of xts objects.
 
-Changes in xts 0.7-1:
+# Changes in xts 0.7-1:
 
-o  subsecond ISO8601 subsetting on dates
+*  subsecond ISO8601 subsetting on dates
    before 1970 (epoch) is disabled. This is due to a bug
    in the R implementation of POSIX handling of fractional
    seconds pre-1970.  10 microsecond granularity is still
    functional for all other times. Thanks to Andreas Noack Jensen
    for the early bug report.
 
-o  new 'tzone' arg in xts constructor and 'tz' in .parseISO8601
+*  new 'tzone' arg in xts constructor and 'tz' in .parseISO8601
    allows for future support of non-system TZ dependent indexing
 
-o  internal index attribute (numeric) now can have attributes
+*  internal index attribute (numeric) now can have attributes
    set (tzone is currently the only one used in xts). These should
    remain during all xts operations. Still experimental.
 
-o  naCheck has been exposed at the C level for use in packages
+*  naCheck has been exposed at the C level for use in packages
    "LinkingTo: xts".  See ?xtsAPI for more details.
 
-Changes in xts 0.7-0:
+# Changes in xts 0.7-0:
 
-o  A new NEWS file.  
+*  A new NEWS file.  
 
-o  print.xts now passes ...
+*  print.xts now passes ...
 
-o  endpoints speedup and bug fix (thanks Ismail Onur Filiz)  
+*  endpoints speedup and bug fix (thanks Ismail Onur Filiz)  
 
-o  na.omit bug on logical and NaN fixes (thanks Fabrizio Pollastri
+*  na.omit bug on logical and NaN fixes (thanks Fabrizio Pollastri
    and Koert Kuipers)
 
-o  fromLast=FALSE for na.locf.xts.  Matching to zoo. (thanks
+*  fromLast=FALSE for na.locf.xts.  Matching to zoo. (thanks
    to Sandor Benczik)
 
-o  LGLSXP support in leadingNA (R fun naCheck)
+*  LGLSXP support in leadingNA (R fun naCheck)
 
-o  fixed logical and NA 'j' subsetting. Thanks Koert Kuipers.
+*  fixed logical and NA 'j' subsetting. Thanks Koert Kuipers.
 
-o  as.xts and as.timeSeries fixes for timeSeries changes
+*  as.xts and as.timeSeries fixes for timeSeries changes
 
-o  merge and subset now support dimensionless xts (non-standard).
+*  merge and subset now support dimensionless xts (non-standard).
    merge segfault fixed when merging all 3 or more zero-width xts objects
    and only zero-width objects.  Thanks to Koert Kuipers for the report.
 
-o  added which.i to [.xts to return i values found via
+*  added which.i to [.xts to return i values found via
    ISO8601 subset string
 
-o  new lines.xts and plot.xts, similar to methods in zoo
+*  new lines.xts and plot.xts, similar to methods in zoo
 
-o  lastof now has sec to 10 microsecond precision, and subsec
+*  lastof now has sec to 10 microsecond precision, and subsec
    arg to append to secs.
 
-o  xts() further consistency in NROW/index check
+*  xts() further consistency in NROW/index check
 
-o  align.time error checks for positive n= values (thanks Brian Peterson)
+*  align.time error checks for positive n= values (thanks Brian Peterson)
 
-o  toPeriod updates in C, almost exported. ~600-1200x faster
+*  toPeriod updates in C, almost exported. ~600-1200x faster
 
-o  new lag_xts in C.  Increased speed and index flexibility.
+*  new lag_xts in C.  Increased speed and index flexibility.
 
-o  endpoints 'days' bug fix 
+*  endpoints 'days' bug fix 
 
-o  .makeISO8601 function to create ISO8601 compliant string
+*  .makeISO8601 function to create ISO8601 compliant string
    from xts objects
