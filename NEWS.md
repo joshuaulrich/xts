@@ -1,4 +1,5 @@
-# Changes in xts 0.13.2:
+
+# xts 0.13.2 (2024-01-21)
 
 * Print a message when `period.apply()` is called with `FUN = mean` because it
   calculates the mean for each column, not all the data in the subset like it
@@ -23,7 +24,7 @@
 
 * Significantly refactor the internals of `plot.xts()`. (#408)
 
-# Changes in xts 0.13.1:
+# xts 0.13.1 (2023-04-16)
 
 * Ignore attribute order in `all.equal()`. Attribute order shouldn't matter.
   That can be checked with `identical()`.
@@ -50,7 +51,7 @@
   `R CMD check` notes these S3 methods are not registered. It also notes that
   the signatures for `as.POSIXct.tis()` and `str.replot_xts()` do not match
   the respective generics.
-    
+
   It also thinks `time.frequency()` is a S3 method because `time()` is a
   generic. The function isn't exported, so renaming won't break any external
   code. Thanks to Kurt Hornik for the report. (#398)
@@ -125,7 +126,7 @@
   `tz = "GMT"` setting in `as.yearmon()`. This is also the reason for calling
   `as.POSIXlt()` before calling `as.yearqtr()`. (#392)
 
-# Changes in xts 0.13.0:
+# xts 0.13.0 (2023-02-21)
 
 ## New Features
 
@@ -202,7 +203,7 @@
   number of rows in the object. This is consistent with `merge.zoo()`. Thanks
   to Ethan B. Smith for the report and testing! (#222)
 
-# Changes in xts 0.12.2:
+# xts 0.12.2 (2022-10-16)
 
 * `Ops.xts()` no longer changes column names (via `make.names()`) when the two
   objects do not have identical indexes. This makes it consistent with
@@ -303,7 +304,7 @@
   the plot. This is FALSE by default to maintain backward compatibility. Thanks
   to Vitalie Spinu for the report and help debugging and testing! (#360)
 
-# Changes in xts 0.12.1:
+# xts 0.12.1 (2020-09-09)
 
 *  Various function could change the tclass of xts objects. This would happen
    in calls to reclass(), period.apply(), and for logical operations on
@@ -334,7 +335,7 @@
    ?subset.xts. He also fixed a bug in time-of-day subsetting where subsetting
    by hour only returned wrong results (#304, #326, #328).
 
-# Changes in xts 0.12-0:
+# xts 0.12-0 (2020-01-19)
 
 *  All the index-attributes have been removed from the xts object and are now
    only attached to the index itself (#245). We took great care to maintain
@@ -381,7 +382,7 @@
 *  Time-of-day performance is ~200x faster, thanks to StackOverflow
    user3226167 (#193).
 
-# Changes in xts 0.11-2:
+# xts 0.11-2 (2018-11-05)
 
 *  The to.period() family of functions now use the index timezone when
    converting intraday index values to daily values (or lower frequency).
@@ -407,7 +408,7 @@
    some existing code that calls the methods directly, though 'best practice'
    is to let method dispatch determine which method to invoke.
 
-# Changes in xts 0.11-1:
+# xts 0.11-1 (2018-09-12)
 
 *  Fix regression in .xts() that caused 'tclass' argument/attribute to be
    incorrectly set to POSIXct regardless of user-provided value. Thanks to
@@ -431,7 +432,7 @@
 *  Fix illegal read reported by valgrind. Thanks to Tom Andrews for the report
    and PR (#236, #264).
 
-# Changes in xts 0.11-0:
+# xts 0.11-0 (2018-07-16)
 
 *  Fix make.index.unique() to always return a unique and sorted index. Thanks
    to Chris Katsulis for the report and example (#241).
@@ -470,7 +471,7 @@
 *  Change plot.xts() default 'pch = 0' (rectangles) to 'pch = 1' (circles) so
    it looks more like base and zoo plots (#203).
 
-# Changes in xts 0.10-2:
+# xts 0.10-2 (2018-03-15)
 
 *  na.locf.xts() and na.omit.xts() now support character xts objects. Thanks to
    Ken Williams and Samo Pahor for the reports (#42).
@@ -486,7 +487,7 @@
    Thanks to Charlie Friedemann for the report. This was inadvertently broken
    as part of the fix for #210.
 
-# Changes in xts 0.10-1:
+# xts 0.10-1 (2017-12-20)
 
 *  'ylim' values passed to 'addSeries' and 'addPolygon' via '...' are now
    captured and honored (#220).
@@ -532,7 +533,7 @@
 *  rbind.xts() now throws an error if passed an xts object with different
    number of observations in the index and data (e.g., zero-width) (#98).
 
-# Changes in xts 0.10-0:
+# xts 0.10-0 (2017-07-07)
 
 Major changes include:
 *  A new plot.xts() that is incompatible with earlier versions of plot.xts().
@@ -611,7 +612,7 @@ Other, less disruptive changes include:
 
 *  Fixed bug in to.period() that errored when name=NULL (#5937).
 
-*  Fixed bug in .index* functions that did not account for timezones (#5891).
+*  Fixed bug in `.index*` functions that did not account for timezones (#5891).
 
 *  Fixed bug that allowed index<-.xts to produce an unsorted index (#5893).
 
@@ -623,7 +624,7 @@ Other, less disruptive changes include:
 
 *  endpoints() now errors if k < 0.
 
-# Changes in xts 0.9-7:
+# xts 0.9-7 (2014-01-02)
 
 *  Fixed bug that caused logical operators on xts objects to drop the 'tzone'
    attribute (#2750).
@@ -633,21 +634,19 @@ Other, less disruptive changes include:
 
 *  Fixed bug where xts() does not sort 'order.by' if x is missing (#4775).
 
-# Changes in xts 0.9-6:
-
 *  Fixed bug where setting dimnames to NULL would break as.xts() (#4794).
 
 *  Added checks to period.sum/prod/min/max to ensure INDEX is in [0,nrow(x)].
 
 *  Fixed missing argument to na_locf() in the C/C++ xtsAPI (Dirk Eddelbuettel).
 
-# Changes in xts 0.9-5:
+# xts 0.9-5 (2013-06-24)
 
 *  Increased zoo dependency version to 1.7-10 for changes in C code.
 
 *  Fixed several minor issues in the C/C++ xtsAPI (Dirk Eddelbuettel).
 
-# Changes in xts 0.9-4:
+# xts 0.9-4 (2013-06-09)
 
 *  Fixed bug where the index was missing the 'tzone' attribute.
 
@@ -676,23 +675,23 @@ Other, less disruptive changes include:
 *  Fixed xts' rollapply() method when input has one column, but function
    output has more than one column.
 
-# Changes in xts 0.9-3:
+# xts 0.9-3 (2013-01-20)
 
 *  No user-visible changes.
 
-# Changes in xts 0.9-2:
+# xts 0.9-2 (2013-01-18)
 
 *  Added C/C++ xtsAPI (Dirk Eddelbuettel)
 
 *  Added tzone() and tclass() functions as aliases to indexTZ() and
    indexClass(), respectively. Eventually will Deprecate/Defunct the former.
 
-# Changes in xts 0.9-1:
+# xts 0.9-1 (2012-12-29)
 
 *  xts() now ignores timezone arguments when order.by is Date class, with a
    warning.
 
-# Changes in xts 0.8-8:
+# xts 0.8-8 (2012-11-06)
 
 *  Modified str() output to make use of proper ISO-8601 range formating
 
@@ -716,12 +715,12 @@ Other, less disruptive changes include:
 *  Restore Date index/tclass conversion to POSIXct with a UTC timezone via
    integer division instead of double-precision division.
 
-# Changes in xts 0.8-6:
+# xts 0.8-6 (2012-03-25)
 
 *  Revert Date index/tclass conversion to POSIXct with a UTC timezone to
    previous behavior as in 0.8-2.
 
-# Changes in xts 0.8-5:
+# xts 0.8-5 (2012-03-24)
 
 *  A Date index/tclass is now internally converted to POSIXct with a UTC
    timezone ensure proper conversion regardless of user TZ settings.
@@ -734,7 +733,7 @@ Other, less disruptive changes include:
 *  Subsetting zero-width xts objects now behaves like zoo, with NA values
    returned for valid row requests.
 
-# Changes in xts 0.8-2:
+# xts 0.8-2 (2011-08-09)
 
 *  Fixed bug in lag() and diff() for character coredata.
 
@@ -769,7 +768,7 @@ Other, less disruptive changes include:
 
 *  Updated indexFormat() documentation and add an example
 
-# Changes in xts 0.8-0:
+# xts 0.8-0 (2011-02-22)
 
 *  Fix print formatting (#1080)
 
@@ -783,14 +782,14 @@ Other, less disruptive changes include:
 *  Fix bug that caused colnames to be dropped if object is subset by time
    that is not in the index.
 
-# Changes in xts 0.7-5:
+# xts 0.7-5 (2010-08-21)
 
 *  try.xts and reclass now are more efficient on xts objects,
    no longer appending a .RECLASS attribute. This penalty 
    (copying) is shifted to classes that are internally converted
    to xts.
 
-# Changes in xts 0.7-4:
+# xts 0.7-4 (2010-08-04)
 
 *  internal attributes of index are now maintaining
    timezone (tzone), time class (tclass) information.
@@ -809,7 +808,7 @@ Other, less disruptive changes include:
    changes.  Also indexTZ<- is now exported to facilitate 
    timezone changing of xts objects.
 
-# Changes in xts 0.7-1:
+# xts 0.7-1 (2010-05-08)
 
 *  subsecond ISO8601 subsetting on dates
    before 1970 (epoch) is disabled. This is due to a bug
@@ -828,7 +827,7 @@ Other, less disruptive changes include:
 *  naCheck has been exposed at the C level for use in packages
    "LinkingTo: xts".  See ?xtsAPI for more details.
 
-# Changes in xts 0.7-0:
+# xts 0.7-0 (2010-01-26)
 
 *  A new NEWS file.  
 
