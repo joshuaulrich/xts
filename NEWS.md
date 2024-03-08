@@ -610,14 +610,14 @@ Other, less disruptive changes include:
 
 *  Moved development from R-Forge to GitHub.
 
-*  Fixed bug in to.period() that errored when name=NULL (#5937).
+*  Fixed bug in to.period() that errored when name=NULL (#2).
 
-*  Fixed bug in `.index*` functions that did not account for timezones (#5891).
+*  Fixed bug in `.index*` functions that did not account for timezones (#3).
 
-*  Fixed bug that allowed index<-.xts to produce an unsorted index (#5893).
+*  Fixed bug that allowed index<-.xts to produce an unsorted index (#4).
 
 *  Fixed bug so subsetting a zero-width xts object with a zero-length 'i'
-   vector no longer returns an object with column names (#5885).
+   vector no longer returns an object with column names (#5).
 
 *  Updated [.xts to handle 'i' containing multiple zeros (e.g. subsetting by a
    "logical" column of an integer xts object).
@@ -627,14 +627,14 @@ Other, less disruptive changes include:
 # xts 0.9-7 (2014-01-02)
 
 *  Fixed bug that caused logical operators on xts objects to drop the 'tzone'
-   attribute (#2750).
+   attribute (#10).
 
 *  Fixed bug that ignored 'which.i' argument to [.xts on zero-width xts
-   objects (#2753).
+   objects (#12).
 
-*  Fixed bug where xts() does not sort 'order.by' if x is missing (#4775).
+*  Fixed bug where xts() does not sort 'order.by' if x is missing (#13).
 
-*  Fixed bug where setting dimnames to NULL would break as.xts() (#4794).
+*  Fixed bug where setting dimnames to NULL would break as.xts() (#14).
 
 *  Added checks to period.sum/prod/min/max to ensure INDEX is in [0,nrow(x)].
 
@@ -650,11 +650,11 @@ Other, less disruptive changes include:
 
 *  Fixed bug where the index was missing the 'tzone' attribute.
 
-*  Fixed to.period() bug when 'indexAt' is "firstof" or "lastof". (bug #2691,
-   patch #2710, thanks to Garrett See)
+*  Fixed to.period() bug when 'indexAt' is "firstof" or "lastof". (bug #15,
+   patch #35, thanks to Garrett See)
 
 *  Fixed subsetting bug on zero-width xts objects that returned NA data and an
-   NA index (#2669).
+   NA index (#16).
 
 *  xts' merge() method now has 'drop' and 'check.names' arguments to match
    the zoo merge() method.
@@ -764,15 +764,15 @@ Other, less disruptive changes include:
 *  Added adj.time() and shift.time()
 
 *  Fixed na.locf() bug that would fill trailing NA larger than 'maxgap'
-   observations (#1319)
+   observations (#22)
 
 *  Updated indexFormat() documentation and add an example
 
 # xts 0.8-0 (2011-02-22)
 
-*  Fix print formatting (#1080)
+*  Fix print formatting (#27)
 
-*  Fix bug related to na.locf() and zero-width objects (#1079)
+*  Fix bug related to na.locf() and zero-width objects (#28)
 
 *  Add .RECLASS = FALSE after '...' for as.xts.*() methods. This makes all
    as.xts.*() methods one-way (i.e. not reclass-able). Objects converted to
