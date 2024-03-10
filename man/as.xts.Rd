@@ -1,5 +1,5 @@
-\name{as.xts.methods}
-\alias{as.xts.methods}
+\name{as.xts}
+\alias{as.xts}
 \alias{as.xts.timeSeries}
 \alias{as.timeSeries.xts}
 \alias{as.xts.xts}
@@ -14,6 +14,8 @@ arbitrary classes to class \code{xts} and back, without
 losing any attributes of the original format.
 }
 \usage{
+as.xts(x, ...)
+
 \method{as.xts}{xts}(x,...,.RECLASS=FALSE)
 
 

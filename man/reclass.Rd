@@ -12,7 +12,6 @@ arbitrary classes to class \code{xts} and back, without
 losing any attributes of the original format.
 }
 \usage{
-as.xts(x, ...)
 xtsible(x)
 
 Reclass(x)
@@ -38,7 +37,7 @@ convert objects of class \code{timeSeries}, \code{ts}, \code{irts},
 an \code{xts} object; returning TRUE on success and FALSE
 otherwise.
 
-The help file \code{as.xts.methods} lists all available
+The help file \code{as.xts} lists all available
 xts methods and arguments specific to each coercible type.
 
 Additional name=value pairs may be passed to the function
@@ -91,5 +90,5 @@ In the case of \code{Reclass} and \code{reclass}, the object
 returned will be of the original class as identified by \code{CLASS}.
 }
 \author{ Jeffrey A. Ryan }
-\seealso{ \code{\link{xts}},\code{\link{as.xts.methods}} }
+\seealso{ \code{\link{xts}},\code{\link{as.xts}} }
 \keyword{ utilities }
