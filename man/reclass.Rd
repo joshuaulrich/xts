@@ -1,11 +1,10 @@
-\name{as.xts}
-\alias{as.xts}
+\name{reclass}
+\alias{reclass}
 \alias{xtsible}
 \alias{use.xts}
 \alias{try.xts}
 \alias{use.reclass}
 \alias{Reclass}
-\alias{reclass}
 \title{ Convert Object To And From Class xts }
 \description{
 Conversion functions to coerce data objects of
