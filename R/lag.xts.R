@@ -18,53 +18,6 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: remove
-`Lag.xts` <- function(x, k=1, na.action=na.pass, ...) {
-  x <- try.xts(x, error=FALSE)
-  
-  if(!is.xts(x)) x <- as.matrix(x)
-  
-  xx <-sapply(k, 
-         function(k) {
-           apply(x, 2, 
-             function(x)  {
-               if(k==0) return(as.matrix(x)) 
-               as.matrix(c(rep(NA, k), x[-((length(x) - k + 1):length(x))]))
-             }
-           )}
-       )
-  xx <- matrix(as.numeric(xx),nrow=NROW(x))
-  colnames(xx) <- c(paste(colnames(x)[(rep(1:NCOL(x),length(k)))],
-                          'lag',
-                          rep(k, each=NCOL(x)),
-                          sep = "."))
-  as.function(na.action)(reclass(xx,x))
-}
-
-
-# TODO: remove
-`Next.xts` <- function(x, k=1, na.action=na.pass, ...) {
-  x <- try.xts(x, error=FALSE)
-  
-  if(!is.xts(x)) x <- as.matrix(x)
-  
-  xx <-sapply(k, 
-         function(k) {
-           apply(x, 2, 
-             function(x)  {
-               if(k==0) return(as.matrix(x)) 
-               as.matrix(c(x[-(1:k)],rep(NA, k)))
-             }
-           )}
-       )
-  xx <- matrix(as.numeric(xx),nrow=NROW(x))
-  colnames(xx) <- c(paste(colnames(x)[(rep(1:NCOL(x),length(k)))],
-                          'next',
-                          rep(k, each=NCOL(x)),
-                          sep = "."))
-  as.function(na.action)(reclass(xx,x))
-
-}
 
 #' @rdname diff.xts
 lag.xts <- function(x, k=1, na.pad=TRUE, ...) {

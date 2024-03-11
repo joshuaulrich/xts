@@ -89,5 +89,3 @@ as.timeSeries.xts <- function(x, ...) {
 
   timeSeries(data=coredata(x), charvec=as.character(index(x)), ...)
 }
-
-`xts.as.timeSeries` <- function(x,...) {}

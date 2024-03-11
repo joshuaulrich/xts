@@ -675,8 +675,3 @@ function(x,...,.RECLASS=FALSE) {
   }
   xx
 }
-
-`xts.to.xts` <-
-function(x,...) {
-  return(x)
-}

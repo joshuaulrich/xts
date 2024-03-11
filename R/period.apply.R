@@ -134,31 +134,6 @@ function(x, INDEX, FUN, ...)
     reclass(xx, x[INDEX])
 }
 
-
-`period.apply.original` <-
-function (x, INDEX, FUN, ...)
-{
-  x <- use.xts(x,error=FALSE)
-
-  if(!is.xts(x)) {
-    FUN <- match.fun(FUN)
-    xx <- sapply(1:(length(INDEX) - 1), function(y) {
-          FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
-    })
-  } else {
-    FUN <- match.fun(FUN)
-    new.index <- index(x)[INDEX]
-    xx <- sapply(1:(length(INDEX) - 1), function(y) {
-          FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
-    })
-    xx <- xts(xx,new.index)
-    CLASS(xx) <- CLASS(x)
-    xtsAttributes(xx) <- xtsAttributes(x)
-    xx <- reclass(xx)
-  }
-  xx
-}
-
 #' @rdname apply.monthly
 `apply.daily` <-
 function(x,FUN, ...)

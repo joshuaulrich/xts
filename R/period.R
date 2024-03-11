@@ -51,10 +51,6 @@ function(x) {
 #' @rdname timeBased
 `timeBased` <- `is.timeBased`
 
-make.timeBased <- function(x, class='POSIXct', ...)
-{
-  do.call(class, list(x,...))
-}
 
 #' Calculate Sum By Period
 #' 
