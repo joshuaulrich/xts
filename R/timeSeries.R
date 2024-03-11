@@ -44,6 +44,7 @@ function(x,...) {
              documentation=x.attr$documentation,...)
 }
 
+#' @rdname as.xts
 `as.xts.timeSeries` <-
 function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,..., .RECLASS=FALSE) {
 

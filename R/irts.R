@@ -35,6 +35,7 @@ function(x,...) {
   irts(index(x),xx)
 }
 
+#' @rdname as.xts
 `as.xts.irts` <-
 function(x,order.by,frequency=NULL,...,.RECLASS=FALSE) {
   if(.RECLASS) {

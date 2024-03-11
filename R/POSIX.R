@@ -19,6 +19,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' @rdname as.xts
 as.xts.POSIXt <- function(x, ...)
 {
   xts(NULL, order.by=x)

@@ -19,6 +19,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' @rdname as.xts
 `as.xts.Date` <- function(x,...) {
   xts(x=NULL,order.by=x,...)
 }

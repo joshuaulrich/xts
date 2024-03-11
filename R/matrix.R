@@ -57,6 +57,7 @@ function(x,...) {
   as.matrix(x,...)
 }
 
+#' @rdname as.xts
 `as.xts.matrix` <-
 function(x,order.by,dateFormat="POSIXct",frequency=NULL,...,.RECLASS=FALSE) {
   # Should allow 'order.by' to be a vector of dates or a scaler

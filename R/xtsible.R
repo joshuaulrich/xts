@@ -19,6 +19,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' @rdname as.xts
 xtsible <- function(x)
 {
   if(inherits(try(as.xts(x),silent=TRUE),'try-error')) {
@@ -26,7 +27,11 @@ xtsible <- function(x)
   } else TRUE
 }
 
-use.xts <- try.xts <- function(x, ..., error=TRUE)
+#' @inheritParams as.xts
+#' @param error error handling option. See Details.
+#' @rdname as.xts
+#' @aliases use.xts
+try.xts <- function(x, ..., error=TRUE)
 {
   if(is.xts(x)) {
     #attr(x,'.RECLASS') <- FALSE
@@ -51,6 +56,7 @@ use.xts <- try.xts <- function(x, ..., error=TRUE)
     structure(xx, .RECLASS=TRUE)
   }
 }
+use.xts <- try.xts
 
 .merge.xts.scalar <- function(x, length.out, ...) {
   if( length.out == 0)
@@ -62,10 +68,13 @@ use.xts <- try.xts <- function(x, ..., error=TRUE)
   stop("improper length of one or more arguments to merge.xts")
 }
 
-use.reclass <- Reclass <- function(x) {
+#' @rdname as.xts
+#' @aliases use.reclass
+Reclass <- function(x) {
   xx <- match.call()
   xxObj <- eval.parent(parse(text=all.vars(xx)[1]), 1)
   inObj <- try.xts(xxObj, error=FALSE)
   xx <- eval(match.call()[[-1]])
   reclass(xx, inObj)
 }
+use.reclass <- Reclass

@@ -19,6 +19,51 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' Locate Endpoints by Time
+#' 
+#' Extract index locations for an \code{xts} object that correspond to the
+#' \emph{last} observation in each period specified by \code{on}.
+#' 
+#' \code{endpoints} returns a numeric vector corresponding to the \emph{last}
+#' observation in each period. The vector always begins with zero and ends with
+#' the last observation in \code{x}.
+#' 
+#' Periods are always based on the distance from the UNIX epoch (midnight
+#' 1970-01-01 UTC), \emph{not the first observation in \code{x}}. The examples
+#' illustrate this behavior.
+#' 
+#' Valid values for the argument \code{on} include: \dQuote{us} (microseconds),
+#' \dQuote{microseconds}, \dQuote{ms} (milliseconds), \dQuote{milliseconds},
+#' \dQuote{secs} (seconds), \dQuote{seconds}, \dQuote{mins} (minutes),
+#' \dQuote{minutes}, \dQuote{hours}, \dQuote{days}, \dQuote{weeks},
+#' \dQuote{months}, \dQuote{quarters}, and \dQuote{years}.
+#' 
+#' @param x an xts object
+#' @param on the periods endpoints to find as a character string
+#' @param k along every k-th element - see notes
+#' 
+#' @return A numeric vector of beginning with 0 and ending with the value equal
+#' to the number of observations in the \code{x} argument.
+#' 
+#' @author Jeffrey A. Ryan
+#' @keywords utilities
+#' @examples
+#' 
+#' data(sample_matrix)
+#' 
+#' endpoints(sample_matrix)
+#' endpoints(sample_matrix, "weeks")
+#' 
+#' ### example of how periods are based on the UNIX epoch,
+#' ### *not* the first observation of the data series
+#' x <- xts(1:38, yearmon(seq(2018 - 1/12, 2021, 1/12)))
+#' # endpoints for the end of every other year
+#' ep <- endpoints(x, "years", k = 2)
+#' # Dec-2017 is the end of the *first* year in the data. But when you start from
+#' # Jan-1970 and use every second year end as your endpoints, the endpoints are
+#' # always December of every odd year.
+#' x[ep, ]
+#' 
 endpoints <-
 function(x,on='months',k=1) {
 
@@ -117,11 +162,41 @@ function(x,by='months', k=1) {
   endpoints(x,on=by, k=k)[-1]
 }
 
+
+#' Create a POSIXct Object
+#' 
+#' Enable fast creation of time stamps corresponding to the first or last
+#' observation in a specified time period.
+#' 
+#' A wrapper to the function ISOdatetime with defaults corresponding to the
+#' first or last possible time in a given period.
+#' 
+#' @param year,month,day numerical values to specify a day
+#' @param hour,min,sec numerical vaues to specify time within a day
+#' @param tz timezone used for conversion
+#' 
+#' @return An object of class POSIXct.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso \code{\link{ISOdatetime}}
+#'
+#' @keywords utilities
+#' @examples
+#' 
+#' firstof(2000)
+#' firstof(2005,01,01)
+#' 
+#' lastof(2007)
+#' lastof(2007,10)
+#' 
 `firstof` <-
 function(year=1970,month=1,day=1,hour=0,min=0,sec=0,tz="") {
   ISOdatetime(year,month,day,hour,min,sec,tz)
 }
 
+#' @param subsec number of sub-seconds
+#' @rdname firstof
 lastof <-
 function (year = 1970,
           month = 12,

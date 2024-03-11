@@ -19,6 +19,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' @rdname timeBasedSeq
 `timeBasedRange` <-
 function(x, ...) {
   # convert unquoted time range to

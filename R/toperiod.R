@@ -30,6 +30,103 @@
 # to.quarterly
 # to.yearly
 
+
+#' Convert time series data to an OHLC series
+#' 
+#' Convert an OHLC or univariate object to a specified periodicity lower than
+#' the given data object. For example, convert a daily series to a monthly
+#' series, or a monthly series to a yearly one, or a one minute series to an
+#' hourly series.
+#' 
+#' The result will contain the open and close for the given period, as well as
+#' the maximum and minimum over the new period, reflected in the new high and
+#' low, respectively.
+#' 
+#' If volume for a period was available, the new volume will also be
+#' calculated.
+#' 
+#' Essentially an easy and reliable way to convert one periodicity of data into
+#' any new periodicity. It is important to note that all dates will be aligned
+#' to the \emph{end} of each period by default - with the exception of
+#' \code{to.monthly} and \code{to.quarterly}, which index by \sQuote{yearmon}
+#' and \sQuote{yearqtr} from the \pkg{zoo} package, respectively.
+#' 
+#' Valid period character strings include: \code{"seconds"}, \code{"minutes"},
+#' \code{"hours"}, \code{"days"}, \code{"weeks"}, \code{"months"},
+#' \code{"quarters"}, and \code{"years"}. These are calculated internally via
+#' \code{endpoints}. See that function's help page for further details.
+#' 
+#' To adjust the final indexing style, it is possible to set \code{indexAt} to
+#' one of the following: \sQuote{yearmon}, \sQuote{yearqtr}, \sQuote{firstof},
+#' \sQuote{lastof}, \sQuote{startof}, or \sQuote{endof}.  The final index will
+#' then be \code{yearmon}, \code{yearqtr}, the first time of the period, the
+#' last time of the period, the starting time in the data for that period, or
+#' the ending time in the data for that period, respectively.
+#' 
+#' It is also possible to pass a single time series, such as a univariate
+#' exchange rate, and return an OHLC object of lower frequency - e.g. the
+#' weekly OHLC of the daily series.
+#' 
+#' Setting \code{drop.time} to \code{TRUE} (the default) will convert a series
+#' that includes a time component into one with just a date index, as the time
+#' index is often of little value in lower frequency series.
+#' 
+#' It is not possible to convert a series from a lower periodicity to a higher
+#' periodicity - e.g. weekly to daily or daily to 5 minute bars, as that would
+#' require magic.
+#' 
+#' @param x a univariate or OHLC type time-series object
+#' @param period period to convert to. See details.
+#' @param indexAt convert final index to new class or date. See details
+#' @param drop.time remove time component of POSIX datestamp (if any)
+#' @param k number of sub periods to aggregate on (only for minutes and
+#' seconds)
+#' @param name override column names
+#' @param OHLC should an OHLC object be returned? (only \code{OHLC=TRUE}
+#' currently supported)
+#' @param \dots additional arguments
+#' 
+#' @return An object of the original type, with new periodicity.
+#' 
+#' @note In order for this function to work properly on OHLC data, it is
+#' necessary that the Open, High, Low and Close columns be names as such;
+#' including the first letter capitalized and the full spelling found.
+#' Internally a call is made to reorder the data into the correct column order,
+#' and then a verification step to make sure that this ordering and naming has
+#' succeeded. All other data formats must be aggregated with functions such as
+#' \code{aggregate} and \code{period.apply}.
+#' 
+#' This method should work on almost all time-series-like objects. Including
+#' \sQuote{timeSeries}, \sQuote{zoo}, \sQuote{ts}, and \sQuote{irts}. It is
+#' even likely to work well for other data structures - including
+#' \sQuote{data.frames} and \sQuote{matrix} objects.
+#' 
+#' Internally a call to \code{as.xts} converts the original \code{x} into the
+#' universal \code{xts} format, and then re-converts back to the original type.
+#' 
+#' A special note with respect to \sQuote{ts} objects. As these are strictly
+#' regular they may include \code{NA} values.  These are stripped for
+#' aggregation purposes, though replaced before returning. This inevitably
+#' leads to many, many additional \sQuote{NA} values in the data. It is more
+#' beneficial to consider using an \sQuote{xts} object originally, or
+#' converting to one in the function call by means of \code{as.xts}.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @keywords utilities
+#' @aliases to_period
+#' @examples
+#' 
+#' data(sample_matrix)
+#' 
+#' samplexts <- as.xts(sample_matrix)
+#' 
+#' to.monthly(samplexts)
+#' to.monthly(sample_matrix)
+#' 
+#' str(to.monthly(samplexts))
+#' str(to.monthly(sample_matrix))
+#' 
 to.period <- to_period <- function(x, period='months', k=1, indexAt=NULL, name=NULL, OHLC=TRUE, ...) {
   if(missing(name)) name <- deparse(substitute(x))
 
@@ -122,7 +219,7 @@ to.period <- to_period <- function(x, period='months', k=1, indexAt=NULL, name=N
   reclass(xx,xo)
 }
 
-
+#' @rdname to.period
 `to.minutes` <-
 function(x,k,name,...)
 {
@@ -130,42 +227,56 @@ function(x,k,name,...)
   if(missing(k)) k <- 1
   to.period(x,'minutes',k=k,name=name,...)
 }
+
+#' @rdname to.period
 `to.minutes3` <-
 function(x,name,...)
 {
   if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'minutes',k=3,name=name,...)
 }
+
+#' @rdname to.period
 `to.minutes5` <-
 function(x,name,...)
 {
   if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'minutes',k=5,name=name,...)
 }
+
+#' @rdname to.period
 `to.minutes10` <-
 function(x,name,...)
 {
   if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'minutes',k=10,name=name,...)
 }
+
+#' @rdname to.period
 `to.minutes15` <-
 function(x,name,...)
 {
   if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'minutes',k=15,name=name,...)
 }
+
+#' @rdname to.period
 `to.minutes30` <-
 function(x,name,...)
 {
   if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'minutes',k=30,name=name,...)
 }
+
+#' @rdname to.period
 `to.hourly` <-
 function(x,name,...)
 {
   if(missing(name)) name <- deparse(substitute(x))
   to.period(x,'hours',name=name,...)
 }
+
+#' @rdname to.period
 `to.daily` <-
 function(x,drop.time=TRUE,name,...)
 {
@@ -174,6 +285,8 @@ function(x,drop.time=TRUE,name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
+
+#' @rdname to.period
 `to.weekly` <-
 function(x,drop.time=TRUE,name,...)
 {
@@ -182,6 +295,8 @@ function(x,drop.time=TRUE,name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
+
+#' @rdname to.period
 `to.monthly` <-
 function(x,indexAt='yearmon',drop.time=TRUE,name,...)
 {
@@ -190,6 +305,8 @@ function(x,indexAt='yearmon',drop.time=TRUE,name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
+
+#' @rdname to.period
 `to.quarterly` <-
 function(x,indexAt='yearqtr',drop.time=TRUE,name,...)
 {
@@ -198,6 +315,8 @@ function(x,indexAt='yearqtr',drop.time=TRUE,name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
+
+#' @rdname to.period
 `to.yearly` <-
 function(x,drop.time=TRUE,name,...)
 {
@@ -206,6 +325,7 @@ function(x,drop.time=TRUE,name,...)
   if(drop.time) x <- .drop.time(x)
   return(x)
 }
+
 `.drop.time` <-
 function(x) {
   # function to remove HHMMSS portion of time index
@@ -229,6 +349,7 @@ function(x) {
     else reclass(x)  # if input wasn't xts, but could be converted
   } else  x          # if input wasn't xts, and couldn't be converted
 }
+
 `by.period` <-
 function(x, FUN, on=Cl, period="days", k=1, fill=na.locf, ...) {
   # aggregate 'x' to a higher periodicity, apply 'FUN' to the 'on' columns
@@ -243,6 +364,7 @@ function(x, FUN, on=Cl, period="days", k=1, fill=na.locf, ...) {
   full <- fill(full)  # Allow function or value
   return(full)
 }
+
 `to.frequency` <-
 function(x, by, k=1, name=NULL, OHLC=TRUE, ...) {
   # similar to to.period, but aggregates on something other than time.

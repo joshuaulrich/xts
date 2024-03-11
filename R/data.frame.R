@@ -26,6 +26,7 @@ function(x,...) {
   data.frame(x,...)
 }
 
+#' @rdname as.xts
 `as.xts.data.frame` <-
 function(x,
          order.by,

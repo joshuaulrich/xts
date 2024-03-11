@@ -19,34 +19,84 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' @rdname ndays
 `nseconds` <-
 function(x) {
   length(endpoints(x,on='seconds'))-1
 }
+
+#' @rdname ndays
 `nminutes` <-
 function(x) {
   length(endpoints(x,on='minutes'))-1
 }
+
+#' @rdname ndays
 `nhours` <-
 function(x) {
   length(endpoints(x,on='hours'))-1
 }
+
+
+#' Number of Periods in Data
+#' 
+#' Calculate the number of specified periods in a given time series like data
+#' object.
+#' 
+#' Essentially a wrapper to \code{endpoints} with the appropriate period
+#' specified; the resulting value derived from counting the endpoints
+#' 
+#' As a compromise between simplicity and accuracy, the results will always
+#' round up to the nearest complete period. So n**** - 1 will return the
+#' completed periods.
+#' 
+#' For finer grain detail one should call a higher frequency n**** function.
+#' 
+#' An alternative summary can be found with \code{periodicity} and
+#' \code{unclass(periodicity(x))}.
+#' 
+#' @param x A time-based object
+#' 
+#' @return The number of observations for the period type specified
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso \code{\link{endpoints}}
+#' 
+#' @keywords utilities
+#' @examples
+#' 
+#' \dontrun{
+#' getSymbols("QQQQ")
+#' 
+#' ndays(QQQQ)
+#' nweeks(QQQQ)
+#' }
+#' 
 `ndays` <-
 function(x) {
   length(endpoints(x,on='days'))-1
 }
+
+#' @rdname ndays
 `nweeks` <-
 function(x) {
   length(endpoints(x,on='weeks'))-1
 }
+
+#' @rdname ndays
 `nmonths` <-
 function(x) {
   length(endpoints(x,on='months'))-1
 }
+
+#' @rdname ndays
 `nquarters` <-
 function(x) {
   length(endpoints(x,on='quarters'))-1
 }
+
+#' @rdname ndays
 `nyears` <-
 function(x) {
   length(endpoints(x,on='years'))-1

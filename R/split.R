@@ -18,6 +18,47 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#' Divide into Groups by Time
+#' 
+#' Creates a list of xts objects split along time periods.
+#' 
+#' A quick way to break up a large xts object by standard time periods; e.g.
+#' 'months', 'quarters', etc.
+#' 
+#' \code{endpoints} is used to find the start and end of each period (or
+#' k-periods).  See that function for valid arguments.
+#' 
+#' If \code{f} is not a character vector, the NextMethod is called, which would
+#' in turn dispatch to the split.zoo method.
+#' 
+#' @param x an xts object
+#' @param f a 'character' vector describing the period to split by
+#' @param drop ignored by split.xts
+#' @param k number of periods to aggregate into each split. See Details.
+#' @param \dots further args to non-xts method
+#' 
+#' @return A list of xts objects.
+#' 
+#' @note \code{aggregate.zoo} would be more flexible, though not as fast for
+#' xts objects.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso \code{\link{endpoints}}, \code{\link[zoo]{split.zoo}},
+#' \code{\link[zoo]{aggregate.zoo}}
+#' 
+#' @keywords utilities
+#' @examples
+#' 
+#' data(sample_matrix)
+#' x <- as.xts(sample_matrix)
+#' 
+#' 
+#' split(x)
+#' split(x, f="weeks")
+#' split(x, f="weeks", k=4)
+#' 
 split.xts <-
 function(x, f="months", drop=FALSE, k=1, ...) {
   if(is.character(f) && length(f) == 1L) {

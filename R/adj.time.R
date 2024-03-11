@@ -19,6 +19,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' @rdname align.time
 adj.time <-
 function(x, ...) {
   tr <- match.call(expand.dots=FALSE)$...

@@ -51,6 +51,7 @@ function(x,...) {
   as.ts(x)
 }
 
+#' @rdname as.xts
 `as.xts.ts` <-
 function(x,dateFormat,...,.RECLASS=FALSE) {
   x.mat <- structure(as.matrix(x),dimnames=dimnames(x))

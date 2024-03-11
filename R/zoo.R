@@ -37,6 +37,7 @@ function(x,...) {
   xx
 }
 
+#' @rdname as.xts
 `as.xts.zoo` <-
 function(x,order.by=index(x),frequency=NULL,...,.RECLASS=FALSE) {
   if(.RECLASS) {

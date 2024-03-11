@@ -18,7 +18,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+# TODO: remove
 `Lag.xts` <- function(x, k=1, na.action=na.pass, ...) {
   x <- try.xts(x, error=FALSE)
   
@@ -42,6 +42,7 @@
 }
 
 
+# TODO: remove
 `Next.xts` <- function(x, k=1, na.action=na.pass, ...) {
   x <- try.xts(x, error=FALSE)
   
@@ -65,7 +66,7 @@
 
 }
 
-
+#' @rdname diff.xts
 lag.xts <- function(x, k=1, na.pad=TRUE, ...) {
   zooCompat <- getOption('xts.compat.zoo.lag')
   if(is.logical(zooCompat) && zooCompat) {
@@ -80,6 +81,7 @@ lag.xts <- function(x, k=1, na.pad=TRUE, ...) {
   .Call(C_lag_xts, x, k, na.pad)
 }
 
+# TODO: remove
 lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
   if(length(k) > 1) {
     if(is.null(names(k)))
@@ -89,6 +91,57 @@ lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
   .Call(C_lag_xts, x, k, na.pad)
 }
 
+#' Lags and Differences of xts Objects
+#' 
+#' Methods for computing lags and differences on \code{xts} objects.  This
+#' matches most of the functionality of \pkg{zoo} methods, with some default
+#' argument changes.
+#' 
+#' The primary motivation for having methods specific to \code{xts} was to make
+#' use of faster C-level code within xts.  Additionally, it was decided that
+#' \code{lag}'s default behavior should match the common time-series
+#' interpretation of that operator --- specifically that a value at time
+#' \sQuote{t} should be the value at time \sQuote{t-1} for a positive lag. This
+#' is different than \code{lag.zoo} as well as \code{lag.ts}.
+#' 
+#' Another notable difference is that \code{na.pad} is set to TRUE by default,
+#' to better reflect the transformation visually and within functions requiring
+#' positional matching of data.
+#' 
+#' Backwards compatability with zoo can be achieved by setting
+#' \code{options(xts.compat.zoo.lag=TRUE)}. This will change the defaults of
+#' lag.xts to k=-1 and na.pad=FALSE.
+#' 
+#' @param x an \code{xts} object
+#' @param k period to lag over
+#' @param lag period to difference over
+#' @param differences order of differencing
+#' @param arithmetic should arithmetic or geometric differencing be used
+#' @param log should (geometric) log differences be returned
+#' @param na.pad pad vector back to original size
+#' @param \dots additional arguments
+#' 
+#' @return An \code{xts} object reflected the desired lag and/or differencing.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @references \url{https://en.wikipedia.org/wiki/Lag }
+#' 
+#' @keywords manip chron
+#' @examples
+#' 
+#' x <- xts(1:10, Sys.Date()+1:10)
+#' lag(x)    # currently using xts-style positive k 
+#' 
+#' lag(x, k=2)
+#' 
+#' lag(x, k=-1, na.pad=FALSE) # matches lag.zoo(x, k=1)
+#' 
+#' diff(x)
+#' diff(x, lag=1)
+#' diff(x, diff=2)
+#' diff(diff(x))
+#' 
 diff.xts <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad=TRUE, ...)
 {
   if(!is.integer(lag) && any(is.na(as.integer(lag))))

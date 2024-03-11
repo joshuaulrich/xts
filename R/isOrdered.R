@@ -19,6 +19,37 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' Check If A Vector Is Ordered
+#' 
+#' Performs check to determine if a vector is strictly increasing, strictly
+#' decreasing, not decreasing, or not increasing.
+#' 
+#' Designed for internal use with \pkg{xts}, this provides highly optimized
+#' tests for ordering.
+#' 
+#' @param x a numeric vector
+#' @param increasing test for increasing/decreasing values
+#' @param strictly are duplicates OK
+#' 
+#' @return Logical
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso \code{\link{is.unsorted}}
+#' 
+#' @keywords misc
+#' @examples
+#' 
+#' # strictly increasing
+#' isOrdered(1:10, increasing=TRUE)
+#' isOrdered(1:10, increasing=FALSE)
+#' isOrdered(c(1,1:10), increasing=TRUE)
+#' isOrdered(c(1,1:10), increasing=TRUE, strictly=FALSE)
+#' 
+#' # decreasing
+#' isOrdered(10:1, increasing=TRUE)
+#' isOrdered(10:1, increasing=FALSE)
+#' 
 `isOrdered` <- function(x, increasing=TRUE, strictly=TRUE) {
   # x must be of type double or integer.  Checked in the C code.
   if(is.character(x))
