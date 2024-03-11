@@ -39,7 +39,26 @@
 # Copyright 2009. Jeffrey A. Ryan. All rights reserved.
 # This is licensed under the GPL version 2 or later
 #
-#' @rdname parseISO8601
+
+#' Create an ISO8601 string from a time series object
+#' 
+#' This function uses the \code{start()} and \code{end()} of a time series
+#' object to create an ISO8601 string that spans the time range of the object.
+#' 
+#' This is not exported an therefore not part of the official xts API.
+#' 
+#' @param x a time series object with \code{start} and \code{end} methods.
+#' 
+#' @return A character vector of length one describing the ISO-style format
+#' for the range of a given time series object.
+#' 
+#' @noRd
+#' @examples
+#'
+#' data(sample_matrix)
+#' x <- as.xts(sample_matrix)
+#' .makeISO8601(x)
+#'
 .makeISO8601 <- function(x) {
   paste(start(x), end(x), sep = "/")
 }
@@ -47,14 +66,9 @@
 
 #' Internal ISO 8601:2004(e) Time Parser
 #' 
-#' This function is used internally in the subsetting mechanism of xts.  The
-#' function is unexported, though documented for use with xts subsetting.
-#' 
-#' This function replicates most of the ISO standard for expressing time and
-#' time-based ranges in a universally accepted way.
-#' 
-#' The best documentation is now the official ISO page as well as the Wikipedia
-#' entry for ISO 8601:2004.
+#' This function replicates most of the ISO standard for parsing times and
+#' time-based ranges in a universally accepted way. The best documentation is
+#' the official ISO page as well as the Wikipedia entry for ISO 8601:2004.
 #' 
 #' The basic idea is to create the endpoints of a range, given a string
 #' representation. These endpoints are aligned in POSIXct time to the zero
@@ -63,16 +77,14 @@
 #' 
 #' For dates prior to the epoch (1970-01-01) the ending time is aligned to the
 #' 59.0000 second. This is due to a bug/feature in the implementation of
-#' asPOSIXct and mktime0 at the C-source level. This limits the precision of
+#' as.POSIXct and mktime0 at the C-source level. This limits the precision of
 #' ranges prior to 1970 to 1 minute granularity with the current \pkg{xts}
 #' workaround.
 #' 
-#' Recurring times over multiple days may be specified using the T notation.
+#' Recurring times over multiple days may be specified using the "T" notation.
 #' See the examples for details.
 #' 
-#' @param x For .parseISO8601(x), a character string conforming to the ISO
-#' 8601:2004(e) rules. For .makeISO8601(x), \code{x} should be a time-like
-#' object with \code{start} and \code{end} methods.
+#' @param x A character string conforming to the ISO 8601:2004(e) rules.
 #' @param start lower constraint on range
 #' @param end upper constraint of range
 #' @param tz timezone (tzone) to use internally
@@ -80,24 +92,21 @@
 #' @return A list of length two, with an entry named \sQuote{first.time} and
 #' one names \sQuote{last.time}.
 #' 
-#' For .makeISO8601, a character vector of length one describing the ISO-style
-#' format for a given time-based object.
-#' 
 #' @note There is no checking done to test for a properly constructed ISO
-#' format string.  This must be correctly entered by the user, lest bad things
+#' format string. This must be correctly entered by the user, lest bad things
 #' may happen.
 #' 
 #' When using durations, it is important to note that the time of the duration
 #' specified is not necessarily the same as the realized periods that may be
-#' returned when applied to an irregular time series.  This is not a bug,
-#' rather it is a standards and implementation gotcha.
+#' returned when applied to an irregular time series. This is not a bug; it is
+#' a standards and implementation gotcha.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
 #' @references \url{https://en.wikipedia.org/wiki/ISO_8601}\cr
 #' \url{https://www.iso.org/iso-8601-date-and-time-format.html}
 #' 
-#' @aliases ISO8601 parseISO8601 makeISO8601
+#' @aliases ISO8601 parseISO8601
 #' @rdname parseISO8601
 #' 
 #' @keywords utilities
