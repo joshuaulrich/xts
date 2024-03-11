@@ -81,8 +81,8 @@ lag.xts <- function(x, k=1, na.pad=TRUE, ...) {
   .Call(C_lag_xts, x, k, na.pad)
 }
 
-# TODO: remove
 lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
+  # NOTE: not exported
   if(length(k) > 1) {
     if(is.null(names(k)))
       names(k) <- paste("lag",k,sep="")

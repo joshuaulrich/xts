@@ -58,16 +58,3 @@ modify.args <- function(formals, arglist, ..., dots=FALSE)
   # return a list (not a pairlist)
   as.list(.formals)
 }
-
-# This is how it is used in quantstrat in applyIndicators()
-# # replace default function arguments with indicator$arguments
-# .formals <- formals(indicator$name)
-# .formals <- modify.args(.formals, indicator$arguments, dots=TRUE)
-# # now add arguments from parameters
-# .formals <- modify.args(.formals, parameters, dots=TRUE)
-# # now add dots
-# .formals <- modify.args(.formals, NULL, ..., dots=TRUE)
-# # remove ... to avoid matching multiple args
-# .formals$`...` <- NULL
-# 
-# tmp_val <- do.call(indicator$name, .formals)

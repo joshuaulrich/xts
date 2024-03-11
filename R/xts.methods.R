@@ -655,5 +655,3 @@ binsearch <- function(key, vec, start=TRUE) {
   }
   .Call(C_binsearch, key, vec, start)
 }
-
-# Unit tests for the above code may be found in runit.xts.methods.R

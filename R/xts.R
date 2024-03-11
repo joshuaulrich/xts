@@ -19,19 +19,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# xts core functions
-#   additional methods are in correspondingly named .R files
-#   current conversions include:
-#     timeSeries, its, irts, ts, matrix, data.frame, and zoo
-#     MISSING: tis, fame
-#
-#  this file includes the main xts constructor as well as the reclass
-#  function.
-#
-#  xts methods (which match foreign conversion methods in other files)
-#  are also defined below
-
-
 # xts() index attribute precedence should be:
 #   1. .index* value (e.g. .indexTZ)  # backward compatibility
 #   2. t* value (e.g. tzone)          # current function to override index attribute
@@ -534,8 +521,6 @@ function(x, match.to, error=FALSE, ...) {
   }
 }
 
-#`reclass` <- reclass2
-
 
 #' Extract and Set .CLASS Attribute
 #' 
@@ -662,8 +647,6 @@ function(x) {
 function(x,...) {
   UseMethod('as.xts')
 }
-
-#as.xts.default <- function(x, ...) x
 
 `re.xts` <-
 function(x,...) {

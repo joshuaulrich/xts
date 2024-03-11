@@ -19,9 +19,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# optimized periodic apply functions
-#
-
 #' Check if Class is Time-Based
 #'
 #' Used to verify that the object is one of the known time-based classes in R.

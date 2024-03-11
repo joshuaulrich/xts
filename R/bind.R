@@ -21,56 +21,8 @@
 
 #' @rdname merge.xts
 cbind.xts <- function(..., all=TRUE, fill=NA, suffixes=NULL) {
-#  mc <- match.call(call=sys.call(sys.parent()))
-#  mc[[1]] <- as.name("merge.xts")
-#  eval(mc)
   merge.xts(..., all=all, fill=fill, suffixes=suffixes)
 }  
-#  # convert the call to a list to better manipulate it
-#  mc <- as.list(match.call(call=sys.call(-1)))
-#  
-#  # remove deparse.level arg if called via cbind 'generic'
-#  if(as.character(mc[[1]]) == "cbind")
-#    mc <- mc[-2]
-#
-#  # check if any default args are missing from the call,
-#  # and add them to the call with the cbind defaults
-#  if(missing(all))      mc <- c(mc,all=all)
-#  if(missing(fill))     mc <- c(mc,fill=fill)
-#  if(missing(suffixes)) mc <- c(mc,suffixes=suffixes)
-#  
-#  # replace the call to cbind.xts with merge.xts
-#  mc[[1]] <- as.name('merge.xts')
-#
-#  # convert the list into a call and evaluate it
-#  mc <- as.call(mc)
-#  eval(mc)
-#} 
-#   sc <- sys.call(sys.parent())
-#   mc <- gsub('cbind|cbind.xts','merge.xts',deparse(match.call(call=sc)))
-#   return(eval(parse(text=mc)))
-#   dots <- mc$...
-#   length.args <- sum(.External("number_of_cols",...,PACKAGE="xts"))
-#   if(is.null(suffixes))
-#     suffixes <- all.vars(match.call(call=sc), unique=FALSE)[1:length.args]
-# 
-#   if( length(suffixes) != length.args ) {
-#     warning("length of suffixes and does not match number of merged objects")
-#     suffixes <- rep(suffixes, length.out=length.args)
-#   }
-#
-#   merge.xts(..., all=all, fill=fill, suffixes=suffixes)
-#
-#   dat <- list(...)
-#   x <- dat[[1]]; dat <- dat[-1]
-#   while( length(dat) > 0 ) {
-#     y <- dat[[1]]
-#     if( length(dat) > 0 )
-#       dat <- dat[-1]
-#     x <- merge.xts(x, y, all=TRUE, fill=NA, suffixes=NULL, retclass="xts")
-#   }
-#   x
-#}
 
 #' @rdname rbind.xts
 `c.xts` <-

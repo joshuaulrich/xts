@@ -19,18 +19,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# to.period functionality from quantmod
-#
-# to.period base function
-# to.minutes
-# to.hourly
-# to.daily
-# to.weekly
-# to.monthly
-# to.quarterly
-# to.yearly
-
-
 #' Convert time series data to an OHLC series
 #' 
 #' Convert an OHLC or univariate object to a specified periodicity lower than
@@ -380,17 +368,6 @@ function(x, by, k=1, name=NULL, OHLC=TRUE, ...) {
     x <- na.omit(x)
     warning("missing values removed from data")
   }
-
-#  if(!OHLC) {
-#    xx <- x[endpoints(x, period, k),]
-#  } else {
-#  if(!is.null(indexAt)) {
-#    index_at <- switch(indexAt,
-#                       "startof" = TRUE,  # start time of period
-#                       "endof"   = FALSE, # end time of period
-#                       FALSE
-#                      )
-#  } else index_at <- FALSE
 
   # make suitable name vector
 

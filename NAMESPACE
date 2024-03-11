@@ -161,7 +161,6 @@ export(axTicksByTime)
 export(plot.xts)
 export(addLegend)
 export(addEventLines)
-# export(addPoints)
 export(addSeries)
 export(addPanel)
 export(addPolygon)
@@ -172,16 +171,10 @@ S3method(print, replot_xts)
 S3method(plot, replot_xts)
 S3method(str, replot_xts)
 
-#export(lines.xts)
-#S3method(lines,xts)
-#S3method(points,xts)
-
-#export(Lag.xts, Next.xts) #, Diff.xts)
 
 export(lag.xts)
 export(diff.xts)
 export(merge.xts)
-#export(mergeXts)
 S3method(all.equal, xts)
 S3method(split, xts)
 S3method(lag,xts)
@@ -208,7 +201,6 @@ importFrom(zoo,'index<-')
 importFrom(zoo,'time<-')
 importFrom(zoo, na.locf)
 importFrom(zoo, as.zoo)
-#importFrom(zoo, lagts)
 importFrom(zoo, rollapply)
 importFrom(zoo, na.approx)
 importFrom(zoo, na.fill)
@@ -275,7 +267,6 @@ S3method(cumsum, xts)
 S3method(cumprod, xts)
 S3method(cummin, xts)
 S3method(cummax, xts)
-#S3method(lagts,xts)
 S3method(rollapply, xts)
 
 # list specific methods
@@ -286,7 +277,6 @@ S3method(as.xts, ts)
 S3method(as.ts, xts)
 
 # zoo specific methods
-#importFrom(zoo,as.zoo)  # now in zoo
 S3method(as.xts,zoo)
 if (getRversion() >= "3.6.0" && utils::packageVersion("zoo") < "1.8.5") {
   # xts:::as.zoo.xts was copied to zoo:::as.zoo.xts in zoo 1.8-5
@@ -302,7 +292,6 @@ S3method(as.xts,matrix)
 S3method(as.matrix,xts)
 
 # environment specific methods
-#S3method(as.xts,environment)
 S3method(as.environment,xts)
 
 # timeSeries (package:timeSeries) specific methods
@@ -327,5 +316,3 @@ S3method(as.xts,yearqtr)
 # timeDate specific methods
 S3method(as.xts,timeDate)
 ## currently unexported functions that _may_ be exported at some point
-
-#export(startof,endof,firstof,lastof)
