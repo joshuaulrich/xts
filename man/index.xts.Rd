@@ -20,7 +20,7 @@
 \alias{.indexweek}
 \alias{.indexyweek}
 \alias{convertIndex}
-\title{Get and Replace the Class of an xts Index}
+\title{Get and Replace an xts Index}
 \usage{
 \method{index}{xts}(x, ...)
 
@@ -89,20 +89,21 @@ attribute before returning the index values to the user.
 The \code{.indexXXX} functions extract time components (similar to
 \code{\link{POSIXlt}} components) from the internal time index:
 
-\describe{ \item{list(".indexsec")}{0 - 61: seconds of the minute (local
-time)} \item{list(".indexmin")}{0 - 59: minutes of the hour (local time)}
-\item{list(".indexhour")}{0 - 23: hours of the day (local time)}
-\item{list(".indexDate")}{date as seconds since the epoch (UTC \emph{not
-local time}} \item{list(".indexday")}{date as seconds since the epoch (UTC
-\emph{not local time}} \item{list(".indexwday")}{0 - 6: day of the week
-(Sunday - Saturday, local time)} \item{list(".indexmday")}{1 - 31: day of
-the month (local time)} \item{list(".indexweek")}{weeks since the epoch (UTC
-\emph{not local time}} \item{list(".indexmon")}{0 - 11: month of the year
-(local time)} \item{list(".indexyear")}{years since 1900 (local time)}
-\item{list(".indexyday")}{0 - 365: day of the year (local time, 365 only in
-leap years)} \item{list(".indexisdst")}{1, 0, -1: Daylight Saving Time flag.
-Positive if Daylight Saving Time is in effect, zero if not, negative if
-unknown.} }
+\describe{
+  \item{\code{".indexsec"}}{0 - 61: seconds of the minute (local time)}
+  \item{\code{".indexmin"}}{0 - 59: minutes of the hour (local time)}
+  \item{\code{".indexhour"}}{0 - 23: hours of the day (local time)}
+  \item{\code{".indexDate"}}{date as seconds since the epoch (UTC \emph{not local time}}
+  \item{\code{".indexday"}}{date as seconds since the epoch (UTC \emph{not local time}}
+  \item{\code{".indexwday"}}{0 - 6: day of the week (Sunday - Saturday, local time)}
+  \item{\code{".indexmday"}}{1 - 31: day of the month (local time)}
+  \item{\code{".indexweek"}}{weeks since the epoch (UTC \emph{not local time}}
+  \item{\code{".indexmon"}}{0 - 11: month of the year (local time)}
+  \item{\code{".indexyear"}}{years since 1900 (local time)}
+  \item{\code{".indexyday"}}{0 - 365: day of the year (local time, 365 only in leap years)}
+  \item{\code{".indexisdst"}}{1, 0, -1: Daylight Saving Time flag. Positive if
+      Daylight Saving Time is in effect, zero if not, negative if unknown.}
+}
 
 Changes in timezone, index class, and index format internal structure, by
 \pkg{xts} version:
