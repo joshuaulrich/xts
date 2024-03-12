@@ -229,3 +229,19 @@ merge.xts <- function(...,
   } else
   return(x)
 }
+
+
+#' @rdname merge.xts
+cbind.xts <- function(..., all=TRUE, fill=NA, suffixes=NULL) {
+  merge.xts(..., all=all, fill=fill, suffixes=suffixes)
+}
+
+.merge.xts.scalar <- function(x, length.out, ...) {
+  if( length.out == 0)
+    return(vector(storage.mode(x), 0))
+  if( length(x) == 1 )
+    return(matrix(rep(x, length.out=length.out)))
+  if( NROW(x) == length.out )
+    return(x)
+  stop("improper length of one or more arguments to merge.xts")
+}

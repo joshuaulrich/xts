@@ -19,11 +19,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#' @rdname merge.xts
-cbind.xts <- function(..., all=TRUE, fill=NA, suffixes=NULL) {
-  merge.xts(..., all=all, fill=fill, suffixes=suffixes)
-}  
-
 #' @rdname rbind.xts
 `c.xts` <-
 function(...) {

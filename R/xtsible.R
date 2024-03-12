@@ -58,16 +58,6 @@ try.xts <- function(x, ..., error=TRUE)
 }
 use.xts <- try.xts
 
-.merge.xts.scalar <- function(x, length.out, ...) {
-  if( length.out == 0)
-    return(vector(storage.mode(x), 0))
-  if( length(x) == 1 )
-    return(matrix(rep(x, length.out=length.out)))
-  if( NROW(x) == length.out )
-    return(x)
-  stop("improper length of one or more arguments to merge.xts")
-}
-
 #' @rdname as.xts
 #' @aliases use.reclass
 Reclass <- function(x) {
