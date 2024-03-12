@@ -19,14 +19,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#' @rdname index.xts
-`convertIndex` <-
-function(x,value) {
-  tclass(x) <- value
-  x
-}
-
-
 #' Get or Replace the Class of an xts Object's Index
 #' 
 #' Generic functions to get or replace the class of an xts object's index.
