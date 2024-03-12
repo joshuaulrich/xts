@@ -19,14 +19,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#' @rdname as.xts
-xtsible <- function(x)
-{
-  if(inherits(try(as.xts(x),silent=TRUE),'try-error')) {
-    FALSE
-  } else TRUE
-}
-
 #' @inheritParams as.xts
 #' @param error error handling option. See Details.
 #' @rdname as.xts

@@ -476,6 +476,14 @@ function(x,...) {
   UseMethod('as.xts')
 }
 
+#' @rdname as.xts
+xtsible <- function(x)
+{
+  if(inherits(try(as.xts(x),silent=TRUE),'try-error')) {
+    FALSE
+  } else TRUE
+}
+
 `re.xts` <-
 function(x,...) {
   # simply return the object
