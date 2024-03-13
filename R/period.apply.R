@@ -171,7 +171,7 @@ function(x,FUN, ...)
 #' \code{period.apply}, mainly as a convenience.
 #' 
 #' @param x an time-series object coercible to xts
-#' @param FUN an function
+#' @param FUN an \R function
 #' @param \dots additional arguments to FUN
 #'
 #' @return A vector of results produced by \code{FUN}, corresponding to the

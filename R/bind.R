@@ -58,7 +58,7 @@ function(...) {
 #' All operations may not behave as expected on objects with non-unique
 #' indices.  You have been warned.
 #' 
-#' \code{rbind} is a .Primitive function in R. As such method dispatch occurs at
+#' \code{rbind} is a .Primitive function in \R. As such method dispatch occurs at
 #' the C-level, and may not be consistent with expectations.  See the details
 #' section of the base function, and if needed call rbind.xts directly to avoid
 #' dispatch ambiguity.

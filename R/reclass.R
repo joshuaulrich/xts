@@ -84,7 +84,7 @@ use.xts <- try.xts
 #' 
 #' \code{Reclass} is designed for top-level use, where it is desirable to have
 #' the object returned from an arbitrary function in the same class as the
-#' object passed in.  Most functions within are not designed to return objects
+#' object passed in.  Most functions in \R are not designed to return objects
 #' matching the original object's class.  While this tool is highly
 #' experimental at present, it attempts to handle conversion and reconversion
 #' transparently.  The caveats are that the original object must be coercible

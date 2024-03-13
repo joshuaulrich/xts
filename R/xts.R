@@ -417,7 +417,7 @@ function(x) {
 #' \code{xts} and back, without losing any attributes of the original format.
 #' 
 #' A simple and reliable way to convert many different objects into a uniform
-#' format for use within .
+#' format for use within \R.
 #' 
 #' It is possible with a call to \code{as.xts} to convert objects of class
 #' \code{timeSeries}, \code{ts}, \code{matrix}, \code{data.frame}, and
@@ -425,7 +425,7 @@ function(x) {
 #' 
 #' Additional name=value pairs may be passed to the function to be added to the
 #' new object. A special print.xts method will assure that the attributes are
-#' hidden from view, but will be available via 's standard \code{attr}
+#' hidden from view, but will be available via \R's standard \code{attr}
 #' function.
 #' 
 #' If \code{.RECLASS=TRUE}, the returned object will preserve all relevant

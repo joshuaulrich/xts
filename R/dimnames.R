@@ -36,7 +36,7 @@
 #' Rownames are redundant in this design, as well as quite burdensome with
 #' respect to memory consumption and internal copying costs.
 #' 
-#' \code{rownames} and \code{colnames} in make use of \code{dimnames} method
+#' \code{rownames} and \code{colnames} in \R make use of \code{dimnames} method
 #' dispatch internally, and thus require only modifications to dimnames to
 #' enforce the \code{xts} no rownames requirement.
 #' 
