@@ -78,7 +78,7 @@ use.xts <- try.xts
 #' methods. A call to `reclass` returns the object to its original class,
 #' with all original attributes intact - unless otherwise changed.
 #' 
-#' It should be obvious, but any attributes added via the \dots{} argument will
+#' It should be obvious, but any attributes added via the \dots argument will
 #' not be carried back to the original data object, as there would be no
 #' available storage slot/attribute.
 #' 

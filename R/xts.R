@@ -433,7 +433,7 @@ function(x) {
 #' for conversion, and should not be altered by the user; i.e. don't touch it
 #' unless you are aware of the consequences.
 #' 
-#' It should be obvious, but any attributes added via the \dots{} argument will
+#' It should be obvious, but any attributes added via the \dots argument will
 #' not be carried back to the original data object, as there would be no
 #' available storage slot/attribute.
 #' 

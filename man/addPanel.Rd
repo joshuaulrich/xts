@@ -41,7 +41,7 @@ other graphical passthrough parameters.}
 Apply a function to the data of an existing xts plot object and plot the
 result. \code{FUN} should have arguments \code{x} or \code{R} for the data
 of the existing xts plot object to be passed to. All other additional
-arguments for \code{FUN} are passed through \dots{}.
+arguments for \code{FUN} are passed through \dots.
 }
 \examples{
 

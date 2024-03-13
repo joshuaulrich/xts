@@ -644,7 +644,7 @@ plot.xts <- function(x,
 #' Apply a function to the data of an existing xts plot object and plot the
 #' result. `FUN` should have arguments `x` or `R` for the data
 #' of the existing xts plot object to be passed to. All other additional
-#' arguments for `FUN` are passed through \dots{}.
+#' arguments for `FUN` are passed through \dots.
 #' 
 #' @param FUN an xts object to plot.
 #' @param main main title for a new panel if drawn.
