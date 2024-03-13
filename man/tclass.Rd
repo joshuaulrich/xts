@@ -48,14 +48,14 @@ the internal index values to the desired class when the \code{index}
 function is called.
 
 The \code{tclass} function retrieves the class of the internal index, and
-the \code{tclass<-} function sets it. The specified value for
-\code{tclass<-} must be one of the following character strings:
+the \verb{tclass<-} function sets it. The specified value for
+\verb{tclass<-} must be one of the following character strings:
 \code{"Date"}, \code{"POSIXct"}, \code{"chron"}, \code{"yearmon"},
 \code{"yearqtr"}, or \code{"timeDate"}.
 }
 \note{
-Both \code{indexClass} and \code{indexClass<-} are deprecated in favor
-of \code{tclass} and \code{tclass<-}, respectively.
+Both \code{indexClass} and \verb{indexClass<-} are deprecated in favor
+of \code{tclass} and \verb{tclass<-}, respectively.
 
 Replacing the \code{tclass} \emph{does not} change the values of the
 internal index. See the examples.
@@ -79,15 +79,15 @@ head(y)    # the index prints without times, but
 
 }
 \seealso{
-\code{\link{index}} has more information on the xts index,
-\code{\link{tformat}} details how the index values are formatted when
-printed, \code{\link{tzone}} has more information about the index timezone
+\code{\link[=index]{index()}} has more information on the xts index,
+\code{\link[=tformat]{tformat()}} details how the index values are formatted when
+printed, \code{\link[=tzone]{tzone()}} has more information about the index timezone
 settings.
 
 The following help pages describe the characteristics of the valid index
-classes: \code{\link{POSIXct}}, \code{\link{Date}},
-\code{\link[chron]{chron}}, \code{\link[zoo]{yearmon}},
-\code{\link[zoo]{yearqtr}}, \code{\link[timeDate]{timeDate}}.
+classes: \code{\link[=POSIXct]{POSIXct()}}, \code{\link[=Date]{Date()}},
+\code{\link[chron:chron]{chron::chron()}}, \code{\link[zoo:yearmon]{zoo::yearmon()}},
+\code{\link[zoo:yearqtr]{zoo::yearqtr()}}, \code{\link[timeDate:timeDate]{timeDate::timeDate()}}.
 }
 \author{
 Jeffrey A. Ryan

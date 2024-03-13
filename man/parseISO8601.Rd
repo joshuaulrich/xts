@@ -33,7 +33,7 @@ second of the day at the beginning, and the 59.9999th second of the 59th
 minute of the 23rd hour of the final day.
 
 For dates prior to the epoch (1970-01-01) the ending time is aligned to the
-59.0000 second. This is due to a bug/feature in the implementation of
+59.0000 second. This is due to a bug/feature in the \R implementation of
 as.POSIXct and mktime0 at the C-source level. This limits the precision of
 ranges prior to 1970 to 1 minute granularity with the current \pkg{xts}
 workaround.

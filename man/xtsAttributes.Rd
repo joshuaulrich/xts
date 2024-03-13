@@ -45,7 +45,7 @@ xtsAttributes(x)
 
 }
 \seealso{
-\code{\link{attributes}}
+\code{\link[=attributes]{attributes()}}
 }
 \author{
 Jeffrey A. Ryan

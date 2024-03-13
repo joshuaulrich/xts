@@ -169,8 +169,8 @@ ISO 8601: Date elements and interchange formats - Information
 interchange - Representation of dates and time \url{https://www.iso.org}
 }
 \seealso{
-\code{\link{xts}}, \code{\link{.parseISO8601}},
-\code{\link{.index}}
+\code{\link[=xts]{xts()}}, \code{\link[=.parseISO8601]{.parseISO8601()}},
+\code{\link[=.index]{.index()}}
 }
 \author{
 Jeffrey A. Ryan

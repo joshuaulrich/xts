@@ -16,12 +16,12 @@ Additionally, one may use \pkg{xts} to create new objects which can contain
 arbitrary attributes named during creation as name=value pairs.
 }
 \seealso{
-\code{\link{xts}} \code{\link{as.xts}} \code{\link{reclass}}
-\code{\link[zoo:zoo]{zoo}}
+\code{\link[=xts]{xts()}} \code{\link[=as.xts]{as.xts()}} \code{\link[=reclass]{reclass()}}
+\code{\link[zoo:zoo]{zoo::zoo()}}
 }
 \author{
 Jeffrey A. Ryan and Joshua M. Ulrich
 
-Maintainer: Joshua M. Ulrich <josh.m.ulrich@gmail.com>
+Maintainer: Joshua M. Ulrich \href{mailto:josh.m.ulrich@gmail.com}{josh.m.ulrich@gmail.com}
 }
 \keyword{package}

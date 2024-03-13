@@ -24,15 +24,15 @@ addSeries(
 \item{on}{panel number to draw on. A new panel will be drawn if
 \code{on=NA}.}
 
-\item{type}{the type of plot to be drawn, same as in \code{\link{plot}}.}
+\item{type}{the type of plot to be drawn, same as in \code{\link[=plot]{plot()}}.}
 
 \item{col}{color palette to use, set by default to rational choices.}
 
-\item{lty}{set the line type, same as in \code{\link{par}}.}
+\item{lty}{set the line type, same as in \code{\link[=par]{par()}}.}
 
-\item{lwd}{set the line width, same as in \code{\link{par}}.}
+\item{lwd}{set the line width, same as in \code{\link[=par]{par()}}.}
 
-\item{pch}{the type of plot to be drawn, same as in \code{\link{par}}.}
+\item{pch}{the type of plot to be drawn, same as in \code{\link[=par]{par()}}.}
 
 \item{\dots}{any other passthrough graphical parameters.}
 }

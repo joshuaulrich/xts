@@ -21,7 +21,7 @@ apply.yearly(x, FUN, ...)
 \arguments{
 \item{x}{an time-series object coercible to xts}
 
-\item{FUN}{an function}
+\item{FUN}{an \R function}
 
 \item{\dots}{additional arguments to FUN}
 }
@@ -55,8 +55,7 @@ order to be consistent with the other math functions. This broke some
 original behavior.
 
 Using \code{FUN = mean} will print a message that describes this
-inconsistency.  To avoid the message and confusion, use \code{FUN =
-colMeans} to calculate means by column and use \code{FUN = function(x) mean}
+inconsistency.  To avoid the message and confusion, use \code{FUN = colMeans} to calculate means by column and use \code{FUN = function(x) mean}
 to calculate one mean for all the data. Set
 \code{options(xts.message.period.apply.mean = FALSE)} to suppress this
 message.
@@ -73,8 +72,8 @@ apply.monthly(xts.ts,function(x) var(x))
 
 }
 \seealso{
-\code{\link{endpoints}}, \code{\link{period.apply}},
-\code{\link{to.monthly}}
+\code{\link[=endpoints]{endpoints()}}, \code{\link[=period.apply]{period.apply()}},
+\code{\link[=to.monthly]{to.monthly()}}
 }
 \author{
 Jeffrey A. Ryan

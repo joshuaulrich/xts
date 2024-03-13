@@ -61,7 +61,7 @@ nweeks(QQQQ)
 
 }
 \seealso{
-\code{\link{endpoints}}
+\code{\link[=endpoints]{endpoints()}}
 }
 \author{
 Jeffrey A. Ryan

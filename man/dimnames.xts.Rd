@@ -26,7 +26,7 @@ Get or set dimnames of an xts object.
 }
 \details{
 The functions \code{dimnames.xts} and \code{dimnames<-.xts} are methods for
-the base functions \code{dimnames} and \code{dimnames<-}.
+the base functions \code{dimnames} and \verb{dimnames<-}.
 
 \code{xts} objects by design are intended for lightweight management of
 time-indexed data.
@@ -34,11 +34,11 @@ time-indexed data.
 Rownames are redundant in this design, as well as quite burdensome with
 respect to memory consumption and internal copying costs.
 
-\code{rownames} and \code{colnames} in make use of \code{dimnames} method
+\code{rownames} and \code{colnames} in \R make use of \code{dimnames} method
 dispatch internally, and thus require only modifications to dimnames to
 enforce the \code{xts} no rownames requirement.
 
-To prevent accidental setting of rownames, \code{dimnames<-} for \code{xts}
+To prevent accidental setting of rownames, \verb{dimnames<-} for \code{xts}
 will simply set the rownames to \code{NULL} when invoked, regardless of
 attempts to set otherwise.
 
@@ -67,7 +67,7 @@ str(x)
 
 }
 \seealso{
-\code{\link{xts}}
+\code{\link[=xts]{xts()}}
 }
 \author{
 Jeffrey A. Ryan

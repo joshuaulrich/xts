@@ -38,7 +38,7 @@ isOrdered(10:1, increasing=FALSE)
 
 }
 \seealso{
-\code{\link{is.unsorted}}
+\code{\link[=is.unsorted]{is.unsorted()}}
 }
 \author{
 Jeffrey A. Ryan

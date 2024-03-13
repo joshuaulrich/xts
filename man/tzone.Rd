@@ -32,17 +32,17 @@ Generic functions to get or replace the timezone of an xts object's index.
 \details{
 Internally, an xts object's index is a \emph{numeric} value corresponding to
 seconds since the epoch in the UTC timezone. When an xts object is created,
-all time index values are converted internally to \code{\link{POSIXct}}
+all time index values are converted internally to \code{\link[=POSIXct]{POSIXct()}}
 (which is also in seconds since the UNIX epoch), using the underlying OS
 conventions and the \env{TZ} environment variable. The \code{xts()} function
 manages timezone information as transparently as possible.
 
-The \code{tzone<-} function \emph{does not} change the internal index values
+The \verb{tzone<-} function \emph{does not} change the internal index values
 (i.e. the index will remain the same time in the UTC timezone).
 }
 \note{
-Both \code{indexTZ} and \code{indexTZ<-} are deprecated in favor of
-\code{tzone} and \code{tzone<-}, respectively.
+Both \code{indexTZ} and \verb{indexTZ<-} are deprecated in favor of
+\code{tzone} and \verb{tzone<-}, respectively.
 
 Problems may arise when an object that had been created under one timezone
 are used in a session using another timezone. This isn't usually a issue,
@@ -83,9 +83,9 @@ head(.index(y))  # the internal index is not changed!
 
 }
 \seealso{
-\code{\link{POSIXt}} \code{\link{index}} has more information on
-the xts index, \code{\link{tformat}} describes how the index values are
-formatted when printed, and \code{\link{tclass}} provides details how
+\code{\link[=POSIXt]{POSIXt()}} \code{\link[=index]{index()}} has more information on
+the xts index, \code{\link[=tformat]{tformat()}} describes how the index values are
+formatted when printed, and \code{\link[=tclass]{tclass()}} provides details how
 \pkg{xts} handles the class of the index.
 }
 \author{

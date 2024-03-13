@@ -66,7 +66,7 @@
 \code{points}}
 
 \item{subset}{character vector of length one of the subset range using
-subsetting as in \code{\link{xts}}}
+subsetting as in \code{\link[=xts]{xts()}}}
 
 \item{panels}{character vector of expressions to plot as panels}
 
@@ -82,15 +82,15 @@ panel.}
 
 \item{dn.col}{color for negative bars if \code{type="h"}}
 
-\item{bg}{background color of plotting area, same as in \code{\link{par}}}
+\item{bg}{background color of plotting area, same as in \code{\link[=par]{par()}}}
 
-\item{type}{the type of plot to be drawn, same as in \code{\link{plot}}}
+\item{type}{the type of plot to be drawn, same as in \code{\link[=plot]{plot()}}}
 
-\item{lty}{set the line type, same as in \code{\link{par}}}
+\item{lty}{set the line type, same as in \code{\link[=par]{par()}}}
 
-\item{lwd}{set the line width, same as in \code{\link{par}}}
+\item{lwd}{set the line width, same as in \code{\link[=par]{par()}}}
 
-\item{lend}{set the line end style, same as in \code{\link{par}}}
+\item{lend}{set the line end style, same as in \code{\link[=par]{par()}}}
 
 \item{main}{main title}
 
@@ -114,7 +114,7 @@ ylim for multiple panels}
 \item{yaxis.right}{if TRUE, draws the y axis on the right}
 
 \item{yaxis.ticks}{desired number of y axis grid lines. The actual number of
-grid lines is determined by the \code{n} argument to \code{\link{pretty}}.}
+grid lines is determined by the \code{n} argument to \code{\link[=pretty]{pretty()}}.}
 
 \item{major.ticks}{period that specifies where tick marks and labels will be
 drawn on the x-axis. See Details for possible values.}
@@ -135,7 +135,7 @@ drawn. See Details for possible values.}
 \item{labels.col}{color of the axis labels}
 
 \item{format.labels}{label format to draw lower frequency x-axis ticks and
-labels passed to \code{\link{axTicksByTime}}}
+labels passed to \code{\link[=axTicksByTime]{axTicksByTime()}}}
 
 \item{grid2}{color for secondary x axis grid}
 
@@ -165,7 +165,7 @@ Possible values for arguments \code{major.ticks}, \code{minor.ticks}, and
 \sQuote{years}. The default is \sQuote{auto}, which attempts to determine
 sensible locations from the periodicity and locations of observations. The
 other values are based on the possible values for the \code{ticks.on}
-argument of \code{\link{axTicksByTime}}.
+argument of \code{\link[=axTicksByTime]{axTicksByTime()}}.
 }
 \examples{
 
@@ -210,7 +210,7 @@ based on \code{chart_Series} in the \code{quantmod} package by
 Jeffrey A. Ryan
 }
 \seealso{
-\code{\link{addSeries}}, \code{\link{addPanel}}
+\code{\link[=addSeries]{addSeries()}}, \code{\link[=addPanel]{addPanel()}}
 }
 \author{
 Ross Bennett

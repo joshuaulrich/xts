@@ -52,7 +52,7 @@ periodicity(zoo.ts)
 
 }
 \seealso{
-\code{\link{difftime}}
+\code{\link[=difftime]{difftime()}}
 }
 \author{
 Jeffrey A. Ryan

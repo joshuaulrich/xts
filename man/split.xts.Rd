@@ -49,8 +49,8 @@ split(x, f="weeks", k=4)
 
 }
 \seealso{
-\code{\link{endpoints}}, \code{\link[zoo]{split.zoo}},
-\code{\link[zoo]{aggregate.zoo}}
+\code{\link[=endpoints]{endpoints()}}, \code{\link[zoo:aggregate.zoo]{zoo::split.zoo()}},
+\code{\link[zoo:aggregate.zoo]{zoo::aggregate.zoo()}}
 }
 \author{
 Jeffrey A. Ryan

@@ -16,8 +16,7 @@ of dates that are convertible to \code{POSIXct}. If you want fast lookups,
 then \code{index.} should be sorted and of class \code{POSIXct}.\cr If an
 unsorted \code{index.} is passed in, \code{window} will sort it.}
 
-\item{start}{a start time. Extract \code{xts} rows where \code{index. >=
-start}. \code{start} may be any class that is convertible to \code{POSIXct}
+\item{start}{a start time. Extract \code{xts} rows where \code{index. >= start}. \code{start} may be any class that is convertible to \code{POSIXct}
 such as a character variable in the format \sQuote{YYYY-MM-DD}.\cr If
 \code{start} is \code{NULL} then all \code{index.} dates are matched.}
 
@@ -60,8 +59,8 @@ x
 
 }
 \seealso{
-\code{\link{subset.xts}}, \code{\link[base]{findInterval}},
-\code{\link{xts}}
+\code{\link[=subset.xts]{subset.xts()}}, \code{\link[base:findInterval]{base::findInterval()}},
+\code{\link[=xts]{xts()}}
 }
 \author{
 Corwin Joy

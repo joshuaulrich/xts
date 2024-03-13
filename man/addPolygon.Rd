@@ -20,7 +20,7 @@ upper y coordinates and the second column as the lower y coordinates.}
 
 \item{col}{color palette to use, set by default to rational choices.}
 
-\item{\dots}{passthru parameters to \code{\link{par}}}
+\item{\dots}{passthru parameters to \code{\link[=par]{par()}}}
 }
 \description{
 Draw a polygon on an existing xts plot by specifying a time series of y

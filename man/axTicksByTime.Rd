@@ -65,7 +65,7 @@ axTicksByTime(as.xts(sample_matrix),'months',7)
 
 }
 \seealso{
-\code{\link{endpoints}}
+\code{\link[=endpoints]{endpoints()}}
 }
 \author{
 Jeffrey A. Ryan

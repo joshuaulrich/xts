@@ -74,7 +74,7 @@ diff(diff(x))
 
 }
 \references{
-\url{https://en.wikipedia.org/wiki/Lag }
+<https://en.wikipedia.org/wiki/Lag >
 }
 \author{
 Jeffrey A. Ryan

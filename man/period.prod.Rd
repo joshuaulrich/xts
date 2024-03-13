@@ -37,8 +37,8 @@ period.prod(as.xts(sample_matrix)[,1],endpoints(sample_matrix))
 
 }
 \seealso{
-\code{\link{endpoints}}, \code{\link{period.sum}},
-\code{\link{period.min}}, \code{\link{period.max}}
+\code{\link[=endpoints]{endpoints()}}, \code{\link[=period.sum]{period.sum()}},
+\code{\link[=period.min]{period.min()}}, \code{\link[=period.max]{period.max()}}
 }
 \author{
 Jeffrey A. Ryan

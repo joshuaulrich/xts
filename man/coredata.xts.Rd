@@ -17,7 +17,7 @@ xcoredata(x) <- value
 
 \item{fmt}{should the rownames be formated in a non-standard way}
 
-\item{\dots}{further arguments [unused]}
+\item{\dots}{further arguments (unused)}
 
 \item{value}{non-core attributes to assign}
 }
@@ -43,7 +43,7 @@ string in the default manner.
 
 \code{xcoredata} is the functional complement to \code{coredata}, returning
 all of the attributes normally removed by \code{coredata}.  Its purpose,
-along with the replacement function \code{xcoredata<-} is primarily for use
+along with the replacement function \verb{xcoredata<-} is primarily for use
 by developers using \pkg{xts} to allow for internal replacement of values
 removed during use of non xts-aware functions.
 }
@@ -56,7 +56,7 @@ xcoredata(x)
 
 }
 \seealso{
-\code{\link[zoo:zoo]{coredata}}, \code{\link{xtsAttributes}}
+\code{\link[zoo:zoo]{coredata()}}, \code{\link[=xtsAttributes]{xtsAttributes()}}
 }
 \author{
 Jeffrey A. Ryan

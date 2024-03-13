@@ -31,7 +31,7 @@ seconds.
 }
 \details{
 This function is an S3 generic.  The result is to round up to the next
-period determined by \code{n modulo x}.
+period determined by \verb{n modulo x}.
 }
 \examples{
 
@@ -48,7 +48,7 @@ align.time(x, 10 * 60)
 
 }
 \seealso{
-\code{\link{to.period}}
+\code{\link[=to.period]{to.period()}}
 }
 \author{
 Jeffrey A. Ryan with input from Brian Peterson

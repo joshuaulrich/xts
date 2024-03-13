@@ -59,7 +59,7 @@ options(ds)
 
 }
 \seealso{
-\code{\link{align.time}}
+\code{\link[=align.time]{align.time()}}
 }
 \author{
 Jeffrey A. Ryan

@@ -19,13 +19,13 @@ active panel is defined as the panel on which the most recent action was
 performed. Note that only the first element of \code{on} is checked for the
 default behavior to add to the last active panel.}
 
-\item{lty}{set the line type, same as in \code{\link{par}}.}
+\item{lty}{set the line type, same as in \code{\link[=par]{par()}}.}
 
-\item{lwd}{set the line width, same as in \code{\link{par}}.}
+\item{lwd}{set the line width, same as in \code{\link[=par]{par()}}.}
 
 \item{col}{color palette to use, set by default to rational choices.}
 
-\item{\dots}{any other passthrough parameters to \code{\link{text}} to
+\item{\dots}{any other passthrough parameters to \code{\link[=text]{text()}} to
 control how the event labels are drawn}
 }
 \description{

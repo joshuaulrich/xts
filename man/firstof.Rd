@@ -48,7 +48,7 @@ lastof(2007,10)
 
 }
 \seealso{
-\code{\link{ISOdatetime}}
+\code{\link[=ISOdatetime]{ISOdatetime()}}
 }
 \author{
 Jeffrey A. Ryan

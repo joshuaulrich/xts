@@ -39,14 +39,14 @@ Details.}
 \item{unique}{check the index for unique timestamps?}
 
 \item{tzone}{time zone of the index (ignored indices without a time
-component, e.g. Date, yearmon, yearqtr). See \code{\link{tzone}}.}
+component, e.g. Date, yearmon, yearqtr). See \code{\link[=tzone]{tzone()}}.}
 
 \item{\dots}{additional attributes to be added. See Details.}
 
 \item{index}{a corresponding \emph{numeric} vector specified as seconds
 since the UNIX epoch (1970-01-01 00:00:00.000)}
 
-\item{tclass}{time class to use for the index. See \code{\link{tclass}}.}
+\item{tclass}{time class to use for the index. See \code{\link[=tclass]{tclass()}}.}
 
 \item{check}{check that the index is ordered?}
 }
@@ -69,9 +69,6 @@ performs several checks to ensure it returns a well-formed xts object. The
 \code{.xts()} constructor is mainly for internal use. It is more efficient
 than the regular \code{xts()} constructor because it doesn't perform as many
 validity checks. Use it with caution.
-
-% TODO: add notes here about the differences between 'empty', 'zero-width',
-and % 'zero-length' xts objects.
 
 Similar to zoo objects, xts objects must have an ordered index.  While zoo
 indexes cannot contain duplicate values, xts objects have optionally
@@ -130,8 +127,8 @@ See the examples for more detail.
 Users may also extend the \code{xts} class to new classes to allow for
 method overloading.
 
-Additional benefits derive from the use of \code{\link{as.xts}} and
-\code{\link{reclass}}, which allow for lossless two-way conversion between
+Additional benefits derive from the use of \code{\link[=as.xts]{as.xts()}} and
+\code{\link[=reclass]{reclass()}}, which allow for lossless two-way conversion between
 common R time-series classes and the \code{xts} object structure. See those
 functions for more detail.
 }
@@ -163,8 +160,8 @@ sample.xts['2007-01-03'] # just the 3rd of January 2007
 \pkg{zoo}:
 }
 \seealso{
-\code{\link{as.xts}}, \code{\link{index}}, \code{\link{tclass}},
-\code{\link{tformat}}, \code{\link{tzone}}, \code{\link{xtsAttributes}}
+\code{\link[=as.xts]{as.xts()}}, \code{\link[=index]{index()}}, \code{\link[=tclass]{tclass()}},
+\code{\link[=tformat]{tformat()}}, \code{\link[=tzone]{tzone()}}, \code{\link[=xtsAttributes]{xtsAttributes()}}
 }
 \author{
 Jeffrey A. Ryan and Joshua M. Ulrich

@@ -52,8 +52,7 @@ order to be consistent with the other math functions. This broke some
 original behavior.
 
 Using \code{FUN = mean} will print a message that describes this
-inconsistency.  To avoid the message and confusion, use \code{FUN =
-colMeans} to calculate means by column and use \code{FUN = function(x) mean}
+inconsistency.  To avoid the message and confusion, use \code{FUN = colMeans} to calculate means by column and use \code{FUN = function(x) mean}
 to calculate one mean for all the data. Set
 \code{options(xts.message.period.apply.mean = FALSE)} to suppress this
 message.
@@ -69,7 +68,7 @@ period.apply(letters,c(0,5,7,26), paste0)
 
 }
 \seealso{
-\code{\link{endpoints}} \code{\link{apply.monthly}}
+\code{\link[=endpoints]{endpoints()}} \code{\link[=apply.monthly]{apply.monthly()}}
 }
 \author{
 Jeffrey A. Ryan, Joshua M. Ulrich

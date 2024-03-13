@@ -32,7 +32,7 @@ active panel is defined as the panel on which the most recent action was
 performed. Note that only the first element of \code{on} is checked for the
 default behavior to add to the last active panel.}
 
-\item{\dots}{any other passthrough parameters to \code{\link{legend}}.}
+\item{\dots}{any other passthrough parameters to \code{\link[=legend]{legend()}}.}
 }
 \description{
 Add Legend

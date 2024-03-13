@@ -89,7 +89,7 @@ International Organization for Standardization: ISO 8601
 \url{https://www.iso.org}
 }
 \seealso{
-\code{\link{timeBased}}, \code{\link{xts}}
+\code{\link[=timeBased]{timeBased()}}, \code{\link[=xts]{xts()}}
 }
 \author{
 Jeffrey A. Ryan

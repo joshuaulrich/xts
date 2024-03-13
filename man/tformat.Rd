@@ -31,10 +31,10 @@ object's index is printed.
 }
 \details{
 Valid values for the \code{value} argument are the same as specified in the
-\emph{Details} section of \code{\link{strptime}}.
+\emph{Details} section of \code{\link[=strptime]{strptime()}}.
 
 An xts object's \code{tformat} is \code{NULL} by default, so the index will
-be formatted according to its \code{\link{tclass}} (e.g. \code{Date},
+be formatted according to its \code{\link[=tclass]{tclass()}} (e.g. \code{Date},
 \code{POSIXct}, \code{timeDate}, \code{yearmon}, etc.).
 
 \code{tformat} only changes how the index is \emph{printed} and how the row
@@ -45,8 +45,8 @@ any way.
 indexFormat<-
 }
 \note{
-Both \code{indexFormat} and \code{indexFormat<-} are deprecated in
-favor of \code{tformat} and \code{tformat<-}, respectively.
+Both \code{indexFormat} and \verb{indexFormat<-} are deprecated in
+favor of \code{tformat} and \verb{tformat<-}, respectively.
 }
 \examples{
 
@@ -60,9 +60,9 @@ favor of \code{tformat} and \code{tformat<-}, respectively.
 
 }
 \seealso{
-\code{\link{index}} has more information on the xts index,
-\code{\link{tclass}} details how \pkg{xts} handles the class of the index,
-\code{\link{tzone}} has more information about the index timezone settings.
+\code{\link[=index]{index()}} has more information on the xts index,
+\code{\link[=tclass]{tclass()}} details how \pkg{xts} handles the class of the index,
+\code{\link[=tzone]{tzone()}} has more information about the index timezone settings.
 }
 \author{
 Jeffrey A. Ryan
