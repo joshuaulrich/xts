@@ -38,20 +38,20 @@ time_frequency <- function(x) {
 #' median time between observations in days.
 #' 
 #' A simple wrapper to quickly estimate the periodicity of a given data.
-#' Returning an object of type \code{periodicity}.
+#' Returning an object of type `periodicity`.
 #' 
 #' This calculates the median number of days between observations as a difftime
 #' object, the numerical difference, the units of measurement, and the derived
 #' scale of the data as a string.
 #' 
-#' The time index currently must be of either \code{Date} or \code{POSIX}
+#' The time index currently must be of either `Date` or `POSIX`
 #' class, or coercible to such.
 #' 
-#' The only list item of note is the \code{scale}. This is an estimate of the
+#' The only list item of note is the `scale`. This is an estimate of the
 #' periodicity of the data in common terms - e.g. 7 day daily data is best
 #' described as \sQuote{weekly}, and would be returned as such.
 #' 
-#' Possible \code{scale} values are:
+#' Possible `scale` values are:
 #' 
 #' \sQuote{minute},\sQuote{hourly}, \sQuote{daily},\sQuote{weekly},
 #' \sQuote{monthly},\sQuote{quarterly}, and \sQuote{yearly}.
@@ -59,17 +59,17 @@ time_frequency <- function(x) {
 #' @param x time-series-like object
 #' @param \dots unused
 #' 
-#' @return An object containing a list containing the \code{difftime} object,
+#' @return An object containing a list containing the `difftime` object,
 #' frequency, units, and suitable scale.
 #' 
-#' @note This function is only a \emph{good estimate} for the underlying
-#' periodicity.  If the series is too short, or has \emph{no} real periodicity,
+#' @note This function is only a *good estimate* for the underlying
+#' periodicity.  If the series is too short, or has *no* real periodicity,
 #' the return values will obviously be wrong. That said, it is quite robust and
 #' used internally within \pkg{xts}.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{difftime}}
+#' @seealso [difftime()]
 #' 
 #' @keywords utilities
 #' @examples

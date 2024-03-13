@@ -24,33 +24,33 @@
 #' Generic functions to get or replace the format that determines how an xts
 #' object's index is printed.
 #' 
-#' Valid values for the \code{value} argument are the same as specified in the
-#' \emph{Details} section of \code{\link{strptime}}.
+#' Valid values for the `value` argument are the same as specified in the
+#' *Details* section of [strptime()].
 #' 
-#' An xts object's \code{tformat} is \code{NULL} by default, so the index will
-#' be formatted according to its \code{\link{tclass}} (e.g. \code{Date},
-#' \code{POSIXct}, \code{timeDate}, \code{yearmon}, etc.).
+#' An xts object's `tformat` is `NULL` by default, so the index will
+#' be formatted according to its [tclass()] (e.g. `Date`,
+#' `POSIXct`, `timeDate`, `yearmon`, etc.).
 #' 
-#' \code{tformat} only changes how the index is \emph{printed} and how the row
+#' `tformat` only changes how the index is *printed* and how the row
 #' names are formatted when xts objects are converted to other classes (e.g.
-#' \code{matrix} or \code{data.frame}. It does not affect the internal index in
+#' `matrix` or `data.frame`. It does not affect the internal index in
 #' any way.
 #' 
 #' indexFormat<-
-#' @param x an \code{xts} object
+#' @param x an `xts` object
 #' @param value new index format string (see Details for valid values)
 #' @param \dots arguments passed to other methods
 #' 
 #' @return A vector containing the format for the object's index.
 #' 
-#' @note Both \code{indexFormat} and \code{indexFormat<-} are deprecated in
-#' favor of \code{tformat} and \code{tformat<-}, respectively.
+#' @note Both `indexFormat` and `indexFormat<-` are deprecated in
+#' favor of `tformat` and `tformat<-`, respectively.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{index}} has more information on the xts index,
-#' \code{\link{tclass}} details how \pkg{xts} handles the class of the index,
-#' \code{\link{tzone}} has more information about the index timezone settings.
+#' @seealso [index()] has more information on the xts index,
+#' [tclass()] details how \pkg{xts} handles the class of the index,
+#' [tzone()] has more information about the index timezone settings.
 #' 
 #' @keywords ts utilities
 #' @examples

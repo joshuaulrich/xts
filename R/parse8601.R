@@ -42,12 +42,12 @@
 
 #' Create an ISO8601 string from a time series object
 #' 
-#' This function uses the \code{start()} and \code{end()} of a time series
+#' This function uses the `start()` and `end()` of a time series
 #' object to create an ISO8601 string that spans the time range of the object.
 #' 
 #' This is not exported an therefore not part of the official xts API.
 #' 
-#' @param x a time series object with \code{start} and \code{end} methods.
+#' @param x a time series object with `start` and `end` methods.
 #' 
 #' @return A character vector of length one describing the ISO-style format
 #' for the range of a given time series object.
@@ -103,8 +103,8 @@
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @references \url{https://en.wikipedia.org/wiki/ISO_8601}\cr
-#' \url{https://www.iso.org/iso-8601-date-and-time-format.html}
+#' @references <https://en.wikipedia.org/wiki/ISO_8601>\cr
+#' <https://www.iso.org/iso-8601-date-and-time-format.html>
 #' 
 #' @aliases ISO8601 parseISO8601
 #' @rdname parseISO8601

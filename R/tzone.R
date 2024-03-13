@@ -30,36 +30,36 @@ indexTZ <- function(x, ...)
 #' 
 #' Generic functions to get or replace the timezone of an xts object's index.
 #' 
-#' Internally, an xts object's index is a \emph{numeric} value corresponding to
+#' Internally, an xts object's index is a *numeric* value corresponding to
 #' seconds since the epoch in the UTC timezone. When an xts object is created,
-#' all time index values are converted internally to \code{\link{POSIXct}}
+#' all time index values are converted internally to [POSIXct()]
 #' (which is also in seconds since the UNIX epoch), using the underlying OS
-#' conventions and the \env{TZ} environment variable. The \code{xts()} function
+#' conventions and the \env{TZ} environment variable. The `xts()` function
 #' manages timezone information as transparently as possible.
 #' 
-#' The \code{tzone<-} function \emph{does not} change the internal index values
+#' The `tzone<-` function *does not* change the internal index values
 #' (i.e. the index will remain the same time in the UTC timezone).
 #' 
-#' @param x an \code{xts} object
-#' @param value a valid timezone value (see \code{OlsonNames()})
+#' @param x an `xts` object
+#' @param value a valid timezone value (see `OlsonNames()`)
 #' @param \dots arguments passed to other methods
 #' 
 #' @return A one element named vector containing the timezone of the object's
 #' index.
 #' 
-#' @note Both \code{indexTZ} and \code{indexTZ<-} are deprecated in favor of
-#' \code{tzone} and \code{tzone<-}, respectively.
+#' @note Both `indexTZ` and `indexTZ<-` are deprecated in favor of
+#' `tzone` and `tzone<-`, respectively.
 #' 
 #' Problems may arise when an object that had been created under one timezone
 #' are used in a session using another timezone. This isn't usually a issue,
 #' but when it is a warning is given upon printing or subsetting. This warning
-#' may be suppressed by setting \code{options(xts_check_TZ = FALSE)}.
+#' may be suppressed by setting `options(xts_check_TZ = FALSE)`.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{POSIXt}} \code{\link{index}} has more information on
-#' the xts index, \code{\link{tformat}} describes how the index values are
-#' formatted when printed, and \code{\link{tclass}} provides details how
+#' @seealso [POSIXt()] [index()] has more information on
+#' the xts index, [tformat()] describes how the index values are
+#' formatted when printed, and [tclass()] provides details how
 #' \pkg{xts} handles the class of the index.
 #' 
 #' @keywords ts utilities

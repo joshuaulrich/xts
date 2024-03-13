@@ -30,8 +30,8 @@ function(...) {
 #' 
 #' Concatenate or bind by row two or more xts objects along a time-based index.
 #' 
-#' Implemented in C, these functions bind \code{xts} objects by row, resulting
-#' in another \code{xts} object
+#' Implemented in C, these functions bind `xts` objects by row, resulting
+#' in another `xts` object
 #' 
 #' There may be non-unique index values in either the original series, or the
 #' resultant series.
@@ -39,17 +39,17 @@ function(...) {
 #' Identical indexed series are bound in the order or the arguments passed to
 #' rbind. See examples.
 #' 
-#' All objects must have the same number of columns, as well as be \code{xts}
+#' All objects must have the same number of columns, as well as be `xts`
 #' objects or coercible to such.
 #' 
-#' \code{rbind} and \code{c} are aliases.
+#' `rbind` and `c` are aliases.
 #' 
-#' For traditional merge operations, see \code{merge.xts} and \code{cbind.xts}.
+#' For traditional merge operations, see `merge.xts` and `cbind.xts`.
 #' 
 #' @param \dots objects to bind
 #' @param deparse.level not implemented
 #' 
-#' @return An \code{xts} object with one row per row for each object
+#' @return An `xts` object with one row per row for each object
 #' concatenated.
 #' 
 #' @note This differs from rbind.zoo in that non-unique index values are
@@ -58,14 +58,14 @@ function(...) {
 #' All operations may not behave as expected on objects with non-unique
 #' indices.  You have been warned.
 #' 
-#' \code{rbind} is a .Primitive function in \R. As such method dispatch occurs at
+#' `rbind` is a .Primitive function in \R. As such method dispatch occurs at
 #' the C-level, and may not be consistent with expectations.  See the details
 #' section of the base function, and if needed call rbind.xts directly to avoid
 #' dispatch ambiguity.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{merge.xts}} \code{\link{rbind}}
+#' @seealso [merge.xts()] [rbind()]
 #' 
 #' @keywords utilities
 #' @examples

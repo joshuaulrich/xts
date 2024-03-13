@@ -43,7 +43,7 @@ function(x) {
 #' Calculate the number of specified periods in a given time series like data
 #' object.
 #' 
-#' Essentially a wrapper to \code{endpoints} with the appropriate period
+#' Essentially a wrapper to `endpoints` with the appropriate period
 #' specified; the resulting value derived from counting the endpoints
 #' 
 #' As a compromise between simplicity and accuracy, the results will always
@@ -52,8 +52,8 @@ function(x) {
 #' 
 #' For finer grain detail one should call a higher frequency n**** function.
 #' 
-#' An alternative summary can be found with \code{periodicity} and
-#' \code{unclass(periodicity(x))}.
+#' An alternative summary can be found with `periodicity` and
+#' `unclass(periodicity(x))`.
 #' 
 #' @param x A time-based object
 #' 
@@ -61,7 +61,7 @@ function(x) {
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{endpoints}}
+#' @seealso [endpoints()]
 #' 
 #' @keywords utilities
 #' @examples

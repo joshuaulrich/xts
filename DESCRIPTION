@@ -17,3 +17,5 @@ Description: Provide for uniform handling of R's different time-based data class
 License: GPL (>= 2)
 URL: https://joshuaulrich.github.io/xts/, https://github.com/joshuaulrich/xts
 BugReports: https://github.com/joshuaulrich/xts/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)

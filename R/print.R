@@ -24,14 +24,14 @@
 #' Method for printing an extensible time-series object.
 #' 
 #' @param x An xts object
-#' @param fmt Passed to \code{\link{coredata}} to format the time index
+#' @param fmt Passed to [coredata()] to format the time index
 #' @param \dots Arguments passed to other methods
 #' @param show.rows The number of first and last rows to print if the number of
-#' rows is truncated (default 10, or \code{getOption("xts.print.show.rows")})
-#' @param max.rows The output will contain at most \code{max.rows} rows before
-#' being truncated (default 100, or \code{getOption("xts.print.max.rows")})
+#' rows is truncated (default 10, or `getOption("xts.print.show.rows")`)
+#' @param max.rows The output will contain at most `max.rows` rows before
+#' being truncated (default 100, or `getOption("xts.print.max.rows")`)
 #' 
-#' @return Returns \code{x} invisibly.
+#' @return Returns `x` invisibly.
 #' 
 #' @author Joshua M. Ulrich
 #' 

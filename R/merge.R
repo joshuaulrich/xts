@@ -21,8 +21,8 @@
 
 #' Merge xts Objects
 #' 
-#' Used to perform merge operation on \code{xts} objects by \emph{time}
-#' (index).  Given the inherent ordered nature of \code{xts} time-series, a
+#' Used to perform merge operation on `xts` objects by *time*
+#' (index).  Given the inherent ordered nature of `xts` time-series, a
 #' merge-join style merge allows for optimally efficient joins.
 #' 
 #' This is an xts method compatible with merge.zoo, as xts extends zoo. That
@@ -30,7 +30,7 @@
 #' applicable.
 #' 
 #' Implemented almost entirely in custom C-level code, it is possible using
-#' either the \code{all} argument or the \code{join} argument to implement all
+#' either the `all` argument or the `join` argument to implement all
 #' common database join operations along the to-be-merged objects time-index:
 #' \sQuote{outer} (full outer - all rows), \sQuote{inner} (only rows with
 #' common indexes), \sQuote{left} (all rows in the left object, and those that
@@ -38,11 +38,11 @@
 #' those that match in the left).
 #' 
 #' The above join types can also be expressed as a vector of logical values
-#' passed to \code{all}.  c(TRUE,TRUE) or TRUE for \sQuote{join="outer"},
+#' passed to `all`.  c(TRUE,TRUE) or TRUE for \sQuote{join="outer"},
 #' c(FALSE,FALSE) or FALSE for \sQuote{join="inner"}, c(TRUE, FALSE) for
 #' \sQuote{join="left"}, and c(FALSE,TRUE) for \sQuote{join="right"}.
 #' 
-#' Note that the \code{all} and \code{join} arguments imply a two case
+#' Note that the `all` and `join` arguments imply a two case
 #' scenario.  For merging more than two objects, they will simply fall back to
 #' a full outer or full inner join, depending on the first position of all, as
 #' left and right can be ambiguous with respect to sides.
@@ -51,13 +51,13 @@
 #' all argument of the same length of the arguments to join, see the example.
 #' 
 #' The resultant object will have the timezone of the leftmost argument if
-#' available. Use \code{tzone} to override.
+#' available. Use `tzone` to override.
 #' 
-#' If \code{retclass} is \code{NULL}, the joined objects will be split and
+#' If `retclass` is `NULL`, the joined objects will be split and
 #' reassigned silently back to the original environment they are called from.
 #' This is for backward compatibility with zoo, though unused by xts.
 #' 
-#' If \code{retclass} is \code{FALSE} the object will be stripped of its class
+#' If `retclass` is `FALSE` the object will be stripped of its class
 #' attribute.  This is for internal use.
 #' 
 #' @param \dots one or more xts objects, or objects coercible to class xts
@@ -72,7 +72,7 @@
 #' @param drop not currently used
 #' @param check.names not currently used
 #' 
-#' @return A new \code{xts} object containing the appropriate elements of the
+#' @return A new `xts` object containing the appropriate elements of the
 #' objects passed in to be merged.
 #' 
 #' @note This is a highly optimized merge, specifically designed for ordered
@@ -81,7 +81,7 @@
 #' @author Jeffrey A. Ryan
 #' 
 #' @references Merge Join Discussion:
-#' \url{https://blogs.msdn.microsoft.com/craigfr/2006/08/03/merge-join/}
+#' <https://blogs.msdn.microsoft.com/craigfr/2006/08/03/merge-join/>
 #' 
 #' @keywords manip utilities
 #' @examples

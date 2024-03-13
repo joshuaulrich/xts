@@ -26,10 +26,10 @@
 #' A quick way to break up a large xts object by standard time periods; e.g.
 #' 'months', 'quarters', etc.
 #' 
-#' \code{endpoints} is used to find the start and end of each period (or
+#' `endpoints` is used to find the start and end of each period (or
 #' k-periods).  See that function for valid arguments.
 #' 
-#' If \code{f} is not a character vector, the NextMethod is called, which would
+#' If `f` is not a character vector, the NextMethod is called, which would
 #' in turn dispatch to the split.zoo method.
 #' 
 #' @param x an xts object
@@ -40,13 +40,13 @@
 #' 
 #' @return A list of xts objects.
 #' 
-#' @note \code{aggregate.zoo} would be more flexible, though not as fast for
+#' @note `aggregate.zoo` would be more flexible, though not as fast for
 #' xts objects.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{endpoints}}, \code{\link[zoo]{split.zoo}},
-#' \code{\link[zoo]{aggregate.zoo}}
+#' @seealso [endpoints()], [zoo::split.zoo()],
+#' [zoo::aggregate.zoo()]
 #' 
 #' @keywords utilities
 #' @examples

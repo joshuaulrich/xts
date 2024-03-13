@@ -21,19 +21,19 @@
 
 #' Compute x-Axis Tickmark Locations by Time
 #' 
-#' Compute x-axis tickmarks like \code{axTicks} in base but with respect to
+#' Compute x-axis tickmarks like `axTicks` in base but with respect to
 #' time.  Additionally the first argument is the object indexed by time which
 #' you are looking to derive tickmark locations for.
 #' 
 #' It is possible to specify the detail you are seeking, or by passing 'auto'
-#' to the \code{ticks.on} argument, to get a best heuristic fit.
+#' to the `ticks.on` argument, to get a best heuristic fit.
 #' 
 #' This function is written for internal use, and documented for those wishing
 #' to use outside of the internal function uses. In general it is most unlikely
 #' that the end user will call this function directly.
 #' 
-#' The \code{format.labels} argument allows for standard formatting like that
-#' used in \code{format}, \code{strptime}, and \code{strftime}.
+#' The `format.labels` argument allows for standard formatting like that
+#' used in `format`, `strptime`, and `strftime`.
 #' 
 #' @param x the object indexed by time, or a vector of times/dates
 #' @param ticks.on what to break on
@@ -45,7 +45,7 @@
 #' @param lt upper bound on number of breaks
 #' 
 #' @return A numeric vector of index element locations where tick marks should
-#' be drawn. These are \emph{locations} (e.g. 1, 2, 3, ...), \emph{not} the
+#' be drawn. These are *locations* (e.g. 1, 2, 3, ...), *not* the
 #' index timestamps.
 #' 
 #' If possible, the result will be named using formatted values from the index
@@ -53,7 +53,7 @@
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{endpoints}}
+#' @seealso [endpoints()]
 #' @keywords utilities
 #' @examples
 #' 

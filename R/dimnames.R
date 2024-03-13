@@ -27,21 +27,21 @@
 #' 
 #' Get or set dimnames of an xts object.
 #' 
-#' The functions \code{dimnames.xts} and \code{dimnames<-.xts} are methods for
-#' the base functions \code{dimnames} and \code{dimnames<-}.
+#' The functions `dimnames.xts` and `dimnames<-.xts` are methods for
+#' the base functions `dimnames` and `dimnames<-`.
 #' 
-#' \code{xts} objects by design are intended for lightweight management of
+#' `xts` objects by design are intended for lightweight management of
 #' time-indexed data.
 #' 
 #' Rownames are redundant in this design, as well as quite burdensome with
 #' respect to memory consumption and internal copying costs.
 #' 
-#' \code{rownames} and \code{colnames} in \R make use of \code{dimnames} method
+#' `rownames` and `colnames` in \R make use of `dimnames` method
 #' dispatch internally, and thus require only modifications to dimnames to
-#' enforce the \code{xts} no rownames requirement.
+#' enforce the `xts` no rownames requirement.
 #' 
-#' To prevent accidental setting of rownames, \code{dimnames<-} for \code{xts}
-#' will simply set the rownames to \code{NULL} when invoked, regardless of
+#' To prevent accidental setting of rownames, `dimnames<-` for `xts`
+#' will simply set the rownames to `NULL` when invoked, regardless of
 #' attempts to set otherwise.
 #' 
 #' This is done for internal compatibility reasons, as well as to provide
@@ -49,8 +49,8 @@
 #' 
 #' User level interaction with either dimnames or rownames will produce a
 #' character vector of the index, formatted based on the current specification
-#' of \code{indexFormat}. This occurs within the call by converting the results
-#' of calling \code{index(x)} to a character string, which itself first creates
+#' of `indexFormat`. This occurs within the call by converting the results
+#' of calling `index(x)` to a character string, which itself first creates
 #' the object type specified internally from the underlying numeric time
 #' representation.
 #' 
@@ -63,12 +63,12 @@
 #' Attempts to set rownames on xts objects via rownames or dimnames will
 #' silently fail.  This is your warning.
 #' 
-#' @note All \code{xts} objects have dimension.  There are no \code{xts}
+#' @note All `xts` objects have dimension.  There are no `xts`
 #' objects representable as named or unnamed vectors.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{xts}}
+#' @seealso [xts()]
 #' 
 #' @keywords misc
 #' @examples

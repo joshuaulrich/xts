@@ -106,7 +106,7 @@
 
 #' Extract Subsets of xts Objects
 #' 
-#' Details on efficient subsetting of \code{xts} objects for maximum
+#' Details on efficient subsetting of `xts` objects for maximum
 #' performance and compatibility.
 #' 
 #' One of the primary motivations, and key points of differentiation of the
@@ -115,7 +115,7 @@
 #' without requiring prior knowledge of the underlying time object used in
 #' construction.
 #' 
-#' When a raw character vector is used for the \code{i} subset argument, it is
+#' When a raw character vector is used for the `i` subset argument, it is
 #' processed as if it was ISO-8601 compliant.  This means that it is parsed
 #' from left to right, according to the following specification:
 #' 
@@ -128,7 +128,7 @@
 #' 
 #' CCYYMMDD HH:MM:SS.ss+/CCYYMMDD HH:MM:SS.ss
 #' 
-#' The algorithm to parse the above is \code{.parseISO8601} from the \pkg{xts}
+#' The algorithm to parse the above is `.parseISO8601` from the \pkg{xts}
 #' package.
 #' 
 #' ISO-style subsetting, given a range type query, makes use of a custom binary
@@ -137,18 +137,18 @@
 #' than length one, allowing for multiple non-contiguous ranges to be selected
 #' in one subsetting call.
 #' 
-#' If a character \emph{vector} representing time is used in place of numeric
+#' If a character *vector* representing time is used in place of numeric
 #' values, ISO-style queries, or timeBased objects, the above parsing will be
 #' carried out on each element of the i-vector.  This overhead can be very
 #' costly. If the character approach is used when no ISO range querying is
 #' needed, it is recommended to wrap the \sQuote{i} character vector with the
-#' \code{I()} function call, to allow for more efficient internal processing.
+#' `I()` function call, to allow for more efficient internal processing.
 #' Alternately converting character vectors to POSIXct objects will provide the
 #' most performance efficiency.
 #' 
-#' As \code{xts} uses POSIXct time representations of all user-level index
+#' As `xts` uses POSIXct time representations of all user-level index
 #' classes internally, the fastest timeBased subsetting will always be from
-#' POSIXct objects, regardless of the \code{tclass} of the original object.
+#' POSIXct objects, regardless of the `tclass` of the original object.
 #' All non-POSIXct time classes are converted to character first to preserve
 #' consistent TZ behavior.
 #' 
@@ -161,23 +161,23 @@
 #' will be performed.
 #' @param \dots additional arguments (unused)
 #' 
-#' @return An extraction of the original xts object.  If \code{which.i} is
+#' @return An extraction of the original xts object.  If `which.i` is
 #' TRUE, the corresponding integer \sQuote{i} values used to subset will be
 #' returned.
 #' 
 #' @note By design, drop=FALSE in the default case.  This preserves the basic
-#' underlying type of \code{matrix} and the \code{dim()} to be non-NULL. This
-#' is different from both matrix and \code{zoo} behavior as uses
-#' \code{drop=TRUE}.  Explicitly passing \code{drop=TRUE} may be required when
+#' underlying type of `matrix` and the `dim()` to be non-NULL. This
+#' is different from both matrix and `zoo` behavior as uses
+#' `drop=TRUE`.  Explicitly passing `drop=TRUE` may be required when
 #' performing certain matrix operations.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{xts}}, \code{\link{.parseISO8601}},
-#' \code{\link{.index}}
+#' @seealso [xts()], [.parseISO8601()],
+#' [.index()]
 #' 
 #' @references ISO 8601: Date elements and interchange formats - Information
-#' interchange - Representation of dates and time \url{https://www.iso.org}
+#' interchange - Representation of dates and time <https://www.iso.org>
 #' 
 #' @rdname subset.xts
 #' 
@@ -574,40 +574,40 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
 # that is, index. must be time based,
 
 
-#' Extract time windows from an \code{xts} series
+#' Extract time windows from an `xts` series
 #' 
-#' Method for extracting time windows from \code{xts} objects.
+#' Method for extracting time windows from `xts` objects.
 #' 
-#' The point of having \code{window} in addition to the regular subset function
-#' is to have a fast way of extracting time ranges from an \code{xts} series.
-#' In particular, this method will convert \code{start} and \code{end} to
-#' \code{POSIXct} then do a binary lookup on the internal \code{xts} index to
+#' The point of having `window` in addition to the regular subset function
+#' is to have a fast way of extracting time ranges from an `xts` series.
+#' In particular, this method will convert `start` and `end` to
+#' `POSIXct` then do a binary lookup on the internal `xts` index to
 #' quickly return a range of matching dates. With a user supplied
-#' \code{index.}, a similarly fast invocation of \code{findInterval} is used so
+#' `index.`, a similarly fast invocation of `findInterval` is used so
 #' that large sets of sorted dates can be retrieved quickly.
 #' 
 #' @param x an object.
-#' @param index. a user defined time index. This defaults to the \code{xts}
-#' index for the series via \code{.index(x)}. When supplied, this is typically
-#' a subset of the dates in the full series.\cr The \code{index.} must be a set
-#' of dates that are convertible to \code{POSIXct}. If you want fast lookups,
-#' then \code{index.} should be sorted and of class \code{POSIXct}.\cr If an
-#' unsorted \code{index.} is passed in, \code{window} will sort it.
-#' @param start a start time. Extract \code{xts} rows where \code{index. >=
-#' start}. \code{start} may be any class that is convertible to \code{POSIXct}
+#' @param index. a user defined time index. This defaults to the `xts`
+#' index for the series via `.index(x)`. When supplied, this is typically
+#' a subset of the dates in the full series.\cr The `index.` must be a set
+#' of dates that are convertible to `POSIXct`. If you want fast lookups,
+#' then `index.` should be sorted and of class `POSIXct`.\cr If an
+#' unsorted `index.` is passed in, `window` will sort it.
+#' @param start a start time. Extract `xts` rows where `index. >=
+#' start`. `start` may be any class that is convertible to `POSIXct`
 #' such as a character variable in the format \sQuote{YYYY-MM-DD}.\cr If
-#' \code{start} is \code{NULL} then all \code{index.} dates are matched.
-#' @param end an end time. Extract \code{xts} rows where \code{index. <= end}.
-#' \code{end} must be convertible to \code{POSIXct}. If \code{end} is
-#' \code{NULL} then all \code{index.} dates are matched.
+#' `start` is `NULL` then all `index.` dates are matched.
+#' @param end an end time. Extract `xts` rows where `index. <= end`.
+#' `end` must be convertible to `POSIXct`. If `end` is
+#' `NULL` then all `index.` dates are matched.
 #' @param \dots currently not used.
 #' 
 #' @return The matching time window is extracted.
 #' 
 #' @author Corwin Joy
 #' 
-#' @seealso \code{\link{subset.xts}}, \code{\link[base]{findInterval}},
-#' \code{\link{xts}}
+#' @seealso [subset.xts()], [base::findInterval()],
+#' [xts()]
 #' 
 #' @keywords ts
 #' @examples

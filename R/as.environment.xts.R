@@ -24,13 +24,13 @@
 #' containing vectors representing each column of the original xts object. Each
 #' objects will be named according to the column name it is exracted by.
 #' 
-#' An experimental tool to convert \code{xts} objects into environments for
+#' An experimental tool to convert `xts` objects into environments for
 #' simplifying use withing the standard R formula/data paradigm.
 #' 
-#' @param x an \code{xts} object
+#' @param x an `xts` object
 #' 
-#' @return An \code{environment} containing \code{ncol(x)} vectors extracted by
-#' column from \code{x}.  Note that environments do not preserve (or have
+#' @return An `environment` containing `ncol(x)` vectors extracted by
+#' column from `x`.  Note that environments do not preserve (or have
 #' knowledge) of column position, a.k.a order.
 #' 
 #' @author Jeffrey A. Ryan

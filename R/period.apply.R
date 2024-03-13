@@ -45,53 +45,53 @@ function(caller)
 
 #' Apply Function Over Specified Interval
 #' 
-#' Apply a specified function to data over intervals specified by \code{INDEX}.
-#' The intervals are defined as the observations from \code{INDEX[k]+1} to
-#' \code{INDEX[k+1]}, for \code{k = 1:(length(INDEX)-1)}.
+#' Apply a specified function to data over intervals specified by `INDEX`.
+#' The intervals are defined as the observations from `INDEX[k]+1` to
+#' `INDEX[k+1]`, for `k = 1:(length(INDEX)-1)`.
 #' 
-#' Similar to the rest of the apply family, \code{period.apply()} calculates
+#' Similar to the rest of the apply family, `period.apply()` calculates
 #' the specified function's value over a subset of data. The primary difference
-#' is that \code{period.apply()} applies the function to non-overlapping
+#' is that `period.apply()` applies the function to non-overlapping
 #' intervals of a vector or matrix.
 #' 
 #' Useful for applying functions over an entire data object by any
-#' non-overlapping intervals. For example, when \code{INDEX} is the result of a
-#' call to \code{endpoints()}.
+#' non-overlapping intervals. For example, when `INDEX` is the result of a
+#' call to `endpoints()`.
 #' 
-#' \code{period.apply()} checks that \code{INDEX} is sorted, unique, starts
-#' with 0, and ends with \code{NROW(x)}. All those conditions are true of
-#' vectors returned by \code{endpoints()}.
+#' `period.apply()` checks that `INDEX` is sorted, unique, starts
+#' with 0, and ends with `NROW(x)`. All those conditions are true of
+#' vectors returned by `endpoints()`.
 #' 
 #' @param x The data that FUN will be applied to.
 #' @param INDEX A numeric vector of index breakpoint locations. The vector
-#' should begin with 0 and end with \code{NROW(x)}.
-#' @param FUN A \code{function} to apply to each interval in \code{x}.
-#' @param \dots Additional arguments for \code{FUN}.
+#' should begin with 0 and end with `NROW(x)`.
+#' @param FUN A `function` to apply to each interval in `x`.
+#' @param \dots Additional arguments for `FUN`.
 #' 
-#' @return An object with \code{length(INDEX) - 1} observations (assuming
-#' \code{INDEX} starts with 0 and ends with \code{NROW(x)}).
+#' @return An object with `length(INDEX) - 1` observations (assuming
+#' `INDEX` starts with 0 and ends with `NROW(x)`).
 #' 
-#' @note When \code{FUN = mean} the results will contain one column for every
+#' @note When `FUN = mean` the results will contain one column for every
 #' column in the input, which is different from other math functions (e.g.
-#' \code{median}, \code{sum}, \code{prod}, \code{sd}, etc.).
+#' `median`, `sum`, `prod`, `sd`, etc.).
 #' 
-#' \code{FUN = mean} works by column because the default method
-#' \code{stats::mean} used to work by column for matrices and data.frames. R
-#' Core changed the behavior of \code{mean} to always return one column in
+#' `FUN = mean` works by column because the default method
+#' `stats::mean` used to work by column for matrices and data.frames. R
+#' Core changed the behavior of `mean` to always return one column in
 #' order to be consistent with the other math functions. This broke some
-#' \pkg{xts} dependencies and \code{mean.xts} was created to maintain the
+#' \pkg{xts} dependencies and `mean.xts` was created to maintain the
 #' original behavior.
 #' 
-#' Using \code{FUN = mean} will print a message that describes this
-#' inconsistency.  To avoid the message and confusion, use \code{FUN =
-#' colMeans} to calculate means by column and use \code{FUN = function(x) mean}
+#' Using `FUN = mean` will print a message that describes this
+#' inconsistency.  To avoid the message and confusion, use `FUN =
+#' colMeans` to calculate means by column and use `FUN = function(x) mean`
 #' to calculate one mean for all the data. Set
-#' \code{options(xts.message.period.apply.mean = FALSE)} to suppress this
+#' `options(xts.message.period.apply.mean = FALSE)` to suppress this
 #' message.
 #' 
 #' @author Jeffrey A. Ryan, Joshua M. Ulrich
 #' 
-#' @seealso \code{\link{endpoints}} \code{\link{apply.monthly}}
+#' @seealso [endpoints()] [apply.monthly()]
 #' 
 #' @keywords utilities
 #' @examples
@@ -167,38 +167,38 @@ function(x,FUN, ...)
 #' subset the data based on the specified time period (implicit in the call),
 #' and return a vector of values for each period in the original data.
 #' 
-#' Essentially a wrapper to the \pkg{xts} functions \code{endpoints} and
-#' \code{period.apply}, mainly as a convenience.
+#' Essentially a wrapper to the \pkg{xts} functions `endpoints` and
+#' `period.apply`, mainly as a convenience.
 #' 
 #' @param x an time-series object coercible to xts
 #' @param FUN an \R function
 #' @param \dots additional arguments to FUN
 #'
-#' @return A vector of results produced by \code{FUN}, corresponding to the
+#' @return A vector of results produced by `FUN`, corresponding to the
 #' appropriate periods.
 #'
-#' @note When \code{FUN = mean} the results will contain one column for every
+#' @note When `FUN = mean` the results will contain one column for every
 #' column in the input, which is different from other math functions (e.g.
-#' \code{median}, \code{sum}, \code{prod}, \code{sd}, etc.).
+#' `median`, `sum`, `prod`, `sd`, etc.).
 #' 
-#' \code{FUN = mean} works by column because the default method
-#' \code{stats::mean} used to work by column for matrices and data.frames. R
-#' Core changed the behavior of \code{mean} to always return one column in
+#' `FUN = mean` works by column because the default method
+#' `stats::mean` used to work by column for matrices and data.frames. R
+#' Core changed the behavior of `mean` to always return one column in
 #' order to be consistent with the other math functions. This broke some
-#' \pkg{xts} dependencies and \code{mean.xts} was created to maintain the
+#' \pkg{xts} dependencies and `mean.xts` was created to maintain the
 #' original behavior.
 #' 
-#' Using \code{FUN = mean} will print a message that describes this
-#' inconsistency.  To avoid the message and confusion, use \code{FUN =
-#' colMeans} to calculate means by column and use \code{FUN = function(x) mean}
+#' Using `FUN = mean` will print a message that describes this
+#' inconsistency.  To avoid the message and confusion, use `FUN =
+#' colMeans` to calculate means by column and use `FUN = function(x) mean`
 #' to calculate one mean for all the data. Set
-#' \code{options(xts.message.period.apply.mean = FALSE)} to suppress this
+#' `options(xts.message.period.apply.mean = FALSE)` to suppress this
 #' message.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{endpoints}}, \code{\link{period.apply}},
-#' \code{\link{to.monthly}}
+#' @seealso [endpoints()], [period.apply()],
+#' [to.monthly()]
 #' 
 #' @keywords utilities
 #' @examples

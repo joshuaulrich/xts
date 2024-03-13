@@ -27,34 +27,34 @@
 #' A more advanced subsetting is available for zoo objects with indexes
 #' inheriting from POSIXt or Date classes.
 #' 
-#' Provides the ability to identify the first or last \code{n} rows or
+#' Provides the ability to identify the first or last `n` rows or
 #' observations of a data set.  The generic method behaves much like
-#' \code{head} and \code{tail} from \pkg{base}, except by default only the
-#' \emph{first} or \emph{last} observation will be returned.
+#' `head` and `tail` from \pkg{base}, except by default only the
+#' *first* or *last* observation will be returned.
 #' 
 #' The more useful method for the xts class allows for time based subsetting,
 #' given an xtsible object.
 #' 
-#' \code{n} may be either a numeric value, indicating the number of
-#' observations to return - forward from \code{first}, or backwards from
-#' \code{last}, or it may be a character string describing the number and type
+#' `n` may be either a numeric value, indicating the number of
+#' observations to return - forward from `first`, or backwards from
+#' `last`, or it may be a character string describing the number and type
 #' of periods to return.
 #' 
-#' \code{n} may be positive or negative, in either numeric or character
+#' `n` may be positive or negative, in either numeric or character
 #' contexts. When positive it will return the result expected - e.g.
-#' \code{last(X,'1 month')} will return the last month's data. If negative, all
-#' data will be returned \emph{except} for the last month. It is important to
-#' note that this is not the same as calling \code{first(X,'1 month')} or
-#' \code{first(X,'-1 month')}. All 4 variations return different subsets of
+#' `last(X,'1 month')` will return the last month's data. If negative, all
+#' data will be returned *except* for the last month. It is important to
+#' note that this is not the same as calling `first(X,'1 month')` or
+#' `first(X,'-1 month')`. All 4 variations return different subsets of
 #' data and have distinct purposes.
 #' 
-#' If \code{n} is a character string, it must be of the form \sQuote{n
-#' period.type} or \sQuote{period.type}, where \code{n} is a numeric value
-#' (defaults to 1 if not provided) describing the number of \code{period.types}
+#' If `n` is a character string, it must be of the form \sQuote{n
+#' period.type} or \sQuote{period.type}, where `n` is a numeric value
+#' (defaults to 1 if not provided) describing the number of `period.types`
 #' to move forward (first) or back (last).
 #' 
 #' For example, to return the last 3 weeks of a time oriented zoo object, one
-#' could call \code{last(X,'3 weeks')}. Valid period.types are: secs, seconds,
+#' could call `last(X,'3 weeks')`. Valid period.types are: secs, seconds,
 #' mins, minutes, hours, days, weeks, months, quarters, and years.
 #' 
 #' It is possible to use any frequency specification (secs, mins, days,

@@ -35,7 +35,7 @@
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{is.unsorted}}
+#' @seealso [is.unsorted()]
 #' 
 #' @keywords misc
 #' @examples

@@ -21,18 +21,18 @@
 
 #' Locate Endpoints by Time
 #' 
-#' Extract index locations for an \code{xts} object that correspond to the
-#' \emph{last} observation in each period specified by \code{on}.
+#' Extract index locations for an `xts` object that correspond to the
+#' *last* observation in each period specified by `on`.
 #' 
-#' \code{endpoints} returns a numeric vector corresponding to the \emph{last}
+#' `endpoints` returns a numeric vector corresponding to the *last*
 #' observation in each period. The vector always begins with zero and ends with
-#' the last observation in \code{x}.
+#' the last observation in `x`.
 #' 
 #' Periods are always based on the distance from the UNIX epoch (midnight
-#' 1970-01-01 UTC), \emph{not the first observation in \code{x}}. The examples
+#' 1970-01-01 UTC), *not the first observation in `x`*. The examples
 #' illustrate this behavior.
 #' 
-#' Valid values for the argument \code{on} include: \dQuote{us} (microseconds),
+#' Valid values for the argument `on` include: \dQuote{us} (microseconds),
 #' \dQuote{microseconds}, \dQuote{ms} (milliseconds), \dQuote{milliseconds},
 #' \dQuote{secs} (seconds), \dQuote{seconds}, \dQuote{mins} (minutes),
 #' \dQuote{minutes}, \dQuote{hours}, \dQuote{days}, \dQuote{weeks},
@@ -43,7 +43,7 @@
 #' @param k along every k-th element - see notes
 #' 
 #' @return A numeric vector of beginning with 0 and ending with the value equal
-#' to the number of observations in the \code{x} argument.
+#' to the number of observations in the `x` argument.
 #' 
 #' @author Jeffrey A. Ryan
 #' @keywords utilities
@@ -179,7 +179,7 @@ function(x,by='months', k=1) {
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{ISOdatetime}}
+#' @seealso [ISOdatetime()]
 #'
 #' @keywords utilities
 #' @examples

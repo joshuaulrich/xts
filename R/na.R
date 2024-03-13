@@ -97,19 +97,19 @@ na.replace <- function(x) {
 #' 
 #' \pkg{xts} method replace \sQuote{NA} with most recent non-\sQuote{NA}
 #' 
-#' This is the \pkg{xts} method for the S3 generic \code{na.locf}. The primary
+#' This is the \pkg{xts} method for the S3 generic `na.locf`. The primary
 #' difference to note is that after the \sQuote{NA} fill action is carried out,
 #' the default it to leave trailing or leading \sQuote{NA}'s in place. This is
 #' different than \pkg{zoo} behavior.
 #' 
 #' @param object an xts object
 #' @param na.rm logical. Should leading/trailing \sQuote{NA}'s be removed? The
-#' default for xts \code{FALSE} is different than the default S3 method in the
+#' default for xts `FALSE` is different than the default S3 method in the
 #' \pkg{zoo} package.
 #' @param fromLast logical. Cause observations to be carried backward rather
-#' than forward. Default is \code{FALSE}.
+#' than forward. Default is `FALSE`.
 #' @param maxgap runs of more than \sQuote{maxgap} will retain \sQuote{NA}s
-#' after the maximum gap specified. See \code{na.locf} in the zoo package.
+#' after the maximum gap specified. See `na.locf` in the zoo package.
 #' @param \dots unused
 #' 
 #' @return See the documentation in zoo.

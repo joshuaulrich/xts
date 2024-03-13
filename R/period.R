@@ -22,8 +22,8 @@
 #' Check if Class is Time-Based
 #'
 #' Used to verify that the object is one of the known time-based classes in R.
-#' Current time-based objects supported are \code{Date}, \code{POSIXct},
-#' \code{chron}, \code{yearmon}, \code{yearqtr}, and \code{timeDate}.
+#' Current time-based objects supported are `Date`, `POSIXct`,
+#' `chron`, `yearmon`, `yearqtr`, and `timeDate`.
 #'
 #' @param x object to test
 #'
@@ -62,18 +62,18 @@ function(x) {
 #' additionally optimized versions for min, max, and prod.
 #' 
 #' For xts-coercible objects, an appropriate INDEX can be derived from a call
-#' to \code{endpoints}.
+#' to `endpoints`.
 #' 
 #' @param x a univariate data object
 #' @param INDEX a numeric vector of endpoints to calculate sum on
 #' 
-#' @return An \code{xts} or \code{zoo} object of sums, indexed by the period
+#' @return An `xts` or `zoo` object of sums, indexed by the period
 #' endpoints.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{endpoints}}, \code{\link{period.max}},
-#' \code{\link{period.min}}, \code{\link{period.prod}}
+#' @seealso [endpoints()], [period.max()],
+#' [period.min()], [period.prod()]
 #' 
 #' @keywords utilities
 #' @examples
@@ -114,18 +114,18 @@ function(x,INDEX) {
 #' additionally optimized versions for min, max, and sum.
 #' 
 #' For xts-coercible objects, an appropriate INDEX can be derived from a call
-#' to \code{endpoints}.
+#' to `endpoints`.
 #' 
 #' @param x a univariate data object
 #' @param INDEX a vector of breakpoints to calculate product on
 #' 
-#' @return An \code{xts} or \code{zoo} object of products, indexed by the
+#' @return An `xts` or `zoo` object of products, indexed by the
 #' period endpoints.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{endpoints}}, \code{\link{period.sum}},
-#' \code{\link{period.min}}, \code{\link{period.max}}
+#' @seealso [endpoints()], [period.sum()],
+#' [period.min()], [period.max()]
 #' 
 #' @keywords utilities
 #' @examples
@@ -175,8 +175,8 @@ function(x,INDEX) {
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{endpoints}}, \code{\link{period.sum}},
-#' \code{\link{period.min}}, \code{\link{period.prod}}
+#' @seealso [endpoints()], [period.sum()],
+#' [period.min()], [period.prod()]
 #' 
 #' @keywords utilities
 #' @examples
@@ -217,7 +217,7 @@ function(x,INDEX) {
 #' additional optimized versions for max, sum, and prod.
 #' 
 #' For xts-coercible objects, an appropriate INDEX can be derived from a call
-#' to \code{endpoints}.
+#' to `endpoints`.
 #' 
 #' @param x a univariate data object
 #' @param INDEX a numeric vector of endpoints to calculate maximum on
@@ -226,8 +226,8 @@ function(x,INDEX) {
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{endpoints}}, \code{\link{period.sum}},
-#' \code{\link{period.max}}, \code{\link{period.prod}}
+#' @seealso [endpoints()], [period.sum()],
+#' [period.max()], [period.prod()]
 #' 
 #' @keywords utilities
 #' @examples

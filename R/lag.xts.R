@@ -46,26 +46,26 @@ lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
 
 #' Lags and Differences of xts Objects
 #' 
-#' Methods for computing lags and differences on \code{xts} objects.  This
+#' Methods for computing lags and differences on `xts` objects.  This
 #' matches most of the functionality of \pkg{zoo} methods, with some default
 #' argument changes.
 #' 
-#' The primary motivation for having methods specific to \code{xts} was to make
+#' The primary motivation for having methods specific to `xts` was to make
 #' use of faster C-level code within xts.  Additionally, it was decided that
-#' \code{lag}'s default behavior should match the common time-series
+#' `lag`'s default behavior should match the common time-series
 #' interpretation of that operator --- specifically that a value at time
 #' \sQuote{t} should be the value at time \sQuote{t-1} for a positive lag. This
-#' is different than \code{lag.zoo} as well as \code{lag.ts}.
+#' is different than `lag.zoo` as well as `lag.ts`.
 #' 
-#' Another notable difference is that \code{na.pad} is set to TRUE by default,
+#' Another notable difference is that `na.pad` is set to TRUE by default,
 #' to better reflect the transformation visually and within functions requiring
 #' positional matching of data.
 #' 
 #' Backwards compatability with zoo can be achieved by setting
-#' \code{options(xts.compat.zoo.lag=TRUE)}. This will change the defaults of
+#' `options(xts.compat.zoo.lag=TRUE)`. This will change the defaults of
 #' lag.xts to k=-1 and na.pad=FALSE.
 #' 
-#' @param x an \code{xts} object
+#' @param x an `xts` object
 #' @param k period to lag over
 #' @param lag period to difference over
 #' @param differences order of differencing
@@ -74,11 +74,11 @@ lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
 #' @param na.pad pad vector back to original size
 #' @param \dots additional arguments
 #' 
-#' @return An \code{xts} object reflected the desired lag and/or differencing.
+#' @return An `xts` object reflected the desired lag and/or differencing.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @references \url{https://en.wikipedia.org/wiki/Lag }
+#' @references <https://en.wikipedia.org/wiki/Lag >
 #' 
 #' @keywords manip chron
 #' @examples

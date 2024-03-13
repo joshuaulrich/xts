@@ -25,7 +25,7 @@
 #' seconds.
 #' 
 #' This function is an S3 generic.  The result is to round up to the next
-#' period determined by \code{n modulo x}.
+#' period determined by `n modulo x`.
 #' 
 #' @param x object to align
 #' @param n number of seconds to adjust by
@@ -35,7 +35,7 @@
 #' 
 #' @author Jeffrey A. Ryan with input from Brian Peterson
 #' 
-#' @seealso \code{\link{to.period}}
+#' @seealso [to.period()]
 #' 
 #' @keywords chron manip ts misc
 #' @examples
@@ -99,16 +99,16 @@ is.time.unique.zoo <- function(x) {
 #' 
 #' A generic function to force sorted time vectors to be unique. Useful for
 #' high-frequency time-series where original time-stamps may have identical
-#' values. For the case of xts objects, the default \code{eps} is set to ten
+#' values. For the case of xts objects, the default `eps` is set to ten
 #' microseconds. In practice this advances each subsequent identical time by
-#' \code{eps} over the previous (possibly also advanced) value.
+#' `eps` over the previous (possibly also advanced) value.
 #' 
 #' The returned time-series object will have new time-stamps so that
-#' \code{isOrdered( .index(x) )} evaluates to TRUE.
+#' `isOrdered( .index(x) )` evaluates to TRUE.
 #' 
 #' @param x An xts object, or POSIXct vector.
 #' @param eps value to add to force uniqueness.
-#' @param drop drop duplicates instead of adjusting by \code{eps}
+#' @param drop drop duplicates instead of adjusting by `eps`
 #' @param fromLast if drop=TRUE, fromLast controls which duplicated times are
 #' dropped. If fromLast=FALSE, the earliest observation with an identical
 #' timestamp is kept with subsequent observations dropped.
@@ -122,7 +122,7 @@ is.time.unique.zoo <- function(x) {
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{align.time}}
+#' @seealso [align.time()]
 #' 
 #' @rdname make.index.unique
 #' @keywords ts

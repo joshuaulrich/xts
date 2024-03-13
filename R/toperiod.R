@@ -35,19 +35,19 @@
 #' 
 #' Essentially an easy and reliable way to convert one periodicity of data into
 #' any new periodicity. It is important to note that all dates will be aligned
-#' to the \emph{end} of each period by default - with the exception of
-#' \code{to.monthly} and \code{to.quarterly}, which index by \sQuote{yearmon}
+#' to the *end* of each period by default - with the exception of
+#' `to.monthly` and `to.quarterly`, which index by \sQuote{yearmon}
 #' and \sQuote{yearqtr} from the \pkg{zoo} package, respectively.
 #' 
-#' Valid period character strings include: \code{"seconds"}, \code{"minutes"},
-#' \code{"hours"}, \code{"days"}, \code{"weeks"}, \code{"months"},
-#' \code{"quarters"}, and \code{"years"}. These are calculated internally via
-#' \code{endpoints}. See that function's help page for further details.
+#' Valid period character strings include: `"seconds"`, `"minutes"`,
+#' `"hours"`, `"days"`, `"weeks"`, `"months"`,
+#' `"quarters"`, and `"years"`. These are calculated internally via
+#' `endpoints`. See that function's help page for further details.
 #' 
-#' To adjust the final indexing style, it is possible to set \code{indexAt} to
+#' To adjust the final indexing style, it is possible to set `indexAt` to
 #' one of the following: \sQuote{yearmon}, \sQuote{yearqtr}, \sQuote{firstof},
 #' \sQuote{lastof}, \sQuote{startof}, or \sQuote{endof}.  The final index will
-#' then be \code{yearmon}, \code{yearqtr}, the first time of the period, the
+#' then be `yearmon`, `yearqtr`, the first time of the period, the
 #' last time of the period, the starting time in the data for that period, or
 #' the ending time in the data for that period, respectively.
 #' 
@@ -55,7 +55,7 @@
 #' exchange rate, and return an OHLC object of lower frequency - e.g. the
 #' weekly OHLC of the daily series.
 #' 
-#' Setting \code{drop.time} to \code{TRUE} (the default) will convert a series
+#' Setting `drop.time` to `TRUE` (the default) will convert a series
 #' that includes a time component into one with just a date index, as the time
 #' index is often of little value in lower frequency series.
 #' 
@@ -70,7 +70,7 @@
 #' @param k number of sub periods to aggregate on (only for minutes and
 #' seconds)
 #' @param name override column names
-#' @param OHLC should an OHLC object be returned? (only \code{OHLC=TRUE}
+#' @param OHLC should an OHLC object be returned? (only `OHLC=TRUE`
 #' currently supported)
 #' @param \dots additional arguments
 #' 
@@ -82,22 +82,22 @@
 #' Internally a call is made to reorder the data into the correct column order,
 #' and then a verification step to make sure that this ordering and naming has
 #' succeeded. All other data formats must be aggregated with functions such as
-#' \code{aggregate} and \code{period.apply}.
+#' `aggregate` and `period.apply`.
 #' 
 #' This method should work on almost all time-series-like objects. Including
 #' \sQuote{timeSeries}, \sQuote{zoo}, \sQuote{ts}, and \sQuote{irts}. It is
 #' even likely to work well for other data structures - including
 #' \sQuote{data.frames} and \sQuote{matrix} objects.
 #' 
-#' Internally a call to \code{as.xts} converts the original \code{x} into the
-#' universal \code{xts} format, and then re-converts back to the original type.
+#' Internally a call to `as.xts` converts the original `x` into the
+#' universal `xts` format, and then re-converts back to the original type.
 #' 
 #' A special note with respect to \sQuote{ts} objects. As these are strictly
-#' regular they may include \code{NA} values.  These are stripped for
+#' regular they may include `NA` values.  These are stripped for
 #' aggregation purposes, though replaced before returning. This inevitably
 #' leads to many, many additional \sQuote{NA} values in the data. It is more
 #' beneficial to consider using an \sQuote{xts} object originally, or
-#' converting to one in the function call by means of \code{as.xts}.
+#' converting to one in the function call by means of `as.xts`.
 #' 
 #' @author Jeffrey A. Ryan
 #' 

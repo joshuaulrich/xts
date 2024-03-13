@@ -23,41 +23,41 @@
 #' 
 #' Generic functions to get or replace the class of an xts object's index.
 #' 
-#' Internally, an xts object's index is a \emph{numeric} value corresponding to
+#' Internally, an xts object's index is a *numeric* value corresponding to
 #' seconds since the epoch in the UTC timezone. The index class is stored as
-#' the \code{tclass} attribute on the internal index. This is used to convert
-#' the internal index values to the desired class when the \code{index}
+#' the `tclass` attribute on the internal index. This is used to convert
+#' the internal index values to the desired class when the `index`
 #' function is called.
 #' 
-#' The \code{tclass} function retrieves the class of the internal index, and
-#' the \code{tclass<-} function sets it. The specified value for
-#' \code{tclass<-} must be one of the following character strings:
-#' \code{"Date"}, \code{"POSIXct"}, \code{"chron"}, \code{"yearmon"},
-#' \code{"yearqtr"}, or \code{"timeDate"}.
+#' The `tclass` function retrieves the class of the internal index, and
+#' the `tclass<-` function sets it. The specified value for
+#' `tclass<-` must be one of the following character strings:
+#' `"Date"`, `"POSIXct"`, `"chron"`, `"yearmon"`,
+#' `"yearqtr"`, or `"timeDate"`.
 #' 
-#' @param x an \code{xts} object
+#' @param x an `xts` object
 #' @param value new index class (see Details for valid values)
 #' @param \dots arguments passed to other methods
 #' 
 #' @return A vector containing the class of the object's index.
 #' 
-#' @note Both \code{indexClass} and \code{indexClass<-} are deprecated in favor
-#' of \code{tclass} and \code{tclass<-}, respectively.
+#' @note Both `indexClass` and `indexClass<-` are deprecated in favor
+#' of `tclass` and `tclass<-`, respectively.
 #' 
-#' Replacing the \code{tclass} \emph{does not} change the values of the
+#' Replacing the `tclass` *does not* change the values of the
 #' internal index. See the examples.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{index}} has more information on the xts index,
-#' \code{\link{tformat}} details how the index values are formatted when
-#' printed, \code{\link{tzone}} has more information about the index timezone
+#' @seealso [index()] has more information on the xts index,
+#' [tformat()] details how the index values are formatted when
+#' printed, [tzone()] has more information about the index timezone
 #' settings.
 #' 
 #' The following help pages describe the characteristics of the valid index
-#' classes: \code{\link{POSIXct}}, \code{\link{Date}},
-#' \code{\link[chron]{chron}}, \code{\link[zoo]{yearmon}},
-#' \code{\link[zoo]{yearqtr}}, \code{\link[timeDate]{timeDate}}.
+#' classes: [POSIXct()], [Date()],
+#' [chron::chron()], [zoo::yearmon()],
+#' [zoo::yearqtr()], [timeDate::timeDate()].
 #' 
 #' @keywords ts utilities
 #' @examples

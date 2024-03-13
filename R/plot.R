@@ -217,41 +217,41 @@ isNullOrFalse <- function(x) {
 #' 
 #' Plotting for xts objects.
 #' 
-#' Possible values for arguments \code{major.ticks}, \code{minor.ticks}, and
-#' \code{grid.ticks.on} include \sQuote{auto}, \sQuote{minute}, \sQuote{hours},
+#' Possible values for arguments `major.ticks`, `minor.ticks`, and
+#' `grid.ticks.on` include \sQuote{auto}, \sQuote{minute}, \sQuote{hours},
 #' \sQuote{days}, \sQuote{weeks}, \sQuote{months}, \sQuote{quarters}, and
 #' \sQuote{years}. The default is \sQuote{auto}, which attempts to determine
 #' sensible locations from the periodicity and locations of observations. The
-#' other values are based on the possible values for the \code{ticks.on}
-#' argument of \code{\link{axTicksByTime}}.
+#' other values are based on the possible values for the `ticks.on`
+#' argument of [axTicksByTime()].
 #' 
 #' @param x xts object
 #' @param y NULL, not used
-#' @param \dots any passthrough graphical arguments for \code{lines} and
-#' \code{points}
+#' @param \dots any passthrough graphical arguments for `lines` and
+#' `points`
 #' @param subset character vector of length one of the subset range using
-#' subsetting as in \code{\link{xts}}
+#' subsetting as in [xts()]
 #' @param panels character vector of expressions to plot as panels
 #' @param multi.panel TRUE/FALSE or an integer less than or equal to the number
 #' of columns in the data set. If TRUE, each column of the data is plotted in a
-#' separate panel. For example, if \code{multi.panel = 2}, then the data will
+#' separate panel. For example, if `multi.panel = 2`, then the data will
 #' be plotted in groups of 2 columns and each group is plotted in a separate
 #' panel.
 #' @param col color palette to use, set by default to rational choices
-#' @param up.col color for positive bars if \code{type="h"}
-#' @param dn.col color for negative bars if \code{type="h"}
-#' @param bg background color of plotting area, same as in \code{\link{par}}
-#' @param type the type of plot to be drawn, same as in \code{\link{plot}}
-#' @param lty set the line type, same as in \code{\link{par}}
-#' @param lwd set the line width, same as in \code{\link{par}}
-#' @param lend set the line end style, same as in \code{\link{par}}
+#' @param up.col color for positive bars if `type="h"`
+#' @param dn.col color for negative bars if `type="h"`
+#' @param bg background color of plotting area, same as in [par()]
+#' @param type the type of plot to be drawn, same as in [plot()]
+#' @param lty set the line type, same as in [par()]
+#' @param lwd set the line width, same as in [par()]
+#' @param lend set the line end style, same as in [par()]
 #' @param main main title
 #' @param main.timespan include the timespan of the series on the plot?
-#' (default \code{TRUE})
-#' @param observation.based TRUE/FALSE (default FALSE). If \code{TRUE}, the
-#' x-axis is drawn based on observations in the data. If \code{FALSE}, the
+#' (default `TRUE`)
+#' @param observation.based TRUE/FALSE (default FALSE). If `TRUE`, the
+#' x-axis is drawn based on observations in the data. If `FALSE`, the
 #' x-axis is drawn based on the time index of the data.
-#' @param log TRUE/FALSE (default FALSE). If \code{TRUE}, the y-axis is drawn
+#' @param log TRUE/FALSE (default FALSE). If `TRUE`, the y-axis is drawn
 #' in log-scale
 #' @param ylim the range of the y axis
 #' @param yaxis.same TRUE/FALSE. If TRUE, the y axis is drawn with the same
@@ -259,11 +259,11 @@ isNullOrFalse <- function(x) {
 #' @param yaxis.left if TRUE, draws the y axis on the left
 #' @param yaxis.right if TRUE, draws the y axis on the right
 #' @param yaxis.ticks desired number of y axis grid lines. The actual number of
-#' grid lines is determined by the \code{n} argument to \code{\link{pretty}}.
+#' grid lines is determined by the `n` argument to [pretty()].
 #' @param major.ticks period that specifies where tick marks and labels will be
 #' drawn on the x-axis. See Details for possible values.
 #' @param minor.ticks period that specifies where minor ticks on will be drawn
-#' on the x-axis. If \code{NULL}, minor ticks are not drawn. See Details for
+#' on the x-axis. If `NULL`, minor ticks are not drawn. See Details for
 #' possible values.
 #' @param grid.ticks.on period that specifies where vertical grid lines will be
 #' drawn. See Details for possible values.
@@ -272,15 +272,15 @@ isNullOrFalse <- function(x) {
 #' @param grid.col color of the grid
 #' @param labels.col color of the axis labels
 #' @param format.labels label format to draw lower frequency x-axis ticks and
-#' labels passed to \code{\link{axTicksByTime}}
+#' labels passed to [axTicksByTime()]
 #' @param grid2 color for secondary x axis grid
 #' @param legend.loc places a legend into one of nine locations on the chart:
 #' bottomright, bottom, bottomleft, left, topleft, top, topright, right, or
 #' center. Default NULL does not draw a legend.
 #' @param on panel number to draw on. A new panel will be drawn if
-#' \code{on=NA}. The default, \code{on=0}, will add to the active panel. The
+#' `on=NA`. The default, `on=0`, will add to the active panel. The
 #' active panel is defined as the panel on which the most recent action was
-#' performed. Note that only the first element of \code{on} is checked for the
+#' performed. Note that only the first element of `on` is checked for the
 #' default behavior to add to the last active panel.
 #' @param extend.xaxis TRUE/FALSE (default FALSE). If TRUE, extend the x-axis
 #' before and/or after the plot's existing time index range, so all of of the
@@ -288,9 +288,9 @@ isNullOrFalse <- function(x) {
 #' 
 #' @author Ross Bennett
 #' 
-#' @seealso \code{\link{addSeries}}, \code{\link{addPanel}}
+#' @seealso [addSeries()], [addPanel()]
 #' 
-#' @references based on \code{chart_Series} in the \code{quantmod} package by
+#' @references based on `chart_Series` in the `quantmod` package by
 #' Jeffrey A. Ryan
 #' 
 #' @examples
@@ -642,20 +642,20 @@ plot.xts <- function(x,
 #' Add a panel to an existing xts plot
 #' 
 #' Apply a function to the data of an existing xts plot object and plot the
-#' result. \code{FUN} should have arguments \code{x} or \code{R} for the data
+#' result. `FUN` should have arguments `x` or `R` for the data
 #' of the existing xts plot object to be passed to. All other additional
-#' arguments for \code{FUN} are passed through \dots{}.
+#' arguments for `FUN` are passed through \dots{}.
 #' 
 #' @param FUN an xts object to plot.
 #' @param main main title for a new panel if drawn.
 #' @param on panel number to draw on. A new panel will be drawn if
-#' \code{on=NA}.
-#' @param type the type of plot to be drawn, same as in \code{\link{plot}}.
+#' `on=NA`.
+#' @param type the type of plot to be drawn, same as in [plot()].
 #' @param col color palette to use, set by default to rational choices.
-#' @param lty set the line type, same as in \code{\link{par}}.
-#' @param lwd set the line width, same as in \code{\link{par}}.
-#' @param pch the type of plot to be drawn, same as in \code{\link{par}}.
-#' @param \dots additional named arguments passed through to \code{FUN} and any
+#' @param lty set the line type, same as in [par()].
+#' @param lwd set the line width, same as in [par()].
+#' @param pch the type of plot to be drawn, same as in [par()].
+#' @param \dots additional named arguments passed through to `FUN` and any
 #' other graphical passthrough parameters.
 #' 
 #' @author Ross Bennett
@@ -726,12 +726,12 @@ addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=
 #' @param x an xts object to plot.
 #' @param main main title for a new panel if drawn.
 #' @param on panel number to draw on. A new panel will be drawn if
-#' \code{on=NA}.
-#' @param type the type of plot to be drawn, same as in \code{\link{plot}}.
+#' `on=NA`.
+#' @param type the type of plot to be drawn, same as in [plot()].
 #' @param col color palette to use, set by default to rational choices.
-#' @param lty set the line type, same as in \code{\link{par}}.
-#' @param lwd set the line width, same as in \code{\link{par}}.
-#' @param pch the type of plot to be drawn, same as in \code{\link{par}}.
+#' @param lty set the line type, same as in [par()].
+#' @param lwd set the line width, same as in [par()].
+#' @param pch the type of plot to be drawn, same as in [par()].
 #' @param \dots any other passthrough graphical parameters.
 #' 
 #' @author Ross Bennett
@@ -848,18 +848,18 @@ points.xts <- function(x, ..., main="", on=0, col=NULL, pch=1){
 #' Add vertical lines and labels to an existing xts plot
 #' 
 #' @param events xts object of events and their associated labels. It is
-#' assumed that the first column of \code{events} is the event
+#' assumed that the first column of `events` is the event
 #' description/label.
 #' @param main main title for a new panel if drawn.
 #' @param on panel number to draw on. A new panel will be drawn if
-#' \code{on=NA}. The default, \code{on=0}, will add to the active panel. The
+#' `on=NA`. The default, `on=0`, will add to the active panel. The
 #' active panel is defined as the panel on which the most recent action was
-#' performed. Note that only the first element of \code{on} is checked for the
+#' performed. Note that only the first element of `on` is checked for the
 #' default behavior to add to the last active panel.
-#' @param lty set the line type, same as in \code{\link{par}}.
-#' @param lwd set the line width, same as in \code{\link{par}}.
+#' @param lty set the line type, same as in [par()].
+#' @param lwd set the line width, same as in [par()].
 #' @param col color palette to use, set by default to rational choices.
-#' @param \dots any other passthrough parameters to \code{\link{text}} to
+#' @param \dots any other passthrough parameters to [text()] to
 #' control how the event labels are drawn
 #' 
 #' @author Ross Bennett
@@ -966,16 +966,16 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
 #' the chart: bottomright, bottom, bottomleft, left, topleft, top, topright,
 #' right, or center.
 #' @param legend.names character vector of names for the legend. If
-#' \code{NULL}, the column names of the current plot object are used.
-#' @param col fill colors for the legend. If \code{NULL}, the colorset of the
+#' `NULL`, the column names of the current plot object are used.
+#' @param col fill colors for the legend. If `NULL`, the colorset of the
 #' current plot object data is used.
 #' @param ncol number of columns for the legend
 #' @param on panel number to draw on. A new panel will be drawn if
-#' \code{on=NA}. The default, \code{on=0}, will add to the active panel. The
+#' `on=NA`. The default, `on=0`, will add to the active panel. The
 #' active panel is defined as the panel on which the most recent action was
-#' performed. Note that only the first element of \code{on} is checked for the
+#' performed. Note that only the first element of `on` is checked for the
 #' default behavior to add to the last active panel.
-#' @param \dots any other passthrough parameters to \code{\link{legend}}.
+#' @param \dots any other passthrough parameters to [legend()].
 #' 
 #' @author Ross Bennett
 #' 
@@ -1083,14 +1083,14 @@ legend.coords <- function(legend.loc, xrange, yrange) {
 #' @param y NULL, not used
 #' @param main main title for a new panel if drawn.
 #' @param on panel number to draw on. A new panel will be drawn if
-#' \code{on=NA}.
+#' `on=NA`.
 #' @param col color palette to use, set by default to rational choices.
-#' @param \dots passthru parameters to \code{\link{par}}
+#' @param \dots passthru parameters to [par()]
 #' 
 #' @author Ross Bennett
 #' 
 #' @references Based on code by Dirk Eddelbuettel from
-#' \url{http://dirk.eddelbuettel.com/blog/2011/01/16/}
+#' <http://dirk.eddelbuettel.com/blog/2011/01/16/>
 #' 
 #' @examples
 #' 

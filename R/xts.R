@@ -37,15 +37,15 @@
 #' 
 #' Constructor function for creating an extensible time-series object.
 #' 
-#' \code{xts} is used to create an \code{xts} object from raw data inputs.
+#' `xts` is used to create an `xts` object from raw data inputs.
 #' 
-#' An \code{xts} object extends the S3 class \code{zoo} from the package of the
+#' An `xts` object extends the S3 class `zoo` from the package of the
 #' same name.
 #' 
-#' The \code{xts()} constructor is the preferred way to create xts objects. It
+#' The `xts()` constructor is the preferred way to create xts objects. It
 #' performs several checks to ensure it returns a well-formed xts object. The
-#' \code{.xts()} constructor is mainly for internal use. It is more efficient
-#' than the regular \code{xts()} constructor because it doesn't perform as many
+#' `.xts()` constructor is mainly for internal use. It is more efficient
+#' than the regular `xts()` constructor because it doesn't perform as many
 #' validity checks. Use it with caution.
 #' 
 #' % TODO: add notes here about the differences between 'empty', 'zero-width',
@@ -53,25 +53,25 @@
 #' 
 #' Similar to zoo objects, xts objects must have an ordered index.  While zoo
 #' indexes cannot contain duplicate values, xts objects have optionally
-#' supported duplicate index elements since version 0.5-0.  The \code{xts}
+#' supported duplicate index elements since version 0.5-0.  The `xts`
 #' class has one additional requirement, the index must be a time-based class.
 #' Currently supported classes include: \sQuote{Date}, \sQuote{POSIXct},
 #' \sQuote{timeDate}, as well as \sQuote{yearmon} and \sQuote{yearqtr} where
 #' the index values remain unique.
 #' 
 #' The uniqueness requirement was relaxed in version 0.5-0, but is still
-#' enforced by default.  Setting \code{unique = FALSE} skips the uniqueness
-#' check and only ensures that the index is ordered via the \code{isOrdered}
+#' enforced by default.  Setting `unique = FALSE` skips the uniqueness
+#' check and only ensures that the index is ordered via the `isOrdered`
 #' function.
 #' 
 #' As of version 0.10-0, xts no longer allows missing values in the index.
 #' This is because many xts functions expect all index values to be finite.
-#' The most important of these is \code{merge.xts}, which is used ubiquitously.
+#' The most important of these is `merge.xts`, which is used ubiquitously.
 #' Missing values in the index are usually the result of a date-time conversion
 #' error (e.g. incorrect format, non-existent time due to daylight saving time,
 #' etc).  Because of how non-finite numbers are represented, a missing
 #' timestamp will always be at the end of the index (except if it is
-#' \code{-Inf}, which will be first).
+#' `-Inf`, which will be first).
 #' 
 #' Another difference from \pkg{zoo} is that xts object may carry additional
 #' attributes that may be desired in individual time-series handling. This
@@ -82,7 +82,7 @@
 #' track of sources, last-update times, financial instrument descriptions or
 #' details, etc.
 #' 
-#' The idea behind \code{xts} is to offer the user the ability to utilize a
+#' The idea behind `xts` is to offer the user the ability to utilize a
 #' standard zoo object, while providing an mechanism to customize the object's
 #' meta-data, as well as create custom methods to handle the object in a manner
 #' required by the user.
@@ -105,40 +105,40 @@
 #' to seconds - e.g. '1999-01-01 08:35:23'. Leading zeros are not necessary.
 #' See the examples for more detail.
 #' 
-#' Users may also extend the \code{xts} class to new classes to allow for
+#' Users may also extend the `xts` class to new classes to allow for
 #' method overloading.
 #' 
-#' Additional benefits derive from the use of \code{\link{as.xts}} and
-#' \code{\link{reclass}}, which allow for lossless two-way conversion between
-#' common R time-series classes and the \code{xts} object structure. See those
+#' Additional benefits derive from the use of [as.xts()] and
+#' [reclass()], which allow for lossless two-way conversion between
+#' common R time-series classes and the `xts` object structure. See those
 #' functions for more detail.
 #' 
 #' @param x an object containing the time series data
 #' @param order.by a corresponding vector of dates/times of a known time-based
 #' class. See Details.
-#' @param index a corresponding \emph{numeric} vector specified as seconds
+#' @param index a corresponding *numeric* vector specified as seconds
 #' since the UNIX epoch (1970-01-01 00:00:00.000)
-#' @param frequency numeric indicating frequency of \code{order.by}. See
+#' @param frequency numeric indicating frequency of `order.by`. See
 #' Details.
 #' @param unique check the index for unique timestamps?
 #' @param check check that the index is ordered?
-#' @param tclass time class to use for the index. See \code{\link{tclass}}.
+#' @param tclass time class to use for the index. See [tclass()].
 #' @param tzone time zone of the index (ignored indices without a time
-#' component, e.g. Date, yearmon, yearqtr). See \code{\link{tzone}}.
+#' component, e.g. Date, yearmon, yearqtr). See [tzone()].
 #' @param \dots additional attributes to be added. See Details.
 #' 
-#' @return An S3 object of class \code{xts}. As it inherits and extends the zoo
+#' @return An S3 object of class `xts`. As it inherits and extends the zoo
 #' class, all zoo methods remain valid.  Additional attributes may be assigned
-#' and extracted via \code{xtsAttributes}.
+#' and extracted via `xtsAttributes`.
 #' 
-#' @note Most users will benefit the most by using the \code{as.xts} and
-#' \code{reclass} functions to automagically handle \emph{all} data objects as
-#' one would handle a \code{zoo} object.
+#' @note Most users will benefit the most by using the `as.xts` and
+#' `reclass` functions to automagically handle *all* data objects as
+#' one would handle a `zoo` object.
 #' 
 #' @author Jeffrey A. Ryan and Joshua M. Ulrich
 #' 
-#' @seealso \code{\link{as.xts}}, \code{\link{index}}, \code{\link{tclass}},
-#' \code{\link{tformat}}, \code{\link{tzone}}, \code{\link{xtsAttributes}}
+#' @seealso [as.xts()], [index()], [tclass()],
+#' [tformat()], [tzone()], [xtsAttributes()]
 #' 
 #' @references \pkg{zoo}:
 #' 
@@ -414,25 +414,25 @@ function(x) {
 #' Convert Object To And From Class xts
 #' 
 #' Conversion S3 methods to coerce data objects of arbitrary classes to class
-#' \code{xts} and back, without losing any attributes of the original format.
+#' `xts` and back, without losing any attributes of the original format.
 #' 
 #' A simple and reliable way to convert many different objects into a uniform
 #' format for use within \R.
 #' 
-#' It is possible with a call to \code{as.xts} to convert objects of class
-#' \code{timeSeries}, \code{ts}, \code{matrix}, \code{data.frame}, and
-#' \code{zoo}.
+#' It is possible with a call to `as.xts` to convert objects of class
+#' `timeSeries`, `ts`, `matrix`, `data.frame`, and
+#' `zoo`.
 #' 
 #' Additional name=value pairs may be passed to the function to be added to the
 #' new object. A special print.xts method will assure that the attributes are
-#' hidden from view, but will be available via \R's standard \code{attr}
+#' hidden from view, but will be available via \R's standard `attr`
 #' function.
 #' 
-#' If \code{.RECLASS=TRUE}, the returned object will preserve all relevant
+#' If `.RECLASS=TRUE`, the returned object will preserve all relevant
 #' attribute/slot data within itself, allowing for temporary conversion to use
-#' zoo and xts compatible methods. A call to \code{reclass} returns the object
+#' zoo and xts compatible methods. A call to `reclass` returns the object
 #' to its original class, with all original attributes intact - unless
-#' otherwise changed.  This is the default behavior when \code{try.xts} is used
+#' otherwise changed.  This is the default behavior when `try.xts` is used
 #' for conversion, and should not be altered by the user; i.e. don't touch it
 #' unless you are aware of the consequences.
 #' 
@@ -446,16 +446,16 @@ function(x) {
 #' @param recordIDs see timeSeries help
 #' @param title see timeSeries help
 #' @param documentation see timeSeries help
-#' @param order.by see \link[zoo]{zoo} help
-#' @param frequency see \link[zoo]{zoo} help
+#' @param order.by see [zoo][zoo::zoo] help
+#' @param frequency see [zoo][zoo::zoo] help
 #' @param \dots additional parameters or attributes
 #' @param .RECLASS should conversion be reversible?
 #' 
-#' @return An S3 object of class \code{xts}.
+#' @return An S3 object of class `xts`.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso \code{\link{xts}}, \code{\link[zoo]{zoo}}
+#' @seealso [xts()], [zoo::zoo()]
 #' 
 #' @keywords utilities
 #' @examples

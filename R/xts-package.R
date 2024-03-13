@@ -53,13 +53,13 @@
 #' Notable changes in direction include the use of time-based indexing, at
 #' first explicitely, now implicitely.
 #' 
-#' An \code{xts} object consists of data in the form of a matrix, an index -
+#' An `xts` object consists of data in the form of a matrix, an index -
 #' ordered and increasing, either numeric or integer, and additional attributes
 #' for use internally, or for end-user purposes.
 #' 
 #' The current implementation enforces two major rules on the object.  One is
-#' that the index must be coercible to numeric, by way of \code{as.POSIXct}.
-#' There are defined types that meet this criteria. See \code{timeBased} for
+#' that the index must be coercible to numeric, by way of `as.POSIXct`.
+#' There are defined types that meet this criteria. See `timeBased` for
 #' details.
 #' 
 #' The second requirement is that the object cannot have rownames. The
@@ -67,12 +67,12 @@
 #' his data.table class, in the package of the same name.  Rownames in must be
 #' character vectors, and as such are inefficient in both storage and
 #' conversion.  By eliminating the rownames, and providing a numeric index of
-#' internal type \code{REAL} or \code{INTEGER}, it is possible to maintain a
+#' internal type `REAL` or `INTEGER`, it is possible to maintain a
 #' connection to standard date and time classes via the POSIXct functions,
 #' while at at the same time maximizing efficiencies in data handling.
 #' 
-#' User level functions \code{index}, as well as conversion to other classes
-#' proceeds as if there were rownames.  The code for \code{index} automatically
+#' User level functions `index`, as well as conversion to other classes
+#' proceeds as if there were rownames.  The code for `index` automatically
 #' converts time to numeric in both extraction and replacement functionality.
 #' This provides a level of abstraction to facilitate internal, and external
 #' package use and inter-operability.
@@ -110,8 +110,8 @@ NULL
 #' @author Jeffrey A. Ryan and Joshua M. Ulrich
 #' 
 #' Maintainer: Joshua M. Ulrich <josh.m.ulrich@@gmail.com>
-#' @seealso \code{\link{xts}} \code{\link{as.xts}} \code{\link{reclass}}
-#' \code{\link[zoo:zoo]{zoo}}
+#' @seealso [xts()] [as.xts()] [reclass()]
+#' [zoo::zoo()]
 #' @keywords package
 "_PACKAGE"
 
@@ -125,7 +125,7 @@ NULL
 #' 2018-05-02 Version: 0.10-3 and above
 #' 
 #' At present the \pkg{xts} API has publicly available interfaces to the
-#' following functions (as defined in \code{xtsAPI.h}):
+#' following functions (as defined in `xtsAPI.h`):
 #' 
 #' \preformatted{ Callable from other R packages: SEXP xtsIsOrdered(SEXP x,
 #' SEXP increasing, SEXP strictly) SEXP xtsNaCheck(SEXP x, SEXP check) SEXP
