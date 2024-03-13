@@ -48,9 +48,6 @@
 #' than the regular `xts()` constructor because it doesn't perform as many
 #' validity checks. Use it with caution.
 #' 
-#' % TODO: add notes here about the differences between 'empty', 'zero-width',
-#' and % 'zero-length' xts objects.
-#' 
 #' Similar to zoo objects, xts objects must have an ordered index.  While zoo
 #' indexes cannot contain duplicate values, xts objects have optionally
 #' supported duplicate index elements since version 0.5-0.  The `xts`
