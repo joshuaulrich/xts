@@ -182,6 +182,24 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   if(check) {
     if( !isOrdered(index, increasing=TRUE, strictly=unique) )
       stop('index is not in ',ifelse(unique, 'strictly', ''),' increasing order')
+
+    if(timeBased(index)) {
+      msg <- paste0("'index' is not a plain numeric vector\n",
+                    "  this may create a malformed xts object and cause unexpected behaviors")
+      if(!inherits(index, tclass)) {
+        iclass <- class(index)
+        fmt <- "\n    * index class (%s) does not match 'tclass' argument (%s)"
+        msg <- paste0(msg,
+                      sprintf(fmt,
+                              paste(iclass, collapse = ", "),
+                              paste(tclass, collapse = ", ")))
+      }
+      if(isTRUE(tzone(index) != tzone)) {
+        fmt <- "\n    * index timezone (%s) does not match 'tzone' argument (%s)"
+        msg <- paste0(msg, sprintf(fmt, dQuote(tzone(index)), dQuote(tzone)))
+      }
+      warning(msg)
+    }
   }
 
   index_out <- index
