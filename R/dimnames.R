@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -27,48 +27,26 @@
 #' 
 #' Get or set dimnames of an xts object.
 #' 
-#' The functions `dimnames.xts` and `dimnames<-.xts` are methods for
-#' the base functions `dimnames` and `dimnames<-`.
-#' 
-#' `xts` objects by design are intended for lightweight management of
-#' time-indexed data.
-#' 
-#' Rownames are redundant in this design, as well as quite burdensome with
-#' respect to memory consumption and internal copying costs.
-#' 
-#' `rownames` and `colnames` in \R make use of `dimnames` method
-#' dispatch internally, and thus require only modifications to dimnames to
-#' enforce the `xts` no rownames requirement.
-#' 
-#' To prevent accidental setting of rownames, `dimnames<-` for `xts`
-#' will simply set the rownames to `NULL` when invoked, regardless of
-#' attempts to set otherwise.
-#' 
+#' For efficienty, xts objects do not have rownames (unlike zoo objects).
+#' Attempts to set rownames on an xts object will silently set them to `NULL`.
 #' This is done for internal compatibility reasons, as well as to provide
 #' consistency in performance regardless of object use.
 #' 
-#' User level interaction with either dimnames or rownames will produce a
-#' character vector of the index, formatted based on the current specification
-#' of `indexFormat`. This occurs within the call by converting the results
-#' of calling `index(x)` to a character string, which itself first creates
-#' the object type specified internally from the underlying numeric time
-#' representation.
-#' 
-#' @param x an xts object
-#' @param value a list object of length two. See Details.
+#' @param x An xts object.
+#' @param value A two element list. See Details.
 #' 
 #' @return A list or character string containing coerced row names and/or
 #' actual column names.
 #' 
 #' Attempts to set rownames on xts objects via rownames or dimnames will
-#' silently fail.  This is your warning.
+#' silently fail.
 #' 
-#' @note All `xts` objects have dimension.  There are no `xts`
-#' objects representable as named or unnamed vectors.
+#' @note Unlike zoo, all xts objects have dimensions. xts objects cannot be
+#' plain vectors.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [xts()]
+#' @seealso [`xts()`]
 #' 
 #' @keywords misc
 #' @examples

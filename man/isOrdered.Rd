@@ -7,18 +7,19 @@
 isOrdered(x, increasing = TRUE, strictly = TRUE)
 }
 \arguments{
-\item{x}{a numeric vector}
+\item{x}{A numeric vector.}
 
-\item{increasing}{test for increasing/decreasing values}
+\item{increasing}{Test for increasing (\code{TRUE}) or decreasing (\code{FALSE}) values?}
 
-\item{strictly}{are duplicates OK}
+\item{strictly}{When \code{TRUE}, vectors with duplicate values are \emph{not}
+considered ordered.}
 }
 \value{
-Logical
+A logical scalar indicating whether or not \code{x} is ordered.
 }
 \description{
-Performs check to determine if a vector is strictly increasing, strictly
-decreasing, not decreasing, or not increasing.
+Check if a vector is strictly increasing, strictly decreasing, not
+decreasing, or not increasing.
 }
 \details{
 Designed for internal use with \pkg{xts}, this provides highly optimized

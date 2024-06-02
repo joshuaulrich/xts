@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -25,43 +25,42 @@
 #' object's index is printed.
 #' 
 #' Valid values for the `value` argument are the same as specified in the
-#' *Details* section of [strptime()].
+#' *Details* section of [`strptime()`].
 #' 
-#' An xts object's `tformat` is `NULL` by default, so the index will
-#' be formatted according to its [tclass()] (e.g. `Date`,
-#' `POSIXct`, `timeDate`, `yearmon`, etc.).
+#' An xts object's `tformat` is `NULL` by default, so the index will be
+#' be formatted according to its [`tclass()`] (e.g. Date, POSIXct, timeDate,
+#' yearmon, etc.).
 #' 
-#' `tformat` only changes how the index is *printed* and how the row
-#' names are formatted when xts objects are converted to other classes (e.g.
-#' `matrix` or `data.frame`. It does not affect the internal index in
-#' any way.
+#' The `tformat` only changes how the index is *printed* and how the row names
+#' are formatted when xts objects are converted to other classes (e.g. matrix
+#' or data.frame). It does not affect the internal index in any way.
 #' 
-#' indexFormat<-
-#' @param x an `xts` object
-#' @param value new index format string (see Details for valid values)
-#' @param \dots arguments passed to other methods
+#' @param x An xts object.
+#' @param value New index format string (see [`strptime()`] details for valid
+#'   values).
+#' @param \dots Arguments passed to other methods.
 #' 
 #' @return A vector containing the format for the object's index.
 #' 
-#' @note Both `indexFormat` and `indexFormat<-` are deprecated in
-#' favor of `tformat` and `tformat<-`, respectively.
+#' @note Both `indexFormat()` and `indexFormat<-` are deprecated in
+#' favor of `tformat()` and `tformat<-`, respectively.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [index()] has more information on the xts index,
-#' [tclass()] details how \pkg{xts} handles the class of the index,
-#' [tzone()] has more information about the index timezone settings.
+#' @seealso [`index()`] has more information on the xts index, [`tclass()`]
+#' details how \pkg{xts} handles the class of the index, [`tzone()`] has more
+#' information about the index timezone settings.
 #' 
 #' @keywords ts utilities
 #' @examples
 #' 
-#'   x <- timeBasedSeq('2010-01-01/2010-01-02 12:00')
-#'   x <- xts(seq_along(x), x)
+#' x <- timeBasedSeq('2010-01-01/2010-01-02 12:00')
+#' x <- xts(seq_along(x), x)
 #' 
-#'   # set a custom index format
-#'   head(x)
-#'   tformat(x) <- "%Y-%b-%d %H:%M:%OS3"
-#'   head(x)
+#' # set a custom index format
+#' head(x)
+#' tformat(x) <- "%Y-%b-%d %H:%M:%OS3"
+#' head(x)
 #' 
 `tformat` <-
 function(x, ...) {

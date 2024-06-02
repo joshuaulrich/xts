@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -21,29 +21,27 @@
 
 #' Locate Endpoints by Time
 #' 
-#' Extract index locations for an `xts` object that correspond to the
-#' *last* observation in each period specified by `on`.
+#' Extract index locations for an xts object that correspond to the *last*
+#' observation in each period specified by `on` and `k`.
 #' 
-#' `endpoints` returns a numeric vector corresponding to the *last*
-#' observation in each period. The vector always begins with zero and ends with
-#' the last observation in `x`.
+#' `endpoints()` returns a numeric vector that always begins with zero and ends
+#' with the number of observations in `x`.
 #' 
 #' Periods are always based on the distance from the UNIX epoch (midnight
-#' 1970-01-01 UTC), *not the first observation in `x`*. The examples
-#' illustrate this behavior.
+#' 1970-01-01 UTC), *not the first observation in `x`*. See the examples.
 #' 
-#' Valid values for the argument `on` include: \dQuote{us} (microseconds),
+#' Valid values for the `on` argument are: \dQuote{us} (microseconds),
 #' \dQuote{microseconds}, \dQuote{ms} (milliseconds), \dQuote{milliseconds},
 #' \dQuote{secs} (seconds), \dQuote{seconds}, \dQuote{mins} (minutes),
 #' \dQuote{minutes}, \dQuote{hours}, \dQuote{days}, \dQuote{weeks},
 #' \dQuote{months}, \dQuote{quarters}, and \dQuote{years}.
 #' 
-#' @param x an xts object
-#' @param on the periods endpoints to find as a character string
-#' @param k along every k-th element - see notes
+#' @param x An xts object.
+#' @param on A character string specifying the period.
+#' @param k The number of periods each endpoint should cover.
 #' 
-#' @return A numeric vector of beginning with 0 and ending with the value equal
-#' to the number of observations in the `x` argument.
+#' @return A numeric vector of beginning with 0 and ending with the number of
+#' of observations in `x`.
 #' 
 #' @author Jeffrey A. Ryan
 #' @keywords utilities
@@ -165,21 +163,21 @@ function(x,by='months', k=1) {
 
 #' Create a POSIXct Object
 #' 
-#' Enable fast creation of time stamps corresponding to the first or last
-#' observation in a specified time period.
+#' Easily create of time stamps corresponding to the first or last observation
+#' in a specified time period.
 #' 
-#' A wrapper to the function ISOdatetime with defaults corresponding to the
+#' This is a wrapper to [`ISOdatetime()`] with defaults corresponding to the
 #' first or last possible time in a given period.
 #' 
-#' @param year,month,day numerical values to specify a day
-#' @param hour,min,sec numerical vaues to specify time within a day
-#' @param tz timezone used for conversion
+#' @param year,month,day Numeric values to specify a day.
+#' @param hour,min,sec Numeric vaues to specify time within a day.
+#' @param tz Timezone used for conversion.
 #' 
-#' @return An object of class POSIXct.
+#' @return An POSIXct object.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [ISOdatetime()]
+#' @seealso [`ISOdatetime()`]
 #'
 #' @keywords utilities
 #' @examples
@@ -195,7 +193,7 @@ function(year=1970,month=1,day=1,hour=0,min=0,sec=0,tz="") {
   ISOdatetime(year,month,day,hour,min,sec,tz)
 }
 
-#' @param subsec number of sub-seconds
+#' @param subsec Number of sub-seconds.
 #' @rdname firstof
 lastof <-
 function (year = 1970,

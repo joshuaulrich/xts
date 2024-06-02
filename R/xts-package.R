@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -25,10 +25,11 @@
 #' 
 #' @usage data(sample_matrix)
 #' 
-#' @format \preformatted{ The format is: num [1:180, 1:4] 50.0 50.2 50.4 50.4
-#' 50.2 ...  - attr(*, "dimnames")=List of 2 ..$ : chr [1:180] "2007-01-02"
-#' "2007-01-03" "2007-01-04" "2007-01-05" ...  ..$ : chr [1:4] "Open" "High"
-#' "Low" "Close" }
+#' @format \preformatted{The format is:
+#'   num [1:180, 1:4] 50.0 50.2 50.4 50.4 50.2 ...
+#'   - attr(*, "dimnames")=List of 2
+#'     ..$ : chr [1:180] "2007-01-02" "2007-01-03" "2007-01-04" "2007-01-05" ...
+#'     ..$ : chr [1:4] "Open" "High" "Low" "Close" }
 #' 
 #' @rdname sample.data
 #' @keywords datasets
@@ -53,7 +54,7 @@
 #' Notable changes in direction include the use of time-based indexing, at
 #' first explicitely, now implicitely.
 #' 
-#' An `xts` object consists of data in the form of a matrix, an index -
+#' An xts object consists of data in the form of a matrix, an index -
 #' ordered and increasing, either numeric or integer, and additional attributes
 #' for use internally, or for end-user purposes.
 #' 
@@ -99,7 +100,7 @@ NULL
 #' 
 #' Extensible time series class and methods, extending and behaving like zoo.
 #' 
-#' Easily convert one of 's many time-series (and non-time-series) classes to a
+#' Easily convert one of \R's many time-series (and non-time-series) classes to a
 #' true time-based object which inherits all of zoo's methods, while allowing
 #' for new time-based tools where appropriate.
 #' 
@@ -109,9 +110,8 @@ NULL
 #' @name xts-package
 #' @author Jeffrey A. Ryan and Joshua M. Ulrich
 #' 
-#' Maintainer: Joshua M. Ulrich <josh.m.ulrich@@gmail.com>
-#' @seealso [xts()] [as.xts()] [reclass()]
-#' [zoo::zoo()]
+#' Maintainer: Joshua M. Ulrich <josh.m.ulrich@gmail.com>
+#' @seealso [`xts()`], [`as.xts()`], [`reclass()`], [`zoo()`][zoo::zoo]
 #' @keywords package
 "_PACKAGE"
 
@@ -127,22 +127,39 @@ NULL
 #' At present the \pkg{xts} API has publicly available interfaces to the
 #' following functions (as defined in `xtsAPI.h`):
 #' 
-#' \preformatted{ Callable from other R packages: SEXP xtsIsOrdered(SEXP x,
-#' SEXP increasing, SEXP strictly) SEXP xtsNaCheck(SEXP x, SEXP check) SEXP
-#' xtsTry(SEXP x) SEXP xtsRbind(SEXP x, SEXP y, SEXP dup) SEXP xtsCoredata(SEXP
-#' x) SEXP xtsLag(SEXP x, SEXP k, SEXP pad)
+#' \preformatted{Callable from other R packages:
+#'   SEXP xtsIsOrdered(SEXP x, SEXP increasing, SEXP strictly)
+#'   SEXP xtsNaCheck(SEXP x, SEXP check)
+#'   SEXP xtsTry(SEXP x)
+#'   SEXP xtsRbind(SEXP x, SEXP y, SEXP dup)
+#'   SEXP xtsCoredata(SEXP x)
+#'   SEXP xtsLag(SEXP x, SEXP k, SEXP pad)
 #' 
-#' Internal use functions: SEXP isXts(SEXP x) void copy_xtsAttributes(SEXP x,
-#' SEXP y) void copy_xtsCoreAttributes(SEXP x, SEXP y)
+#' Internal use functions:
+#'   SEXP isXts(SEXP x)
+#'   void copy_xtsAttributes(SEXP x, SEXP y)
+#'   void copy_xtsCoreAttributes(SEXP x, SEXP y)
 #' 
-#' Internal use macros: xts_ATTRIB(x) xts_COREATTRIB(x) GET_xtsIndex(x)
-#' SET_xtsIndex(x,value) GET_xtsIndexFormat(x) SET_xtsIndexFormat(x,value)
-#' GET_xtsCLASS(x) SET_xtsCLASS(x,value)
+#' Internal use macros:
+#'   xts_ATTRIB(x)
+#'   xts_COREATTRIB(x)
+#'   GET_xtsIndex(x)
+#'   SET_xtsIndex(x,value)
+#'   GET_xtsIndexFormat(x)
+#'   SET_xtsIndexFormat(x,value)
+#'   GET_xtsCLASS(x)
+#'   SET_xtsCLASS(x,value)
 #' 
-#' Internal use SYMBOLS: xts_IndexSymbol xts_ClassSymbol xts_IndexFormatSymbol
+#' Internal use SYMBOLS:
+#'   xts_IndexSymbol
+#'   xts_ClassSymbol
+#'   xts_IndexFormatSymbol
 #' 
-#' Callable from R: SEXP mergeXts(SEXP args) SEXP rbindXts(SEXP args) SEXP
-#' tryXts(SEXP x) }
+#' Callable from R:
+#'   SEXP mergeXts(SEXP args)
+#'   SEXP rbindXts(SEXP args)
+#'   SEXP tryXts(SEXP x)
+#' }
 #' 
 #' @name xtsAPI
 #' @author Jeffrey A. Ryan

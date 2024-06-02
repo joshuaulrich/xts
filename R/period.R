@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -22,12 +22,12 @@
 #' Check if Class is Time-Based
 #'
 #' Used to verify that the object is one of the known time-based classes in R.
-#' Current time-based objects supported are `Date`, `POSIXct`,
-#' `chron`, `yearmon`, `yearqtr`, and `timeDate`.
+#' Current time-based objects supported are `Date`, `POSIXct`, `chron`,
+#' `yearmon`, `yearqtr`, and `timeDate`.
 #'
-#' @param x object to test
+#' @param x Object to test.
 #'
-#' @return a logical scalar
+#' @return A logical scalar.
 #'
 #' @author Jeffrey A. Ryan
 #'
@@ -52,37 +52,55 @@ function(x) {
 `timeBased` <- `is.timeBased`
 
 
-#' Calculate Sum By Period
+#' Optimized Calculations By Period
 #' 
-#' Calculate a sum for each period of INDEX. Essentially a rolling application
-#' of sum over a series of non-overlapping sections.
+#' Calculate a sum, product, minimum, or maximum for each non-overlapping
+#' period specified by `INDEX`.
 #' 
-#' Used to calculate a sum per period given an arbitrary index of sections to
-#' be calculated over. This is an optimized function for sum.  There are
-#' additionally optimized versions for min, max, and prod.
+#' These functions are similar to calling `period.apply()` with the same
+#' endpoints and function. There may be slight differences in the results due
+#' to numerical accuracy.
 #' 
-#' For xts-coercible objects, an appropriate INDEX can be derived from a call
-#' to `endpoints`.
+#' For xts-coercible objects, an appropriate `INDEX` can be created by a call
+#' to `endpoints()`.
 #' 
-#' @param x a univariate data object
-#' @param INDEX a numeric vector of endpoints to calculate sum on
+#' @param x A univariate data object.
+#' @param INDEX A numeric vector of endpoints for each period.
 #' 
-#' @return An `xts` or `zoo` object of sums, indexed by the period
-#' endpoints.
+#' @return An xts or zoo object containing the sum, product, minimum, or
+#' maximum for each endpoint in `INDEX`.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [endpoints()], [period.max()],
-#' [period.min()], [period.prod()]
+#' @seealso [`endpoints()`], [`period.apply()`]
 #' 
 #' @keywords utilities
+#' @rdname period_math
 #' @examples
 #' 
-#' period.sum(c(1,1,4,2,2,6,7,8,-1,20),c(0,3,5,8,10))
+#' x <- c(1, 1, 4, 2, 2, 6, 7, 8, -1, 20)
+#' i <- c(0, 3, 5, 8, 10)
+#' 
+#' period.sum(x, i)
+#' period.prod(x, i)
+#' period.min(x, i)
+#' period.max(x, i)
 #' 
 #' data(sample_matrix)
-#' period.sum(sample_matrix[,1],endpoints(sample_matrix))
-#' period.sum(as.xts(sample_matrix)[,1],endpoints(sample_matrix))
+#' y <- sample_matrix[, 1]
+#' ep <- endpoints(sample_matrix)
+#'
+#' period.sum(y, ep)
+#' period.sum(as.xts(y), ep)
+#' 
+#' period.prod(y, ep)
+#' period.prod(as.xts(y), ep)
+#' 
+#' period.min(y, ep)
+#' period.min(as.xts(y), ep)
+#' 
+#' period.max(y, ep)
+#' period.max(as.xts(y), ep)
 #' 
 `period.sum` <-
 function(x,INDEX) {
@@ -103,39 +121,7 @@ function(x,INDEX) {
   tz
 }
 
-
-#' Calculate Product By Period
-#' 
-#' Calculate a product for each period of INDEX. Essentially a rolling
-#' application of prod over a series of non-overlapping sections.
-#' 
-#' Used to calculate a product per period given an arbitrary index of sections
-#' to be calculated over. This is an optimized function for product.  There are
-#' additionally optimized versions for min, max, and sum.
-#' 
-#' For xts-coercible objects, an appropriate INDEX can be derived from a call
-#' to `endpoints`.
-#' 
-#' @param x a univariate data object
-#' @param INDEX a vector of breakpoints to calculate product on
-#' 
-#' @return An `xts` or `zoo` object of products, indexed by the
-#' period endpoints.
-#' 
-#' @author Jeffrey A. Ryan
-#' 
-#' @seealso [endpoints()], [period.sum()],
-#' [period.min()], [period.max()]
-#' 
-#' @keywords utilities
-#' @examples
-#' 
-#' period.prod(c(1,1,4,2,2,6,7,8,-1,20),c(0,3,5,8,10))
-#' 
-#' data(sample_matrix)
-#' period.prod(sample_matrix[,1],endpoints(sample_matrix))
-#' period.prod(as.xts(sample_matrix)[,1],endpoints(sample_matrix))
-#' 
+#' @rdname period_math
 `period.prod` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
@@ -155,38 +141,7 @@ function(x,INDEX) {
   tz
 }
 
-
-#' Calculate Max By Period
-#' 
-#' Calculate a maximum for each period of INDEX. Essentially a rolling
-#' application of maximum over a series of non-overlapping sections.
-#' 
-#' Used to calculate a maximum per period given an arbitrary index of sections
-#' to be calculated over. This is an optimized function for maximum.  There are
-#' additional optimized versions for min, sum, and prod.
-#' 
-#' For xts-coercible objects, an appropriate INDEX can be derived from a call
-#' to 'endpoints'.
-#' 
-#' @param x a univariate data object
-#' @param INDEX a numeric vector of endpoints to calculate maximum on
-#' 
-#' @return An xts or zoo object of maximums, indexed by the period endpoints.
-#' 
-#' @author Jeffrey A. Ryan
-#' 
-#' @seealso [endpoints()], [period.sum()],
-#' [period.min()], [period.prod()]
-#' 
-#' @keywords utilities
-#' @examples
-#' 
-#' period.max(c(1,1,4,2,2,6,7,8,-1,20),c(0,3,5,8,10))
-#' 
-#' data(sample_matrix)
-#' period.max(sample_matrix[,1],endpoints(sample_matrix))
-#' period.max(as.xts(sample_matrix)[,1],endpoints(sample_matrix))
-#' 
+#' @rdname period_math
 `period.max` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
@@ -206,38 +161,7 @@ function(x,INDEX) {
   tz
 }
 
-
-#' Calculate Min By Period
-#' 
-#' Calculate a minimum for each period of INDEX. Essentially a rolling
-#' application of minimum over a series of non-overlapping sections.
-#' 
-#' Used to calculate a minimum per period given an arbitrary index of sections
-#' to be calculated over. This is an optimized function for minimum. There are
-#' additional optimized versions for max, sum, and prod.
-#' 
-#' For xts-coercible objects, an appropriate INDEX can be derived from a call
-#' to `endpoints`.
-#' 
-#' @param x a univariate data object
-#' @param INDEX a numeric vector of endpoints to calculate maximum on
-#' 
-#' @return An xts or zoo object of minimums, indexed by the period endpoints.
-#' 
-#' @author Jeffrey A. Ryan
-#' 
-#' @seealso [endpoints()], [period.sum()],
-#' [period.max()], [period.prod()]
-#' 
-#' @keywords utilities
-#' @examples
-#' 
-#' period.min(c(1,1,4,2,2,6,7,8,-1,20),c(0,3,5,8,10))
-#' 
-#' data(sample_matrix)
-#' period.min(sample_matrix[,1],endpoints(sample_matrix))
-#' period.min(as.xts(sample_matrix)[,1],endpoints(sample_matrix))
-#' 
+#' @rdname period_math
 `period.min` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")

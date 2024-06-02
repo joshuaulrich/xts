@@ -10,15 +10,15 @@ is.timeBased(x)
 timeBased(x)
 }
 \arguments{
-\item{x}{object to test}
+\item{x}{Object to test.}
 }
 \value{
-a logical scalar
+A logical scalar.
 }
 \description{
 Used to verify that the object is one of the known time-based classes in R.
-Current time-based objects supported are \code{Date}, \code{POSIXct},
-\code{chron}, \code{yearmon}, \code{yearqtr}, and \code{timeDate}.
+Current time-based objects supported are \code{Date}, \code{POSIXct}, \code{chron},
+\code{yearmon}, \code{yearqtr}, and \code{timeDate}.
 }
 \examples{
 

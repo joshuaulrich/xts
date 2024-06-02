@@ -11,15 +11,15 @@
 \arguments{
 \item{x}{A character string conforming to the ISO 8601:2004(e) rules.}
 
-\item{start}{lower constraint on range}
+\item{start}{Lower constraint on range.}
 
-\item{end}{upper constraint of range}
+\item{end}{Upper constraint of range}
 
-\item{tz}{timezone (tzone) to use internally}
+\item{tz}{Timezone (tzone) to use internally.}
 }
 \value{
-A list of length two, with an entry named \sQuote{first.time} and
-one names \sQuote{last.time}.
+A two element list with an entry named \sQuote{first.time} and
+one named \sQuote{last.time}.
 }
 \description{
 This function replicates most of the ISO standard for parsing times and
@@ -34,21 +34,20 @@ minute of the 23rd hour of the final day.
 
 For dates prior to the epoch (1970-01-01) the ending time is aligned to the
 59.0000 second. This is due to a bug/feature in the \R implementation of
-as.POSIXct and mktime0 at the C-source level. This limits the precision of
-ranges prior to 1970 to 1 minute granularity with the current \pkg{xts}
-workaround.
+\code{as.POSIXct()} and \code{mktime0()} at the C-source level. This limits the
+precision of ranges prior to 1970 to 1 minute granularity with the current
+\pkg{xts} workaround.
 
 Recurring times over multiple days may be specified using the "T" notation.
 See the examples for details.
 }
 \note{
 There is no checking done to test for a properly constructed ISO
-format string. This must be correctly entered by the user, lest bad things
-may happen.
+format string. This must be correctly entered by the user.
 
 When using durations, it is important to note that the time of the duration
 specified is not necessarily the same as the realized periods that may be
-returned when applied to an irregular time series. This is not a bug; it is
+returned when applied to an irregular time series. This is not a bug, it is
 a standards and implementation gotcha.
 }
 \examples{

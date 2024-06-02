@@ -10,45 +10,32 @@
 \method{rbind}{xts}(..., deparse.level = 1)
 }
 \arguments{
-\item{\dots}{objects to bind}
+\item{\dots}{Objects to bind by row.}
 
-\item{deparse.level}{not implemented}
+\item{deparse.level}{Not implemented.}
 }
 \value{
-An \code{xts} object with one row per row for each object
-concatenated.
+An xts object with one row per row for each object concatenated.
 }
 \description{
 Concatenate or bind by row two or more xts objects along a time-based index.
+All objects must have the same number of columns and be xts objects or
+coercible to xts.
 }
 \details{
-Implemented in C, these functions bind \code{xts} objects by row, resulting
-in another \code{xts} object
+Duplicate index values are supported. When one or more input has the same
+index value, the duplicated index values in the result are in the same order
+the objects are passed to \code{rbind()}. See examples.
 
-There may be non-unique index values in either the original series, or the
-resultant series.
+\code{c()} is an alias for \code{rbind()} for xts objects.
 
-Identical indexed series are bound in the order or the arguments passed to
-rbind. See examples.
-
-All objects must have the same number of columns, as well as be \code{xts}
-objects or coercible to such.
-
-\code{rbind} and \code{c} are aliases.
-
-For traditional merge operations, see \code{merge.xts} and \code{cbind.xts}.
+See \code{\link[=merge.xts]{merge.xts()}} for traditional merge operations.
 }
 \note{
-This differs from rbind.zoo in that non-unique index values are
-allowed, in addition to the completely different algorithms used internally.
-
-All operations may not behave as expected on objects with non-unique
-indices.  You have been warned.
-
-\code{rbind} is a .Primitive function in \R. As such method dispatch occurs at
-the C-level, and may not be consistent with expectations.  See the details
-section of the base function, and if needed call rbind.xts directly to avoid
-dispatch ambiguity.
+\code{rbind()} is a '.Primitive' function in \R, which means method dispatch
+occurs at the C-level, and may not be consistent with normal S3 method
+dispatch (see \code{\link[=rbind]{rbind()}} for details). Call \code{rbind.xts()} directly to
+avoid potential dispatch ambiguity.
 }
 \examples{
 

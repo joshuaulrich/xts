@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -21,28 +21,27 @@
 
 #' Compute x-Axis Tickmark Locations by Time
 #' 
-#' Compute x-axis tickmarks like `axTicks` in base but with respect to
-#' time.  Additionally the first argument is the object indexed by time which
-#' you are looking to derive tickmark locations for.
+#' Compute x-axis tickmarks like [`axTicks()`] in base but with respect to
+#' time. This function is written for internal use, and documented for those
+#' wishing to use it for customized plots.
 #' 
-#' It is possible to specify the detail you are seeking, or by passing 'auto'
-#' to the `ticks.on` argument, to get a best heuristic fit.
+#' The default `ticks.on = "auto"` uses heuristics to compute sensible tick
+#' locations. Use a combination of `ticks.on` and `k` to create tick locations
+#' at specific intervals. For example, `ticks.on = "days"` and `k = 7` will
+#' create tick marks every 7 days.
 #' 
-#' This function is written for internal use, and documented for those wishing
-#' to use outside of the internal function uses. In general it is most unlikely
-#' that the end user will call this function directly.
+#' When `format.labels` is a character string the possible values are the same
+#' as those listed in the Details section of [`strptime()`].
 #' 
-#' The `format.labels` argument allows for standard formatting like that
-#' used in `format`, `strptime`, and `strftime`.
-#' 
-#' @param x the object indexed by time, or a vector of times/dates
-#' @param ticks.on what to break on
-#' @param k frequency of breaks
-#' @param labels should a labeled vector be returned
-#' @param format.labels format labels - may be format to use
-#' @param ends should the ends be adjusted
-#' @param gt lower bound on number of breaks
-#' @param lt upper bound on number of breaks
+#' @param x An object indexed by time or a vector of times/dates.
+#' @param ticks.on Time unit for tick locations.
+#' @param k Frequency of tick locations.
+#' @param labels Should a labeled vector be returned?
+#' @param format.labels Either a logical value specifying whether labels should
+#'   be formatted, or a character string specifying the format to use.
+#' @param ends Should the ends be adjusted?
+#' @param gt Lower bound on number of tick locations.
+#' @param lt Upper bound on number of tick locations.
 #' 
 #' @return A numeric vector of index element locations where tick marks should
 #' be drawn. These are *locations* (e.g. 1, 2, 3, ...), *not* the
@@ -53,7 +52,7 @@
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [endpoints()]
+#' @seealso [`endpoints()`]
 #' @keywords utilities
 #' @examples
 #' 

@@ -16,11 +16,11 @@ indexTZ(x) <- value
 tzone(x) <- value
 }
 \arguments{
-\item{x}{an \code{xts} object}
+\item{x}{An xts object.}
 
-\item{\dots}{arguments passed to other methods}
+\item{\dots}{Arguments passed to other methods.}
 
-\item{value}{a valid timezone value (see \code{OlsonNames()})}
+\item{value}{A valid timezone value (see \code{\link[=OlsonNames]{OlsonNames()}}).}
 }
 \value{
 A one element named vector containing the timezone of the object's
@@ -41,8 +41,8 @@ The \verb{tzone<-} function \emph{does not} change the internal index values
 (i.e. the index will remain the same time in the UTC timezone).
 }
 \note{
-Both \code{indexTZ} and \verb{indexTZ<-} are deprecated in favor of
-\code{tzone} and \verb{tzone<-}, respectively.
+Both \code{indexTZ()} and \verb{indexTZ<-} are deprecated in favor of
+\code{tzone()} and \verb{tzone<-}, respectively.
 
 Problems may arise when an object that had been created under one timezone
 are used in a session using another timezone. This isn't usually a issue,
@@ -83,10 +83,9 @@ head(.index(y))  # the internal index is not changed!
 
 }
 \seealso{
-\code{\link[=POSIXt]{POSIXt()}} \code{\link[=index]{index()}} has more information on
-the xts index, \code{\link[=tformat]{tformat()}} describes how the index values are
-formatted when printed, and \code{\link[=tclass]{tclass()}} provides details how
-\pkg{xts} handles the class of the index.
+\code{\link[=index]{index()}} has more information on the xts index, \code{\link[=tformat]{tformat()}}
+describes how the index values are formatted when printed, and \code{\link[=tclass]{tclass()}}
+provides details how \pkg{xts} handles the class of the index.
 }
 \author{
 Jeffrey A. Ryan

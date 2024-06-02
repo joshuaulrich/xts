@@ -19,11 +19,11 @@ apply.quarterly(x, FUN, ...)
 apply.yearly(x, FUN, ...)
 }
 \arguments{
-\item{x}{an time-series object coercible to xts}
+\item{x}{A time-series object coercible to xts.}
 
-\item{FUN}{an \R function}
+\item{FUN}{A function to apply to each period.}
 
-\item{\dots}{additional arguments to FUN}
+\item{\dots}{Additional arguments to \code{FUN}.}
 }
 \value{
 A vector of results produced by \code{FUN}, corresponding to the
@@ -39,25 +39,24 @@ weekly, monthly, etc. Different from rolling functions in that this will
 subset the data based on the specified time period (implicit in the call),
 and return a vector of values for each period in the original data.
 
-Essentially a wrapper to the \pkg{xts} functions \code{endpoints} and
-\code{period.apply}, mainly as a convenience.
+Essentially a wrapper to the \pkg{xts} functions \code{endpoints()} and
+\code{period.apply()}, mainly as a convenience.
 }
 \note{
 When \code{FUN = mean} the results will contain one column for every
 column in the input, which is different from other math functions (e.g.
 \code{median}, \code{sum}, \code{prod}, \code{sd}, etc.).
 
-\code{FUN = mean} works by column because the default method
-\code{stats::mean} used to work by column for matrices and data.frames. R
-Core changed the behavior of \code{mean} to always return one column in
-order to be consistent with the other math functions. This broke some
-\pkg{xts} dependencies and \code{mean.xts} was created to maintain the
-original behavior.
+\code{FUN = mean} works by column because the default method \code{stats::mean}
+previously worked by column for matrices and data.frames. R Core changed the
+behavior of \code{mean} to always return one column in order to be consistent
+with the other math functions. This broke some \pkg{xts} dependencies and
+\code{mean.xts()} was created to maintain the original behavior.
 
-Using \code{FUN = mean} will print a message that describes this
-inconsistency.  To avoid the message and confusion, use \code{FUN = colMeans} to calculate means by column and use \code{FUN = function(x) mean}
-to calculate one mean for all the data. Set
-\code{options(xts.message.period.apply.mean = FALSE)} to suppress this
+Using \code{FUN = mean} will print a message that describes this inconsistency.
+To avoid the message and confusion, use \code{FUN = colMeans} to calculate means
+by column and use \code{FUN = function(x) mean} to calculate one mean for all the
+data. Set \code{options(xts.message.period.apply.mean = FALSE)} to suppress this
 message.
 }
 \examples{
@@ -72,8 +71,7 @@ apply.monthly(xts.ts,function(x) var(x))
 
 }
 \seealso{
-\code{\link[=endpoints]{endpoints()}}, \code{\link[=period.apply]{period.apply()}},
-\code{\link[=to.monthly]{to.monthly()}}
+\code{\link[=endpoints]{endpoints()}}, \code{\link[=period.apply]{period.apply()}}, \code{\link[=to.monthly]{to.monthly()}}
 }
 \author{
 Jeffrey A. Ryan

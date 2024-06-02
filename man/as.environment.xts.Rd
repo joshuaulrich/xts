@@ -2,26 +2,26 @@
 % Please edit documentation in R/as.environment.xts.R
 \name{as.environment.xts}
 \alias{as.environment.xts}
-\title{Coerce an \sQuote{xts} Object to an Environment by Column}
+\title{Coerce an xts Object to an Environment by Column}
 \usage{
 \method{as.environment}{xts}(x)
 }
 \arguments{
-\item{x}{an \code{xts} object}
+\item{x}{An xts object.}
 }
 \value{
-An \code{environment} containing \code{ncol(x)} vectors extracted by
-column from \code{x}.  Note that environments do not preserve (or have
-knowledge) of column position, a.k.a order.
+An environment containing \code{ncol(x)} vectors extracted by
+column from \code{x}.
 }
 \description{
-Method to automatically convert an \sQuote{xts} object to an environment
-containing vectors representing each column of the original xts object. Each
-objects will be named according to the column name it is exracted by.
+Method to automatically convert an xts object to an environment containing
+vectors representing each column of the original xts object. The name of
+each object in the resulting environment corresponds to the name of the
+column of the xts object.
 }
-\details{
-An experimental tool to convert \code{xts} objects into environments for
-simplifying use withing the standard R formula/data paradigm.
+\note{
+Environments do not preserve (or have knowledge) of column order and
+cannot be subset by an integer index.
 }
 \examples{
 

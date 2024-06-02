@@ -223,75 +223,71 @@ isNullOrFalse <- function(x) {
 #' \sQuote{years}. The default is \sQuote{auto}, which attempts to determine
 #' sensible locations from the periodicity and locations of observations. The
 #' other values are based on the possible values for the `ticks.on`
-#' argument of [axTicksByTime()].
+#' argument of [`axTicksByTime()`].
 #' 
-#' @param x xts object
-#' @param y NULL, not used
-#' @param \dots any passthrough graphical arguments for `lines` and
-#' `points`
-#' @param subset character vector of length one of the subset range using
-#' subsetting as in [xts()]
-#' @param panels character vector of expressions to plot as panels
-#' @param multi.panel TRUE/FALSE or an integer less than or equal to the number
-#' of columns in the data set. If TRUE, each column of the data is plotted in a
-#' separate panel. For example, if `multi.panel = 2`, then the data will
-#' be plotted in groups of 2 columns and each group is plotted in a separate
-#' panel.
-#' @param col color palette to use, set by default to rational choices
-#' @param up.col color for positive bars if `type="h"`
-#' @param dn.col color for negative bars if `type="h"`
-#' @param bg background color of plotting area, same as in [par()]
-#' @param type the type of plot to be drawn, same as in [plot()]
-#' @param lty set the line type, same as in [par()]
-#' @param lwd set the line width, same as in [par()]
-#' @param lend set the line end style, same as in [par()]
-#' @param main main title
-#' @param main.timespan include the timespan of the series on the plot?
-#' (default `TRUE`)
-#' @param observation.based TRUE/FALSE (default FALSE). If `TRUE`, the
-#' x-axis is drawn based on observations in the data. If `FALSE`, the
-#' x-axis is drawn based on the time index of the data.
-#' @param log TRUE/FALSE (default FALSE). If `TRUE`, the y-axis is drawn
-#' in log-scale
-#' @param ylim the range of the y axis
-#' @param yaxis.same TRUE/FALSE. If TRUE, the y axis is drawn with the same
-#' ylim for multiple panels
-#' @param yaxis.left if TRUE, draws the y axis on the left
-#' @param yaxis.right if TRUE, draws the y axis on the right
-#' @param yaxis.ticks desired number of y axis grid lines. The actual number of
-#' grid lines is determined by the `n` argument to [pretty()].
-#' @param major.ticks period that specifies where tick marks and labels will be
-#' drawn on the x-axis. See Details for possible values.
-#' @param minor.ticks period that specifies where minor ticks on will be drawn
-#' on the x-axis. If `NULL`, minor ticks are not drawn. See Details for
-#' possible values.
-#' @param grid.ticks.on period that specifies where vertical grid lines will be
-#' drawn. See Details for possible values.
-#' @param grid.ticks.lwd line width of the grid
-#' @param grid.ticks.lty line type of the grid
-#' @param grid.col color of the grid
-#' @param labels.col color of the axis labels
-#' @param format.labels label format to draw lower frequency x-axis ticks and
-#' labels passed to [axTicksByTime()]
-#' @param grid2 color for secondary x axis grid
-#' @param legend.loc places a legend into one of nine locations on the chart:
-#' bottomright, bottom, bottomleft, left, topleft, top, topright, right, or
-#' center. Default NULL does not draw a legend.
-#' @param on panel number to draw on. A new panel will be drawn if
-#' `on=NA`. The default, `on=0`, will add to the active panel. The
-#' active panel is defined as the panel on which the most recent action was
-#' performed. Note that only the first element of `on` is checked for the
-#' default behavior to add to the last active panel.
-#' @param extend.xaxis TRUE/FALSE (default FALSE). If TRUE, extend the x-axis
-#' before and/or after the plot's existing time index range, so all of of the
-#' time index values of the new series are included in the plot.
+#' @param x A xts object.
+#' @param y Not used, always `NULL`.
+#' @param \dots Any passthrough arguments for `lines()` and `points()`.
+#' @param subset An ISO8601-style subset string.
+#' @param panels Character vector of expressions to plot as panels.
+#' @param multi.panel Either `TRUE`, `FALSE`, or an integer less than or equal
+#'   to the number of columns in the data set. When `TRUE`, each column of the
+#'   data is plotted in a separate panel. When an integer 'n', the data will be
+#'   plotted in groups of 'n' columns per panel and each group will be plotted
+#'   in a separate panel.
+#' @param col Color palette to use.
+#' @param up.col Color for positive bars when `type = "h"`.
+#' @param dn.col Color for negative bars when `type = "h"`.
+#' @param bg Background color of plotting area, same as in [`par()`].
+#' @param type The type of plot to be drawn, same as in [`plot()`].
+#' @param lty Set the line type, same as in [`par()`].
+#' @param lwd Set the line width, same as in [`par()`].
+#' @param lend Set the line end style, same as in [`par()`].
+#' @param main Main plot title.
+#' @param main.timespan Should the timespan of the series be shown in the top
+#'   right corner of the plot?
+#' @param observation.based When `TRUE`, all the observations are equally spaced
+#'   along the x-axis. When `FALSE` (the default) the observations on the x-axis
+#'   are spaced based on the time index of the data.
+#' @param log Should the y-axis be in log scale? Default `FALSE`.
+#' @param ylim The range of the y axis.
+#' @param yaxis.same Should 'ylim' be the same for every panel? Default `TRUE`.
+#' @param yaxis.left Add y-axis labels to the left side of the plot?
+#' @param yaxis.right Add y-axis labels to the right side of the plot?
+#' @param yaxis.ticks Desired number of y-axis grid lines. The actual number of
+#'   grid lines is determined by the `n` argument to [`pretty()`].
+#' @param major.ticks Period specifying locations for major tick marks and labels
+#'   on the x-axis. See Details for possible values.
+#' @param minor.ticks Period specifying locations for minor tick marks on the
+#'   x-axis. When `NULL`, minor ticks are not drawn. See details for possible
+#'   values.
+#' @param grid.ticks.on Period specifying locations for vertical grid lines.
+#'   See details for possible values.
+#' @param grid.ticks.lwd Line width of the grid.
+#' @param grid.ticks.lty Line type of the grid.
+#' @param grid.col Color of the grid.
+#' @param labels.col Color of the axis labels.
+#' @param format.labels Label format to draw lower frequency x-axis ticks and
+#'   labels passed to [`axTicksByTime()`]
+#' @param grid2 Color for secondary x-axis grid.
+#' @param legend.loc Places a legend into one of nine locations on the chart:
+#'   bottomright, bottom, bottomleft, left, topleft, top, topright, right, or
+#'   center. Default `NULL` does not draw a legend.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#'   The default, `on = 0`, will add to the active panel. The active panel is
+#'   defined as the panel on which the most recent action was performed. Note
+#'   that only the first element of `on` is checked for the default behavior to
+#'   add to the last active panel.
+#' @param extend.xaxis When `TRUE`, extend the x-axis before and/or after the
+#'   plot's existing time index range, so all of of the time index values of
+#'   the new series are included in the plot. Default `FALSE`.
 #' 
 #' @author Ross Bennett
 #' 
-#' @seealso [addSeries()], [addPanel()]
+#' @seealso [`addSeries()`], [`addPanel()`]
 #' 
-#' @references based on `chart_Series` in the `quantmod` package by
-#' Jeffrey A. Ryan
+#' @references based on [`chart_Series()`][quantmod::quantmod] in \pkg{quantmod}
+#' written by Jeffrey A. Ryan
 #' 
 #' @examples
 #' 
@@ -303,7 +299,7 @@ isNullOrFalse <- function(x) {
 #' plot(sample.xts[,"Close"])
 #' 
 #' # plot a subset of the data
-#' plot(sample.xts[,"Close"], subset="2007-04-01/2007-06-31")
+#' plot(sample.xts[,"Close"], subset = "2007-04-01/2007-06-31")
 #' 
 #' # function to compute simple returns
 #' simple.ret <- function(x, col.name){
@@ -313,21 +309,21 @@ isNullOrFalse <- function(x) {
 #' # plot the close and add a panel with the simple returns
 #' plot(sample.xts[,"Close"])
 #' R <- simple.ret(sample.xts, "Close")
-#' lines(R, type="h", on=NA)
+#' lines(R, type = "h", on = NA)
 #' 
 #' # add the 50 period simple moving average to panel 1 of the plot
 #' library(TTR)
-#' lines(SMA(sample.xts[,"Close"], n = 50), on=1, col="blue")
+#' lines(SMA(sample.xts[,"Close"], n = 50), on = 1, col = "blue")
 #' 
 #' # add month end points to the chart
 #' points(sample.xts[endpoints(sample.xts[,"Close"], on = "months"), "Close"], 
-#'        col="red", pch=17, on=1)
+#'        col = "red", pch = 17, on = 1)
 #' 
 #' # add legend to panel 1
-#' addLegend("topright", on=1, 
+#' addLegend("topright", on = 1, 
 #'           legend.names = c("Close", "SMA(50)"), 
-#'           lty=c(1, 1), lwd=c(2, 1),
-#'           col=c("black", "blue", "red"))
+#'           lty = c(1, 1), lwd = c(2, 1),
+#'           col = c("black", "blue", "red"))
 #' }
 #' 
 plot.xts <- function(x, 
@@ -642,21 +638,22 @@ plot.xts <- function(x,
 #' Add a panel to an existing xts plot
 #' 
 #' Apply a function to the data of an existing xts plot object and plot the
-#' result. `FUN` should have arguments `x` or `R` for the data
-#' of the existing xts plot object to be passed to. All other additional
-#' arguments for `FUN` are passed through \dots.
+#' result on an existing or new panel. `FUN` should have arguments `x` or `R`
+#' for the data of the existing xts plot object to be passed to. All other
+#' additional arguments for `FUN` are passed through \dots.
 #' 
-#' @param FUN an xts object to plot.
-#' @param main main title for a new panel if drawn.
-#' @param on panel number to draw on. A new panel will be drawn if
-#' `on=NA`.
-#' @param type the type of plot to be drawn, same as in [plot()].
-#' @param col color palette to use, set by default to rational choices.
-#' @param lty set the line type, same as in [par()].
-#' @param lwd set the line width, same as in [par()].
-#' @param pch the type of plot to be drawn, same as in [par()].
-#' @param \dots additional named arguments passed through to `FUN` and any
-#' other graphical passthrough parameters.
+#' @param FUN An xts object to plot.
+#' @param main Main title for a new panel if drawn.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#' @param type The type of plot to be drawn, same as in [`plot()`].
+#' @param col Color palette to use, set by default to rational choices.
+#' @param lty Set the line type, same as in [`par()`].
+#' @param lwd Set the line width, same as in [`par()`].
+#' @param pch The type of plot to be drawn, same as in [`par()`].
+#' @param \dots Additional named arguments passed through to `FUN` and any
+#'   other graphical passthrough parameters.
+#' 
+#' @seealso [`plot.xts()`], [`addSeries()`]
 #' 
 #' @author Ross Bennett
 #' 
@@ -680,10 +677,10 @@ plot.xts <- function(x,
 #' # plot the Close
 #' plot(sample.xts[,"Close"])
 #' # calculate returns 
-#' addPanel(calcReturns, method="discrete", type="h")
+#' addPanel(calcReturns, method = "discrete", type = "h")
 #' # Add simple moving average to panel 1
-#' addPanel(rollmean, k=20, on=1)
-#' addPanel(rollmean, k=40, col="blue", on=1)
+#' addPanel(rollmean, k = 20, on = 1)
+#' addPanel(rollmean, k = 40, col = "blue", on = 1)
 #' 
 addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1, ...){
   # get the chob and the raw data (i.e. xdata)
@@ -723,16 +720,15 @@ addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=
 #' 
 #' Add a time series to an existing xts plot
 #' 
-#' @param x an xts object to plot.
-#' @param main main title for a new panel if drawn.
-#' @param on panel number to draw on. A new panel will be drawn if
-#' `on=NA`.
-#' @param type the type of plot to be drawn, same as in [plot()].
-#' @param col color palette to use, set by default to rational choices.
-#' @param lty set the line type, same as in [par()].
-#' @param lwd set the line width, same as in [par()].
-#' @param pch the type of plot to be drawn, same as in [par()].
-#' @param \dots any other passthrough graphical parameters.
+#' @param x An xts object to add to the plot.
+#' @param main Main title for a new panel if drawn.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#' @param type The type of plot to be drawn, same as in [`plot()`].
+#' @param col Color palette to use, set by default to rational choices.
+#' @param lty Set the line type, same as in [`par()`].
+#' @param lwd Set the line width, same as in [`par()`].
+#' @param pch The type of plot to be drawn, same as in [`par()`].
+#' @param \dots Any other passthrough graphical parameters.
 #' 
 #' @author Ross Bennett
 #' 
@@ -845,22 +841,21 @@ points.xts <- function(x, ..., main="", on=0, col=NULL, pch=1){
 
 #' Add vertical lines to an existing xts plot
 #' 
-#' Add vertical lines and labels to an existing xts plot
+#' Add vertical lines and labels to an existing xts plot.
 #' 
-#' @param events xts object of events and their associated labels. It is
-#' assumed that the first column of `events` is the event
-#' description/label.
-#' @param main main title for a new panel if drawn.
-#' @param on panel number to draw on. A new panel will be drawn if
-#' `on=NA`. The default, `on=0`, will add to the active panel. The
-#' active panel is defined as the panel on which the most recent action was
-#' performed. Note that only the first element of `on` is checked for the
-#' default behavior to add to the last active panel.
-#' @param lty set the line type, same as in [par()].
-#' @param lwd set the line width, same as in [par()].
-#' @param col color palette to use, set by default to rational choices.
-#' @param \dots any other passthrough parameters to [text()] to
-#' control how the event labels are drawn
+#' @param events An xts object of events and their associated labels. It is
+#'   ensured that the first column of `events` is the event description/label.
+#' @param main Main title for a new panel, if drawn.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#'   The default, `on = 0`, will add to the active panel. The active panel is
+#'   defined as the panel on which the most recent action was performed. Note
+#'   that only the first element of `on` is checked for the default behavior to
+#'   add to the last active panel.
+#' @param lty Set the line type, same as in [`par()`].
+#' @param lwd Set the line width, same as in [`par()`].
+#' @param col Color palette to use, set by default to rational choices.
+#' @param \dots Any other passthrough parameters to [`text()`] to control how
+#'   the event labels are drawn.
 #' 
 #' @author Ross Bennett
 #' 
@@ -873,7 +868,7 @@ points.xts <- function(x, ..., main="", on=0, col=NULL, pch=1){
 #' events <- xts(letters[1:3], 
 #'               as.Date(c("2007-01-12", "2007-04-22", "2007-06-13")))
 #' plot(sample.xts[,4])
-#' addEventLines(events, srt=90, pos=2)
+#' addEventLines(events, srt = 90, pos = 2)
 #' }
 #' 
 addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
@@ -960,22 +955,21 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
 
 #' Add Legend
 #' 
-#' Add Legend
+#' Add a legend to an existing panel.
 #' 
-#' @param legend.loc legend.loc places a legend into one of nine locations on
-#' the chart: bottomright, bottom, bottomleft, left, topleft, top, topright,
-#' right, or center.
-#' @param legend.names character vector of names for the legend. If
-#' `NULL`, the column names of the current plot object are used.
-#' @param col fill colors for the legend. If `NULL`, the colorset of the
-#' current plot object data is used.
-#' @param ncol number of columns for the legend
-#' @param on panel number to draw on. A new panel will be drawn if
-#' `on=NA`. The default, `on=0`, will add to the active panel. The
-#' active panel is defined as the panel on which the most recent action was
-#' performed. Note that only the first element of `on` is checked for the
-#' default behavior to add to the last active panel.
-#' @param \dots any other passthrough parameters to [legend()].
+#' @param legend.loc One of nine locations: bottomright, bottom, bottomleft,
+#'   left, topleft, top, topright, right, or center.
+#' @param legend.names Character vector of names for the legend. When `NULL`,
+#'   the column names of the current plot object are used.
+#' @param col Fill colors for the legend. When `NULL`, the colorset of the
+#'   current plot object data is used.
+#' @param ncol Number of columns for the legend.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#'   The default, `on = 0`, will add to the active panel. The active panel is
+#'   defined as the panel on which the most recent action was performed. Note
+#'   that only the first element of `on` is checked for the default behavior to
+#'   add to the last active panel.
+#' @param \dots Any other passthrough parameters to [`legend()`].
 #' 
 #' @author Ross Bennett
 #' 
@@ -1077,15 +1071,14 @@ legend.coords <- function(legend.loc, xrange, yrange) {
 #' coordinates. The xts index is used for the x coordinates and the first two
 #' columns are the upper and lower y coordinates, respectively.
 #' 
-#' @param x an xts object to plot. Must contain 2 columns for the upper and
-#' lower y coordinates for the polygon. The first column is interpreted as the
-#' upper y coordinates and the second column as the lower y coordinates.
-#' @param y NULL, not used
-#' @param main main title for a new panel if drawn.
-#' @param on panel number to draw on. A new panel will be drawn if
-#' `on=NA`.
-#' @param col color palette to use, set by default to rational choices.
-#' @param \dots passthru parameters to [par()]
+#' @param x An xts object to plot. Must contain 2 columns for the upper and
+#'   the lower y coordinates for the polygon. The first column is interpreted
+#'   as upper y coordinates and the second column as the lower y coordinates.
+#' @param y `NULL`, not used.
+#' @param main Main title for a new panel, if drawn.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#' @param col Color palette to use, set by default to rational choices.
+#' @param \dots Any other passthrough parameters to [`par()`].
 #' 
 #' @author Ross Bennett
 #' 

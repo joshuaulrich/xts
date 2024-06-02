@@ -17,31 +17,30 @@ addPanel(
 )
 }
 \arguments{
-\item{FUN}{an xts object to plot.}
+\item{FUN}{An xts object to plot.}
 
-\item{main}{main title for a new panel if drawn.}
+\item{main}{Main title for a new panel if drawn.}
 
-\item{on}{panel number to draw on. A new panel will be drawn if
-\code{on=NA}.}
+\item{on}{Panel number to draw on. A new panel will be drawn if \code{on = NA}.}
 
-\item{type}{the type of plot to be drawn, same as in \code{\link[=plot]{plot()}}.}
+\item{type}{The type of plot to be drawn, same as in \code{\link[=plot]{plot()}}.}
 
-\item{col}{color palette to use, set by default to rational choices.}
+\item{col}{Color palette to use, set by default to rational choices.}
 
-\item{lty}{set the line type, same as in \code{\link[=par]{par()}}.}
+\item{lty}{Set the line type, same as in \code{\link[=par]{par()}}.}
 
-\item{lwd}{set the line width, same as in \code{\link[=par]{par()}}.}
+\item{lwd}{Set the line width, same as in \code{\link[=par]{par()}}.}
 
-\item{pch}{the type of plot to be drawn, same as in \code{\link[=par]{par()}}.}
+\item{pch}{The type of plot to be drawn, same as in \code{\link[=par]{par()}}.}
 
-\item{\dots}{additional named arguments passed through to \code{FUN} and any
+\item{\dots}{Additional named arguments passed through to \code{FUN} and any
 other graphical passthrough parameters.}
 }
 \description{
 Apply a function to the data of an existing xts plot object and plot the
-result. \code{FUN} should have arguments \code{x} or \code{R} for the data
-of the existing xts plot object to be passed to. All other additional
-arguments for \code{FUN} are passed through \dots.
+result on an existing or new panel. \code{FUN} should have arguments \code{x} or \code{R}
+for the data of the existing xts plot object to be passed to. All other
+additional arguments for \code{FUN} are passed through \dots.
 }
 \examples{
 
@@ -63,11 +62,14 @@ calcReturns <- function(price, method = c("discrete", "log")){
 # plot the Close
 plot(sample.xts[,"Close"])
 # calculate returns 
-addPanel(calcReturns, method="discrete", type="h")
+addPanel(calcReturns, method = "discrete", type = "h")
 # Add simple moving average to panel 1
-addPanel(rollmean, k=20, on=1)
-addPanel(rollmean, k=40, col="blue", on=1)
+addPanel(rollmean, k = 20, on = 1)
+addPanel(rollmean, k = 40, col = "blue", on = 1)
 
+}
+\seealso{
+\code{\link[=plot.xts]{plot.xts()}}, \code{\link[=addSeries]{addSeries()}}
 }
 \author{
 Ross Bennett

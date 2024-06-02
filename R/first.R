@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -21,59 +21,40 @@
 
 #' Return First or Last n Elements of A Data Object
 #' 
-#' A generic function to return the first or last elements or rows of a vector
+#' Generic functions to return the first or last elements or rows of a vector
 #' or two-dimensional data object.
 #' 
 #' A more advanced subsetting is available for zoo objects with indexes
 #' inheriting from POSIXt or Date classes.
 #' 
-#' Provides the ability to identify the first or last `n` rows or
-#' observations of a data set.  The generic method behaves much like
-#' `head` and `tail` from \pkg{base}, except by default only the
-#' *first* or *last* observation will be returned.
+#' Quickly and easily extract the first or last `n` observations of an object.
+#' When `n` is a number, these functions are similar to [`head()`] and
+#' [`tail()`], but only return the *first* or *last* observation by default.
 #' 
-#' The more useful method for the xts class allows for time based subsetting,
-#' given an xtsible object.
+#' `n` can be a character string if `x` is an xts object or coerceable to xts.
+#' It must be of the form \sQuote{n period}, where 'n' is a numeric value
+#' (1 if not provided) describing the number of periods to return. Valid
+#' periods are: secs, seconds, mins, minutes, hours, days, weeks, months,
+#' quarters, and years.
+#'
+#' The 'period' portion can be any frequency greater than or equal to the
+#' frequency of the object's time index. For example, `first(x, "2 months")`
+#' will return the first 2 months of data even if `x` is hourly frequency.
+#' Attempts to set 'period' to a frequency less than the object's frequency
+#' will throw an error.
 #' 
-#' `n` may be either a numeric value, indicating the number of
-#' observations to return - forward from `first`, or backwards from
-#' `last`, or it may be a character string describing the number and type
-#' of periods to return.
+#' `n` may be positive or negative, whether it's a number or character string.
+#' When `n` is positive, the functions return the obvious result. For example,
+#' `first(x, "1 month")` returns the first month's data. When `n` is negative,
+#' all data *except* first month's is returned.
 #' 
-#' `n` may be positive or negative, in either numeric or character
-#' contexts. When positive it will return the result expected - e.g.
-#' `last(X,'1 month')` will return the last month's data. If negative, all
-#' data will be returned *except* for the last month. It is important to
-#' note that this is not the same as calling `first(X,'1 month')` or
-#' `first(X,'-1 month')`. All 4 variations return different subsets of
-#' data and have distinct purposes.
+#' Requesting more data than is in `x` will throw a warning and simply return
+#' `x`.
 #' 
-#' If `n` is a character string, it must be of the form \sQuote{n
-#' period.type} or \sQuote{period.type}, where `n` is a numeric value
-#' (defaults to 1 if not provided) describing the number of `period.types`
-#' to move forward (first) or back (last).
-#' 
-#' For example, to return the last 3 weeks of a time oriented zoo object, one
-#' could call `last(X,'3 weeks')`. Valid period.types are: secs, seconds,
-#' mins, minutes, hours, days, weeks, months, quarters, and years.
-#' 
-#' It is possible to use any frequency specification (secs, mins, days,
-#' \ldots{}) for the period.type portion of the string, even if the original
-#' data is in a higher frequency. This makes it possible to return the last
-#' \sQuote{2 months} of data from an oject that has a daily periodicity.
-#' 
-#' It should be noted that it is only possible to extract data with methods
-#' equal to or less than the frequency of the original data set. Attempting
-#' otherwise will result in error.
-#' 
-#' Requesting more data than is in the original data object will produce a
-#' warning advising as such, and the object returned will simply be the
-#' original data.
-#' 
-#' @param x 1 or 2 dimensional data object
-#' @param n number of periods to return
-#' @param keep should removed values be kept?
-#' @param \dots additional args - unused
+#' @param x An object.
+#' @param n Number of observations to return.
+#' @param keep Should removed values be kept as an attribute on the result?
+#' @param \dots Arguments passed to other methods.
 #' 
 #' @return A subset of elements/rows of the original data.
 #' 

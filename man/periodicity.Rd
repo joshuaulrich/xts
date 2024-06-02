@@ -7,13 +7,24 @@
 periodicity(x, ...)
 }
 \arguments{
-\item{x}{time-series-like object}
+\item{x}{A time-series-like object.}
 
-\item{\dots}{unused}
+\item{\dots}{Unused.}
 }
 \value{
-An object containing a list containing the \code{difftime} object,
-frequency, units, and suitable scale.
+A 'periodicity' object with the following elements:
+\itemize{
+\item the \code{difftime} object,
+\item frequency: the median time difference between observations
+\item start: the first observation
+\item end: the last observation
+\item units: one of secs, mins, hours, or days
+\item scale: one of seconds, minute, hourly, daily, weekly, monthly, quarterly, or yearly
+\item label: one of second, minute, hour, day, week, month, quarter, year
+}
+
+Possible \code{scale} values are: \sQuote{minute}, \sQuote{hourly}, \sQuote{daily},
+\sQuote{weekly}, \sQuote{monthly}, \sQuote{quarterly}, and \sQuote{yearly}.
 }
 \description{
 Estimate the periodicity of a time-series-like object by calculating the
@@ -23,26 +34,21 @@ median time between observations in days.
 A simple wrapper to quickly estimate the periodicity of a given data.
 Returning an object of type \code{periodicity}.
 
-This calculates the median number of days between observations as a difftime
-object, the numerical difference, the units of measurement, and the derived
-scale of the data as a string.
+This calculates the median time difference between observations as a
+difftime object, the numerical difference, the units of measurement, and the
+derived scale of the data as a string.
 
-The time index currently must be of either \code{Date} or \code{POSIX}
-class, or coercible to such.
+The time index currently must be of either a 'Date' or 'POSIXct' class, or
+or coercible to one of them.
 
-The only list item of note is the \code{scale}. This is an estimate of the
-periodicity of the data in common terms - e.g. 7 day daily data is best
-described as \sQuote{weekly}, and would be returned as such.
-
-Possible \code{scale} values are:
-
-\sQuote{minute},\sQuote{hourly}, \sQuote{daily},\sQuote{weekly},
-\sQuote{monthly},\sQuote{quarterly}, and \sQuote{yearly}.
+The 'scale' component of the result is an estimate of the periodicity of the
+data in common terms - e.g. 7 day daily data is best described as 'weekly',
+and would be returned as such.
 }
 \note{
-This function is only a \emph{good estimate} for the underlying
-periodicity.  If the series is too short, or has \emph{no} real periodicity,
-the return values will obviously be wrong. That said, it is quite robust and
+This function only attempts to be a \emph{good estimate} for the underlying
+periodicity. If the series is too short, or has highly irregular periodicity,
+the return values will not be accurate. That said, it is quite robust and
 used internally within \pkg{xts}.
 }
 \examples{

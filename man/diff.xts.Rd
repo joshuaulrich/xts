@@ -18,45 +18,47 @@
 )
 }
 \arguments{
-\item{x}{an \code{xts} object}
+\item{x}{An xts object.}
 
-\item{k}{period to lag over}
+\item{k}{Number of periods to shift.}
 
-\item{na.pad}{pad vector back to original size}
+\item{na.pad}{Should \code{NA} be added so the result has the same number of
+observations as \code{x}?}
 
-\item{\dots}{additional arguments}
+\item{\dots}{Additional arguments.}
 
-\item{lag}{period to difference over}
+\item{lag}{Period to difference over.}
 
-\item{differences}{order of differencing}
+\item{differences}{Order of differencing.}
 
-\item{arithmetic}{should arithmetic or geometric differencing be used}
+\item{arithmetic}{Should arithmetic or geometric differencing be used?}
 
-\item{log}{should (geometric) log differences be returned}
+\item{log}{Should (geometric) log differences be returned?}
 }
 \value{
-An \code{xts} object reflected the desired lag and/or differencing.
+An xts object with the desired lag and/or differencing.
 }
 \description{
-Methods for computing lags and differences on \code{xts} objects.  This
-matches most of the functionality of \pkg{zoo} methods, with some default
-argument changes.
+Methods for computing lags and differences on xts objects. This provides
+similar functionality as the \pkg{zoo} counterparts, but with some different
+defaults.
 }
 \details{
-The primary motivation for having methods specific to \code{xts} was to make
-use of faster C-level code within xts.  Additionally, it was decided that
-\code{lag}'s default behavior should match the common time-series
-interpretation of that operator --- specifically that a value at time
-\sQuote{t} should be the value at time \sQuote{t-1} for a positive lag. This
-is different than \code{lag.zoo} as well as \code{lag.ts}.
+The primary motivation for these methods was to take advantage of a faster
+C-level implementation. Another motivation was to make \code{lag()} behave using
+standard sign for \code{k}. Both \code{\link[=lag.zoo]{lag.zoo()}} and \code{\link[=lag.default]{lag.default()}} require a
+\emph{negative} value for \code{k} in order to shift a series backward. So \code{k = 1},
+shifts the series \emph{forward} one observation. This is especially confusing
+because \code{k = 1} is the default for those functions. When \code{x} is an xts
+object, \code{lag(x, 1)} returns an object where the value at time 't' is the
+value at time 't-1' in the original object.
 
-Another notable difference is that \code{na.pad} is set to TRUE by default,
-to better reflect the transformation visually and within functions requiring
-positional matching of data.
+Another difference is that \code{na.pad = TRUE} by default, to better reflect the
+transformation visually and for functions the require positional alignment
+of data.
 
-Backwards compatability with zoo can be achieved by setting
-\code{options(xts.compat.zoo.lag=TRUE)}. This will change the defaults of
-lag.xts to k=-1 and na.pad=FALSE.
+Set \code{options(xts.compat.zoo.lag = TRUE)} to use make \code{lag.xts()} consistent
+with \code{lag.zoo()} by reversing the sign of \code{k} and setting \code{na.pad = FALSE}.
 }
 \examples{
 
@@ -74,7 +76,7 @@ diff(diff(x))
 
 }
 \references{
-<https://en.wikipedia.org/wiki/Lag >
+\url{https://en.wikipedia.org/wiki/Lag}
 }
 \author{
 Jeffrey A. Ryan

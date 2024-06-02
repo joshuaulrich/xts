@@ -17,7 +17,7 @@ or carries into the xts package.
 Notable changes in direction include the use of time-based indexing, at
 first explicitely, now implicitely.
 
-An \code{xts} object consists of data in the form of a matrix, an index -
+An xts object consists of data in the form of a matrix, an index -
 ordered and increasing, either numeric or integer, and additional attributes
 for use internally, or for end-user purposes.
 

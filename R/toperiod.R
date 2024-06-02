@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -28,51 +28,44 @@
 #' 
 #' The result will contain the open and close for the given period, as well as
 #' the maximum and minimum over the new period, reflected in the new high and
-#' low, respectively.
+#' low, respectively. Aggregate volume will also be calculated if applicable.
 #' 
-#' If volume for a period was available, the new volume will also be
-#' calculated.
+#' An easy and reliable way to convert one periodicity of data into any new
+#' periodicity. It is important to note that all dates will be aligned to the
+#' *end* of each period by default - with the exception of `to.monthly()` and
+#' `to.quarterly()`, which use the \pkg{zoo} package's [yearmon][zoo::zoo] and
+#' [yearqtr][zoo::zoo] classes, respectively.
 #' 
-#' Essentially an easy and reliable way to convert one periodicity of data into
-#' any new periodicity. It is important to note that all dates will be aligned
-#' to the *end* of each period by default - with the exception of
-#' `to.monthly` and `to.quarterly`, which index by \sQuote{yearmon}
-#' and \sQuote{yearqtr} from the \pkg{zoo} package, respectively.
+#' Valid period character strings include: `"seconds"`, `"minutes"`, `"hours"`,
+#' `"days"`, `"weeks"`, `"months"`, `"quarters"`, and `"years"`. These are
+#' calculated internally via [`endpoints()`]. See that function's help page for
+#' further details.
 #' 
-#' Valid period character strings include: `"seconds"`, `"minutes"`,
-#' `"hours"`, `"days"`, `"weeks"`, `"months"`,
-#' `"quarters"`, and `"years"`. These are calculated internally via
-#' `endpoints`. See that function's help page for further details.
-#' 
-#' To adjust the final indexing style, it is possible to set `indexAt` to
-#' one of the following: \sQuote{yearmon}, \sQuote{yearqtr}, \sQuote{firstof},
-#' \sQuote{lastof}, \sQuote{startof}, or \sQuote{endof}.  The final index will
-#' then be `yearmon`, `yearqtr`, the first time of the period, the
-#' last time of the period, the starting time in the data for that period, or
-#' the ending time in the data for that period, respectively.
+#' To adjust the final indexing style, it is possible to set `indexAt` to one
+#' of the following: \sQuote{yearmon}, \sQuote{yearqtr}, \sQuote{firstof},
+#' \sQuote{lastof}, \sQuote{startof}, or \sQuote{endof}. The final index will
+#' then be `yearmon`, `yearqtr`, the first time of the period, the last time
+#' of the period, the starting time in the data for that period, or the ending
+#' time in the data for that period, respectively.
 #' 
 #' It is also possible to pass a single time series, such as a univariate
 #' exchange rate, and return an OHLC object of lower frequency - e.g. the
 #' weekly OHLC of the daily series.
 #' 
-#' Setting `drop.time` to `TRUE` (the default) will convert a series
-#' that includes a time component into one with just a date index, as the time
-#' index is often of little value in lower frequency series.
+#' Setting `drop.time = TRUE` (the default) will convert a series that includes
+#' a time component into one with just a date index, since the time component
+#' is often of little value in lower frequency series.
 #' 
-#' It is not possible to convert a series from a lower periodicity to a higher
-#' periodicity - e.g. weekly to daily or daily to 5 minute bars, as that would
-#' require magic.
-#' 
-#' @param x a univariate or OHLC type time-series object
-#' @param period period to convert to. See details.
-#' @param indexAt convert final index to new class or date. See details
-#' @param drop.time remove time component of POSIX datestamp (if any)
-#' @param k number of sub periods to aggregate on (only for minutes and
-#' seconds)
-#' @param name override column names
-#' @param OHLC should an OHLC object be returned? (only `OHLC=TRUE`
-#' currently supported)
-#' @param \dots additional arguments
+#' @param x A univariate or OHLC type time-series object.
+#' @param period Period to convert to. See details.
+#' @param indexAt Convert final index to new class or date. See details.
+#' @param drop.time Remove time component of POSIX datestamp (if any)?
+#' @param k Number of sub periods to aggregate on (only for minutes and
+#'   seconds).
+#' @param name Override column names?
+#' @param OHLC Should an OHLC object be returned? (only `OHLC = TRUE`
+#'   currently supported)
+#' @param \dots Additional arguments.
 #' 
 #' @return An object of the original type, with new periodicity.
 #' 
@@ -82,22 +75,21 @@
 #' Internally a call is made to reorder the data into the correct column order,
 #' and then a verification step to make sure that this ordering and naming has
 #' succeeded. All other data formats must be aggregated with functions such as
-#' `aggregate` and `period.apply`.
+#' `aggregate()` and `period.apply()`.
 #' 
 #' This method should work on almost all time-series-like objects. Including
 #' \sQuote{timeSeries}, \sQuote{zoo}, \sQuote{ts}, and \sQuote{irts}. It is
 #' even likely to work well for other data structures - including
 #' \sQuote{data.frames} and \sQuote{matrix} objects.
 #' 
-#' Internally a call to `as.xts` converts the original `x` into the
-#' universal `xts` format, and then re-converts back to the original type.
+#' Internally a call to `as.xts()` converts the original `x` into the
+#' universal xts format, and then re-converts back to the original type.
 #' 
 #' A special note with respect to \sQuote{ts} objects. As these are strictly
-#' regular they may include `NA` values.  These are stripped for
-#' aggregation purposes, though replaced before returning. This inevitably
-#' leads to many, many additional \sQuote{NA} values in the data. It is more
-#' beneficial to consider using an \sQuote{xts} object originally, or
-#' converting to one in the function call by means of `as.xts`.
+#' regular they may include `NA` values. These are removed before aggregation,
+#' though replaced before returning the result. This inevitably leads to many
+#' additional `NA` values in the result. Consider using an xts object or
+#' converting to xts using `as.xts()`.
 #' 
 #' @author Jeffrey A. Ryan
 #' 

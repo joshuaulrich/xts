@@ -2,44 +2,44 @@
 % Please edit documentation in R/xts.methods.R
 \name{window.xts}
 \alias{window.xts}
-\title{Extract time windows from an \code{xts} series}
+\title{Extract Time Windows from xts Objects}
 \usage{
 \method{window}{xts}(x, index. = NULL, start = NULL, end = NULL, ...)
 }
 \arguments{
-\item{x}{an object.}
+\item{x}{An xts object.}
 
-\item{index.}{a user defined time index. This defaults to the \code{xts}
-index for the series via \code{.index(x)}. When supplied, this is typically
-a subset of the dates in the full series.\cr The \code{index.} must be a set
-of dates that are convertible to \code{POSIXct}. If you want fast lookups,
-then \code{index.} should be sorted and of class \code{POSIXct}.\cr If an
-unsorted \code{index.} is passed in, \code{window} will sort it.}
+\item{index.}{A user defined time index (default \code{.index(x)}).}
 
-\item{start}{a start time. Extract \code{xts} rows where \code{index. >= start}. \code{start} may be any class that is convertible to \code{POSIXct}
-such as a character variable in the format \sQuote{YYYY-MM-DD}.\cr If
-\code{start} is \code{NULL} then all \code{index.} dates are matched.}
+\item{start}{A start time coercible to POSIXct.}
 
-\item{end}{an end time. Extract \code{xts} rows where \code{index. <= end}.
-\code{end} must be convertible to \code{POSIXct}. If \code{end} is
-\code{NULL} then all \code{index.} dates are matched.}
+\item{end}{An end time coercible to POSIXct.}
 
-\item{\dots}{currently not used.}
+\item{\dots}{Unused.}
 }
 \value{
-The matching time window is extracted.
+The subset of \code{x} that matches the time window.
 }
 \description{
-Method for extracting time windows from \code{xts} objects.
+Method for extracting time windows from xts objects.
 }
 \details{
-The point of having \code{window} in addition to the regular subset function
-is to have a fast way of extracting time ranges from an \code{xts} series.
-In particular, this method will convert \code{start} and \code{end} to
-\code{POSIXct} then do a binary lookup on the internal \code{xts} index to
-quickly return a range of matching dates. With a user supplied
-\code{index.}, a similarly fast invocation of \code{findInterval} is used so
-that large sets of sorted dates can be retrieved quickly.
+The xts \code{window()} method provides an efficient way to subset an xts object
+between a start and end date using a binary search algorithm. Specifically,
+it converts \code{start} and \code{end} to POSIXct and then does a binary search of
+the index to quickly return a subset of \code{x} between \code{start} and \code{end}.
+
+Both \code{start} and \code{end} may be any class that is convertible to POSIXct, such
+as a character string in the format \sQuote{yyyy-mm-dd}. When \code{start = NULL}
+the returned subset will begin at the first value of \code{index.}. When
+\code{end = NULL} the returned subset will end with the last value of \code{index.}.
+Otherwise the subset will contain all timestamps where \code{index.} is between
+\code{start} and \code{end}, inclusive.
+
+When \code{index.} is specified, \code{\link[=findInterval]{findInterval()}} is used to quickly retrieve
+large sets of sorted timestamps. For the best performance, \code{index.} must be
+a \emph{sorted} POSIXct vector or a numeric vector of seconds since the epoch.
+\code{index.} is typically a subset of the timestamps in \code{x}.
 }
 \examples{
 
@@ -50,17 +50,16 @@ x
 
 window(x, start = "2003-02-01", end = "2003-03-01")
 window(x, start = as.Date("2003-02-01"), end = as.Date("2003-03-01"))
-window(x, index = x.date[1:6], start = as.Date("2003-02-01"))
-window(x, index = x.date[c(4, 8, 10)])
+window(x, index. = x.date[1:6], start = as.Date("2003-02-01"))
+window(x, index. = x.date[c(4, 8, 10)])
 
 ## Assign to subset
-window(x, index = x.date[c(4, 8, 10)]) <- matrix(1:6, ncol = 2)
+window(x, index. = x.date[c(4, 8, 10)]) <- matrix(1:6, ncol = 2)
 x
 
 }
 \seealso{
-\code{\link[=subset.xts]{subset.xts()}}, \code{\link[base:findInterval]{base::findInterval()}},
-\code{\link[=xts]{xts()}}
+\code{\link[=subset.xts]{subset.xts()}}, \code{\link[=findInterval]{findInterval()}}, \code{\link[=xts]{xts()}}
 }
 \author{
 Corwin Joy

@@ -7,15 +7,15 @@
 \method{split}{xts}(x, f = "months", drop = FALSE, k = 1, ...)
 }
 \arguments{
-\item{x}{an xts object}
+\item{x}{An xts object.}
 
-\item{f}{a 'character' vector describing the period to split by}
+\item{f}{A character vector describing the period to split by.}
 
-\item{drop}{ignored by split.xts}
+\item{drop}{Ignored by \code{split.xts()}.}
 
-\item{k}{number of periods to aggregate into each split. See Details.}
+\item{k}{Number of periods to aggregate into each split. See details.}
 
-\item{\dots}{further args to non-xts method}
+\item{\dots}{Further arguments passed to other methods.}
 }
 \value{
 A list of xts objects.
@@ -27,15 +27,14 @@ Creates a list of xts objects split along time periods.
 A quick way to break up a large xts object by standard time periods; e.g.
 'months', 'quarters', etc.
 
-\code{endpoints} is used to find the start and end of each period (or
-k-periods).  See that function for valid arguments.
+\code{\link[=endpoints]{endpoints()}} is used to find the start and end of each period (or
+k-periods). See that function for valid arguments.
 
-If \code{f} is not a character vector, the NextMethod is called, which would
-in turn dispatch to the split.zoo method.
+The inputs are passed to \code{\link[=split.zoo]{split.zoo()}} when \code{f} is not a character vector.
 }
 \note{
-\code{aggregate.zoo} would be more flexible, though not as fast for
-xts objects.
+\code{\link[=aggregate.zoo]{aggregate.zoo()}} is more flexible, though not as fast for xts
+objects.
 }
 \examples{
 
@@ -49,8 +48,7 @@ split(x, f="weeks", k=4)
 
 }
 \seealso{
-\code{\link[=endpoints]{endpoints()}}, \code{\link[zoo:aggregate.zoo]{zoo::split.zoo()}},
-\code{\link[zoo:aggregate.zoo]{zoo::aggregate.zoo()}}
+\code{\link[=endpoints]{endpoints()}}, \code{\link[zoo:zoo]{split.zoo()}}, \code{\link[zoo:zoo]{aggregate.zoo()}}
 }
 \author{
 Jeffrey A. Ryan

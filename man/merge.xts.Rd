@@ -21,71 +21,70 @@
 \method{cbind}{xts}(..., all = TRUE, fill = NA, suffixes = NULL)
 }
 \arguments{
-\item{\dots}{one or more xts objects, or objects coercible to class xts}
+\item{\dots}{One or more xts objects, or objects coercible to class xts.}
 
-\item{all}{a logical vector indicating merge type}
+\item{all}{A logical vector indicating merge type.}
 
-\item{fill}{values to be used for missing elements}
+\item{fill}{Values to be used for missing elements.}
 
-\item{suffixes}{to be added to merged column names}
+\item{suffixes}{Suffix to be added to merged column names.}
 
-\item{join}{type of database join}
+\item{join}{Type of database join. One of 'outer', 'inner', 'left', or 'right'.}
 
-\item{retside}{which side of the merged object should be returned (2-case
-only)}
+\item{retside}{Which side of the merged object should be returned (2-case only)?}
 
-\item{retclass}{object to return}
+\item{retclass}{Either a logical value indicating whether the result should
+have a 'class' attribute, or the name of the desired class for the result.}
 
-\item{tzone}{time zone of merged object}
+\item{tzone}{Time zone to use for the merged result.}
 
-\item{drop}{not currently used}
+\item{drop}{Not currently used.}
 
-\item{check.names}{not currently used}
+\item{check.names}{Use \code{\link[=make.names]{make.names()}} to ensure column names are vaild \R
+object names?}
 }
 \value{
-A new \code{xts} object containing the appropriate elements of the
+A new xts object containing the appropriate elements of the
 objects passed in to be merged.
 }
 \description{
-Used to perform merge operation on \code{xts} objects by \emph{time}
-(index).  Given the inherent ordered nature of \code{xts} time-series, a
-merge-join style merge allows for optimally efficient joins.
+Perform merge operations on xts objects by time index.
 }
 \details{
-This is an xts method compatible with merge.zoo, as xts extends zoo. That
-documentation should also be referenced. Difference are noted where
-applicable.
+This xts method is compatible with \code{\link[=merge.zoo]{merge.zoo()}} but implemented almost
+entirely in C-level code for efficiency.
 
-Implemented almost entirely in custom C-level code, it is possible using
-either the \code{all} argument or the \code{join} argument to implement all
-common database join operations along the to-be-merged objects time-index:
-\sQuote{outer} (full outer - all rows), \sQuote{inner} (only rows with
-common indexes), \sQuote{left} (all rows in the left object, and those that
-match in the right), and \sQuote{right} (all rows in the right object, and
-those that match in the left).
+The function can perform all common database join operations along the time
+index by setting 'join' to one of the values below. Note that 'left' and
+'right' are only implemented for two objects.
+\itemize{
+\item outer: full outer (all rows in all objects)
+\item inner: only rows with common indexes in all objects
+\item left: all rows in the first object, and rows from the second object that
+have the same index as the first object
+\item right: all rows in the second object, and rows from the first object that
+have the same index as the second object
+}
 
-The above join types can also be expressed as a vector of logical values
-passed to \code{all}.  c(TRUE,TRUE) or TRUE for \sQuote{join="outer"},
-c(FALSE,FALSE) or FALSE for \sQuote{join="inner"}, c(TRUE, FALSE) for
-\sQuote{join="left"}, and c(FALSE,TRUE) for \sQuote{join="right"}.
+The above join types can also be accomplished by setting 'all' to one of the
+values below.
+\itemize{
+\item outer: \code{all = TRUE} or \code{all = c(TRUE, TRUE)}
+\item inner: \code{all = FALSE} or \code{all = c(FALSE, FALSE)}
+\item left: \code{all = c(TRUE, FALSE)}
+\item right: \code{all = c(FALSE, TRUE)}
+}
 
-Note that the \code{all} and \code{join} arguments imply a two case
-scenario.  For merging more than two objects, they will simply fall back to
-a full outer or full inner join, depending on the first position of all, as
-left and right can be ambiguous with respect to sides.
+The result will have the timezone of the leftmost argument if available. Use
+the 'tzone' argument to override the default behavior.
 
-To do something along the lines of merge.zoo's method of joining based on an
-all argument of the same length of the arguments to join, see the example.
+When \code{retclass = NULL} the joined objects will be split and reassigned
+silently back to the original environment they are called from. This is for
+backward compatibility with zoo, but unused by xts. When \code{retclass = FALSE}
+the object will be stripped of its class attribute. This is for internal use.
 
-The resultant object will have the timezone of the leftmost argument if
-available. Use \code{tzone} to override.
-
-If \code{retclass} is \code{NULL}, the joined objects will be split and
-reassigned silently back to the original environment they are called from.
-This is for backward compatibility with zoo, though unused by xts.
-
-If \code{retclass} is \code{FALSE} the object will be stripped of its class
-attribute.  This is for internal use.
+See the examples in order to join using an 'all' argument that is the same
+arguments to join, like you can do with \code{merge.zoo()}.
 }
 \note{
 This is a highly optimized merge, specifically designed for ordered

@@ -7,31 +7,31 @@
 \method{na.locf}{xts}(object, na.rm = FALSE, fromLast = FALSE, maxgap = Inf, ...)
 }
 \arguments{
-\item{object}{an xts object}
+\item{object}{An xts object.}
 
-\item{na.rm}{logical. Should leading/trailing \sQuote{NA}'s be removed? The
-default for xts \code{FALSE} is different than the default S3 method in the
-\pkg{zoo} package.}
+\item{na.rm}{Logical indicating whether leading/trailing \code{NA} should be
+removed. The default is \code{FALSE} unlike the zoo method.}
 
-\item{fromLast}{logical. Cause observations to be carried backward rather
-than forward. Default is \code{FALSE}.}
+\item{fromLast}{Logical indicating whether observations should be carried
+backward rather than forward. Default is \code{FALSE}.}
 
-\item{maxgap}{runs of more than \sQuote{maxgap} will retain \sQuote{NA}s
-after the maximum gap specified. See \code{na.locf} in the zoo package.}
+\item{maxgap}{Consecutive runs of observations more than 'maxgap' will
+remain \code{NA}. See \code{\link[zoo:zoo]{na.locf()}} for details.}
 
-\item{\dots}{unused}
+\item{\dots}{Unused.}
 }
 \value{
-See the documentation in zoo.
+An object where each \code{NA} in \code{object} is replaced by the most recent
+non-NA prior to it. See \code{\link[zoo:zoo]{na.locf()}} for details.
 }
 \description{
-\pkg{xts} method replace \sQuote{NA} with most recent non-\sQuote{NA}
+\pkg{xts} method replace \code{NA} with most recent non-NA
 }
 \details{
-This is the \pkg{xts} method for the S3 generic \code{na.locf}. The primary
-difference to note is that after the \sQuote{NA} fill action is carried out,
-the default it to leave trailing or leading \sQuote{NA}'s in place. This is
-different than \pkg{zoo} behavior.
+This is the \pkg{xts} method for the S3 generic \code{na.locf()}. The primary
+difference to note is that after the \code{NA} fill action is carried out, the
+default it to leave trailing or leading \code{NA}'s in place. This is different
+than \pkg{zoo} behavior.
 }
 \examples{
 
@@ -44,8 +44,8 @@ na.locf(x, fromLast=TRUE)
 na.locf(x, na.rm=TRUE, fromLast=TRUE)
 
 }
-\references{
-\sQuote{zoo}
+\seealso{
+\code{\link[zoo:zoo]{na.locf()}}
 }
 \author{
 Jeffrey A. Ryan

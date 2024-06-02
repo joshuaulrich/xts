@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -29,43 +29,30 @@ function(...) {
 #' Concatenate Two or More xts Objects by Row
 #' 
 #' Concatenate or bind by row two or more xts objects along a time-based index.
+#' All objects must have the same number of columns and be xts objects or
+#' coercible to xts.
 #' 
-#' Implemented in C, these functions bind `xts` objects by row, resulting
-#' in another `xts` object
+#' Duplicate index values are supported. When one or more input has the same
+#' index value, the duplicated index values in the result are in the same order
+#' the objects are passed to `rbind()`. See examples.
+#'
+#' `c()` is an alias for `rbind()` for xts objects.
 #' 
-#' There may be non-unique index values in either the original series, or the
-#' resultant series.
+#' See [`merge.xts()`] for traditional merge operations.
 #' 
-#' Identical indexed series are bound in the order or the arguments passed to
-#' rbind. See examples.
+#' @param \dots Objects to bind by row.
+#' @param deparse.level Not implemented.
 #' 
-#' All objects must have the same number of columns, as well as be `xts`
-#' objects or coercible to such.
+#' @return An xts object with one row per row for each object concatenated.
 #' 
-#' `rbind` and `c` are aliases.
-#' 
-#' For traditional merge operations, see `merge.xts` and `cbind.xts`.
-#' 
-#' @param \dots objects to bind
-#' @param deparse.level not implemented
-#' 
-#' @return An `xts` object with one row per row for each object
-#' concatenated.
-#' 
-#' @note This differs from rbind.zoo in that non-unique index values are
-#' allowed, in addition to the completely different algorithms used internally.
-#' 
-#' All operations may not behave as expected on objects with non-unique
-#' indices.  You have been warned.
-#' 
-#' `rbind` is a .Primitive function in \R. As such method dispatch occurs at
-#' the C-level, and may not be consistent with expectations.  See the details
-#' section of the base function, and if needed call rbind.xts directly to avoid
-#' dispatch ambiguity.
+#' @note `rbind()` is a '.Primitive' function in \R, which means method dispatch
+#'   occurs at the C-level, and may not be consistent with normal S3 method
+#'   dispatch (see [`rbind()`] for details). Call `rbind.xts()` directly to
+#'   avoid potential dispatch ambiguity.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [merge.xts()] [rbind()]
+#' @seealso [`merge.xts()`] [`rbind()`]
 #' 
 #' @keywords utilities
 #' @examples

@@ -7,30 +7,28 @@
 endpoints(x, on = "months", k = 1)
 }
 \arguments{
-\item{x}{an xts object}
+\item{x}{An xts object.}
 
-\item{on}{the periods endpoints to find as a character string}
+\item{on}{A character string specifying the period.}
 
-\item{k}{along every k-th element - see notes}
+\item{k}{The number of periods each endpoint should cover.}
 }
 \value{
-A numeric vector of beginning with 0 and ending with the value equal
-to the number of observations in the \code{x} argument.
+A numeric vector of beginning with 0 and ending with the number of
+of observations in \code{x}.
 }
 \description{
-Extract index locations for an \code{xts} object that correspond to the
-\emph{last} observation in each period specified by \code{on}.
+Extract index locations for an xts object that correspond to the \emph{last}
+observation in each period specified by \code{on} and \code{k}.
 }
 \details{
-\code{endpoints} returns a numeric vector corresponding to the \emph{last}
-observation in each period. The vector always begins with zero and ends with
-the last observation in \code{x}.
+\code{endpoints()} returns a numeric vector that always begins with zero and ends
+with the number of observations in \code{x}.
 
 Periods are always based on the distance from the UNIX epoch (midnight
-1970-01-01 UTC), \emph{not the first observation in \code{x}}. The examples
-illustrate this behavior.
+1970-01-01 UTC), \emph{not the first observation in \code{x}}. See the examples.
 
-Valid values for the argument \code{on} include: \dQuote{us} (microseconds),
+Valid values for the \code{on} argument are: \dQuote{us} (microseconds),
 \dQuote{microseconds}, \dQuote{ms} (milliseconds), \dQuote{milliseconds},
 \dQuote{secs} (seconds), \dQuote{seconds}, \dQuote{mins} (minutes),
 \dQuote{minutes}, \dQuote{hours}, \dQuote{days}, \dQuote{weeks},

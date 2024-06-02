@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -32,7 +32,7 @@ indexTZ <- function(x, ...)
 #' 
 #' Internally, an xts object's index is a *numeric* value corresponding to
 #' seconds since the epoch in the UTC timezone. When an xts object is created,
-#' all time index values are converted internally to [POSIXct()]
+#' all time index values are converted internally to [`POSIXct()`]
 #' (which is also in seconds since the UNIX epoch), using the underlying OS
 #' conventions and the \env{TZ} environment variable. The `xts()` function
 #' manages timezone information as transparently as possible.
@@ -40,15 +40,15 @@ indexTZ <- function(x, ...)
 #' The `tzone<-` function *does not* change the internal index values
 #' (i.e. the index will remain the same time in the UTC timezone).
 #' 
-#' @param x an `xts` object
-#' @param value a valid timezone value (see `OlsonNames()`)
-#' @param \dots arguments passed to other methods
+#' @param x An xts object.
+#' @param value A valid timezone value (see [`OlsonNames()`]).
+#' @param \dots Arguments passed to other methods.
 #' 
 #' @return A one element named vector containing the timezone of the object's
 #' index.
 #' 
-#' @note Both `indexTZ` and `indexTZ<-` are deprecated in favor of
-#' `tzone` and `tzone<-`, respectively.
+#' @note Both `indexTZ()` and `indexTZ<-` are deprecated in favor of
+#' `tzone()` and `tzone<-`, respectively.
 #' 
 #' Problems may arise when an object that had been created under one timezone
 #' are used in a session using another timezone. This isn't usually a issue,
@@ -57,10 +57,9 @@ indexTZ <- function(x, ...)
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [POSIXt()] [index()] has more information on
-#' the xts index, [tformat()] describes how the index values are
-#' formatted when printed, and [tclass()] provides details how
-#' \pkg{xts} handles the class of the index.
+#' @seealso [`index()`] has more information on the xts index, [`tformat()`]
+#' describes how the index values are formatted when printed, and [`tclass()`]
+#' provides details how \pkg{xts} handles the class of the index.
 #' 
 #' @keywords ts utilities
 #' @examples

@@ -7,20 +7,19 @@
 addPolygon(x, y = NULL, main = "", on = NA, col = NULL, ...)
 }
 \arguments{
-\item{x}{an xts object to plot. Must contain 2 columns for the upper and
-lower y coordinates for the polygon. The first column is interpreted as the
-upper y coordinates and the second column as the lower y coordinates.}
+\item{x}{An xts object to plot. Must contain 2 columns for the upper and
+the lower y coordinates for the polygon. The first column is interpreted
+as upper y coordinates and the second column as the lower y coordinates.}
 
-\item{y}{NULL, not used}
+\item{y}{\code{NULL}, not used.}
 
-\item{main}{main title for a new panel if drawn.}
+\item{main}{Main title for a new panel, if drawn.}
 
-\item{on}{panel number to draw on. A new panel will be drawn if
-\code{on=NA}.}
+\item{on}{Panel number to draw on. A new panel will be drawn if \code{on = NA}.}
 
-\item{col}{color palette to use, set by default to rational choices.}
+\item{col}{Color palette to use, set by default to rational choices.}
 
-\item{\dots}{passthru parameters to \code{\link[=par]{par()}}}
+\item{\dots}{Any other passthrough parameters to \code{\link[=par]{par()}}.}
 }
 \description{
 Draw a polygon on an existing xts plot by specifying a time series of y

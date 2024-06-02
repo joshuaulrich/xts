@@ -13,13 +13,14 @@ xcoredata(x, ...)
 xcoredata(x) <- value
 }
 \arguments{
-\item{x}{an \code{xts} object}
+\item{x}{An xts object.}
 
-\item{fmt}{should the rownames be formated in a non-standard way}
+\item{fmt}{Should the rownames be formated using \code{tformat()}? Alternatively
+a date/time string to be passed to \code{format()}. See details.}
 
-\item{\dots}{further arguments (unused)}
+\item{\dots}{Unused.}
 
-\item{value}{non-core attributes to assign}
+\item{value}{Non-core attributes to assign.}
 }
 \value{
 Returns either a matrix object for coredata, or a list of named
@@ -28,24 +29,25 @@ attributes.
 The replacement functions are called for their side-effects.
 }
 \description{
-Mechanism to extract and replace the core data of an \code{xts} object.
+Mechanism to extract and replace the core data of an xts object.
 }
 \details{
-Extract coredata of an \code{xts} object - removing all attributes except
+Extract coredata of an xts object - removing all attributes except
 \code{dim} and \code{dimnames} and returning a matrix object with rownames
-converted from the index of the \code{xts} object.
+converted from the index of the xts object.
 
-The \code{fmt} argument, if TRUE, allows the internal index formatting
-specified by the user to be used. Alternatively, it may be a valid
-formatting string to be passed to \code{format}. Setting to FALSE will
+The rownames of the result use the format specified by \code{tformat(x)} when
+\code{fmt = TRUE}. When \code{fmt} is a character string to be passed to \code{format()}.
+See \code{\link[=strptime]{strptime()}} for valid format strings. Setting \code{fmt = FALSE} will
 return the row names by simply coercing the index class to a character
 string in the default manner.
 
-\code{xcoredata} is the functional complement to \code{coredata}, returning
-all of the attributes normally removed by \code{coredata}.  Its purpose,
-along with the replacement function \verb{xcoredata<-} is primarily for use
-by developers using \pkg{xts} to allow for internal replacement of values
-removed during use of non xts-aware functions.
+\code{xcoredata()} is the complement to \code{coredata()}. It returns all of the
+attributes normally removed by \code{coredata()}.  Its purpose, along with the
+the replacement function \verb{xcoredata<-} is primarily for developers using
+\pkg{xts}' \code{\link[=try.xts]{try.xts()}} and \code{\link[=reclass]{reclass()}} functionality inside functions
+so the functions can take any time series class as an input and return the
+same time series class.
 }
 \examples{
 

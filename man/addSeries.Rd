@@ -17,24 +17,23 @@ addSeries(
 )
 }
 \arguments{
-\item{x}{an xts object to plot.}
+\item{x}{An xts object to add to the plot.}
 
-\item{main}{main title for a new panel if drawn.}
+\item{main}{Main title for a new panel if drawn.}
 
-\item{on}{panel number to draw on. A new panel will be drawn if
-\code{on=NA}.}
+\item{on}{Panel number to draw on. A new panel will be drawn if \code{on = NA}.}
 
-\item{type}{the type of plot to be drawn, same as in \code{\link[=plot]{plot()}}.}
+\item{type}{The type of plot to be drawn, same as in \code{\link[=plot]{plot()}}.}
 
-\item{col}{color palette to use, set by default to rational choices.}
+\item{col}{Color palette to use, set by default to rational choices.}
 
-\item{lty}{set the line type, same as in \code{\link[=par]{par()}}.}
+\item{lty}{Set the line type, same as in \code{\link[=par]{par()}}.}
 
-\item{lwd}{set the line width, same as in \code{\link[=par]{par()}}.}
+\item{lwd}{Set the line width, same as in \code{\link[=par]{par()}}.}
 
-\item{pch}{the type of plot to be drawn, same as in \code{\link[=par]{par()}}.}
+\item{pch}{The type of plot to be drawn, same as in \code{\link[=par]{par()}}.}
 
-\item{\dots}{any other passthrough graphical parameters.}
+\item{\dots}{Any other passthrough graphical parameters.}
 }
 \description{
 Add a time series to an existing xts plot

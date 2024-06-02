@@ -16,22 +16,22 @@ align.time(x, ...)
 shift.time(x, n = 60, ...)
 }
 \arguments{
-\item{x}{object to align}
+\item{x}{Object containing timestamps to align.}
 
-\item{\dots}{additional arguments. See details.}
+\item{\dots}{Additional arguments. See details.}
 
-\item{n}{number of seconds to adjust by}
+\item{n}{Number of seconds to adjust by.}
 }
 \value{
-A new object of class(x)
+A new object with the same class as \code{x}.
 }
 \description{
 Change timestamps to the start of the next period, specified in multiples of
 seconds.
 }
 \details{
-This function is an S3 generic.  The result is to round up to the next
-period determined by \verb{n modulo x}.
+This function is an S3 generic. The result is to round up to the next period
+determined by 'n modulo x'.
 }
 \examples{
 

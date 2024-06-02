@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -26,27 +26,25 @@
 #' A quick way to break up a large xts object by standard time periods; e.g.
 #' 'months', 'quarters', etc.
 #' 
-#' `endpoints` is used to find the start and end of each period (or
-#' k-periods).  See that function for valid arguments.
+#' [`endpoints()`] is used to find the start and end of each period (or
+#' k-periods). See that function for valid arguments.
 #' 
-#' If `f` is not a character vector, the NextMethod is called, which would
-#' in turn dispatch to the split.zoo method.
+#' The inputs are passed to [`split.zoo()`] when `f` is not a character vector.
 #' 
-#' @param x an xts object
-#' @param f a 'character' vector describing the period to split by
-#' @param drop ignored by split.xts
-#' @param k number of periods to aggregate into each split. See Details.
-#' @param \dots further args to non-xts method
+#' @param x An xts object.
+#' @param f A character vector describing the period to split by.
+#' @param drop Ignored by `split.xts()`.
+#' @param k Number of periods to aggregate into each split. See details.
+#' @param \dots Further arguments passed to other methods.
 #' 
 #' @return A list of xts objects.
 #' 
-#' @note `aggregate.zoo` would be more flexible, though not as fast for
-#' xts objects.
+#' @note [`aggregate.zoo()`] is more flexible, though not as fast for xts
+#' objects.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [endpoints()], [zoo::split.zoo()],
-#' [zoo::aggregate.zoo()]
+#' @seealso [`endpoints()`], [`split.zoo()`][zoo::zoo], [`aggregate.zoo()`][zoo::zoo]
 #' 
 #' @keywords utilities
 #' @examples

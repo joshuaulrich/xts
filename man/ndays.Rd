@@ -28,26 +28,26 @@ nquarters(x)
 nyears(x)
 }
 \arguments{
-\item{x}{A time-based object}
+\item{x}{A time-based object.}
 }
 \value{
-The number of observations for the period type specified
+The number of respective periods in \code{x}.
 }
 \description{
 Calculate the number of specified periods in a given time series like data
 object.
 }
 \details{
-Essentially a wrapper to \code{endpoints} with the appropriate period
-specified; the resulting value derived from counting the endpoints
+Essentially a wrapper to \code{endpoints()} with the appropriate period
+specified. The result is the number of endpoints found.
 
 As a compromise between simplicity and accuracy, the results will always
-round up to the nearest complete period. So n**** - 1 will return the
-completed periods.
+round up to the nearest complete period. Subtract 1 from the result to
+get the completed periods.
 
-For finer grain detail one should call a higher frequency n**** function.
+For finer grain detail one should call the higher frequency functions.
 
-An alternative summary can be found with \code{periodicity} and
+An alternative summary can be found with \code{periodicity(x)} and
 \code{unclass(periodicity(x))}.
 }
 \examples{

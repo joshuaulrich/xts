@@ -61,96 +61,96 @@
 convertIndex(x, value)
 }
 \arguments{
-\item{x}{an \code{xts} object}
+\item{x}{An xts object.}
 
-\item{\dots}{arguments passed to other methods}
+\item{\dots}{Arguments passed to other methods.}
 
-\item{value}{new index value}
+\item{value}{A new time index value.}
 }
 \description{
 Functions to get and replace an xts object's index values and it's
 components.
 }
 \details{
-Internally, an xts object's index is a \emph{numeric} value corresponding to
-seconds since the epoch in the UTC timezone. The \code{.index} and
-\verb{.index<-} functions get and replace the internal \emph{numeric} value
-of the index, respectively.  These functions are primarily for internal use,
-but are exported because they may be useful for users.
+An xts object's index is stored internally as the number of seconds since
+UNIX epoch in the UTC timezone. The \code{.index()} and \verb{.index<-} functions get
+and replace the internal numeric value of the index, respectively. These
+functions are primarily for internal use, but are exported because they may
+be useful for users.
 
-The \code{index} and \verb{index<-} methods get and replace the xts object's
-index, respectively. The replacement method also updates the
-\code{\link[=tclass]{tclass()}} and \code{\link[=tzone]{tzone()}} of the index to match the class
-and timezone of the new index, respectively. The \code{index} method
-converts the index to the class specified by the \code{\link[=tclass]{tclass()}}
-attribute and with the timezone specified by the \code{\link[=tzone]{tzone()}}
+The replacement method also updates the \code{\link[=tclass]{tclass()}} and \code{\link[=tzone]{tzone()}} of the
+index to match the class and timezone of the new index, respectively. The
+\code{index()} method converts the internal numeric index to the class specified
+by the 'tclass' attribute and with the timezone specified by the 'tzone'
 attribute before returning the index values to the user.
 
-The \code{.indexXXX} functions extract time components (similar to
-\code{\link[=POSIXlt]{POSIXlt()}} components) from the internal time index:
+The \code{.indexXXX()} functions below extract time components from the internal
+time index. They return values like the values of \link{POSIXlt} components.
 
 \describe{
-\item{\code{".indexsec"}}{0 - 61: seconds of the minute (local time)}
-\item{\code{".indexmin"}}{0 - 59: minutes of the hour (local time)}
-\item{\code{".indexhour"}}{0 - 23: hours of the day (local time)}
-\item{\code{".indexDate"}}{date as seconds since the epoch (UTC \emph{not local time}}
-\item{\code{".indexday"}}{date as seconds since the epoch (UTC \emph{not local time}}
-\item{\code{".indexwday"}}{0 - 6: day of the week (Sunday - Saturday, local time)}
-\item{\code{".indexmday"}}{1 - 31: day of the month (local time)}
-\item{\code{".indexweek"}}{weeks since the epoch (UTC \emph{not local time}}
-\item{\code{".indexmon"}}{0 - 11: month of the year (local time)}
-\item{\code{".indexyear"}}{years since 1900 (local time)}
-\item{\code{".indexyday"}}{0 - 365: day of the year (local time, 365 only in leap years)}
-\item{\code{".indexisdst"}}{1, 0, -1: Daylight Saving Time flag. Positive if
+\item{\code{.indexsec}}{0 - 61: seconds of the minute (local time)}
+\item{\code{.indexmin}}{0 - 59: minutes of the hour (local time)}
+\item{\code{.indexhour}}{0 - 23: hours of the day (local time)}
+\item{\code{.indexDate}}{date as seconds since the epoch (UTC \emph{not local time}}
+\item{\code{.indexday}}{date as seconds since the epoch (UTC \emph{not local time}}
+\item{\code{.indexwday}}{0 - 6: day of the week (Sunday - Saturday, local time)}
+\item{\code{.indexmday}}{1 - 31: day of the month (local time)}
+\item{\code{.indexweek}}{weeks since the epoch (UTC \emph{not local time}}
+\item{\code{.indexmon}}{0 - 11: month of the year (local time)}
+\item{\code{.indexyear}}{years since 1900 (local time)}
+\item{\code{.indexyday}}{0 - 365: day of the year (local time, 365 only in leap years)}
+\item{\code{.indexisdst}}{1, 0, -1: Daylight Saving Time flag. Positive if
 Daylight Saving Time is in effect, zero if not, negative if unknown.}
 }
 
 Changes in timezone, index class, and index format internal structure, by
 \pkg{xts} version:
 
-\describe{ \item{Version 0.12.0:}{The \code{.indexTZ}, \code{.indexCLASS}
-and \code{.indexFORMAT} attributes are no longer stored on xts objects, only
-on the index itself.
-
-The \code{indexTZ}, \code{indexClass}, and \code{indexFormat} functions (and
+\describe{
+\item{Version 0.12.0:}{The \code{.indexTZ}, \code{.indexCLASS} and \code{.indexFORMAT}
+attributes are no longer stored on xts objects, only on the index itself.
+\cr\cr
+The \code{indexTZ()}, \code{indexClass()}, and \code{indexFormat()} functions (and
 their respective replacement methods) are deprecated in favor of their
-respective \code{tzone}, \code{tclass}, and \code{tformat} versions. The
-previous versions will throw a warning that they're deprecated, but they
-will continue to work.  There are no plans to remove them or have them throw
-an error. Ever.
-
-The latter versions are careful to look for the old attributes on the xts
+respective \code{tzone()}, \code{tclass()}, and \code{tformat()} versions. The previous
+versions throw a warning that they're deprecated, but they will continue
+to work. They will never be removed or throw an error. Ever.
+\cr\cr
+The new versions are careful to look for the old attributes on the xts
 object, in case they're ever called on an xts object that was created prior
 to the attributes being added to the index itself.
+\cr\cr
+You can set \code{options(xts.warn.index.missing.tzone = TRUE)} and
+\code{options(xts.warn.index.missing.tclass = TRUE)} to identify xts objects
+that do not have a 'tzone' or 'tclass' attribute on the index, even if
+there is a 'tzone' or 'tclass' attribute on the xts object itself. The
+warnings will be thrown when the object is printed.
+Use \code{x <- as.xts(x)} to update these objects to the new structure.}
 
-There are options to throw a warning if there is no \code{tzone} or
-\code{tclass} attribute on the index, even if there may be one on the xts
-object. This gives the user a way to know if an xts object should be updated
-to use the new structure.
+\item{Version 0.9.8:}{The index timezone is now set to "UTC" for time classes
+that do not have any intra-day component (e.g. days, months, quarters).
+Previously the timezone was blank, which meant "local time" as determined by
+\R and the OS.}
 
-You can enable the warnings via: \code{options(xts.warn.index.missing.tzone = TRUE, xts.warn.index.missing.tclass = TRUE)} You can identify xts objects
-with the old structure by printing them. Then you can update them to the new
-structure using \code{x <- as.xts(x)}.  } \item{Version 0.9.8:}{The index
-timezone is now set to "UTC" for time classes that do not have any intra-day
-component (e.g. days, months, quarters).  Previously the timezone was blank,
-which meant "local time" as determined by R and the OS.  } \item{Version
-0.9.2:}{There are new get/set methods for the timezone, index class, and
-index format attributes: \code{tzone} and, \verb{tzone<-}, \code{tclass} and
-\verb{tclass<-}, and \code{tformat} and \verb{tformat<-}.
+\item{Version 0.9.2:}{There are new get/set methods for the timezone, index
+class, and index format attributes: \code{tzone()} and, \verb{tzone<-}, \code{tclass()}
+and \verb{tclass<-}, and \code{tformat()} and \verb{tformat<-}. These new functions are
+aliases to their \code{indexTZ()}, \code{indexClass()}, and \code{indexFormat()}
+counterparts.}
 
-These new functions are aliases to their \code{indexTZ}, \code{indexClass},
-and \code{indexFormat} counterparts.  } \item{Version 0.7.5:}{The timezone,
-index class, and index format were added as attributes to the index itself,
-as \code{tzone}, \code{tclass}, and \code{tformat}, respectively. This is in
-order to remove those three attributes from the xts object, so they're only
-on the index itself.
+\item{Version 0.7.5:}{The timezone, index class, and index format were added
+as attributes to the index itself, as 'tzone', 'tclass', and 'tformat',
+respectively. This is in order to remove those three attributes from the xts
+object, so they're only on the index itself.
+\cr\cr
+The \code{indexTZ()}, \code{indexClass()}, and \code{indexFormat()} functions (and their
+respective replacement methods) will continue to work as in prior \pkg{xts}
+versions. The attributes on the index take priority over their respective
+counterparts that may be on the xts object.}
 
-The \code{indexTZ}, \code{indexClass}, and \code{indexFormat} functions (and
-their respective replacement methods) will continue to work as in prior
-\pkg{xts} versions. The attributes on the index take priority over their
-respective counterparts that may be on the xts object.  } \item{Versions
-0.6.4 and prior:}{Objects track their timezone and index class in their
-\code{.indexTZ} and \code{.indexCLASS} attributes, respectively.} }
+\item{Versions 0.6.4 and prior:}{Objects track their timezone and index class
+in their '.indexTZ' and '.indexCLASS' attributes, respectively.}
+}
 }
 \examples{
 
@@ -227,10 +227,9 @@ u[.indexyday(u) \%in\% 50:51 & .indexhour(u) >= 12]
 
 }
 \seealso{
-\code{\link[=tformat]{tformat()}} describes how the index values are formatted
-when printed, \code{\link[=tclass]{tclass()}} provides details how \pkg{xts} handles
-the class of the index, and \code{\link[=tzone]{tzone()}} has more information about
-the index timezone settings.
+\code{\link[=tformat]{tformat()}} describes how the index values are formatted when
+printed, \code{\link[=tclass]{tclass()}} documents how \pkg{xts} handles the index class, and
+\code{\link[=tzone]{tzone()}} has more information about index timezone settings.
 }
 \author{
 Jeffrey A. Ryan

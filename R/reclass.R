@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,9 +19,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#' @inheritParams as.xts
-#' @param error error handling option. See Details.
-#' @rdname as.xts
+#' @rdname reclass
 #' @aliases use.xts
 try.xts <- function(x, ..., error=TRUE)
 {
@@ -50,78 +48,78 @@ try.xts <- function(x, ..., error=TRUE)
 }
 use.xts <- try.xts
 
-#' Convert Object To And From Class xts
+
+#' Convert Objects to xts and Back to Original Class
 #' 
-#' Conversion functions to coerce data objects of arbitrary classes to class
-#' `xts` and back, without losing any attributes of the original format.
+#' Functions to convert objects of arbitrary classes to xts and then back to
+#' the original class, without losing any attributes of the original class.
 #' 
 #' A simple and reliable way to convert many different objects into a uniform
-#' format for use within .
+#' format for use within \R.
 #' 
-#' It is possible with a call to `as.xts` to convert objects of class
-#' `timeSeries`, `ts`, `irts`, `matrix`, `data.frame`,
-#' and `zoo`.
+#' `try.xts()` and `reclass()` are functions that enable external developers
+#' access to the reclassing tools within \pkg{xts} to help speed development of
+#' time-aware functions, as well as provide a more robust and seemless end-user
+#' experience, regardless of the end-user's choice of data-classes.
 #' 
-#' `xtsible` safely checks whether an object can be converted to an
-#' `xts` object; returning TRUE on success and FALSE otherwise.
+#' `try.xts()` calls `as.xts()` internally. See [`as.xts()`] for available xts
+#' methods and arguments for each coercible class. Since it calls `as.xts()`,
+#' you can add custom attributes as `name = value` pairs in the same way. But
+#' these custom attributes will not be copied back to the original object when
+#' `reclass()` is called.
 #' 
-#' The help file `as.xts` lists all available xts methods and arguments
-#' specific to each coercible type.
+#' The `error` argument can be a logical value indicating whether an error
+#' should be thrown (or fail silently), a character string allowing for custom
+#' error error messages, or a function of the form `f(x, ...)` that will be
+#' called if the conversion fails.
 #' 
-#' Additional name=value pairs may be passed to the function to be added to the
-#' new object. A special print.xts method will assure that the attributes are
-#' hidden from view, but will be available via 's standard `attr`
-#' function, as well as the `xtsAttributes` function.
+#' `reclass()` converts an object created by `try.xts()` back to its original
+#' class with all the original attributes intact (unless they were changed
+#' after the object was converted to xts). The `match.to` argument allows you
+#' copy the index attributes ([`tclass`], [`tformat`], and [`tzone`]) and
+#' [`xtsAttributes()`] from another xts object to the result. `match.to` must
+#' be an xts object with an index value for every observation in `x`.
 #' 
-#' The returned object will preserve all relevant attribute/slot data within
-#' itself, allowing for temporary conversion to use zoo and xts compatible
-#' methods. A call to `reclass` returns the object to its original class,
-#' with all original attributes intact - unless otherwise changed.
-#' 
-#' It should be obvious, but any attributes added via the \dots argument will
-#' not be carried back to the original data object, as there would be no
-#' available storage slot/attribute.
-#' 
-#' `Reclass` is designed for top-level use, where it is desirable to have
+#' `Reclass()` is designed for top-level use, where it is desirable to have
 #' the object returned from an arbitrary function in the same class as the
-#' object passed in.  Most functions in \R are not designed to return objects
-#' matching the original object's class.  While this tool is highly
-#' experimental at present, it attempts to handle conversion and reconversion
-#' transparently.  The caveats are that the original object must be coercible
-#' to `xts`, the returned object must be of the same row length as the
-#' original object, and that the object to reconvert to is the first argument
-#' to the function being wrapped.
+#' object passed in. Most functions in \R are not designed to return objects
+#' matching the original object's class. It attempts to handle conversion and
+#' reconversion transparently but it requires the original object must be
+#' coercible to xts, the result of the function must have the same number of
+#' rows as the input, and the object to be converted/reclassed must be the
+#' first argument to the function being wrapped. Note that this function
+#' hasn't been tested for robustness.
 #' 
-#' `try.xts` and `reclass` are functions that enable external
-#' developers access to the reclassing tools within \pkg{xts} to help speed
-#' development of time-aware functions, as well as provide a more robust and
-#' seemless end-user experience, regardless of the end-user's choice of
-#' data-classes.
+#' See the accompanying vignette for more details on the above usage.
 #' 
-#' The `error` argument to try.xts accepts a logical value, indicating
-#' where an error should be thrown, a character string allowing for custom
-#' error messages to be displayed, or a function of the form `f(x, ...)`,
-#' to be called upon construction error.
+#' @param x Data object to convert. See details for supported types.
+#' @param match.to An xts object whose attributes will be copied to the result.
+#' @param error Error handling option. See Details.
+#' @param \dots Additional parameters or attributes.
 #' 
-#' See the accompanying vignette for more details on the above usage and the
-#' package in general.
+#' @return `try.xts()` returns an xts object when conversion is successful.
+#' The `error` argument controls the function's behavior when conversion fails.
 #' 
-#' @param x data object to convert. See details for supported types
-#' @param match.to `xts` object whose attributes will be passed to
-#' `x`
-#' @param error error handling option. See Details.
-#' @param \dots additional parameters or attributes
-#' 
-#' @return An S3 object of class `xts`.
-#' 
-#' In the case of `Reclass` and `reclass`, the object returned will
-#' be of the original class as identified by `CLASS`.
+#' `Reclass()` and `reclass()` return the object as its original class, as
+#' specified by the 'CLASS' attribute.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [xts()],[as.xts()]
+#' @seealso [`as.xts()`]
 #' 
 #' @keywords utilities
+#' @examples
+#' 
+#' a <- 1:10
+#' try.xts(a, error = FALSE)  # fails silently, still an integer vector
+#' 
+#' # control the result with a function
+#' try.xts(a, error = function(x, ...) { paste0("I'm sorry ", Sys.info()[["user"]], ", I'm afraid I can't do that.") })
+#' 
+#' z <- zoo(1:10, timeBasedSeq("2020-01-01/2020-01-10"))
+#'
+#' str(try.xts(z))          # zoo to xts
+#' str(reclass(as.xts(z)))  # reclass back to zoo
 #' 
 `reclass` <-
 function(x, match.to, error=FALSE, ...) {
@@ -168,8 +166,7 @@ function(x, match.to, error=FALSE, ...) {
   }
 }
 
-
-#' @rdname as.xts
+#' @rdname reclass
 #' @aliases use.reclass
 Reclass <- function(x) {
   xx <- match.call()
@@ -180,28 +177,26 @@ Reclass <- function(x) {
 }
 use.reclass <- Reclass
 
-
 #' Extract and Set .CLASS Attribute
 #' 
-#' Simple extraction and replacement function to access `xts` .CLASS
-#' attribute.  The .CLASS attribute is used by `reclass` to transform an
-#' `xts` object back to its original class.
+#' Extraction and replacement functions to access the xts '.CLASS' attribute.
+#' The '.CLASS' attribute is used by `reclass()` to transform an xts object
+#' back to its original class.
 #' 
-#' It is not recommended that CLASS be called in daily use.  While it may be
-#' possible to coerce objects to other classes than originally derived from,
-#' there is little, if any, chance that the `reclass` function will
-#' perform as expected.
+#' This is meant for use in conjunction with `try.xts()` and `reclass()` and is
+#' is not intended for daily use. While it's possible to interactively coerce
+#' objects to other classes than originally derived from, it's likely to cause
+#' unexpected behavior. It is best to use the usual `as.xts()` and other
+#' classes' `as` methods.
 #' 
-#' It is best to use the traditional `as` methods.
+#' @param x An xts object.
+#' @param value The new value to assign to the '.CLASS' attribute.
 #' 
-#' @param x an xts object
-#' @param value the new .CLASS value to assign
-#' 
-#' @return Called for its side-effect of changing the .CLASS attribute
+#' @return Called for its side-effect of changing the '.CLASS' attribute.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [as.xts()],[reclass()]
+#' @seealso [`as.xts()`], [`reclass()`]
 #' 
 #' @keywords utilities
 `CLASS` <-

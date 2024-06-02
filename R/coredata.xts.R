@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -21,37 +21,39 @@
 
 #' Extract/Replace Core Data of an xts Object
 #' 
-#' Mechanism to extract and replace the core data of an `xts` object.
+#' Mechanism to extract and replace the core data of an xts object.
 #' 
-#' Extract coredata of an `xts` object - removing all attributes except
+#' Extract coredata of an xts object - removing all attributes except
 #' `dim` and `dimnames` and returning a matrix object with rownames
-#' converted from the index of the `xts` object.
+#' converted from the index of the xts object.
 #' 
-#' The `fmt` argument, if TRUE, allows the internal index formatting
-#' specified by the user to be used. Alternatively, it may be a valid
-#' formatting string to be passed to `format`. Setting to FALSE will
+#' The rownames of the result use the format specified by `tformat(x)` when
+#' `fmt = TRUE`. When `fmt` is a character string to be passed to `format()`.
+#' See [`strptime()`] for valid format strings. Setting `fmt = FALSE` will
 #' return the row names by simply coercing the index class to a character
 #' string in the default manner.
 #' 
-#' `xcoredata` is the functional complement to `coredata`, returning
-#' all of the attributes normally removed by `coredata`.  Its purpose,
-#' along with the replacement function `xcoredata<-` is primarily for use
-#' by developers using \pkg{xts} to allow for internal replacement of values
-#' removed during use of non xts-aware functions.
+#' `xcoredata()` is the complement to `coredata()`. It returns all of the
+#' attributes normally removed by `coredata()`.  Its purpose, along with the
+#' the replacement function `xcoredata<-` is primarily for developers using
+#' \pkg{xts}' [`try.xts()`] and [`reclass()`] functionality inside functions
+#' so the functions can take any time series class as an input and return the
+#' same time series class.
 #' 
-#' @param x an `xts` object
-#' @param fmt should the rownames be formated in a non-standard way
-#' @param value non-core attributes to assign
-#' @param \dots further arguments (unused)
+#' @param x An xts object.
+#' @param fmt Should the rownames be formated using `tformat()`? Alternatively
+#'   a date/time string to be passed to `format()`. See details.
+#' @param value Non-core attributes to assign.
+#' @param \dots Unused.
 #' 
 #' @return Returns either a matrix object for coredata, or a list of named
-#' attributes.
+#'   attributes.
 #' 
 #' The replacement functions are called for their side-effects.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [`coredata()`][zoo::zoo], [xtsAttributes()]
+#' @seealso [`coredata()`][zoo::zoo], [`xtsAttributes()`]
 #' 
 #' @keywords utilities
 #' @examples
@@ -138,24 +140,24 @@ function(x,...) {
 
 #' Extract and Replace xts Attributes
 #' 
-#' Extract and replace non-core `xts` attributes.
+#' Extract and replace non-core xts attributes.
 #' 
-#' Since `xts` objects are S3 objects with special attributes, a method is
-#' necessary to properly assign and view the user-added attributes.
+#' This function allows users to assign custom attributes to the xts objects,
+#' without altering core xts attributes (i.e. tclass, tzone, and tformat).
 #' 
-#' A call to `attributes` from the \pkg{base} package will return all
-#' attributes, including those specific to the `xts` class.
+#' [`attributes()`] returns all attributes, including core attributes of the
+#' xts class.
 #' 
-#' @param x an xts object
-#' @param user logical; should user-defined attributes be returned?  The
-#' default of `NULL` returns all `xts` attributes.
-#' @param value a list of new name=value attributes
+#' @param x An xts object.
+#' @param user Should user-defined attributes be returned? The default of
+#'   `NULL` returns all xts attributes.
+#' @param value A list of new `name = value` attributes.
 #' 
-#' @return A named list of user settable attributes.
+#' @return A named list of user-defined attributes.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [attributes()]
+#' @seealso [`attributes()`]
 #'
 #' @keywords utilities
 #' @examples

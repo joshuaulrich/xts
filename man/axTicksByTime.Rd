@@ -16,21 +16,22 @@ axTicksByTime(
 )
 }
 \arguments{
-\item{x}{the object indexed by time, or a vector of times/dates}
+\item{x}{An object indexed by time or a vector of times/dates.}
 
-\item{ticks.on}{what to break on}
+\item{ticks.on}{Time unit for tick locations.}
 
-\item{k}{frequency of breaks}
+\item{k}{Frequency of tick locations.}
 
-\item{labels}{should a labeled vector be returned}
+\item{labels}{Should a labeled vector be returned?}
 
-\item{format.labels}{format labels - may be format to use}
+\item{format.labels}{Either a logical value specifying whether labels should
+be formatted, or a character string specifying the format to use.}
 
-\item{ends}{should the ends be adjusted}
+\item{ends}{Should the ends be adjusted?}
 
-\item{gt}{lower bound on number of breaks}
+\item{gt}{Lower bound on number of tick locations.}
 
-\item{lt}{upper bound on number of breaks}
+\item{lt}{Upper bound on number of tick locations.}
 }
 \value{
 A numeric vector of index element locations where tick marks should
@@ -41,20 +42,18 @@ If possible, the result will be named using formatted values from the index
 timestamps. The names will be used for the tick mark labels.
 }
 \description{
-Compute x-axis tickmarks like \code{axTicks} in base but with respect to
-time.  Additionally the first argument is the object indexed by time which
-you are looking to derive tickmark locations for.
+Compute x-axis tickmarks like \code{\link[=axTicks]{axTicks()}} in base but with respect to
+time. This function is written for internal use, and documented for those
+wishing to use it for customized plots.
 }
 \details{
-It is possible to specify the detail you are seeking, or by passing 'auto'
-to the \code{ticks.on} argument, to get a best heuristic fit.
+The default \code{ticks.on = "auto"} uses heuristics to compute sensible tick
+locations. Use a combination of \code{ticks.on} and \code{k} to create tick locations
+at specific intervals. For example, \code{ticks.on = "days"} and \code{k = 7} will
+create tick marks every 7 days.
 
-This function is written for internal use, and documented for those wishing
-to use outside of the internal function uses. In general it is most unlikely
-that the end user will call this function directly.
-
-The \code{format.labels} argument allows for standard formatting like that
-used in \code{format}, \code{strptime}, and \code{strftime}.
+When \code{format.labels} is a character string the possible values are the same
+as those listed in the Details section of \code{\link[=strptime]{strptime()}}.
 }
 \examples{
 

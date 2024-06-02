@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -106,75 +106,64 @@
 
 #' Extract Subsets of xts Objects
 #' 
-#' Details on efficient subsetting of `xts` objects for maximum
-#' performance and compatibility.
+#' Details on efficient subsetting of xts objects for maximum performance
+#' and compatibility.
 #' 
-#' One of the primary motivations, and key points of differentiation of the
-#' time series class xts, is the ability to subset rows by specifying ISO-8601
-#' compatible range strings.  This allows for natural range-based time queries
-#' without requiring prior knowledge of the underlying time object used in
-#' construction.
+#' One of the primary motivations and key points of differentiation of xts is
+#' the ability to subset rows by specifying ISO-8601 compatible range strings.
+#' This allows for natural range-based time queries without requiring prior
+#' knowledge of the underlying class used for the time index.
 #' 
-#' When a raw character vector is used for the `i` subset argument, it is
-#' processed as if it was ISO-8601 compliant.  This means that it is parsed
-#' from left to right, according to the following specification:
+#' When `i` is a character string, it is processed as an ISO-8601 formatted
+#' datetime or time range using [`.parseISO8601()`]. A single datetime is
+#' parsed from left to to right, according to the following specification:
 #' 
 #' CCYYMMDD HH:MM:SS.ss+
 #' 
-#' A full description will be expanded from a left-specified truncated one.
-#' 
-#' Additionally, one may specify range-based queries by simply supplying two
-#' time descriptions seperated by a forward slash:
+#' A time range can be specified by two datetimes separated by a forward slash
+#' or double-colon. For example:
 #' 
 #' CCYYMMDD HH:MM:SS.ss+/CCYYMMDD HH:MM:SS.ss
 #' 
-#' The algorithm to parse the above is `.parseISO8601` from the \pkg{xts}
-#' package.
+#' The ISO8601 time range subsetting uses a custom binary search algorithm to
+#' efficiently find the beginning and end of the time range. `i` can also be a
+#' vector of ISO8601 time ranges, which enables subsetting by multiple
+#' non-contiguous time ranges in one subset call.
 #' 
-#' ISO-style subsetting, given a range type query, makes use of a custom binary
-#' search mechanism that allows for very fast subsetting as no linear search
-#' though the index is required.  ISO-style character vectors may be longer
-#' than length one, allowing for multiple non-contiguous ranges to be selected
-#' in one subsetting call.
+#' The above parsing, both for single datetimes and time ranges, will be done
+#' on each element when `i` is a character *vector*. This is very inefficient,
+#' especially for long vectors. In this case, it's recommened to use `I(i)` so
+#' the xts subset function can process the vector more efficiently. Another
+#' alternative is to convert `i` to POSIXct before passing it to the subset
+#' function. See the examples for an illustration of using `I(i)`.
 #' 
-#' If a character *vector* representing time is used in place of numeric
-#' values, ISO-style queries, or timeBased objects, the above parsing will be
-#' carried out on each element of the i-vector.  This overhead can be very
-#' costly. If the character approach is used when no ISO range querying is
-#' needed, it is recommended to wrap the \sQuote{i} character vector with the
-#' `I()` function call, to allow for more efficient internal processing.
-#' Alternately converting character vectors to POSIXct objects will provide the
-#' most performance efficiency.
+#' The xts index is stored as POSIXct internally, regardless of the value of
+#' its `tclass` attribute. So the fastest time-based subsetting is always when
+#' `i` is a POSIXct vector.
 #' 
-#' As `xts` uses POSIXct time representations of all user-level index
-#' classes internally, the fastest timeBased subsetting will always be from
-#' POSIXct objects, regardless of the `tclass` of the original object.
-#' All non-POSIXct time classes are converted to character first to preserve
-#' consistent TZ behavior.
+#' @param x An xts object.
+#' @param i The rows to extract. Can be a numeric vector, time-based vector, or
+#'   an ISO-8601 style range string (see details).
+#' @param j The columns to extract, either a numeric vector of column locations
+#'   or a character vector of column names.
+#' @param drop Should dimension be dropped, if possible? See notes section.
+#' @param which.i Logical value that determines whether a subset xts object is
+#'   returned (the default), or the locations of the matching rows (when
+#'   `which.i = TRUE`).
+#' @param \dots Additional arguments (currently unused).
 #' 
-#' @param x xts object
-#' @param i the rows to extract. Numeric, timeBased or ISO-8601 style (see
-#' details)
-#' @param j the columns to extract, numeric or by name
-#' @param drop should dimension be dropped, if possible. See NOTE.
-#' @param which.i return the \sQuote{i} values used for subsetting. No subset
-#' will be performed.
-#' @param \dots additional arguments (unused)
+#' @return An xts object containing the subset of `x`. When `which.i = TRUE`,
+#' the corresponding integer locations of the matching rows is returned.
 #' 
-#' @return An extraction of the original xts object.  If `which.i` is
-#' TRUE, the corresponding integer \sQuote{i} values used to subset will be
-#' returned.
-#' 
-#' @note By design, drop=FALSE in the default case.  This preserves the basic
-#' underlying type of `matrix` and the `dim()` to be non-NULL. This
-#' is different from both matrix and `zoo` behavior as uses
-#' `drop=TRUE`.  Explicitly passing `drop=TRUE` may be required when
-#' performing certain matrix operations.
+#' @note By design, xts objects always have two dimensions. They cannot be
+#' vectors like zoo objects. Therefore `drop = FALSE` by default in order to
+#' preserve the xts object's dimensions. This is different from both matrix and
+#' zoo, which use `drop = TRUE` by default. Explicitly setting `drop = TRUE`
+#' may be needed when performing certain matrix operations.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [xts()], [.parseISO8601()],
-#' [.index()]
+#' @seealso [`xts()`], [`.parseISO8601()`], [`.index()`]
 #' 
 #' @references ISO 8601: Date elements and interchange formats - Information
 #' interchange - Representation of dates and time <https://www.iso.org>
@@ -188,7 +177,7 @@
 #' x <- xts(1:3, Sys.Date()+1:3)
 #' xx <- cbind(x,x)
 #' 
-#' # drop=FALSE for xts, differs from zoo and matrix
+#' # drop = FALSE for xts, differs from zoo and matrix
 #' z <- as.zoo(xx)
 #' z/z[,1]
 #' 
@@ -198,11 +187,11 @@
 #' # this will fail with non-conformable arrays (both retain dim)
 #' tryCatch(
 #'   xx/x[,1], 
-#'   error=function(e) print("need to set drop=TRUE")
+#'   error = function(e) print("need to set drop = TRUE")
 #' )
 #' 
 #' # correct way
-#' xx/xx[,1,drop=TRUE]
+#' xx/xx[,1,drop = TRUE]
 #' 
 #' # or less efficiently
 #' xx/drop(xx[,1])
@@ -574,40 +563,38 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
 # that is, index. must be time based,
 
 
-#' Extract time windows from an `xts` series
+#' Extract Time Windows from xts Objects
 #' 
-#' Method for extracting time windows from `xts` objects.
+#' Method for extracting time windows from xts objects.
 #' 
-#' The point of having `window` in addition to the regular subset function
-#' is to have a fast way of extracting time ranges from an `xts` series.
-#' In particular, this method will convert `start` and `end` to
-#' `POSIXct` then do a binary lookup on the internal `xts` index to
-#' quickly return a range of matching dates. With a user supplied
-#' `index.`, a similarly fast invocation of `findInterval` is used so
-#' that large sets of sorted dates can be retrieved quickly.
+#' The xts `window()` method provides an efficient way to subset an xts object
+#' between a start and end date using a binary search algorithm. Specifically,
+#' it converts `start` and `end` to POSIXct and then does a binary search of
+#' the index to quickly return a subset of `x` between `start` and `end`.
 #' 
-#' @param x an object.
-#' @param index. a user defined time index. This defaults to the `xts`
-#' index for the series via `.index(x)`. When supplied, this is typically
-#' a subset of the dates in the full series.\cr The `index.` must be a set
-#' of dates that are convertible to `POSIXct`. If you want fast lookups,
-#' then `index.` should be sorted and of class `POSIXct`.\cr If an
-#' unsorted `index.` is passed in, `window` will sort it.
-#' @param start a start time. Extract `xts` rows where `index. >=
-#' start`. `start` may be any class that is convertible to `POSIXct`
-#' such as a character variable in the format \sQuote{YYYY-MM-DD}.\cr If
-#' `start` is `NULL` then all `index.` dates are matched.
-#' @param end an end time. Extract `xts` rows where `index. <= end`.
-#' `end` must be convertible to `POSIXct`. If `end` is
-#' `NULL` then all `index.` dates are matched.
-#' @param \dots currently not used.
+#' Both `start` and `end` may be any class that is convertible to POSIXct, such
+#' as a character string in the format \sQuote{yyyy-mm-dd}. When `start = NULL`
+#' the returned subset will begin at the first value of `index.`. When
+#' `end = NULL` the returned subset will end with the last value of `index.`.
+#' Otherwise the subset will contain all timestamps where `index.` is between
+#' `start` and `end`, inclusive.
+#'
+#' When `index.` is specified, [`findInterval()`] is used to quickly retrieve
+#' large sets of sorted timestamps. For the best performance, `index.` must be
+#' a *sorted* POSIXct vector or a numeric vector of seconds since the epoch.
+#' `index.` is typically a subset of the timestamps in `x`.
 #' 
-#' @return The matching time window is extracted.
+#' @param x An xts object.
+#' @param index. A user defined time index (default `.index(x)`).
+#' @param start A start time coercible to POSIXct.
+#' @param end An end time coercible to POSIXct.
+#' @param \dots Unused.
+#' 
+#' @return The subset of `x` that matches the time window.
 #' 
 #' @author Corwin Joy
 #' 
-#' @seealso [subset.xts()], [base::findInterval()],
-#' [xts()]
+#' @seealso [`subset.xts()`], [`findInterval()`], [`xts()`]
 #' 
 #' @keywords ts
 #' @examples
@@ -619,11 +606,11 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
 #' 
 #' window(x, start = "2003-02-01", end = "2003-03-01")
 #' window(x, start = as.Date("2003-02-01"), end = as.Date("2003-03-01"))
-#' window(x, index = x.date[1:6], start = as.Date("2003-02-01"))
-#' window(x, index = x.date[c(4, 8, 10)])
+#' window(x, index. = x.date[1:6], start = as.Date("2003-02-01"))
+#' window(x, index. = x.date[c(4, 8, 10)])
 #' 
 #' ## Assign to subset
-#' window(x, index = x.date[c(4, 8, 10)]) <- matrix(1:6, ncol = 2)
+#' window(x, index. = x.date[c(4, 8, 10)]) <- matrix(1:6, ncol = 2)
 #' x
 #' 
 window.xts <- function(x, index. = NULL, start = NULL, end = NULL, ...)

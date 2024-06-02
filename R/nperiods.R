@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -43,25 +43,25 @@ function(x) {
 #' Calculate the number of specified periods in a given time series like data
 #' object.
 #' 
-#' Essentially a wrapper to `endpoints` with the appropriate period
-#' specified; the resulting value derived from counting the endpoints
+#' Essentially a wrapper to `endpoints()` with the appropriate period
+#' specified. The result is the number of endpoints found.
 #' 
 #' As a compromise between simplicity and accuracy, the results will always
-#' round up to the nearest complete period. So n**** - 1 will return the
-#' completed periods.
+#' round up to the nearest complete period. Subtract 1 from the result to
+#' get the completed periods.
 #' 
-#' For finer grain detail one should call a higher frequency n**** function.
+#' For finer grain detail one should call the higher frequency functions.
 #' 
-#' An alternative summary can be found with `periodicity` and
+#' An alternative summary can be found with `periodicity(x)` and
 #' `unclass(periodicity(x))`.
 #' 
-#' @param x A time-based object
+#' @param x A time-based object.
 #' 
-#' @return The number of observations for the period type specified
+#' @return The number of respective periods in `x`.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [endpoints()]
+#' @seealso [`endpoints()`]
 #' 
 #' @keywords utilities
 #' @examples

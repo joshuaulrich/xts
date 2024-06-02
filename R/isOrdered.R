@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -21,21 +21,22 @@
 
 #' Check If A Vector Is Ordered
 #' 
-#' Performs check to determine if a vector is strictly increasing, strictly
-#' decreasing, not decreasing, or not increasing.
+#' Check if a vector is strictly increasing, strictly decreasing, not
+#' decreasing, or not increasing.
 #' 
 #' Designed for internal use with \pkg{xts}, this provides highly optimized
 #' tests for ordering.
 #' 
-#' @param x a numeric vector
-#' @param increasing test for increasing/decreasing values
-#' @param strictly are duplicates OK
+#' @param x A numeric vector.
+#' @param increasing Test for increasing (`TRUE`) or decreasing (`FALSE`) values?
+#' @param strictly When `TRUE`, vectors with duplicate values are *not*
+#'   considered ordered.
 #' 
-#' @return Logical
+#' @return A logical scalar indicating whether or not `x` is ordered.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [is.unsorted()]
+#' @seealso [`is.unsorted()`]
 #' 
 #' @keywords misc
 #' @examples

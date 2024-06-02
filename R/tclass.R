@@ -35,29 +35,30 @@
 #' `"Date"`, `"POSIXct"`, `"chron"`, `"yearmon"`,
 #' `"yearqtr"`, or `"timeDate"`.
 #' 
-#' @param x an `xts` object
-#' @param value new index class (see Details for valid values)
-#' @param \dots arguments passed to other methods
+#' @param x An xts object.
+#' @param value The new index class (see Details for valid values).
+#' @param \dots Arguments passed to other methods.
 #' 
 #' @return A vector containing the class of the object's index.
 #' 
 #' @note Both `indexClass` and `indexClass<-` are deprecated in favor
 #' of `tclass` and `tclass<-`, respectively.
 #' 
-#' Replacing the `tclass` *does not* change the values of the
-#' internal index. See the examples.
+#' Replacing the `tclass` can *potentially change* the values of the internal
+#' index. For example, changing the 'tclass' from POSIXct to Date will
+#' truncate the POSIXct value and convert the timezone to UTC (since the Date
+#' class doesn't have a timezone). See the examples.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [index()] has more information on the xts index,
-#' [tformat()] details how the index values are formatted when
-#' printed, [tzone()] has more information about the index timezone
-#' settings.
+#' @seealso [`index()`] has more information on the xts index, [`tformat()`]
+#' details how the index values are formatted when printed, and [`tzone()`]
+#' has more information about the index timezone settings.
 #' 
 #' The following help pages describe the characteristics of the valid index
-#' classes: [POSIXct()], [Date()],
-#' [chron::chron()], [zoo::yearmon()],
-#' [zoo::yearqtr()], [timeDate::timeDate()].
+#' classes: [`POSIXct()`], [`Date()`], [chron()][chron::chron],
+#' [`yearmon()`][zoo::zoo], [`yearqtr()`][zoo::zoo],
+#' [`timeDate()`][timeDate::timeDate]
 #' 
 #' @keywords ts utilities
 #' @examples
@@ -65,17 +66,15 @@
 #' x <- timeBasedSeq('2010-01-01/2010-01-02 12:00')
 #' x <- xts(seq_along(x), x)
 #' 
-#' 
 #' y <- timeBasedSeq('2010-01-01/2010-01-03 12:00/H')
 #' y <- xts(seq_along(y), y, tzone = "America/New_York")
 #' 
-#' # Changing the tclass does not change the internal index values, but it
-#' # does change how the index is printed!
-#' head(y)    # the index has times
-#' .index(y)
+#' # Changing the tclass *changes* the internal index values
+#' head(y)          # the index has times
+#' head(.index(y))
 #' tclass(y) <- "Date"
-#' head(y)    # the index prints without times, but
-#' .index(y)  # the internal index is not changed!
+#' head(y)          # the index prints as a Date
+#' head(.index(y))  # the internal index is truncated
 #' 
 tclass <-
 function(x, ...) {

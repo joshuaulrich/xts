@@ -40,36 +40,40 @@ time_frequency <- function(x) {
 #' A simple wrapper to quickly estimate the periodicity of a given data.
 #' Returning an object of type `periodicity`.
 #' 
-#' This calculates the median number of days between observations as a difftime
-#' object, the numerical difference, the units of measurement, and the derived
-#' scale of the data as a string.
+#' This calculates the median time difference between observations as a
+#' difftime object, the numerical difference, the units of measurement, and the
+#' derived scale of the data as a string.
 #' 
-#' The time index currently must be of either `Date` or `POSIX`
-#' class, or coercible to such.
+#' The time index currently must be of either a 'Date' or 'POSIXct' class, or
+#' or coercible to one of them.
 #' 
-#' The only list item of note is the `scale`. This is an estimate of the
-#' periodicity of the data in common terms - e.g. 7 day daily data is best
-#' described as \sQuote{weekly}, and would be returned as such.
+#' The 'scale' component of the result is an estimate of the periodicity of the
+#' data in common terms - e.g. 7 day daily data is best described as 'weekly',
+#' and would be returned as such.
 #' 
-#' Possible `scale` values are:
+#' @param x A time-series-like object.
+#' @param \dots Unused.
 #' 
-#' \sQuote{minute},\sQuote{hourly}, \sQuote{daily},\sQuote{weekly},
-#' \sQuote{monthly},\sQuote{quarterly}, and \sQuote{yearly}.
+#' @return A 'periodicity' object with the following elements:
+#' * the `difftime` object,
+#' * frequency: the median time difference between observations
+#' * start: the first observation
+#' * end: the last observation
+#' * units: one of secs, mins, hours, or days
+#' * scale: one of seconds, minute, hourly, daily, weekly, monthly, quarterly, or yearly
+#' * label: one of second, minute, hour, day, week, month, quarter, year
 #' 
-#' @param x time-series-like object
-#' @param \dots unused
+#' Possible `scale` values are: \sQuote{minute}, \sQuote{hourly}, \sQuote{daily},
+#' \sQuote{weekly}, \sQuote{monthly}, \sQuote{quarterly}, and \sQuote{yearly}.
 #' 
-#' @return An object containing a list containing the `difftime` object,
-#' frequency, units, and suitable scale.
-#' 
-#' @note This function is only a *good estimate* for the underlying
-#' periodicity.  If the series is too short, or has *no* real periodicity,
-#' the return values will obviously be wrong. That said, it is quite robust and
+#' @note This function only attempts to be a *good estimate* for the underlying
+#' periodicity. If the series is too short, or has highly irregular periodicity,
+#' the return values will not be accurate. That said, it is quite robust and
 #' used internally within \pkg{xts}.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [difftime()]
+#' @seealso [`difftime()`]
 #' 
 #' @keywords utilities
 #' @examples

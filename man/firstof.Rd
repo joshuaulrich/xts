@@ -19,23 +19,23 @@ lastof(
 )
 }
 \arguments{
-\item{year, month, day}{numerical values to specify a day}
+\item{year, month, day}{Numeric values to specify a day.}
 
-\item{hour, min, sec}{numerical vaues to specify time within a day}
+\item{hour, min, sec}{Numeric vaues to specify time within a day.}
 
-\item{tz}{timezone used for conversion}
+\item{tz}{Timezone used for conversion.}
 
-\item{subsec}{number of sub-seconds}
+\item{subsec}{Number of sub-seconds.}
 }
 \value{
-An object of class POSIXct.
+An POSIXct object.
 }
 \description{
-Enable fast creation of time stamps corresponding to the first or last
-observation in a specified time period.
+Easily create of time stamps corresponding to the first or last observation
+in a specified time period.
 }
 \details{
-A wrapper to the function ISOdatetime with defaults corresponding to the
+This is a wrapper to \code{\link[=ISOdatetime]{ISOdatetime()}} with defaults corresponding to the
 first or last possible time in a given period.
 }
 \examples{

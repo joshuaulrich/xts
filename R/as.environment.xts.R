@@ -18,20 +18,20 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#' Coerce an \sQuote{xts} Object to an Environment by Column
+#' Coerce an xts Object to an Environment by Column
 #' 
-#' Method to automatically convert an \sQuote{xts} object to an environment
-#' containing vectors representing each column of the original xts object. Each
-#' objects will be named according to the column name it is exracted by.
+#' Method to automatically convert an xts object to an environment containing
+#' vectors representing each column of the original xts object. The name of
+#' each object in the resulting environment corresponds to the name of the
+#' column of the xts object.
 #' 
-#' An experimental tool to convert `xts` objects into environments for
-#' simplifying use withing the standard R formula/data paradigm.
+#' @param x An xts object.
 #' 
-#' @param x an `xts` object
-#' 
-#' @return An `environment` containing `ncol(x)` vectors extracted by
-#' column from `x`.  Note that environments do not preserve (or have
-#' knowledge) of column position, a.k.a order.
+#' @return An environment containing `ncol(x)` vectors extracted by
+#'   column from `x`.
+#'
+#' @note Environments do not preserve (or have knowledge) of column order and
+#'   cannot be subset by an integer index.
 #' 
 #' @author Jeffrey A. Ryan
 #' 

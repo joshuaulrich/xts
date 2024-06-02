@@ -45,53 +45,51 @@ function(caller)
 
 #' Apply Function Over Specified Interval
 #' 
-#' Apply a specified function to data over intervals specified by `INDEX`.
-#' The intervals are defined as the observations from `INDEX[k]+1` to
-#' `INDEX[k+1]`, for `k = 1:(length(INDEX)-1)`.
+#' Apply a specified function to data over intervals specified by `INDEX`. The
+#' intervals are defined as the observations from `INDEX[k]+1` to `INDEX[k+1]`,
+#' for `k = 1:(length(INDEX)-1)`.
 #' 
-#' Similar to the rest of the apply family, `period.apply()` calculates
-#' the specified function's value over a subset of data. The primary difference
-#' is that `period.apply()` applies the function to non-overlapping
-#' intervals of a vector or matrix.
+#' Similar to the rest of the apply family, `period.apply()` calculates the
+#' specified function's value over a subset of data. The primary difference is
+#' that `period.apply()` applies the function to non-overlapping intervals of a
+#' vector or matrix.
 #' 
 #' Useful for applying functions over an entire data object by any
 #' non-overlapping intervals. For example, when `INDEX` is the result of a
 #' call to `endpoints()`.
 #' 
-#' `period.apply()` checks that `INDEX` is sorted, unique, starts
-#' with 0, and ends with `NROW(x)`. All those conditions are true of
-#' vectors returned by `endpoints()`.
+#' `period.apply()` checks that `INDEX` is sorted, unique, starts with 0, and
+#' ends with `nrow(x)`. All those conditions are true of vectors returned by
+#' `endpoints()`.
 #' 
-#' @param x The data that FUN will be applied to.
+#' @param x The data that `FUN` will be applied to.
 #' @param INDEX A numeric vector of index breakpoint locations. The vector
-#' should begin with 0 and end with `NROW(x)`.
-#' @param FUN A `function` to apply to each interval in `x`.
+#'   should begin with 0 and end with `nrow(x)`.
+#' @param FUN A function to apply to each interval in `x`.
 #' @param \dots Additional arguments for `FUN`.
 #' 
-#' @return An object with `length(INDEX) - 1` observations (assuming
-#' `INDEX` starts with 0 and ends with `NROW(x)`).
+#' @return An object with `length(INDEX) - 1` observations, assuming `INDEX`
+#'   starts with 0 and ends with `nrow(x)`.
 #' 
 #' @note When `FUN = mean` the results will contain one column for every
 #' column in the input, which is different from other math functions (e.g.
 #' `median`, `sum`, `prod`, `sd`, etc.).
 #' 
-#' `FUN = mean` works by column because the default method
-#' `stats::mean` used to work by column for matrices and data.frames. R
-#' Core changed the behavior of `mean` to always return one column in
-#' order to be consistent with the other math functions. This broke some
-#' \pkg{xts} dependencies and `mean.xts` was created to maintain the
-#' original behavior.
+#' `FUN = mean` works by column because the default method `stats::mean`
+#' previously worked by column for matrices and data.frames. R Core changed the
+#' behavior of `mean` to always return one column in order to be consistent
+#' with the other math functions. This broke some \pkg{xts} dependencies and
+#' `mean.xts()` was created to maintain the original behavior.
 #' 
-#' Using `FUN = mean` will print a message that describes this
-#' inconsistency.  To avoid the message and confusion, use `FUN =
-#' colMeans` to calculate means by column and use `FUN = function(x) mean`
-#' to calculate one mean for all the data. Set
-#' `options(xts.message.period.apply.mean = FALSE)` to suppress this
+#' Using `FUN = mean` will print a message that describes this inconsistency.
+#' To avoid the message and confusion, use `FUN = colMeans` to calculate means
+#' by column and use `FUN = function(x) mean` to calculate one mean for all the
+#' data. Set `options(xts.message.period.apply.mean = FALSE)` to suppress this
 #' message.
 #' 
 #' @author Jeffrey A. Ryan, Joshua M. Ulrich
 #' 
-#' @seealso [endpoints()] [apply.monthly()]
+#' @seealso [`endpoints()`] [`apply.monthly()`]
 #' 
 #' @keywords utilities
 #' @examples
@@ -167,12 +165,12 @@ function(x,FUN, ...)
 #' subset the data based on the specified time period (implicit in the call),
 #' and return a vector of values for each period in the original data.
 #' 
-#' Essentially a wrapper to the \pkg{xts} functions `endpoints` and
-#' `period.apply`, mainly as a convenience.
+#' Essentially a wrapper to the \pkg{xts} functions `endpoints()` and
+#' `period.apply()`, mainly as a convenience.
 #' 
-#' @param x an time-series object coercible to xts
-#' @param FUN an \R function
-#' @param \dots additional arguments to FUN
+#' @param x A time-series object coercible to xts.
+#' @param FUN A function to apply to each period.
+#' @param \dots Additional arguments to `FUN`.
 #'
 #' @return A vector of results produced by `FUN`, corresponding to the
 #' appropriate periods.
@@ -181,24 +179,21 @@ function(x,FUN, ...)
 #' column in the input, which is different from other math functions (e.g.
 #' `median`, `sum`, `prod`, `sd`, etc.).
 #' 
-#' `FUN = mean` works by column because the default method
-#' `stats::mean` used to work by column for matrices and data.frames. R
-#' Core changed the behavior of `mean` to always return one column in
-#' order to be consistent with the other math functions. This broke some
-#' \pkg{xts} dependencies and `mean.xts` was created to maintain the
-#' original behavior.
+#' `FUN = mean` works by column because the default method `stats::mean`
+#' previously worked by column for matrices and data.frames. R Core changed the
+#' behavior of `mean` to always return one column in order to be consistent
+#' with the other math functions. This broke some \pkg{xts} dependencies and
+#' `mean.xts()` was created to maintain the original behavior.
 #' 
-#' Using `FUN = mean` will print a message that describes this
-#' inconsistency.  To avoid the message and confusion, use `FUN =
-#' colMeans` to calculate means by column and use `FUN = function(x) mean`
-#' to calculate one mean for all the data. Set
-#' `options(xts.message.period.apply.mean = FALSE)` to suppress this
+#' Using `FUN = mean` will print a message that describes this inconsistency.
+#' To avoid the message and confusion, use `FUN = colMeans` to calculate means
+#' by column and use `FUN = function(x) mean` to calculate one mean for all the
+#' data. Set `options(xts.message.period.apply.mean = FALSE)` to suppress this
 #' message.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [endpoints()], [period.apply()],
-#' [to.monthly()]
+#' @seealso [`endpoints()`], [`period.apply()`], [`to.monthly()`]
 #' 
 #' @keywords utilities
 #' @examples

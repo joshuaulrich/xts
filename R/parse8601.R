@@ -42,12 +42,12 @@
 
 #' Create an ISO8601 string from a time series object
 #' 
-#' This function uses the `start()` and `end()` of a time series
-#' object to create an ISO8601 string that spans the time range of the object.
+#' This function uses the `start()` and `end()` of a time series object to
+#' create an ISO8601 string that spans the time range of the object.
 #' 
 #' This is not exported an therefore not part of the official xts API.
 #' 
-#' @param x a time series object with `start` and `end` methods.
+#' @param x A time series object with `start()` and `end()` methods.
 #' 
 #' @return A character vector of length one describing the ISO-style format
 #' for the range of a given time series object.
@@ -77,28 +77,27 @@
 #' 
 #' For dates prior to the epoch (1970-01-01) the ending time is aligned to the
 #' 59.0000 second. This is due to a bug/feature in the \R implementation of
-#' as.POSIXct and mktime0 at the C-source level. This limits the precision of
-#' ranges prior to 1970 to 1 minute granularity with the current \pkg{xts}
-#' workaround.
+#' `as.POSIXct()` and `mktime0()` at the C-source level. This limits the
+#' precision of ranges prior to 1970 to 1 minute granularity with the current
+#' \pkg{xts} workaround.
 #' 
 #' Recurring times over multiple days may be specified using the "T" notation.
 #' See the examples for details.
 #' 
 #' @param x A character string conforming to the ISO 8601:2004(e) rules.
-#' @param start lower constraint on range
-#' @param end upper constraint of range
-#' @param tz timezone (tzone) to use internally
+#' @param start Lower constraint on range.
+#' @param end Upper constraint of range
+#' @param tz Timezone (tzone) to use internally.
 #' 
-#' @return A list of length two, with an entry named \sQuote{first.time} and
-#' one names \sQuote{last.time}.
+#' @return A two element list with an entry named \sQuote{first.time} and
+#'   one named \sQuote{last.time}.
 #' 
 #' @note There is no checking done to test for a properly constructed ISO
-#' format string. This must be correctly entered by the user, lest bad things
-#' may happen.
+#' format string. This must be correctly entered by the user.
 #' 
 #' When using durations, it is important to note that the time of the duration
 #' specified is not necessarily the same as the realized periods that may be
-#' returned when applied to an irregular time series. This is not a bug; it is
+#' returned when applied to an irregular time series. This is not a bug, it is
 #' a standards and implementation gotcha.
 #' 
 #' @author Jeffrey A. Ryan

@@ -18,18 +18,18 @@ make.time.unique(x, eps = 1e-06, drop = FALSE, fromLast = FALSE, ...)
 \arguments{
 \item{x}{An xts object, or POSIXct vector.}
 
-\item{eps}{value to add to force uniqueness.}
+\item{eps}{A value to add to force uniqueness.}
 
-\item{drop}{drop duplicates instead of adjusting by \code{eps}}
+\item{drop}{Should duplicates be dropped instead of adjusted by \code{eps}?}
 
-\item{fromLast}{if drop=TRUE, fromLast controls which duplicated times are
-dropped. If fromLast=FALSE, the earliest observation with an identical
-timestamp is kept with subsequent observations dropped.}
+\item{fromLast}{When \code{drop = TRUE}, \code{fromLast} controls which duplicated
+times are dropped. When \code{fromLast = FALSE}, the earliest observation with
+an identical timestamp is kept and subsequent observations are dropped.}
 
-\item{\dots}{unused}
+\item{\dots}{Unused.}
 }
 \value{
-A modified version of x.
+A modified version of \code{x} with unique timestamps.
 }
 \description{
 A generic function to force sorted time vectors to be unique. Useful for
@@ -40,12 +40,12 @@ microseconds. In practice this advances each subsequent identical time by
 }
 \details{
 The returned time-series object will have new time-stamps so that
-\code{isOrdered( .index(x) )} evaluates to TRUE.
+\code{isOrdered(.index(x))} evaluates to \code{TRUE}.
 }
 \note{
 Incoming values must be pre-sorted, and no check is done to make sure
-that this is the case.  If the index values are of storage.mode
-\sQuote{integer}, they will be coerced to \sQuote{double} if drop=FALSE.
+that this is the case.  \sQuote{integer} index value will be coerced to
+\sQuote{double} when \code{drop = FALSE}.
 }
 \examples{
 

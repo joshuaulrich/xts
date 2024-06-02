@@ -10,25 +10,25 @@ xtsAttributes(x, user = NULL)
 xtsAttributes(x) <- value
 }
 \arguments{
-\item{x}{an xts object}
+\item{x}{An xts object.}
 
-\item{user}{logical; should user-defined attributes be returned?  The
-default of \code{NULL} returns all \code{xts} attributes.}
+\item{user}{Should user-defined attributes be returned? The default of
+\code{NULL} returns all xts attributes.}
 
-\item{value}{a list of new name=value attributes}
+\item{value}{A list of new \code{name = value} attributes.}
 }
 \value{
-A named list of user settable attributes.
+A named list of user-defined attributes.
 }
 \description{
-Extract and replace non-core \code{xts} attributes.
+Extract and replace non-core xts attributes.
 }
 \details{
-Since \code{xts} objects are S3 objects with special attributes, a method is
-necessary to properly assign and view the user-added attributes.
+This function allows users to assign custom attributes to the xts objects,
+without altering core xts attributes (i.e. tclass, tzone, and tformat).
 
-A call to \code{attributes} from the \pkg{base} package will return all
-attributes, including those specific to the \code{xts} class.
+\code{\link[=attributes]{attributes()}} returns all attributes, including core attributes of the
+xts class.
 }
 \examples{
 

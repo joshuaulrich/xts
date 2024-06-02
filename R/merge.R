@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -21,58 +21,55 @@
 
 #' Merge xts Objects
 #' 
-#' Used to perform merge operation on `xts` objects by *time*
-#' (index).  Given the inherent ordered nature of `xts` time-series, a
-#' merge-join style merge allows for optimally efficient joins.
+#' Perform merge operations on xts objects by time index.
 #' 
-#' This is an xts method compatible with merge.zoo, as xts extends zoo. That
-#' documentation should also be referenced. Difference are noted where
-#' applicable.
+#' This xts method is compatible with [`merge.zoo()`] but implemented almost
+#' entirely in C-level code for efficiency.
 #' 
-#' Implemented almost entirely in custom C-level code, it is possible using
-#' either the `all` argument or the `join` argument to implement all
-#' common database join operations along the to-be-merged objects time-index:
-#' \sQuote{outer} (full outer - all rows), \sQuote{inner} (only rows with
-#' common indexes), \sQuote{left} (all rows in the left object, and those that
-#' match in the right), and \sQuote{right} (all rows in the right object, and
-#' those that match in the left).
+#' The function can perform all common database join operations along the time
+#' index by setting 'join' to one of the values below. Note that 'left' and
+#' 'right' are only implemented for two objects.
 #' 
-#' The above join types can also be expressed as a vector of logical values
-#' passed to `all`.  c(TRUE,TRUE) or TRUE for \sQuote{join="outer"},
-#' c(FALSE,FALSE) or FALSE for \sQuote{join="inner"}, c(TRUE, FALSE) for
-#' \sQuote{join="left"}, and c(FALSE,TRUE) for \sQuote{join="right"}.
+#' * outer: full outer (all rows in all objects)
+#' * inner: only rows with common indexes in all objects
+#' * left: all rows in the first object, and rows from the second object that
+#'   have the same index as the first object
+#' * right: all rows in the second object, and rows from the first object that
+#'   have the same index as the second object
+#'
+#' The above join types can also be accomplished by setting 'all' to one of the
+#' values below.
 #' 
-#' Note that the `all` and `join` arguments imply a two case
-#' scenario.  For merging more than two objects, they will simply fall back to
-#' a full outer or full inner join, depending on the first position of all, as
-#' left and right can be ambiguous with respect to sides.
+#' * outer: `all = TRUE` or `all = c(TRUE, TRUE)`
+#' * inner: `all = FALSE` or `all = c(FALSE, FALSE)`
+#' * left: `all = c(TRUE, FALSE)`
+#' * right: `all = c(FALSE, TRUE)`
+#'
+#' The result will have the timezone of the leftmost argument if available. Use
+#' the 'tzone' argument to override the default behavior.
 #' 
-#' To do something along the lines of merge.zoo's method of joining based on an
-#' all argument of the same length of the arguments to join, see the example.
+#' When `retclass = NULL` the joined objects will be split and reassigned
+#' silently back to the original environment they are called from. This is for
+#' backward compatibility with zoo, but unused by xts. When `retclass = FALSE`
+#' the object will be stripped of its class attribute. This is for internal use.
 #' 
-#' The resultant object will have the timezone of the leftmost argument if
-#' available. Use `tzone` to override.
+#' See the examples in order to join using an 'all' argument that is the same
+#' arguments to join, like you can do with `merge.zoo()`.
 #' 
-#' If `retclass` is `NULL`, the joined objects will be split and
-#' reassigned silently back to the original environment they are called from.
-#' This is for backward compatibility with zoo, though unused by xts.
+#' @param \dots One or more xts objects, or objects coercible to class xts.
+#' @param all A logical vector indicating merge type.
+#' @param fill Values to be used for missing elements.
+#' @param suffixes Suffix to be added to merged column names.
+#' @param join Type of database join. One of 'outer', 'inner', 'left', or 'right'.
+#' @param retside Which side of the merged object should be returned (2-case only)?
+#' @param retclass Either a logical value indicating whether the result should
+#'   have a 'class' attribute, or the name of the desired class for the result.
+#' @param tzone Time zone to use for the merged result.
+#' @param drop Not currently used.
+#' @param check.names Use [`make.names()`] to ensure column names are vaild \R
+#'   object names?
 #' 
-#' If `retclass` is `FALSE` the object will be stripped of its class
-#' attribute.  This is for internal use.
-#' 
-#' @param \dots one or more xts objects, or objects coercible to class xts
-#' @param all a logical vector indicating merge type
-#' @param fill values to be used for missing elements
-#' @param suffixes to be added to merged column names
-#' @param join type of database join
-#' @param retside which side of the merged object should be returned (2-case
-#' only)
-#' @param retclass object to return
-#' @param tzone time zone of merged object
-#' @param drop not currently used
-#' @param check.names not currently used
-#' 
-#' @return A new `xts` object containing the appropriate elements of the
+#' @return A new xts object containing the appropriate elements of the
 #' objects passed in to be merged.
 #' 
 #' @note This is a highly optimized merge, specifically designed for ordered

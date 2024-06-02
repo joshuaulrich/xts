@@ -24,18 +24,18 @@
 #' Change timestamps to the start of the next period, specified in multiples of
 #' seconds.
 #' 
-#' This function is an S3 generic.  The result is to round up to the next
-#' period determined by `n modulo x`.
+#' This function is an S3 generic. The result is to round up to the next period
+#' determined by 'n modulo x'.
 #' 
-#' @param x object to align
-#' @param n number of seconds to adjust by
-#' @param \dots additional arguments. See details.
+#' @param x Object containing timestamps to align.
+#' @param n Number of seconds to adjust by.
+#' @param \dots Additional arguments. See details.
 #' 
-#' @return A new object of class(x)
+#' @return A new object with the same class as `x`.
 #' 
 #' @author Jeffrey A. Ryan with input from Brian Peterson
 #' 
-#' @seealso [to.period()]
+#' @seealso [`to.period()`]
 #' 
 #' @keywords chron manip ts misc
 #' @examples
@@ -104,25 +104,25 @@ is.time.unique.zoo <- function(x) {
 #' `eps` over the previous (possibly also advanced) value.
 #' 
 #' The returned time-series object will have new time-stamps so that
-#' `isOrdered( .index(x) )` evaluates to TRUE.
+#' `isOrdered(.index(x))` evaluates to `TRUE`.
 #' 
 #' @param x An xts object, or POSIXct vector.
-#' @param eps value to add to force uniqueness.
-#' @param drop drop duplicates instead of adjusting by `eps`
-#' @param fromLast if drop=TRUE, fromLast controls which duplicated times are
-#' dropped. If fromLast=FALSE, the earliest observation with an identical
-#' timestamp is kept with subsequent observations dropped.
-#' @param \dots unused
+#' @param eps A value to add to force uniqueness.
+#' @param drop Should duplicates be dropped instead of adjusted by `eps`?
+#' @param fromLast When `drop = TRUE`, `fromLast` controls which duplicated
+#'   times are dropped. When `fromLast = FALSE`, the earliest observation with
+#'   an identical timestamp is kept and subsequent observations are dropped.
+#' @param \dots Unused.
 #' 
-#' @return A modified version of x.
+#' @return A modified version of `x` with unique timestamps.
 #' 
 #' @note Incoming values must be pre-sorted, and no check is done to make sure
-#' that this is the case.  If the index values are of storage.mode
-#' \sQuote{integer}, they will be coerced to \sQuote{double} if drop=FALSE.
+#'   that this is the case.  \sQuote{integer} index value will be coerced to
+#'   \sQuote{double} when `drop = FALSE`.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [align.time()]
+#' @seealso [`align.time()`]
 #' 
 #' @rdname make.index.unique
 #' @keywords ts
