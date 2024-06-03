@@ -111,15 +111,17 @@ use.xts <- try.xts
 #' @examples
 #' 
 #' a <- 1:10
-#' try.xts(a, error = FALSE)  # fails silently, still an integer vector
+#' 
+#' # fails silently, the result is still an integer vector
+#' try.xts(a, error = FALSE)
 #' 
 #' # control the result with a function
 #' try.xts(a, error = function(x, ...) { "I'm afraid I can't do that." })
 #' 
 #' z <- zoo(1:10, timeBasedSeq("2020-01-01/2020-01-10"))
-#'
-#' str(try.xts(z))          # zoo to xts
-#' str(reclass(as.xts(z)))  # reclass back to zoo
+#' x <- try.xts(z)  # zoo to xts
+#' str(x)
+#' str(reclass(x))  # reclass back to zoo
 #' 
 `reclass` <-
 function(x, match.to, error=FALSE, ...) {
