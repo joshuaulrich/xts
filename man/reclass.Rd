@@ -79,20 +79,12 @@ a <- 1:10
 try.xts(a, error = FALSE)  # fails silently, still an integer vector
 
 # control the result with a function
-try.xts(a, error = function(x, ...) { paste0("I'm sorry ", Sys.info()[["user"]], ", I'm afraid I can't do that.") })
+try.xts(a, error = function(x, ...) { "I'm afraid I can't do that." })
 
 z <- zoo(1:10, timeBasedSeq("2020-01-01/2020-01-10"))
 
 str(try.xts(z))          # zoo to xts
 str(reclass(as.xts(z)))  # reclass back to zoo
-
-#add <- function(x, ...) {
-#    print(class(x))
-#    x + 21
-#}
-#add_ts <- Reclass(add)
-#z_plus <- add_ts(z)  # will print "xts"
-#class(z_plus)        # still zoo!
 
 }
 \seealso{

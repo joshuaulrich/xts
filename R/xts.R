@@ -412,8 +412,9 @@ function(x) {
 #' format for use within \R.
 #' 
 #' `as.xts()` can convert objects of the following classes into an xts object:
-#' object: [timeSeries], [ts], [matrix], [data.frame], and [zoo]. `xtsible()`
-#' safely checks whether an object can be converted to an xts object.
+#' object: [timeSeries][timeSeries::timeSeries], [ts], [matrix], [data.frame],
+#' and [zoo]. `xtsible()` safely checks whether an object can be converted to
+#' an xts object.
 #' 
 #' Additional `name = value` pairs may be passed to the function to be added to
 #' the new object. A special [`print.xts()`] method ensures the attributes are

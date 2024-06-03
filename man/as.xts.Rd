@@ -92,8 +92,9 @@ A simple and reliable way to convert many different objects into a uniform
 format for use within \R.
 
 \code{as.xts()} can convert objects of the following classes into an xts object:
-object: \link{timeSeries}, \link{ts}, \link{matrix}, \link{data.frame}, and \link{zoo}. \code{xtsible()}
-safely checks whether an object can be converted to an xts object.
+object: \link[timeSeries:timeSeries]{timeSeries}, \link{ts}, \link{matrix}, \link{data.frame},
+and \link{zoo}. \code{xtsible()} safely checks whether an object can be converted to
+an xts object.
 
 Additional \code{name = value} pairs may be passed to the function to be added to
 the new object. A special \code{\link[=print.xts]{print.xts()}} method ensures the attributes are
