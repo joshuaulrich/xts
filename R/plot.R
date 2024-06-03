@@ -890,7 +890,13 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
 
-    ypos <- x$get_panel(on)$ylim[2] * 0.995
+    panel <- x$get_active_panel()
+    if (panel$use_log_yaxis) {
+      ypos <- log(exp(panel$ylim_render[2]) * 0.995)
+    } else {
+      ypos <- panel$ylim_render[2] * 0.995
+    }
+
     # we can add points that are not necessarily at the points on the main series
     subset.range <-
       paste(format(start(xdata[xsubset]), "%Y%m%d %H:%M:%OS6"),
@@ -985,7 +991,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     if(is.na(on[1])){
       yrange <- c(0, 1)
     } else {
-      panel <- x$get_panel(on)
+      panel <- x$get_active_panel()
       yrange <- panel$ylim_render
     }
     # this just gets the data of the main plot
@@ -1674,6 +1680,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$get_xlim <- get_xlim
   replot_env$get_ylim <- get_ylim
   replot_env$create_ylim <- create_ylim
+  replot_env$get_active_panel <- get_active_panel
   replot_env$get_last_action_panel <- get_last_action_panel
 
   replot_env$new_environment <- function() { new.env(TRUE, Env) }
