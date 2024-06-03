@@ -366,15 +366,22 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   /* do the inputs have any data to merge? */
   len = nrx + nry;
   if (len < 1 && ncx < 1 && ncy < 1) {
-    /* nothing to do, return empty xts object */
-    SEXP s, t;
-    PROTECT(s = t = allocList(1)); p++;
-    SET_TYPEOF(s, LANGSXP);
-    SETCAR(t, install("xts"));
-    SEXP out = PROTECT(eval(s, env)); p++;
-    SET_TYPEOF(out, TYPEOF(x));
+
+    /* return empty xts object if there are no rows or columns */
+    PROTECT(result = allocVector(TYPEOF(x), 0)); p++;
+    PROTECT(index  = allocVector(TYPEOF(xindex), 0)); p++;
+    setAttrib(index, xts_IndexTzoneSymbol, getAttrib(xindex, xts_IndexTzoneSymbol));
+    setAttrib(index, xts_IndexTclassSymbol, getAttrib(xindex, xts_IndexTclassSymbol));
+    setAttrib(index, xts_IndexTformatSymbol, getAttrib(xindex, xts_IndexTformatSymbol));
+    setAttrib(result, xts_IndexSymbol, index);
+
+    if (LOGICAL(retclass)[0]) {
+      setAttrib(result, R_ClassSymbol, getAttrib(x, R_ClassSymbol));
+    }
+    setAttrib(result, xts_ClassSymbol, getAttrib(x, xts_ClassSymbol));
+
     UNPROTECT(p);
-    return out;
+    return result;
   }
 
   /* Ensure both indexes are REAL if they are not the same type. */

@@ -245,7 +245,6 @@ empty_with_dims_3x <-
   structure(integer(0), dim = c(0L, 9L), index = .index(x0),
             dimnames = list(NULL, c("a", "b", "c", "a.1", "b.1", "c.1", "a.2", "b.2", "c.2")),
             class = c("xts", "zoo"))
-storage.mode(.index(empty_with_dims_3x)) <- "integer"  ## FIXME: this should be 'numeric
 expect_identical(xm6, empty_with_dims_3x, info = "merge.xts([empty_xts_with_dims 3x]) has correct dims")
 
 
