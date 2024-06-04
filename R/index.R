@@ -353,9 +353,14 @@ time.xts <- index.xts
 #' @rdname index.xts
 `.indexisdst` <- function(x) {
   as.POSIXlt(.POSIXct(.index(x), tz=tzone(x)))$isdst }
-`.indexDate` <- `.indexday` <- function(x) {
+
+#' @rdname index.xts
+`.indexDate` <- function(x) {
   .index(x) %/% 86400L
 }
+
+#' @rdname index.xts
+`.indexday` <- .indexDate
 
 #' @rdname index.xts
 `.indexweek` <- function(x) {

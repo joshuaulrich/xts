@@ -17,6 +17,8 @@
 \alias{.indexbday}
 \alias{.indexyday}
 \alias{.indexisdst}
+\alias{.indexDate}
+\alias{.indexday}
 \alias{.indexweek}
 \alias{.indexyweek}
 \alias{convertIndex}
@@ -53,6 +55,10 @@
 .indexyday(x)
 
 .indexisdst(x)
+
+.indexDate(x)
+
+.indexday(x)
 
 .indexweek(x)
 
