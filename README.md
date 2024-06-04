@@ -11,7 +11,7 @@ constraints, while providing a truly time-based structure.
 
 Available as part of the Tidelift Subscription.
 
-The maintainers of `xts` and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/cran-xts?utm_source=cran-xts&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+The maintainers of `xts` and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/?utm_source=cran-xts&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
 
 ### Supporting xts development
 
@@ -41,7 +41,7 @@ appendix in the [R Installation and Administration manual](https://cran.r-projec
 for your operating system:
 
 - [Windows](https://cran.r-project.org/doc/manuals/r-release/R-admin.html#The-Windows-toolset)
-- [MacOS](https://cran.r-project.org/doc/manuals/r-release/R-admin.html#macOS) (the [R for Mac OS X Developer's Page](https://r.research.att.com/) might also be helpful)
+- [MacOS](https://cran.r-project.org/doc/manuals/r-release/R-admin.html#macOS) (the [R for Mac OS X Developer's Page](https://mac.r-project.org/) might also be helpful)
 - [Unix-alike](https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Essential-and-useful-other-programs-under-a-Unix_002dalike)
 
 ### Getting Started
@@ -152,14 +152,14 @@ period.apply(x, endpoints(x, "months"), colMeans)
 
 ###### Have a question?
 
-Ask your question on [Stack Overflow](http://stackoverflow.com/questions/tagged/r)
+Ask your question on [Stack Overflow](https://stackoverflow.com/questions/tagged/r)
 or the [R-SIG-Finance](https://stat.ethz.ch/mailman/listinfo/r-sig-finance)
 mailing list (you must subscribe to post).
 
 ###### Want hands-on experience?
 
 - [DataCamp course on importing and managing financial data](https://www.datacamp.com/courses/importing-and-managing-financial-data-in-r)
-- [DataCamp course on manipulating time series with xts & zoo](https://www.datacamp.com/courses/manipulating-time-series-data-in-r-with-xts-zoo)
+- [DataCamp course on manipulating time series with xts & zoo](https://www.datacamp.com/courses/manipulating-time-series-data-in-r)
 
 ### Contributing
 
