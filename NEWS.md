@@ -1,3 +1,24 @@
+# xts 0.14.0 (2024-06-05)
+
+* `addEventLines()` and `addLegend()` now draw on multiple panels when `on` is
+  a vector. Thanks to Ethan Smith for the report.
+  ([#420](https://github.com/joshuaulrich/xts/issues/420))
+
+* Replace `SET_TYPEOF()` in merge.c because it will error when it tries to
+  convert a REAL to an INTEGER. Thanks to Kurt Hornik for the report!
+  ([#419](https://github.com/joshuaulrich/xts/issues/419))
+
+* Fix crash when 'j' is not an integer and in [0, 1) (e.g. `j = 0.1`). Also
+  throw a warning when 'j' is not an integer.
+  ([#413](https://github.com/joshuaulrich/xts/issues/413))
+  ([#415](https://github.com/joshuaulrich/xts/issues/415))
+
+* Fix plot header when `layout()` is used to draw multiple plots on a single
+  device. Thanks to Dirk Eddelbuettel for the report and testing!
+  ([#412](https://github.com/joshuaulrich/xts/issues/412))
+
+* Fix plot legend location when the y-axis is log scale.
+  ([#407](https://github.com/joshuaulrich/xts/issues/407))
 
 # xts 0.13.2 (2024-01-21)
 
