@@ -6,18 +6,12 @@
 
 ### Package Testing
 - [ ] Ensure all [*Additional* CRAN checks](https://cran.r-project.org/web/checks/check_results_xts.html) are addressed
-- [ ] Run via R-Hub for linux, Windows, Solaris
-    ```r
-    platforms <-
-      c("linux-x86_64-rocker-gcc-san",
-        "solaris-x86-patched",
-        "windows-x86_64-devel",
-        "windows-x86_64-release",
-        "ubuntu-rchk")
-    rhub::check("xts_X.Y.Z.tar.gz", platforms)
-    ```
 - [ ] Run R-devel on Win-builder
 - [ ] Use [Winston's R-debug containers](https://github.com/wch/r-debug) for valgrind, UBSAN, and ASAN
+    * Start container: `docker run --rm -tiv [pwd]:/opt/xts/ wch1/r-debug:latest`
+    * Get dependencies: `RDscript -e 'install.packages("xts", dependencies = TRUE)'`
+    * Run check: `RD CMD check xts_X.Y.Z.tar.gz`
+    * Install and run check with the remaining builds: `Rsan`, `Rcsan`, `Rvalgrind`
 - [ ] Run rchk
     * `docker run --rm -v [pwd]/packages:/rchk/packages kalibera/rchk /rchk/packages/xts_X.Y.Z.tar.gz`
 
