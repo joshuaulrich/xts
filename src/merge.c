@@ -333,7 +333,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   } else {
     nrx = LENGTH(xindex);
     ncx = 0;
-    PROTECT(x = coerceVector(x, TYPEOF(y))); p++;
   }
 
   int return_y_data = LOGICAL(retside)[1];
@@ -360,7 +359,6 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   } else {
     nry = LENGTH(yindex);
     ncy = 0;
-    PROTECT(y = coerceVector(y, TYPEOF(x))); p++;
   }
 
   /* do the inputs have any data to merge? */
