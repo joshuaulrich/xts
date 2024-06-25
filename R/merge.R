@@ -78,7 +78,7 @@
 #' @author Jeffrey A. Ryan
 #' 
 #' @references Merge Join Discussion:
-#' <https://blogs.msdn.microsoft.com/craigfr/2006/08/03/merge-join/>
+#' <https://learn.microsoft.com/en-us/archive/blogs/craigfr/merge-join>
 #' 
 #' @keywords manip utilities
 #' @examples

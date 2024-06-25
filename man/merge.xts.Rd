@@ -110,7 +110,7 @@ merge(y, xi)
 }
 \references{
 Merge Join Discussion:
-\url{https://blogs.msdn.microsoft.com/craigfr/2006/08/03/merge-join/}
+\url{https://learn.microsoft.com/en-us/archive/blogs/craigfr/merge-join}
 }
 \author{
 Jeffrey A. Ryan
