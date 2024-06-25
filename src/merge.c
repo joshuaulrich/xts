@@ -32,33 +32,29 @@ SEXP xts_merge_make_colnames (SEXP colnames, SEXP suffixes, SEXP check_names, SE
 
   // add suffixes
   if (R_NilValue != suffixes) {
-    SEXP s, t;
-    PROTECT(s = t = allocList(4)); p++;
-    SET_TYPEOF(s, LANGSXP);
 
-    SETCAR(t, install("paste")); t = CDR(t);
-    SETCAR(t, newcolnames);      t = CDR(t);
-    SETCAR(t, suffixes);         t = CDR(t);
-    SETCAR(t, mkString(""));
-    SET_TAG(t, install("sep"));
+    SEXP args = PROTECT(allocList(3)); p++;
+    SEXP vals = args;
+    SETCAR(vals, newcolnames);      vals = CDR(vals);
+    SETCAR(vals, suffixes);         vals = CDR(vals);
+    SETCAR(vals, mkString(""));
+    SET_TAG(vals, install("sep"));
 
-    PROTECT(newcolnames = eval(s, env)); p++;
+    SEXP expr = PROTECT(LCONS(install("paste"), args)); p++;
+    PROTECT(newcolnames = eval(expr, env)); p++;
   }
 
   // check that names are 'valid R names'
   if (LOGICAL(check_names)[0]) {
-    SEXP s, t, unique;
-    PROTECT(s = t = allocList(3)); p++;
-    SET_TYPEOF(s, LANGSXP);
 
-    PROTECT(unique = ScalarLogical(1)); p++;
+    SEXP args = PROTECT(allocList(2)); p++;
+    SEXP vals = args;
+    SETCAR(vals, newcolnames);        vals = CDR(vals);
+    SETCAR(vals, ScalarLogical(1));
+    SET_TAG(vals, install("unique"));
 
-    SETCAR(t, install("make.names")); t = CDR(t);
-    SETCAR(t, newcolnames);           t = CDR(t);
-    SETCAR(t, unique);
-    SET_TAG(t, install("unique"));
-
-    PROTECT(newcolnames = eval(s, env)); p++;
+    SEXP expr = PROTECT(LCONS(install("make.names"), args)); p++;
+    PROTECT(newcolnames = eval(expr, env)); p++;
   }
 
   UNPROTECT(p);
@@ -264,8 +260,7 @@ SEXP do_merge_xts (SEXP x, SEXP y,
   int nrx, ncx, nry, ncy, len;
   int left_join, right_join;
   int p = 0;
-  SEXP xindex, yindex, index, result, attr, len_xindex;
-  SEXP s, t;
+  SEXP xindex, yindex, index, result, attr;
 
   int *int_index=NULL, *int_xindex=NULL, *int_yindex=NULL;
   double *real_index=NULL, *real_xindex=NULL, *real_yindex=NULL;
@@ -285,17 +280,19 @@ SEXP do_merge_xts (SEXP x, SEXP y,
 
   /* convert to xts object if needed */
   if (!asInteger(isXts(y))) {
-    PROTECT(s = t = allocList(4)); p++;
-    SET_TYPEOF(s, LANGSXP);
-    SETCAR(t, install("try.xts")); t = CDR(t);
-    SETCAR(t, y); t = CDR(t);
-    PROTECT(len_xindex = allocVector(INTSXP, 1)); p++;
-    INTEGER(len_xindex)[0] = length(xindex);
-    SETCAR(t, len_xindex);
-    SET_TAG(t, install("length.out")); t = CDR(t);
-    SETCAR(t, install(".merge.xts.scalar"));
-    SET_TAG(t, install("error"));
-    PROTECT(y = eval(s, env)); p++;
+
+    SEXP args = PROTECT(allocList(3)); p++;
+    SEXP vals = args;
+    SETCAR(vals, y);  vals = CDR(vals);
+
+    SET_TAG(vals, install("length.out"));
+    SETCAR(vals, ScalarInteger(length(xindex)));  vals = CDR(vals);
+
+    SET_TAG(vals, install("error"));
+    SETCAR(vals, install(".merge.xts.scalar"));
+
+    SEXP expr = PROTECT(LCONS(install("try.xts"), args)); p++;
+    PROTECT(y = eval(expr, env)); p++;
   }
 
   if (asInteger(isXts(y))) {

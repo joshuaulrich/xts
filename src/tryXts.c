@@ -28,14 +28,14 @@ SEXP tryXts (SEXP x)
 {
   if( !Rf_asInteger(isXts(x)) ) {
     int P = 0;
-    SEXP s, t, result, env, str_xts;
-    PROTECT(s = t = allocList(2)); P++;
-    SET_TYPEOF(s, LANGSXP);
-    SETCAR(t, install("try.xts")); t = CDR(t);
-    SETCAR(t, x); t=CDR(t);
+    SEXP expr, result, env, str_xts;
+
     PROTECT(str_xts = mkString("xts")); P++;
     PROTECT(env = R_FindNamespace(str_xts)); P++;
-    PROTECT(result = eval(s, env)); P++;
+
+    PROTECT(expr = LCONS(install("try.xts"), x)); P++;
+    PROTECT(result = eval(expr, env)); P++;
+
     if( !Rf_asInteger(isXts(result)) ) {
       UNPROTECT(P);
       error("rbind.xts requires xtsible data");
