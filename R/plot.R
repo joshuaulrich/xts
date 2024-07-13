@@ -1248,7 +1248,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       if(lim[1L] == 0) {
         lim <- c(-1, 1)
       } else {
-        lim <- lim[1L] * c(1 - const_y_mult, 1 + const_y_mult)
+        adj <- sign(lim[1L]) * const_y_mult
+        lim <- lim[1L] * c(1 - adj, 1 + adj)
       }
     }
 
