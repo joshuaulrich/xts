@@ -247,12 +247,10 @@ plot.xts <- function(x,
                      legend.loc=NULL,
                      extend.xaxis=FALSE){
 
-  if (as.numeric(multi.panel) > 0){
-    # allow color and line attributes for each panel in a multi.panel plot
-    if(length(lty) < ncol(x)) lty <- rep(lty, length.out = ncol(x))
-    if(length(lwd) < ncol(x)) lwd <- rep(lwd, length.out = ncol(x))
-    if(length(col) < ncol(x)) col <- rep(col, length.out = ncol(x))
-  }
+  # recycle inputs
+  if(length(lty) < ncol(x)) lty <- rep(lty, length.out = ncol(x))
+  if(length(lwd) < ncol(x)) lwd <- rep(lwd, length.out = ncol(x))
+  if(length(col) < ncol(x)) col <- rep(col, length.out = ncol(x))
 
   # Small multiples with multiple pages behavior occurs when multi.panel is
   # an integer. (i.e. multi.panel=2 means to iterate over the data in a step
