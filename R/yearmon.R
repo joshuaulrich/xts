@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,11 +19,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' @rdname as.xts
 as.xts.yearmon <- function(x, ...)
 {
   xts(x=NULL, order.by=x)
 }
 
+#' @rdname as.xts
 as.xts.yearqtr <- function(x, ...)
 {
   xts(x=NULL, order.by=x)

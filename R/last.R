@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,12 +19,14 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' @rdname first
 `last` <-
 function(x,...)
 {
   UseMethod("last")
 }
 
+#' @rdname first
 `last.default` <-
 function(x,n=1,keep=FALSE,...)
 {
@@ -72,6 +74,7 @@ function(x,n=1,keep=FALSE,...)
   }
 }
 
+#' @rdname first
 `last.xts` <-
 function(x,n=1,keep=FALSE,...)
 {

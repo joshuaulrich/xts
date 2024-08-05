@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -57,6 +57,7 @@ function(x,...) {
   as.matrix(x,...)
 }
 
+#' @rdname as.xts
 `as.xts.matrix` <-
 function(x,order.by,dateFormat="POSIXct",frequency=NULL,...,.RECLASS=FALSE) {
   # Should allow 'order.by' to be a vector of dates or a scaler

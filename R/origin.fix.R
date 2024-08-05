@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -43,9 +43,6 @@ as.POSIXct.Date <- function(x, ...)
 as.Date.POSIXct <- function(x, ...)
 {
   as.Date(strftime(x))
-#  z <- floor(unclass((x - unclass(as.POSIXct('1970-01-01'))))/86400)
-#  attr(z, 'tzone') <- NULL
-#  structure(z, class="Date")
 }
 
 as.POSIXlt.Date <- function(x, ...)
@@ -53,21 +50,9 @@ as.POSIXlt.Date <- function(x, ...)
   as.POSIXlt(as.POSIXct.Date(x))
 }
 
-#as.POSIXct.yearmon <- function(x, ...)
-#{
-#  structure(as.POSIXct("1970-01-01") + unclass(as.Date(x))*86400,
-#            class=c("POSIXct","POSIXt"))
-#}
-#
-#as.POSIXlt.yearmon <- function(x, ...)
-#{
-#  as.POSIXlt(xts:::as.POSIXct.yearmon(x))
-#}
-#
 as.POSIXct.dates <- function(x, ...)
 {
   # need to implement our own method to correctly handle TZ
-  #as.POSIXct(as.character(as.POSIXlt(x,tz="GMT")))
   structure(as.POSIXct(as.POSIXlt(x, tz="GMT"), tz="GMT"),class=c("POSIXct","POSIXt"))
 }
 as.chron.POSIXct <- function(x, ...)

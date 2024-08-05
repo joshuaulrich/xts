@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -35,6 +35,7 @@ function(x,...) {
   irts(index(x),xx)
 }
 
+#' @rdname as.xts
 `as.xts.irts` <-
 function(x,order.by,frequency=NULL,...,.RECLASS=FALSE) {
   if(.RECLASS) {
@@ -52,5 +53,3 @@ function(x,order.by,frequency=NULL,...,.RECLASS=FALSE) {
   }
   xx
 }
-
-

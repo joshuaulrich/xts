@@ -1,7 +1,7 @@
 Package: xts
 Type: Package
 Title: eXtensible Time Series
-Version: 0.13.2.2
+Version: 0.14.1
 Authors@R: c(
   person(given=c("Jeffrey","A."), family="Ryan", role=c("aut","cph")),
   person(given=c("Joshua","M."), family="Ulrich", role=c("cre","aut"), email="josh.m.ulrich@gmail.com"),
@@ -17,3 +17,5 @@ Description: Provide for uniform handling of R's different time-based data class
 License: GPL (>= 2)
 URL: https://joshuaulrich.github.io/xts/, https://github.com/joshuaulrich/xts
 BugReports: https://github.com/joshuaulrich/xts/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)

@@ -38,10 +38,97 @@
 #
 # Copyright 2009. Jeffrey A. Ryan. All rights reserved.
 # This is licensed under the GPL version 2 or later
+#
+
+#' Create an ISO8601 string from a time series object
+#' 
+#' This function uses the `start()` and `end()` of a time series object to
+#' create an ISO8601 string that spans the time range of the object.
+#' 
+#' This is not exported an therefore not part of the official xts API.
+#' 
+#' @param x A time series object with `start()` and `end()` methods.
+#' 
+#' @return A character vector of length one describing the ISO-style format
+#' for the range of a given time series object.
+#' 
+#' @noRd
+#' @examples
+#'
+#' data(sample_matrix)
+#' x <- as.xts(sample_matrix)
+#' .makeISO8601(x)
+#'
 .makeISO8601 <- function(x) {
   paste(start(x), end(x), sep = "/")
 }
 
+
+#' Internal ISO 8601:2004(e) Time Parser
+#' 
+#' This function replicates most of the ISO standard for parsing times and
+#' time-based ranges in a universally accepted way. The best documentation is
+#' the official ISO page as well as the Wikipedia entry for ISO 8601:2004.
+#' 
+#' The basic idea is to create the endpoints of a range, given a string
+#' representation. These endpoints are aligned in POSIXct time to the zero
+#' second of the day at the beginning, and the 59.9999th second of the 59th
+#' minute of the 23rd hour of the final day.
+#' 
+#' For dates prior to the epoch (1970-01-01) the ending time is aligned to the
+#' 59.0000 second. This is due to a bug/feature in the \R implementation of
+#' `as.POSIXct()` and `mktime0()` at the C-source level. This limits the
+#' precision of ranges prior to 1970 to 1 minute granularity with the current
+#' \pkg{xts} workaround.
+#' 
+#' Recurring times over multiple days may be specified using the "T" notation.
+#' See the examples for details.
+#' 
+#' @param x A character string conforming to the ISO 8601:2004(e) rules.
+#' @param start Lower constraint on range.
+#' @param end Upper constraint of range
+#' @param tz Timezone (tzone) to use internally.
+#' 
+#' @return A two element list with an entry named \sQuote{first.time} and
+#'   one named \sQuote{last.time}.
+#' 
+#' @note There is no checking done to test for a properly constructed ISO
+#' format string. This must be correctly entered by the user.
+#' 
+#' When using durations, it is important to note that the time of the duration
+#' specified is not necessarily the same as the realized periods that may be
+#' returned when applied to an irregular time series. This is not a bug, it is
+#' a standards and implementation gotcha.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @references <https://en.wikipedia.org/wiki/ISO_8601>\cr
+#' <https://www.iso.org/iso-8601-date-and-time-format.html>
+#' 
+#' @aliases ISO8601 parseISO8601
+#' @rdname parseISO8601
+#' 
+#' @keywords utilities
+#' @examples
+#' 
+#' # the start and end of 2000
+#' .parseISO8601('2000')
+#' 
+#' # the start of 2000 and end of 2001
+#' .parseISO8601('2000/2001')
+#' 
+#' # May 1, 2000 to Dec 31, 2001
+#' .parseISO8601('2000-05/2001')
+#' 
+#' # May 1, 2000 to end of Feb 2001
+#' .parseISO8601('2000-05/2001-02')
+#' 
+#' # Jan 1, 2000 to Feb 29, 2000; note the truncated time on the LHS
+#' .parseISO8601('2000-01/02')
+#' 
+#' # 8:30 to 15:00 (used in xts subsetting to extract recurring times)
+#' .parseISO8601('T08:30/T15:00')
+#' 
 .parseISO8601 <- function(x, start, end, tz="") {
  # x: character vector of length 1 in ISO8601:2004(e) format
  # start: optional earliest time

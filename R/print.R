@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -18,6 +18,35 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#' Print An xts Time-Series Object
+#' 
+#' Method for printing an extensible time-series object.
+#' 
+#' @param x An xts object.
+#' @param fmt Passed to [`coredata()`] to format the time index.
+#' @param \dots Arguments passed to other methods.
+#' @param show.rows The number of first and last rows to print if the number of
+#'   rows is truncated (default 10, or `getOption("xts.print.show.rows")`).
+#' @param max.rows The output will contain at most `max.rows` rows before being
+#'   truncated (default 100, or `getOption("xts.print.max.rows")`).
+#' 
+#' @return Returns `x` invisibly.
+#' 
+#' @author Joshua M. Ulrich
+#' 
+#' @keywords print
+#' @examples
+#' 
+#' data(sample_matrix)
+#' sample.xts <- as.xts(sample_matrix)
+#' 
+#' # output is truncated and shows first and last 10 observations
+#' print(sample.xts)
+#' 
+#' # show the first and last 5 observations
+#' print(sample.xts, show.rows = 5)
+#' 
 print.xts <-
   function(x,
            fmt,

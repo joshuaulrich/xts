@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -92,6 +92,43 @@ na.replace <- function(x) {
   rbind(x,tmp)
 }
 
+
+#' Last Observation Carried Forward
+#' 
+#' \pkg{xts} method replace `NA` with most recent non-NA
+#' 
+#' This is the \pkg{xts} method for the S3 generic `na.locf()`. The primary
+#' difference to note is that after the `NA` fill action is carried out, the
+#' default it to leave trailing or leading `NA`'s in place. This is different
+#' than \pkg{zoo} behavior.
+#' 
+#' @param object An xts object.
+#' @param na.rm Logical indicating whether leading/trailing `NA` should be
+#'   removed. The default is `FALSE` unlike the zoo method.
+#' @param fromLast Logical indicating whether observations should be carried
+#'   backward rather than forward. Default is `FALSE`.
+#' @param maxgap Consecutive runs of observations more than 'maxgap' will
+#'   remain `NA`. See [`na.locf()`][zoo::zoo] for details.
+#' @param \dots Unused.
+#' 
+#' @return An object where each `NA` in `object` is replaced by the most recent
+#'   non-NA prior to it. See [`na.locf()`][zoo::zoo] for details.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso [`na.locf()`][zoo::zoo]
+#' 
+#' @keywords misc
+#' @examples
+#' 
+#' x <- xts(1:10, Sys.Date()+1:10)
+#' x[c(1,2,5,9,10)] <- NA
+#' 
+#' x
+#' na.locf(x)
+#' na.locf(x, fromLast=TRUE)
+#' na.locf(x, na.rm=TRUE, fromLast=TRUE)
+#' 
 na.locf.xts <- function(object, na.rm=FALSE, fromLast=FALSE, maxgap=Inf, ...) {
     maxgap <- min(maxgap, NROW(object))
     if(length(object) == 0)

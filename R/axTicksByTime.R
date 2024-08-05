@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,6 +19,48 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' Compute x-Axis Tickmark Locations by Time
+#' 
+#' Compute x-axis tickmarks like [`axTicks()`] in base but with respect to
+#' time. This function is written for internal use, and documented for those
+#' wishing to use it for customized plots.
+#' 
+#' The default `ticks.on = "auto"` uses heuristics to compute sensible tick
+#' locations. Use a combination of `ticks.on` and `k` to create tick locations
+#' at specific intervals. For example, `ticks.on = "days"` and `k = 7` will
+#' create tick marks every 7 days.
+#' 
+#' When `format.labels` is a character string the possible values are the same
+#' as those listed in the Details section of [`strptime()`].
+#' 
+#' @param x An object indexed by time or a vector of times/dates.
+#' @param ticks.on Time unit for tick locations.
+#' @param k Frequency of tick locations.
+#' @param labels Should a labeled vector be returned?
+#' @param format.labels Either a logical value specifying whether labels should
+#'   be formatted, or a character string specifying the format to use.
+#' @param ends Should the ends be adjusted?
+#' @param gt Lower bound on number of tick locations.
+#' @param lt Upper bound on number of tick locations.
+#' 
+#' @return A numeric vector of index element locations where tick marks should
+#' be drawn. These are *locations* (e.g. 1, 2, 3, ...), *not* the
+#' index timestamps.
+#' 
+#' If possible, the result will be named using formatted values from the index
+#' timestamps. The names will be used for the tick mark labels.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso [`endpoints()`]
+#' @keywords utilities
+#' @examples
+#' 
+#' data(sample_matrix)
+#' axTicksByTime(as.xts(sample_matrix),'auto')
+#' axTicksByTime(as.xts(sample_matrix),'weeks')
+#' axTicksByTime(as.xts(sample_matrix),'months',7)
+#' 
 axTicksByTime <-
 function(x, ticks.on = "auto", k = 1, labels = TRUE, format.labels = TRUE,
          ends = TRUE, gt = 2, lt = 30)

@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -21,20 +21,6 @@
 
 # methods for handling ts <--> xts
 
-#`re.ts2` <-
-#function(x,...) {
-#  # attempt to provide a more robust reclass 'ts' method
-#  na.replace <- function(x) {
-#    na.removed <- attr(x,'na.action')
-#    if(class(na.removed) != 'omit') return()
-#    nrows <- NROW(x)
-#    xx <- vector('numeric',length=(nrows+length(na.removed)))
-#    xx[ na.removed,] <- NA
-#    xx[-na.removed] <- x
-#    xx
-#  }
-#}
-
 `re.ts` <-
 function(x,...) {
   # major issue with quick reclass.  Basically fails on data < 1970...
@@ -51,6 +37,7 @@ function(x,...) {
   as.ts(x)
 }
 
+#' @rdname as.xts
 `as.xts.ts` <-
 function(x,dateFormat,...,.RECLASS=FALSE) {
   x.mat <- structure(as.matrix(x),dimnames=dimnames(x))

@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,19 +19,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# xts core functions
-#   additional methods are in correspondingly named .R files
-#   current conversions include:
-#     timeSeries, its, irts, ts, matrix, data.frame, and zoo
-#     MISSING: tis, fame
-#
-#  this file includes the main xts constructor as well as the reclass
-#  function.
-#
-#  xts methods (which match foreign conversion methods in other files)
-#  are also defined below
-
-
 # xts() index attribute precedence should be:
 #   1. .index* value (e.g. .indexTZ)  # backward compatibility
 #   2. t* value (e.g. tzone)          # current function to override index attribute
@@ -45,6 +32,127 @@
 # has always set the tclass to POSIXct by default, whether or not the 'index'
 # argument already had a tclass attribute.
 
+
+#' Create or Test For An xts Time-Series Object
+#' 
+#' Constructor function for creating an extensible time-series object.
+#' 
+#' `xts()` is used to create an xts object from raw data inputs. The xts class
+#' inherits from and extends the zoo class, which means most zoo functions can
+#' be used on xts objects.
+#' 
+#' The `xts()` constructor is the preferred way to create xts objects. It
+#' performs several checks to ensure it returns a well-formed xts object. The
+#' `.xts()` constructor is mainly for internal use. It is more efficient then
+#' the regular `xts()` constructor because it doesn't perform as many validity
+#' checks. Use it with caution.
+#' 
+#' Similar to zoo objects, xts objects must have an ordered index. While zoo
+#' indexes cannot contain duplicate values, xts objects have optionally
+#' supported duplicate index elements since version 0.5-0. The xts class has
+#' one additional requirement: the index must be a time-based class. Currently
+#' supported classes include: \sQuote{Date}, \sQuote{POSIXct}, \sQuote{timeDate},
+#' as well as \sQuote{yearmon} and \sQuote{yearqtr} where the index values
+#' remain unique.
+#' 
+#' The uniqueness requirement was relaxed in version 0.5-0, but is still
+#' enforced by default. Setting `unique = FALSE` skips the uniqueness check and
+#' only ensures that the index is ordered via the `isOrdered()` function.
+#' 
+#' As of version 0.10-0, xts no longer allows missing values in the index. This
+#' is because many xts functions expect all index values to be finite. The most
+#' important of these is `merge.xts()`, which is used ubiquitously. Missing
+#' values in the index are usually the result of a date-time conversion error
+#' (e.g. incorrect format, non-existent time due to daylight saving time, etc.).
+#' Because of how non-finite numbers are represented, a missing timestamp will
+#' always be at the end of the index (except if it is `-Inf`, which will be
+#' first).
+#' 
+#' Another difference from \pkg{zoo} is that xts object may carry additional
+#' attributes that may be desired in individual time-series handling. This
+#' includes the ability to augment the objects data with meta-data otherwise
+#' not cleanly attachable to a standard zoo object. These attributes may be
+#' assigned and extracted via [`xtsAttributes()`] and [`xtsAttributes<-`],
+#' respectively.
+#' 
+#' Examples of usage from finance may include the addition of data for keeping
+#' track of sources, last-update times, financial instrument descriptions or
+#' details, etc.
+#' 
+#' The idea behind \pkg{xts} is to offer the user the ability to utilize a
+#' standard zoo object, while providing an mechanism to customize the object's
+#' meta-data, as well as create custom methods to handle the object in a manner
+#' required by the user.
+#' 
+#' Many xts-specific methods have been written to better handle the unique
+#' aspects of xts. These include, subsetting (`[`), `merge()`, `cbind()`,
+#' `rbind()`, `c()`, math and logical operations, `lag()`, `diff()`,
+#' `coredata()`, `head()`, and `tail()`. There are also xts-specific methods
+#' for converting to/from R's different time-series classes.
+#' 
+#' Subsetting via `[` methods offers the ability to specify dates by range, if
+#' they are enclosed in quotes. The style borrows from python by creating
+#' ranges separated by a double colon \dQuote{"::"} or \dQuote{"/"}. Each side
+#' of the range may be left blank, which would then default to the start and
+#' end of the data, respectively. To specify a subset of times, it is only
+#' required that the time specified be in standard ISO format, with some form
+#' of separation between the elements. The time must be *left-filled*, that is
+#' to specify a full year one needs only to provide the year, a month requires
+#' the full year and the integer of the month requested - e.g. '1999-01'. This
+#' format would extend all the way down to seconds - e.g. '1999-01-01 08:35:23'.
+#' Leading zeros are not necessary. See the examples for more detail.
+#' 
+#' Users may also extend the xts class to new classes to allow for method
+#' overloading.
+#' 
+#' Additional benefits derive from the use of [`as.xts()`] and [`reclass()`],
+#' which allow for lossless two-way conversion between common R time-series
+#' classes and the xts object structure. See those functions for more detail.
+#' 
+#' @param x An object containing the underlying data.
+#' @param order.by A corresponding vector of dates/times of a known time-based
+#'   class. See Details.
+#' @param index A corresponding *numeric* vector specified as seconds since
+#'   the UNIX epoch (1970-01-01 00:00:00.000).
+#' @param frequency Numeric value indicating the frequency of `order.by`. See
+#'   details.
+#' @param unique Can the index only include unique timestamps? Ignored when
+#'   `check = FALSE`.
+#' @param check Must the index be ordered? The index cannot contain duplicates
+#'   when `check = TRUE` and `unique = TRUE`.
+#' @param tclass Time class to use for the index. See [`tclass()`].
+#' @param tzone Time zone of the index (ignored for indices without a time
+#'   component, e.g. Date, yearmon, yearqtr). See [`tzone()`].
+#' @param \dots Additional attributes to be added. See details.
+#' 
+#' @return An S3 object of class xts.
+#' 
+#' @author Jeffrey A. Ryan and Joshua M. Ulrich
+#' 
+#' @seealso [`as.xts()`], [`index()`], [`tclass()`], [`tformat()`], [`tzone()`],
+#' [`xtsAttributes()`]
+#' 
+#' @references \pkg{zoo}
+#' 
+#' @keywords utilities
+#' @examples
+#' 
+#' data(sample_matrix)
+#' sample.xts <- as.xts(sample_matrix, descr='my new xts object')
+#' 
+#' class(sample.xts)
+#' str(sample.xts)
+#' 
+#' head(sample.xts)  # attribute 'descr' hidden from view
+#' attr(sample.xts,'descr')
+#' 
+#' sample.xts['2007']  # all of 2007
+#' sample.xts['2007-03/']  # March 2007 to the end of the data set
+#' sample.xts['2007-03/2007']  # March 2007 to the end of 2007
+#' sample.xts['/'] # the whole data set
+#' sample.xts['/2007'] # the beginning of the data through 2007
+#' sample.xts['2007-01-03'] # just the 3rd of January 2007
+#' 
 `xts` <-
 function(x=NULL,
          order.by=index(x),
@@ -175,6 +283,8 @@ function(x=NULL,
   x
 }
 
+
+#' @rdname xts
 `.xts` <-
 function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
          tzone=Sys.getenv("TZ"),
@@ -284,81 +394,7 @@ function(x=NULL, index, tclass=c("POSIXct","POSIXt"),
   xx
 }
 
-`reclass` <-
-function(x, match.to, error=FALSE, ...) {
-  if(!missing(match.to) && is.xts(match.to)) {
-    if(NROW(x) != length(.index(match.to)))
-      if(error) {
-        stop('incompatible match.to attibutes')
-      } else return(x)
-
-    if(!is.xts(x)) {
-      x <- .xts(coredata(x), .index(match.to),
-                tclass = tclass(match.to),
-                tzone = tzone(match.to),
-                tformat = tformat(match.to))
-    }
-    attr(x, ".CLASS") <- CLASS(match.to)
-    xtsAttributes(x) <- xtsAttributes(match.to)
-    tclass(x) <- tclass(match.to)
-    tformat(x) <- tformat(match.to)
-    tzone(x) <- tzone(match.to)
-  }
-  oldCLASS <- CLASS(x)
-  # should this be is.null(oldCLASS)?
-  if(length(oldCLASS) > 0 && !inherits(oldClass,'xts')) {  
-    if(!is.null(dim(x))) {
-      if(!is.null(attr(x,'.ROWNAMES'))) {
-        # rownames<- (i.e. dimnames<-.xts) will not set row names
-        # force them directly
-        attr(x, "dimnames")[[1]] <- attr(x,'.ROWNAMES')[1:NROW(x)]
-      }
-    }
-    attr(x,'.ROWNAMES') <- NULL
-    #if(is.null(attr(x,'.RECLASS')) || attr(x,'.RECLASS')) {#should it be reclassed?
-    if(isTRUE(attr(x,'.RECLASS'))) {#should it be reclassed?
-      #attr(x,'.RECLASS') <- NULL
-      do.call(paste('re',oldCLASS,sep='.'),list(x))
-    } else {
-      #attr(x,'.RECLASS') <- NULL
-      x
-    }
-  } else {
-    #attr(x,'.RECLASS') <- NULL
-    x
-  }
-}
-
-#`reclass` <- reclass2
-
-`CLASS` <-
-function(x) {
-  cl <- attr(x,'.CLASS')
-
-  if(!is.null(cl)) {
-    attr(cl, 'class') <- 'CLASS'
-    return(cl)
-  }
-
-  return(NULL)
-}
-
-`print.CLASS` <-
-function(x,...) {
-  cat(paste("previous class:",x),"\n")
-}
-
-`CLASS<-` <-
-function(x,value) {
-  UseMethod("CLASS<-")
-}
-
-`CLASS<-.xts` <-
-function(x,value) {
-  attr(x,".CLASS") <- value
-  x
-}
-
+#' @rdname xts
 `is.xts` <-
 function(x) {
   inherits(x,'xts') &&
@@ -366,12 +402,69 @@ function(x) {
   !is.null(tclass(x))
 }
 
+
+#' Convert Objects To and From xts
+#' 
+#' Conversion S3 methods to coerce data objects of arbitrary classes to xts
+#' and back, without losing any attributes of the original format.
+#' 
+#' A simple and reliable way to convert many different objects into a uniform
+#' format for use within \R.
+#' 
+#' `as.xts()` can convert objects of the following classes into an xts object:
+#' object: [timeSeries][timeSeries::timeSeries], [ts], [matrix], [data.frame],
+#' and [zoo]. `xtsible()` safely checks whether an object can be converted to
+#' an xts object.
+#' 
+#' Additional `name = value` pairs may be passed to the function to be added to
+#' the new object. A special [`print.xts()`] method ensures the attributes are
+#' hidden from view, but will be available via \R's standard `attr()` function,
+#' as well as the [`xtsAttributes()`] function.
+#' 
+#' When `.RECLASS = TRUE`, the returned xts object internally preserves all
+#' relevant attribute/slot data from the input `x`. This allows for temporary
+#' conversion to xts in order to use zoo and xts compatible methods. See
+#' [`reclass()`] for details.
+#' 
+#' @param x Data object to convert. See details for supported types.
+#' @param dateFormat What class should the dates be converted to?
+#' @param FinCenter,recordIDs,title,documentation See [timeSeries][timeSeries::timeSeries] help.
+#' @param order.by,frequency See [zoo][zoo::zoo] help.
+#' @param \dots Additional parameters or attributes.
+#' @param .RECLASS Should the conversion be reversible via [`reclass()`]?
+#' 
+#' @return An S3 object of class xts.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso [`xts()`], [`reclass()`], [`zoo()`][zoo::zoo]
+#' 
+#' @keywords utilities
+#' @examples
+#' 
+#' \dontrun{
+#' # timeSeries
+#' library(timeSeries)
+#' x <- timeSeries(1:10, 1:10)
+#'
+#' str(as.xts(x))
+#' str(reclass(as.xts(x)))
+#' str(try.xts(x))
+#' str(reclass(try.xts(x)))
+#' }
+#' 
 `as.xts` <-
 function(x,...) {
   UseMethod('as.xts')
 }
 
-#as.xts.default <- function(x, ...) x
+#' @rdname as.xts
+xtsible <- function(x)
+{
+  if(inherits(try(as.xts(x),silent=TRUE),'try-error')) {
+    FALSE
+  } else TRUE
+}
 
 `re.xts` <-
 function(x,...) {
@@ -399,9 +492,4 @@ function(x,...,.RECLASS=FALSE) {
             ...)
   }
   xx
-}
-
-`xts.to.xts` <-
-function(x,...) {
-  return(x)
 }

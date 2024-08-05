@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -103,7 +103,155 @@
   .Call(C__do_subset_xts, x, i, j, FALSE)
 }
 
-`.subset.xts` <- `[.xts` <-
+
+#' Extract Subsets of xts Objects
+#' 
+#' Details on efficient subsetting of xts objects for maximum performance
+#' and compatibility.
+#' 
+#' One of the primary motivations and key points of differentiation of xts is
+#' the ability to subset rows by specifying ISO-8601 compatible range strings.
+#' This allows for natural range-based time queries without requiring prior
+#' knowledge of the underlying class used for the time index.
+#' 
+#' When `i` is a character string, it is processed as an ISO-8601 formatted
+#' datetime or time range using [`.parseISO8601()`]. A single datetime is
+#' parsed from left to to right, according to the following specification:
+#' 
+#' CCYYMMDD HH:MM:SS.ss+
+#' 
+#' A time range can be specified by two datetimes separated by a forward slash
+#' or double-colon. For example:
+#' 
+#' CCYYMMDD HH:MM:SS.ss+/CCYYMMDD HH:MM:SS.ss
+#' 
+#' The ISO8601 time range subsetting uses a custom binary search algorithm to
+#' efficiently find the beginning and end of the time range. `i` can also be a
+#' vector of ISO8601 time ranges, which enables subsetting by multiple
+#' non-contiguous time ranges in one subset call.
+#' 
+#' The above parsing, both for single datetimes and time ranges, will be done
+#' on each element when `i` is a character *vector*. This is very inefficient,
+#' especially for long vectors. In this case, it's recommened to use `I(i)` so
+#' the xts subset function can process the vector more efficiently. Another
+#' alternative is to convert `i` to POSIXct before passing it to the subset
+#' function. See the examples for an illustration of using `I(i)`.
+#' 
+#' The xts index is stored as POSIXct internally, regardless of the value of
+#' its `tclass` attribute. So the fastest time-based subsetting is always when
+#' `i` is a POSIXct vector.
+#' 
+#' @param x An xts object.
+#' @param i The rows to extract. Can be a numeric vector, time-based vector, or
+#'   an ISO-8601 style range string (see details).
+#' @param j The columns to extract, either a numeric vector of column locations
+#'   or a character vector of column names.
+#' @param drop Should dimension be dropped, if possible? See notes section.
+#' @param which.i Logical value that determines whether a subset xts object is
+#'   returned (the default), or the locations of the matching rows (when
+#'   `which.i = TRUE`).
+#' @param \dots Additional arguments (currently unused).
+#' 
+#' @return An xts object containing the subset of `x`. When `which.i = TRUE`,
+#' the corresponding integer locations of the matching rows is returned.
+#' 
+#' @note By design, xts objects always have two dimensions. They cannot be
+#' vectors like zoo objects. Therefore `drop = FALSE` by default in order to
+#' preserve the xts object's dimensions. This is different from both matrix and
+#' zoo, which use `drop = TRUE` by default. Explicitly setting `drop = TRUE`
+#' may be needed when performing certain matrix operations.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso [`xts()`], [`.parseISO8601()`], [`.index()`]
+#' 
+#' @references ISO 8601: Date elements and interchange formats - Information
+#' interchange - Representation of dates and time <https://www.iso.org>
+#' 
+#' @rdname subset.xts
+#' 
+#' @aliases [.xts subset.xts .subset.xts .subset_xts
+#' @keywords utilities
+#' @examples
+#' 
+#' x <- xts(1:3, Sys.Date()+1:3)
+#' xx <- cbind(x,x)
+#' 
+#' # drop = FALSE for xts, differs from zoo and matrix
+#' z <- as.zoo(xx)
+#' z/z[,1]
+#' 
+#' m <- as.matrix(xx)
+#' m/m[,1]
+#' 
+#' # this will fail with non-conformable arrays (both retain dim)
+#' tryCatch(
+#'   xx/x[,1], 
+#'   error = function(e) print("need to set drop = TRUE")
+#' )
+#' 
+#' # correct way
+#' xx/xx[,1,drop = TRUE]
+#' 
+#' # or less efficiently
+#' xx/drop(xx[,1])
+#' # likewise
+#' xx/coredata(xx)[,1]
+#' 
+#' 
+#' x <- xts(1:1000, as.Date("2000-01-01")+1:1000)
+#' y <- xts(1:1000, as.POSIXct(format(as.Date("2000-01-01")+1:1000)))
+#' 
+#' x.subset <- index(x)[1:20]
+#' x[x.subset] # by original index type
+#' system.time(x[x.subset]) 
+#' x[as.character(x.subset)] # by character string. Beware!
+#' system.time(x[as.character(x.subset)]) # slow!
+#' system.time(x[I(as.character(x.subset))]) # wrapped with I(), faster!
+#' 
+#' x['200001'] # January 2000
+#' x['1999/2000'] # All of 2000 (note there is no need to use the exact start)
+#' x['1999/200001'] # January 2000 
+#' 
+#' x['2000/200005'] # 2000-01 to 2000-05
+#' x['2000/2000-04-01'] # through April 01, 2000
+#' y['2000/2000-04-01'] # through April 01, 2000 (using POSIXct series)
+#' 
+#' 
+#' ### Time of day subsetting 
+#' 
+#' i <- 0:60000
+#' focal_date <- as.numeric(as.POSIXct("2018-02-01", tz = "UTC"))
+#' x <- .xts(i, c(focal_date + i * 15), tz = "UTC", dimnames = list(NULL, "value"))
+#' 
+#' # Select all observations between 9am and 15:59:59.99999:
+#' w1 <- x["T09/T15"] # or x["T9/T15"]
+#' head(w1)
+#' 
+#' # timestring is of the form THH:MM:SS.ss/THH:MM:SS.ss
+#' 
+#' # Select all observations between 13:00:00 and 13:59:59.9999 in two ways:
+#' y1 <- x["T13/T13"]
+#' head(y1)
+#' 
+#' x[.indexhour(x) == 13]
+#' 
+#' # Select all observations between 9:30am and 30 seconds, and 4.10pm:
+#' x["T09:30:30/T16:10"]
+#' 
+#' # It is possible to subset time of day overnight.
+#' # e.g. This is useful for subsetting FX time series which trade 24 hours on week days
+#' 
+#' # Select all observations between 23:50 and 00:15 the following day, in the xts time zone
+#' z <- x["T23:50/T00:14"]
+#' z["2018-02-10 12:00/"] # check the last day
+#' 
+#' 
+#' # Select all observations between 7pm and 8.30am the following day:
+#' z2 <- x["T19:00/T08:29:59"]
+#' head(z2); tail(z2)
+#' 
+`[.xts` <-
 function(x, i, j, drop = FALSE, which.i=FALSE,...) 
 {
     USE_EXTRACT <- FALSE # initialize to FALSE
@@ -294,6 +442,8 @@ function(x, i, j, drop = FALSE, which.i=FALSE,...)
     return(.Call(C__do_subset_xts, x, as.integer(i), as.integer(j), drop))
 }
 
+`.subset.xts` <- `[.xts`
+
 # Replacement method for xts objects
 #
 # Adapted from [.xts code, making use of NextGeneric as
@@ -411,6 +561,58 @@ window_idx <- function(x, index. = NULL, start = NULL, end = NULL)
 # window function for xts series, use binary search to be faster than base zoo function
 # index. defaults to the xts time index.  If you use something else, it must conform to the standard for order.by in the xts constructor.
 # that is, index. must be time based,
+
+
+#' Extract Time Windows from xts Objects
+#' 
+#' Method for extracting time windows from xts objects.
+#' 
+#' The xts `window()` method provides an efficient way to subset an xts object
+#' between a start and end date using a binary search algorithm. Specifically,
+#' it converts `start` and `end` to POSIXct and then does a binary search of
+#' the index to quickly return a subset of `x` between `start` and `end`.
+#' 
+#' Both `start` and `end` may be any class that is convertible to POSIXct, such
+#' as a character string in the format \sQuote{yyyy-mm-dd}. When `start = NULL`
+#' the returned subset will begin at the first value of `index.`. When
+#' `end = NULL` the returned subset will end with the last value of `index.`.
+#' Otherwise the subset will contain all timestamps where `index.` is between
+#' `start` and `end`, inclusive.
+#'
+#' When `index.` is specified, [`findInterval()`] is used to quickly retrieve
+#' large sets of sorted timestamps. For the best performance, `index.` must be
+#' a *sorted* POSIXct vector or a numeric vector of seconds since the epoch.
+#' `index.` is typically a subset of the timestamps in `x`.
+#' 
+#' @param x An xts object.
+#' @param index. A user defined time index (default `.index(x)`).
+#' @param start A start time coercible to POSIXct.
+#' @param end An end time coercible to POSIXct.
+#' @param \dots Unused.
+#' 
+#' @return The subset of `x` that matches the time window.
+#' 
+#' @author Corwin Joy
+#' 
+#' @seealso [`subset.xts()`], [`findInterval()`], [`xts()`]
+#' 
+#' @keywords ts
+#' @examples
+#' 
+#' ## xts example
+#' x.date <- as.Date(paste(2003, rep(1:4, 4:1), seq(1,19,2), sep = "-"))
+#' x <- xts(matrix(rnorm(20), ncol = 2), x.date)
+#' x
+#' 
+#' window(x, start = "2003-02-01", end = "2003-03-01")
+#' window(x, start = as.Date("2003-02-01"), end = as.Date("2003-03-01"))
+#' window(x, index. = x.date[1:6], start = as.Date("2003-02-01"))
+#' window(x, index. = x.date[c(4, 8, 10)])
+#' 
+#' ## Assign to subset
+#' window(x, index. = x.date[c(4, 8, 10)]) <- matrix(1:6, ncol = 2)
+#' x
+#' 
 window.xts <- function(x, index. = NULL, start = NULL, end = NULL, ...)
 {
   # scalar NA values are treated as NULL
@@ -440,5 +642,3 @@ binsearch <- function(key, vec, start=TRUE) {
   }
   .Call(C_binsearch, key, vec, start)
 }
-
-# Unit tests for the above code may be found in runit.xts.methods.R

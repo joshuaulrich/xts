@@ -90,14 +90,6 @@ function(pkg, generic, class, fun = NULL)
 
 .onLoad <- function(libname, pkgname)
 {
-#  if(Sys.getenv("TZ") == "") {
-#    packageStartupMessage("xts now requires a valid TZ environment variable to be set")
-#    packageStartupMessage(" no TZ var is set, setting to TZ=GMT")
-#    Sys.setenv(TZ="GMT")
-#  } else {
-#    packageStartupMessage("xts now requires a valid TZ environment variable to be set")
-#    packageStartupMessage(" your current TZ:",paste(Sys.getenv("TZ")))
-#  }
   if (getRversion() < "3.6.0") {
     register_s3_method("timeSeries", "as.timeSeries", "xts")
     if (utils::packageVersion("zoo") < "1.8.5") {

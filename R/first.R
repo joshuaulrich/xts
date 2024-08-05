@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,12 +19,72 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' Return First or Last n Elements of A Data Object
+#' 
+#' Generic functions to return the first or last elements or rows of a vector
+#' or two-dimensional data object.
+#' 
+#' A more advanced subsetting is available for zoo objects with indexes
+#' inheriting from POSIXt or Date classes.
+#' 
+#' Quickly and easily extract the first or last `n` observations of an object.
+#' When `n` is a number, these functions are similar to [`head()`] and
+#' [`tail()`], but only return the *first* or *last* observation by default.
+#' 
+#' `n` can be a character string if `x` is an xts object or coerceable to xts.
+#' It must be of the form \sQuote{n period}, where 'n' is a numeric value
+#' (1 if not provided) describing the number of periods to return. Valid
+#' periods are: secs, seconds, mins, minutes, hours, days, weeks, months,
+#' quarters, and years.
+#'
+#' The 'period' portion can be any frequency greater than or equal to the
+#' frequency of the object's time index. For example, `first(x, "2 months")`
+#' will return the first 2 months of data even if `x` is hourly frequency.
+#' Attempts to set 'period' to a frequency less than the object's frequency
+#' will throw an error.
+#' 
+#' `n` may be positive or negative, whether it's a number or character string.
+#' When `n` is positive, the functions return the obvious result. For example,
+#' `first(x, "1 month")` returns the first month's data. When `n` is negative,
+#' all data *except* first month's is returned.
+#' 
+#' Requesting more data than is in `x` will throw a warning and simply return
+#' `x`.
+#' 
+#' @param x An object.
+#' @param n Number of observations to return.
+#' @param keep Should removed values be kept as an attribute on the result?
+#' @param \dots Arguments passed to other methods.
+#' 
+#' @return A subset of elements/rows of the original data.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @keywords utilities
+#' @examples
+#' 
+#' first(1:100)
+#' last(1:100)
+#' 
+#' data(LakeHuron)
+#' first(LakeHuron,10)
+#' last(LakeHuron)
+#' 
+#' x <- xts(1:100, Sys.Date()+1:100)
+#' first(x, 10)
+#' first(x, '1 day')
+#' first(x, '4 days')
+#' first(x, 'month')
+#' last(x, '2 months')
+#' last(x, '6 weeks')
+#' 
 `first` <-
 function(x,...)
 {
   UseMethod("first")
 }
 
+#' @rdname first
 `first.default` <-
 function(x,n=1,keep=FALSE,...)
 {
@@ -72,6 +132,7 @@ function(x,n=1,keep=FALSE,...)
   }
 }
 
+#' @rdname first
 `first.xts` <-
 function(x,n=1,keep=FALSE,...)
 {

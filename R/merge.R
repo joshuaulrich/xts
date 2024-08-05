@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,6 +19,85 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' Merge xts Objects
+#' 
+#' Perform merge operations on xts objects by time index.
+#' 
+#' This xts method is compatible with [`merge.zoo()`] but implemented almost
+#' entirely in C-level code for efficiency.
+#' 
+#' The function can perform all common database join operations along the time
+#' index by setting 'join' to one of the values below. Note that 'left' and
+#' 'right' are only implemented for two objects.
+#' 
+#' * outer: full outer (all rows in all objects)
+#' * inner: only rows with common indexes in all objects
+#' * left: all rows in the first object, and rows from the second object that
+#'   have the same index as the first object
+#' * right: all rows in the second object, and rows from the first object that
+#'   have the same index as the second object
+#'
+#' The above join types can also be accomplished by setting 'all' to one of the
+#' values below.
+#' 
+#' * outer: `all = TRUE` or `all = c(TRUE, TRUE)`
+#' * inner: `all = FALSE` or `all = c(FALSE, FALSE)`
+#' * left: `all = c(TRUE, FALSE)`
+#' * right: `all = c(FALSE, TRUE)`
+#'
+#' The result will have the timezone of the leftmost argument if available. Use
+#' the 'tzone' argument to override the default behavior.
+#' 
+#' When `retclass = NULL` the joined objects will be split and reassigned
+#' silently back to the original environment they are called from. This is for
+#' backward compatibility with zoo, but unused by xts. When `retclass = FALSE`
+#' the object will be stripped of its class attribute. This is for internal use.
+#' 
+#' See the examples in order to join using an 'all' argument that is the same
+#' arguments to join, like you can do with `merge.zoo()`.
+#' 
+#' @param \dots One or more xts objects, or objects coercible to class xts.
+#' @param all A logical vector indicating merge type.
+#' @param fill Values to be used for missing elements.
+#' @param suffixes Suffix to be added to merged column names.
+#' @param join Type of database join. One of 'outer', 'inner', 'left', or 'right'.
+#' @param retside Which side of the merged object should be returned (2-case only)?
+#' @param retclass Either a logical value indicating whether the result should
+#'   have a 'class' attribute, or the name of the desired class for the result.
+#' @param tzone Time zone to use for the merged result.
+#' @param drop Not currently used.
+#' @param check.names Use [`make.names()`] to ensure column names are vaild \R
+#'   object names?
+#' 
+#' @return A new xts object containing the appropriate elements of the
+#' objects passed in to be merged.
+#' 
+#' @note This is a highly optimized merge, specifically designed for ordered
+#' data. The only supported merging is based on the underlying time index.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @references Merge Join Discussion:
+#' <https://learn.microsoft.com/en-us/archive/blogs/craigfr/merge-join>
+#' 
+#' @keywords manip utilities
+#' @examples
+#' 
+#' (x <- xts(4:10, Sys.Date()+4:10))
+#' (y <- xts(1:6, Sys.Date()+1:6))
+#' 
+#' merge(x,y)
+#' merge(x,y, join='inner')
+#' merge(x,y, join='left')
+#' merge(x,y, join='right')
+#' 
+#' merge.zoo(zoo(x),zoo(y),zoo(x), all=c(TRUE, FALSE, TRUE))
+#' merge(merge(x,x),y,join='left')[,c(1,3,2)]
+#' 
+#' # zero-width objects (only index values) can be used
+#' xi <- xts( , index(x))
+#' merge(y, xi)
+#' 
 merge.xts <- function(..., 
                      all=TRUE,
                      fill=NA,
@@ -146,4 +225,20 @@ merge.xts <- function(...,
     fill.fun(x)
   } else
   return(x)
+}
+
+
+#' @rdname merge.xts
+cbind.xts <- function(..., all=TRUE, fill=NA, suffixes=NULL) {
+  merge.xts(..., all=all, fill=fill, suffixes=suffixes)
+}
+
+.merge.xts.scalar <- function(x, length.out, ...) {
+  if( length.out == 0)
+    return(vector(storage.mode(x), 0))
+  if( length(x) == 1 )
+    return(matrix(rep(x, length.out=length.out)))
+  if( NROW(x) == length.out )
+    return(x)
+  stop("improper length of one or more arguments to merge.xts")
 }

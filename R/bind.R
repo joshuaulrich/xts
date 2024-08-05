@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,63 +19,61 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-cbind.xts <- function(..., all=TRUE, fill=NA, suffixes=NULL) {
-#  mc <- match.call(call=sys.call(sys.parent()))
-#  mc[[1]] <- as.name("merge.xts")
-#  eval(mc)
-  merge.xts(..., all=all, fill=fill, suffixes=suffixes)
-}  
-#  # convert the call to a list to better manipulate it
-#  mc <- as.list(match.call(call=sys.call(-1)))
-#  
-#  # remove deparse.level arg if called via cbind 'generic'
-#  if(as.character(mc[[1]]) == "cbind")
-#    mc <- mc[-2]
-#
-#  # check if any default args are missing from the call,
-#  # and add them to the call with the cbind defaults
-#  if(missing(all))      mc <- c(mc,all=all)
-#  if(missing(fill))     mc <- c(mc,fill=fill)
-#  if(missing(suffixes)) mc <- c(mc,suffixes=suffixes)
-#  
-#  # replace the call to cbind.xts with merge.xts
-#  mc[[1]] <- as.name('merge.xts')
-#
-#  # convert the list into a call and evaluate it
-#  mc <- as.call(mc)
-#  eval(mc)
-#} 
-#   sc <- sys.call(sys.parent())
-#   mc <- gsub('cbind|cbind.xts','merge.xts',deparse(match.call(call=sc)))
-#   return(eval(parse(text=mc)))
-#   dots <- mc$...
-#   length.args <- sum(.External("number_of_cols",...,PACKAGE="xts"))
-#   if(is.null(suffixes))
-#     suffixes <- all.vars(match.call(call=sc), unique=FALSE)[1:length.args]
-# 
-#   if( length(suffixes) != length.args ) {
-#     warning("length of suffixes and does not match number of merged objects")
-#     suffixes <- rep(suffixes, length.out=length.args)
-#   }
-#
-#   merge.xts(..., all=all, fill=fill, suffixes=suffixes)
-#
-#   dat <- list(...)
-#   x <- dat[[1]]; dat <- dat[-1]
-#   while( length(dat) > 0 ) {
-#     y <- dat[[1]]
-#     if( length(dat) > 0 )
-#       dat <- dat[-1]
-#     x <- merge.xts(x, y, all=TRUE, fill=NA, suffixes=NULL, retclass="xts")
-#   }
-#   x
-#}
-
+#' @rdname rbind.xts
 `c.xts` <-
 function(...) {
   .External(C_rbindXts, dup=FALSE, ...)
 }
 
+
+#' Concatenate Two or More xts Objects by Row
+#' 
+#' Concatenate or bind by row two or more xts objects along a time-based index.
+#' All objects must have the same number of columns and be xts objects or
+#' coercible to xts.
+#' 
+#' Duplicate index values are supported. When one or more input has the same
+#' index value, the duplicated index values in the result are in the same order
+#' the objects are passed to `rbind()`. See examples.
+#'
+#' `c()` is an alias for `rbind()` for xts objects.
+#' 
+#' See [`merge.xts()`] for traditional merge operations.
+#' 
+#' @param \dots Objects to bind by row.
+#' @param deparse.level Not implemented.
+#' 
+#' @return An xts object with one row per row for each object concatenated.
+#' 
+#' @note `rbind()` is a '.Primitive' function in \R, which means method dispatch
+#'   occurs at the C-level, and may not be consistent with normal S3 method
+#'   dispatch (see [`rbind()`] for details). Call `rbind.xts()` directly to
+#'   avoid potential dispatch ambiguity.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso [`merge.xts()`] [`rbind()`]
+#' 
+#' @keywords utilities
+#' @examples
+#' 
+#' x <- xts(1:10, Sys.Date()+1:10)
+#' str(x)
+#' 
+#' merge(x,x)
+#' rbind(x,x)
+#' rbind(x[1:5],x[6:10])
+#' 
+#' c(x,x)
+#' 
+#' # this also works on non-unique index values
+#' x <- xts(rep(1,5), Sys.Date()+c(1,2,2,2,3))
+#' y <- xts(rep(2,3), Sys.Date()+c(1,2,3))
+#' 
+#' # overlapping indexes are appended
+#' rbind(x,y)
+#' rbind(y,x)
+#' 
 rbind.xts <- function(..., deparse.level=1)
 {
   .External(C_rbindXts, dup=FALSE, ...)

@@ -213,6 +213,120 @@ isNullOrFalse <- function(x) {
 
 # Main plot.xts method.
 # author: Ross Bennett (adapted from Jeffrey Ryan's chart_Series)
+
+#' Plotting xts Objects
+#' 
+#' Plotting for xts objects.
+#' 
+#' Possible values for arguments `major.ticks`, `minor.ticks`, and
+#' `grid.ticks.on` include \sQuote{auto}, \sQuote{minute}, \sQuote{hours},
+#' \sQuote{days}, \sQuote{weeks}, \sQuote{months}, \sQuote{quarters}, and
+#' \sQuote{years}. The default is \sQuote{auto}, which attempts to determine
+#' sensible locations from the periodicity and locations of observations. The
+#' other values are based on the possible values for the `ticks.on`
+#' argument of [`axTicksByTime()`].
+#' 
+#' @param x A xts object.
+#' @param y Not used, always `NULL`.
+#' @param \dots Any passthrough arguments for `lines()` and `points()`.
+#' @param subset An ISO8601-style subset string.
+#' @param panels Character vector of expressions to plot as panels.
+#' @param multi.panel Either `TRUE`, `FALSE`, or an integer less than or equal
+#'   to the number of columns in the data set. When `TRUE`, each column of the
+#'   data is plotted in a separate panel. When an integer 'n', the data will be
+#'   plotted in groups of 'n' columns per panel and each group will be plotted
+#'   in a separate panel.
+#' @param col Color palette to use.
+#' @param up.col Color for positive bars when `type = "h"`.
+#' @param dn.col Color for negative bars when `type = "h"`.
+#' @param bg Background color of plotting area, same as in [`par()`].
+#' @param type The type of plot to be drawn, same as in [`plot()`].
+#' @param lty Set the line type, same as in [`par()`].
+#' @param lwd Set the line width, same as in [`par()`].
+#' @param lend Set the line end style, same as in [`par()`].
+#' @param main Main plot title.
+#' @param main.timespan Should the timespan of the series be shown in the top
+#'   right corner of the plot?
+#' @param observation.based When `TRUE`, all the observations are equally spaced
+#'   along the x-axis. When `FALSE` (the default) the observations on the x-axis
+#'   are spaced based on the time index of the data.
+#' @param log Should the y-axis be in log scale? Default `FALSE`.
+#' @param ylim The range of the y axis.
+#' @param yaxis.same Should 'ylim' be the same for every panel? Default `TRUE`.
+#' @param yaxis.left Add y-axis labels to the left side of the plot?
+#' @param yaxis.right Add y-axis labels to the right side of the plot?
+#' @param yaxis.ticks Desired number of y-axis grid lines. The actual number of
+#'   grid lines is determined by the `n` argument to [`pretty()`].
+#' @param major.ticks Period specifying locations for major tick marks and labels
+#'   on the x-axis. See Details for possible values.
+#' @param minor.ticks Period specifying locations for minor tick marks on the
+#'   x-axis. When `NULL`, minor ticks are not drawn. See details for possible
+#'   values.
+#' @param grid.ticks.on Period specifying locations for vertical grid lines.
+#'   See details for possible values.
+#' @param grid.ticks.lwd Line width of the grid.
+#' @param grid.ticks.lty Line type of the grid.
+#' @param grid.col Color of the grid.
+#' @param labels.col Color of the axis labels.
+#' @param format.labels Label format to draw lower frequency x-axis ticks and
+#'   labels passed to [`axTicksByTime()`]
+#' @param grid2 Color for secondary x-axis grid.
+#' @param legend.loc Places a legend into one of nine locations on the chart:
+#'   bottomright, bottom, bottomleft, left, topleft, top, topright, right, or
+#'   center. Default `NULL` does not draw a legend.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#'   The default, `on = 0`, will add to the active panel. The active panel is
+#'   defined as the panel on which the most recent action was performed. Note
+#'   that only the first element of `on` is checked for the default behavior to
+#'   add to the last active panel.
+#' @param extend.xaxis When `TRUE`, extend the x-axis before and/or after the
+#'   plot's existing time index range, so all of of the time index values of
+#'   the new series are included in the plot. Default `FALSE`.
+#' 
+#' @author Ross Bennett
+#' 
+#' @seealso [`addSeries()`], [`addPanel()`]
+#' 
+#' @references based on [`chart_Series()`][quantmod::quantmod] in \pkg{quantmod}
+#' written by Jeffrey A. Ryan
+#' 
+#' @examples
+#' 
+#' \dontrun{
+#' data(sample_matrix)
+#' sample.xts <- as.xts(sample_matrix)
+#' 
+#' # plot the Close
+#' plot(sample.xts[,"Close"])
+#' 
+#' # plot a subset of the data
+#' plot(sample.xts[,"Close"], subset = "2007-04-01/2007-06-31")
+#' 
+#' # function to compute simple returns
+#' simple.ret <- function(x, col.name){
+#'   x[,col.name] / lag(x[,col.name]) - 1
+#' }
+#' 
+#' # plot the close and add a panel with the simple returns
+#' plot(sample.xts[,"Close"])
+#' R <- simple.ret(sample.xts, "Close")
+#' lines(R, type = "h", on = NA)
+#' 
+#' # add the 50 period simple moving average to panel 1 of the plot
+#' library(TTR)
+#' lines(SMA(sample.xts[,"Close"], n = 50), on = 1, col = "blue")
+#' 
+#' # add month end points to the chart
+#' points(sample.xts[endpoints(sample.xts[,"Close"], on = "months"), "Close"], 
+#'        col = "red", pch = 17, on = 1)
+#' 
+#' # add legend to panel 1
+#' addLegend("topright", on = 1, 
+#'           legend.names = c("Close", "SMA(50)"), 
+#'           lty = c(1, 1), lwd = c(2, 1),
+#'           col = c("black", "blue", "red"))
+#' }
+#' 
 plot.xts <- function(x, 
                      y=NULL,
                      ...,
@@ -513,6 +627,55 @@ plot.xts <- function(x,
 }
 
 # apply a function to the xdata in the xts chob and add a panel with the result
+
+
+#' Add a panel to an existing xts plot
+#' 
+#' Apply a function to the data of an existing xts plot object and plot the
+#' result on an existing or new panel. `FUN` should have arguments `x` or `R`
+#' for the data of the existing xts plot object to be passed to. All other
+#' additional arguments for `FUN` are passed through \dots.
+#' 
+#' @param FUN An xts object to plot.
+#' @param main Main title for a new panel if drawn.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#' @param type The type of plot to be drawn, same as in [`plot()`].
+#' @param col Color palette to use, set by default to rational choices.
+#' @param lty Set the line type, same as in [`par()`].
+#' @param lwd Set the line width, same as in [`par()`].
+#' @param pch The type of plot to be drawn, same as in [`par()`].
+#' @param \dots Additional named arguments passed through to `FUN` and any
+#'   other graphical passthrough parameters.
+#' 
+#' @seealso [`plot.xts()`], [`addSeries()`]
+#' 
+#' @author Ross Bennett
+#' 
+#' @examples
+#' 
+#' library(xts)
+#' data(sample_matrix)
+#' sample.xts <- as.xts(sample_matrix)
+#' 
+#' calcReturns <- function(price, method = c("discrete", "log")){
+#'   px <- try.xts(price)
+#'   method <- match.arg(method)[1L]
+#'   returns <- switch(method,
+#'     simple = ,
+#'     discrete = px / lag(px) - 1,
+#'     compound = ,
+#'     log = diff(log(px)))
+#'   reclass(returns, px)
+#' }
+#' 
+#' # plot the Close
+#' plot(sample.xts[,"Close"])
+#' # calculate returns 
+#' addPanel(calcReturns, method = "discrete", type = "h")
+#' # Add simple moving average to panel 1
+#' addPanel(rollmean, k = 20, on = 1)
+#' addPanel(rollmean, k = 40, col = "blue", on = 1)
+#' 
 addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1, ...){
   # get the chob and the raw data (i.e. xdata)
   chob <- current.xts_chob()
@@ -545,6 +708,24 @@ addPanel <- function(FUN, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=
 
 # Add a time series to an existing xts plot
 # author: Ross Bennett
+
+
+#' Add a time series to an existing xts plot
+#' 
+#' Add a time series to an existing xts plot
+#' 
+#' @param x An xts object to add to the plot.
+#' @param main Main title for a new panel if drawn.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#' @param type The type of plot to be drawn, same as in [`plot()`].
+#' @param col Color palette to use, set by default to rational choices.
+#' @param lty Set the line type, same as in [`par()`].
+#' @param lwd Set the line width, same as in [`par()`].
+#' @param pch The type of plot to be drawn, same as in [`par()`].
+#' @param \dots Any other passthrough graphical parameters.
+#' 
+#' @author Ross Bennett
+#' 
 addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1, ...){
   plot_object <- current.xts_chob()
   lenv <- plot_object$new_environment()
@@ -626,6 +807,9 @@ addSeries <- function(x, main="", on=NA, type="l", col=NULL, lty=1, lwd=1, pch=1
 
 # Add time series of lines to an existing xts plot
 # author: Ross Bennett
+
+#' @param pch the plotting character to use, same as in 'par'
+#' @rdname plot.xts
 lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, pch=1){
   if(!is.na(on[1]))
     if(on[1] == 0) on[1] <- current.xts_chob()$get_last_action_panel()$id
@@ -635,6 +819,9 @@ lines.xts <- function(x, ..., main="", on=0, col=NULL, type="l", lty=1, lwd=1, p
 
 # Add time series of points to an existing xts plot
 # author: Ross Bennett
+
+#' @param pch the plotting character to use, same as in 'par'
+#' @rdname plot.xts
 points.xts <- function(x, ..., main="", on=0, col=NULL, pch=1){
   if(!is.na(on[1]))
     if(on[1] == 0) on[1] <- current.xts_chob()$get_last_action_panel()$id
@@ -644,6 +831,40 @@ points.xts <- function(x, ..., main="", on=0, col=NULL, pch=1){
 
 # Add vertical lines to an existing xts plot
 # author: Ross Bennett
+
+
+#' Add vertical lines to an existing xts plot
+#' 
+#' Add vertical lines and labels to an existing xts plot.
+#' 
+#' @param events An xts object of events and their associated labels. It is
+#'   ensured that the first column of `events` is the event description/label.
+#' @param main Main title for a new panel, if drawn.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#'   The default, `on = 0`, will add to the active panel. The active panel is
+#'   defined as the panel on which the most recent action was performed. Note
+#'   that only the first element of `on` is checked for the default behavior to
+#'   add to the last active panel.
+#' @param lty Set the line type, same as in [`par()`].
+#' @param lwd Set the line width, same as in [`par()`].
+#' @param col Color palette to use, set by default to rational choices.
+#' @param \dots Any other passthrough parameters to [`text()`] to control how
+#'   the event labels are drawn.
+#' 
+#' @author Ross Bennett
+#' 
+#' @examples
+#' 
+#' \dontrun{
+#' library(xts)
+#' data(sample_matrix)
+#' sample.xts <- as.xts(sample_matrix)
+#' events <- xts(letters[1:3], 
+#'               as.Date(c("2007-01-12", "2007-04-22", "2007-06-13")))
+#' plot(sample.xts[,4])
+#' addEventLines(events, srt = 90, pos = 2)
+#' }
+#' 
 addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
   events <- try.xts(events)
 
@@ -663,7 +884,13 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
 
-    ypos <- x$get_panel(on)$ylim[2] * 0.995
+    panel <- x$get_active_panel()
+    if (panel$use_log_yaxis) {
+      ypos <- log(exp(panel$ylim_render[2]) * 0.995)
+    } else {
+      ypos <- panel$ylim_render[2] * 0.995
+    }
+
     # we can add points that are not necessarily at the points on the main series
     subset.range <-
       paste(format(start(xdata[xsubset]), "%Y%m%d %H:%M:%OS6"),
@@ -724,6 +951,28 @@ addEventLines <- function(events, main="", on=0, lty=1, lwd=1, col=1, ...){
 
 # Add legend to an existing xts plot
 # author: Ross Bennett
+
+
+#' Add Legend
+#' 
+#' Add a legend to an existing panel.
+#' 
+#' @param legend.loc One of nine locations: bottomright, bottom, bottomleft,
+#'   left, topleft, top, topright, right, or center.
+#' @param legend.names Character vector of names for the legend. When `NULL`,
+#'   the column names of the current plot object are used.
+#' @param col Fill colors for the legend. When `NULL`, the colorset of the
+#'   current plot object data is used.
+#' @param ncol Number of columns for the legend.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#'   The default, `on = 0`, will add to the active panel. The active panel is
+#'   defined as the panel on which the most recent action was performed. Note
+#'   that only the first element of `on` is checked for the default behavior to
+#'   add to the last active panel.
+#' @param \dots Any other passthrough parameters to [`legend()`].
+#' 
+#' @author Ross Bennett
+#' 
 addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1, on=0, ...){
 
   plot_object <- current.xts_chob()
@@ -736,7 +985,7 @@ addLegend <- function(legend.loc="topright", legend.names=NULL, col=NULL, ncol=1
     if(is.na(on[1])){
       yrange <- c(0, 1)
     } else {
-      panel <- x$get_panel(on)
+      panel <- x$get_active_panel()
       yrange <- panel$ylim_render
     }
     # this just gets the data of the main plot
@@ -814,6 +1063,43 @@ legend.coords <- function(legend.loc, xrange, yrange) {
 
 # Add a polygon to an existing xts plot
 # author: Ross Bennett
+
+
+#' Add a polygon to an existing xts plot
+#' 
+#' Draw a polygon on an existing xts plot by specifying a time series of y
+#' coordinates. The xts index is used for the x coordinates and the first two
+#' columns are the upper and lower y coordinates, respectively.
+#' 
+#' @param x An xts object to plot. Must contain 2 columns for the upper and
+#'   the lower y coordinates for the polygon. The first column is interpreted
+#'   as upper y coordinates and the second column as the lower y coordinates.
+#' @param y `NULL`, not used.
+#' @param main Main title for a new panel, if drawn.
+#' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
+#' @param col Color palette to use, set by default to rational choices.
+#' @param \dots Any other passthrough parameters to [`par()`].
+#' 
+#' @author Ross Bennett
+#' 
+#' @references Based on code by Dirk Eddelbuettel from
+#' <http://dirk.eddelbuettel.com/blog/2011/01/16/>
+#' 
+#' @examples
+#' 
+#' \dontrun{
+#' library(xts)
+#' data(sample_matrix)
+#' x <- as.xts(sample_matrix)[,1]
+#' ix <- index(x["2007-02"])
+#' shade <- xts(matrix(rep(range(x), each = length(ix)), ncol = 2), ix)
+#' 
+#' plot(x)
+#' 
+#' # set on = -1 to draw the shaded region *behind* the main series
+#' addPolygon(shade, on = -1, col = "lightgrey")
+#' }
+#' 
 addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   # add polygon to xts plot based on http://dirk.eddelbuettel.com/blog/2011/01/16/
   
@@ -956,7 +1242,8 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
       if(lim[1L] == 0) {
         lim <- c(-1, 1)
       } else {
-        lim <- lim[1L] * c(1 - const_y_mult, 1 + const_y_mult)
+        adj <- sign(lim[1L]) * const_y_mult
+        lim <- lim[1L] * c(1 - adj, 1 + adj)
       }
     }
 
@@ -1388,6 +1675,7 @@ new.replot_xts <- function(panel=1,asp=1,xlim=c(1,10),ylim=list(structure(c(1,10
   replot_env$get_xlim <- get_xlim
   replot_env$get_ylim <- get_ylim
   replot_env$create_ylim <- create_ylim
+  replot_env$get_active_panel <- get_active_panel
   replot_env$get_last_action_panel <- get_last_action_panel
 
   replot_env$new_environment <- function() { new.env(TRUE, Env) }

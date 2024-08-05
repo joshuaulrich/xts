@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,53 +19,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-`Lag.xts` <- function(x, k=1, na.action=na.pass, ...) {
-  x <- try.xts(x, error=FALSE)
-  
-  if(!is.xts(x)) x <- as.matrix(x)
-  
-  xx <-sapply(k, 
-         function(k) {
-           apply(x, 2, 
-             function(x)  {
-               if(k==0) return(as.matrix(x)) 
-               as.matrix(c(rep(NA, k), x[-((length(x) - k + 1):length(x))]))
-             }
-           )}
-       )
-  xx <- matrix(as.numeric(xx),nrow=NROW(x))
-  colnames(xx) <- c(paste(colnames(x)[(rep(1:NCOL(x),length(k)))],
-                          'lag',
-                          rep(k, each=NCOL(x)),
-                          sep = "."))
-  as.function(na.action)(reclass(xx,x))
-}
-
-
-`Next.xts` <- function(x, k=1, na.action=na.pass, ...) {
-  x <- try.xts(x, error=FALSE)
-  
-  if(!is.xts(x)) x <- as.matrix(x)
-  
-  xx <-sapply(k, 
-         function(k) {
-           apply(x, 2, 
-             function(x)  {
-               if(k==0) return(as.matrix(x)) 
-               as.matrix(c(x[-(1:k)],rep(NA, k)))
-             }
-           )}
-       )
-  xx <- matrix(as.numeric(xx),nrow=NROW(x))
-  colnames(xx) <- c(paste(colnames(x)[(rep(1:NCOL(x),length(k)))],
-                          'next',
-                          rep(k, each=NCOL(x)),
-                          sep = "."))
-  as.function(na.action)(reclass(xx,x))
-
-}
-
-
+#' @rdname diff.xts
 lag.xts <- function(x, k=1, na.pad=TRUE, ...) {
   zooCompat <- getOption('xts.compat.zoo.lag')
   if(is.logical(zooCompat) && zooCompat) {
@@ -81,6 +35,7 @@ lag.xts <- function(x, k=1, na.pad=TRUE, ...) {
 }
 
 lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
+  # NOTE: not exported
   if(length(k) > 1) {
     if(is.null(names(k)))
       names(k) <- paste("lag",k,sep="")
@@ -89,6 +44,59 @@ lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
   .Call(C_lag_xts, x, k, na.pad)
 }
 
+#' Lags and Differences of xts Objects
+#' 
+#' Methods for computing lags and differences on xts objects. This provides
+#' similar functionality as the \pkg{zoo} counterparts, but with some different
+#' defaults.
+#' 
+#' The primary motivation for these methods was to take advantage of a faster
+#' C-level implementation. Another motivation was to make `lag()` behave using
+#' standard sign for `k`. Both [`lag.zoo()`] and [`lag.default()`] require a
+#' *negative* value for `k` in order to shift a series backward. So `k = 1`,
+#' shifts the series *forward* one observation. This is especially confusing
+#' because `k = 1` is the default for those functions. When `x` is an xts
+#' object, `lag(x, 1)` returns an object where the value at time 't' is the
+#' value at time 't-1' in the original object.
+#'
+#' Another difference is that `na.pad = TRUE` by default, to better reflect the
+#' transformation visually and for functions the require positional alignment
+#' of data.
+#' 
+#' Set `options(xts.compat.zoo.lag = TRUE)` to use make `lag.xts()` consistent
+#' with `lag.zoo()` by reversing the sign of `k` and setting `na.pad = FALSE`.
+#' 
+#' @param x An xts object.
+#' @param k Number of periods to shift.
+#' @param lag Period to difference over.
+#' @param differences Order of differencing.
+#' @param arithmetic Should arithmetic or geometric differencing be used?
+#' @param log Should (geometric) log differences be returned?
+#' @param na.pad Should `NA` be added so the result has the same number of
+#'   observations as `x`?
+#' @param \dots Additional arguments.
+#' 
+#' @return An xts object with the desired lag and/or differencing.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @references <https://en.wikipedia.org/wiki/Lag>
+#' 
+#' @keywords manip chron
+#' @examples
+#' 
+#' x <- xts(1:10, Sys.Date()+1:10)
+#' lag(x)    # currently using xts-style positive k 
+#' 
+#' lag(x, k=2)
+#' 
+#' lag(x, k=-1, na.pad=FALSE) # matches lag.zoo(x, k=1)
+#' 
+#' diff(x)
+#' diff(x, lag=1)
+#' diff(x, diff=2)
+#' diff(diff(x))
+#' 
 diff.xts <- function(x, lag=1, differences=1, arithmetic=TRUE, log=FALSE, na.pad=TRUE, ...)
 {
   if(!is.integer(lag) && any(is.na(as.integer(lag))))

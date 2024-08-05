@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,9 +19,28 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# optimized periodic apply functions
-#
-`is.timeBased` <- `timeBased` <-
+#' Check if Class is Time-Based
+#'
+#' Used to verify that the object is one of the known time-based classes in R.
+#' Current time-based objects supported are `Date`, `POSIXct`, `chron`,
+#' `yearmon`, `yearqtr`, and `timeDate`.
+#'
+#' @param x Object to test.
+#'
+#' @return A logical scalar.
+#'
+#' @author Jeffrey A. Ryan
+#'
+#' @rdname timeBased
+#' @keywords utilities
+#' @examples
+#'
+#' timeBased(Sys.time())
+#' timeBased(Sys.Date())
+#' 
+#' timeBased(200701)
+#'
+`is.timeBased` <-
 function(x) {
   time.classes <-
     c("Date", "POSIXt", "chron", "dates", "times", "timeDate",
@@ -29,11 +48,60 @@ function(x) {
   inherits(x, time.classes)
 }
 
-make.timeBased <- function(x, class='POSIXct', ...)
-{
-  do.call(class, list(x,...))
-}
+#' @rdname timeBased
+`timeBased` <- `is.timeBased`
 
+
+#' Optimized Calculations By Period
+#' 
+#' Calculate a sum, product, minimum, or maximum for each non-overlapping
+#' period specified by `INDEX`.
+#' 
+#' These functions are similar to calling `period.apply()` with the same
+#' endpoints and function. There may be slight differences in the results due
+#' to numerical accuracy.
+#' 
+#' For xts-coercible objects, an appropriate `INDEX` can be created by a call
+#' to `endpoints()`.
+#' 
+#' @param x A univariate data object.
+#' @param INDEX A numeric vector of endpoints for each period.
+#' 
+#' @return An xts or zoo object containing the sum, product, minimum, or
+#' maximum for each endpoint in `INDEX`.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso [`endpoints()`], [`period.apply()`]
+#' 
+#' @keywords utilities
+#' @rdname period_math
+#' @examples
+#' 
+#' x <- c(1, 1, 4, 2, 2, 6, 7, 8, -1, 20)
+#' i <- c(0, 3, 5, 8, 10)
+#' 
+#' period.sum(x, i)
+#' period.prod(x, i)
+#' period.min(x, i)
+#' period.max(x, i)
+#' 
+#' data(sample_matrix)
+#' y <- sample_matrix[, 1]
+#' ep <- endpoints(sample_matrix)
+#'
+#' period.sum(y, ep)
+#' period.sum(as.xts(y), ep)
+#' 
+#' period.prod(y, ep)
+#' period.prod(as.xts(y), ep)
+#' 
+#' period.min(y, ep)
+#' period.min(as.xts(y), ep)
+#' 
+#' period.max(y, ep)
+#' period.max(as.xts(y), ep)
+#' 
 `period.sum` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
@@ -52,6 +120,8 @@ function(x,INDEX) {
   }
   tz
 }
+
+#' @rdname period_math
 `period.prod` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
@@ -70,6 +140,8 @@ function(x,INDEX) {
   }
   tz
 }
+
+#' @rdname period_math
 `period.max` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")
@@ -88,6 +160,8 @@ function(x,INDEX) {
   }
   tz
 }
+
+#' @rdname period_math
 `period.min` <-
 function(x,INDEX) {
   if(NCOL(x) > 1) stop("single column data only")

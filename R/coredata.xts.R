@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,6 +19,50 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' Extract/Replace Core Data of an xts Object
+#' 
+#' Mechanism to extract and replace the core data of an xts object.
+#' 
+#' Extract coredata of an xts object - removing all attributes except
+#' `dim` and `dimnames` and returning a matrix object with rownames
+#' converted from the index of the xts object.
+#' 
+#' The rownames of the result use the format specified by `tformat(x)` when
+#' `fmt = TRUE`. When `fmt` is a character string to be passed to `format()`.
+#' See [`strptime()`] for valid format strings. Setting `fmt = FALSE` will
+#' return the row names by simply coercing the index class to a character
+#' string in the default manner.
+#' 
+#' `xcoredata()` is the complement to `coredata()`. It returns all of the
+#' attributes normally removed by `coredata()`.  Its purpose, along with the
+#' the replacement function `xcoredata<-` is primarily for developers using
+#' \pkg{xts}' [`try.xts()`] and [`reclass()`] functionality inside functions
+#' so the functions can take any time series class as an input and return the
+#' same time series class.
+#' 
+#' @param x An xts object.
+#' @param fmt Should the rownames be formated using `tformat()`? Alternatively
+#'   a date/time string to be passed to `format()`. See details.
+#' @param value Non-core attributes to assign.
+#' @param \dots Unused.
+#' 
+#' @return Returns either a matrix object for coredata, or a list of named
+#'   attributes.
+#' 
+#' The replacement functions are called for their side-effects.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso [`coredata()`][zoo::zoo], [`xtsAttributes()`]
+#' 
+#' @keywords utilities
+#' @examples
+#' 
+#' data(sample_matrix)
+#' x <- as.xts(sample_matrix, myattr=100)
+#' coredata(x)
+#' xcoredata(x)
+#' 
 coredata.xts <- function(x, fmt=FALSE, ...) {
   x.attr <- attributes(x)
 
@@ -70,12 +114,13 @@ function(x,...) {
   original.attr
 }
 
-
+#' @rdname coredata.xts
 `xcoredata` <-
 function(x,...) {
   UseMethod('xcoredata')
 }
 
+#' @rdname coredata.xts
 `xcoredata<-` <- function(x,value) {
   UseMethod('xcoredata<-')
 }
@@ -92,6 +137,42 @@ function(x,...) {
   }
 }
 
+
+#' Extract and Replace xts Attributes
+#' 
+#' Extract and replace non-core xts attributes.
+#' 
+#' This function allows users to assign custom attributes to the xts objects,
+#' without altering core xts attributes (i.e. tclass, tzone, and tformat).
+#' 
+#' [`attributes()`] returns all attributes, including core attributes of the
+#' xts class.
+#' 
+#' @param x An xts object.
+#' @param user Should user-defined attributes be returned? The default of
+#'   `NULL` returns all xts attributes.
+#' @param value A list of new `name = value` attributes.
+#' 
+#' @return A named list of user-defined attributes.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso [`attributes()`]
+#'
+#' @keywords utilities
+#' @examples
+#' 
+#' x <- xts(matrix(1:(9*6),nc=6),
+#'          order.by=as.Date(13000,origin="1970-01-01")+1:9,
+#'          a1='my attribute')
+#' 
+#' xtsAttributes(x)
+#' xtsAttributes(x) <- list(a2=2020)
+#' 
+#' xtsAttributes(x)
+#' xtsAttributes(x) <- list(a1=NULL)
+#' xtsAttributes(x)
+#' 
 `xtsAttributes` <-
 function(x, user=NULL) {
   # get all additional attributes not standard to xts object
@@ -119,6 +200,7 @@ function(x, user=NULL) {
   xa
 }
 
+#' @rdname xtsAttributes
 `xtsAttributes<-` <-
 function(x,value) {
   UseMethod('xtsAttributes<-')

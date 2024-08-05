@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -32,19 +32,6 @@ rollapply.xts <- function(data, width, FUN, ..., by=1, by.column=TRUE,
   data <- try.xts(data)  # jmu: is this necessary?
   
   # Code taken/adapted from rollapply.zoo from the 'zoo' package
-
-#  embedi <- function(n, k, by = 1, ascending = FALSE) {
-  # n = no of time points, k = number of columns
-  # by = increment. normally = 1 but if = b calc every b-th point 
-  # ascending If TRUE, points passed in ascending order else descending.
-  # Note that embed(1:n, k) corresponds to embedi(n, k, by = 1, rev = TRUE)
-  # e.g. embedi(10, 3)
-#    s <- seq(1, n-k+1, by)
-#    lens <- length(s)
-#    cols <- 1:k
-#    if(!ascending) cols <- rev(cols)
-#    matrix(s + rep(cols, rep(lens,k))-1, lens)
-#  }
 
   # xts doesn't currently have these functions
   #  if(by.column && by == 1 && ascending && length(list(...)) < 1)

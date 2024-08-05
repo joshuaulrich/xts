@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -37,6 +37,7 @@ function(x,...) {
   xx
 }
 
+#' @rdname as.xts
 `as.xts.zoo` <-
 function(x,order.by=index(x),frequency=NULL,...,.RECLASS=FALSE) {
   if(.RECLASS) {
@@ -52,14 +53,6 @@ function(x,order.by=index(x),frequency=NULL,...,.RECLASS=FALSE) {
             ...)
   }
 
-#
-#  if(!is.null(attr(x,'names'))) {
-#    dim(xx) <- c(NROW(xx),NCOL(xx))
-#    dn <- list(attr(x,'names'),colnames(x))
-#    dimnames(xx) <- dn
-#    attr(xx,'.ROWNAMES') <- attr(x,'names')
-#  }
-#
   xx
 }
 

@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -18,6 +18,45 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#' Divide into Groups by Time
+#' 
+#' Creates a list of xts objects split along time periods.
+#' 
+#' A quick way to break up a large xts object by standard time periods; e.g.
+#' 'months', 'quarters', etc.
+#' 
+#' [`endpoints()`] is used to find the start and end of each period (or
+#' k-periods). See that function for valid arguments.
+#' 
+#' The inputs are passed to [`split.zoo()`] when `f` is not a character vector.
+#' 
+#' @param x An xts object.
+#' @param f A character vector describing the period to split by.
+#' @param drop Ignored by `split.xts()`.
+#' @param k Number of periods to aggregate into each split. See details.
+#' @param \dots Further arguments passed to other methods.
+#' 
+#' @return A list of xts objects.
+#' 
+#' @note [`aggregate.zoo()`] is more flexible, though not as fast for xts
+#' objects.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso [`endpoints()`], [`split.zoo()`][zoo::zoo], [`aggregate.zoo()`][zoo::zoo]
+#' 
+#' @keywords utilities
+#' @examples
+#' 
+#' data(sample_matrix)
+#' x <- as.xts(sample_matrix)
+#' 
+#' 
+#' split(x)
+#' split(x, f="weeks")
+#' split(x, f="weeks", k=4)
+#' 
 split.xts <-
 function(x, f="months", drop=FALSE, k=1, ...) {
   if(is.character(f) && length(f) == 1L) {

@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -18,21 +18,93 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#' @rdname tzone
 indexTZ <- function(x, ...)
 {
   .Deprecated("tzone", "xts")
   tzone(x, ...)
 }
 
+
+#' Get or Replace the Timezone of an xts Object's Index
+#' 
+#' Generic functions to get or replace the timezone of an xts object's index.
+#' 
+#' Internally, an xts object's index is a *numeric* value corresponding to
+#' seconds since the epoch in the UTC timezone. When an xts object is created,
+#' all time index values are converted internally to [`POSIXct()`]
+#' (which is also in seconds since the UNIX epoch), using the underlying OS
+#' conventions and the \env{TZ} environment variable. The `xts()` function
+#' manages timezone information as transparently as possible.
+#' 
+#' The `tzone<-` function *does not* change the internal index values
+#' (i.e. the index will remain the same time in the UTC timezone).
+#' 
+#' @param x An xts object.
+#' @param value A valid timezone value (see [`OlsonNames()`]).
+#' @param \dots Arguments passed to other methods.
+#' 
+#' @return A one element named vector containing the timezone of the object's
+#' index.
+#' 
+#' @note Both `indexTZ()` and `indexTZ<-` are deprecated in favor of
+#' `tzone()` and `tzone<-`, respectively.
+#' 
+#' Problems may arise when an object that had been created under one timezone
+#' are used in a session using another timezone. This isn't usually a issue,
+#' but when it is a warning is given upon printing or subsetting. This warning
+#' may be suppressed by setting `options(xts_check_TZ = FALSE)`.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso [`index()`] has more information on the xts index, [`tformat()`]
+#' describes how the index values are formatted when printed, and [`tclass()`]
+#' provides details how \pkg{xts} handles the class of the index.
+#' 
+#' @keywords ts utilities
+#' @examples
+#' 
+#' # Date indexes always have a "UTC" timezone
+#' x <- xts(1, Sys.Date())
+#' tzone(x)
+#' str(x)
+#' print(x)
+#' 
+#' # The default 'tzone' is blank -- your machine's local timezone,
+#' # determined by the 'TZ' environment variable.
+#' x <- xts(1, Sys.time())
+#' tzone(x)
+#' str(x)
+#' 
+#' # now set 'tzone' to different values
+#' tzone(x) <- "UTC"
+#' str(x)
+#' 
+#' tzone(x) <- "America/Chicago"
+#' str(x)
+#' 
+#' y <- timeBasedSeq('2010-01-01/2010-01-03 12:00/H')
+#' y <- xts(seq_along(y), y, tzone = "America/New_York")
+#' 
+#' # Changing the tzone does not change the internal index values, but it
+#' # does change how the index is printed!
+#' head(y)
+#' head(.index(y))
+#' tzone(y) <- "Europe/London"
+#' head(y)          # the index prints with hours, but
+#' head(.index(y))  # the internal index is not changed!
+#' 
 tzone <- function(x, ...) {
   UseMethod("tzone")
 }
 
+#' @rdname tzone
 `indexTZ<-` <- function(x, value) {
   .Deprecated("tzone<-", "xts")
   `tzone<-`(x, value)
 }
 
+#' @rdname tzone
 `tzone<-` <- function(x, value) {
   UseMethod("tzone<-")
 }

@@ -245,7 +245,6 @@ empty_with_dims_3x <-
   structure(integer(0), dim = c(0L, 9L), index = .index(x0),
             dimnames = list(NULL, c("a", "b", "c", "a.1", "b.1", "c.1", "a.2", "b.2", "c.2")),
             class = c("xts", "zoo"))
-storage.mode(.index(empty_with_dims_3x)) <- "integer"  ## FIXME: this should be 'numeric
 expect_identical(xm6, empty_with_dims_3x, info = "merge.xts([empty_xts_with_dims 3x]) has correct dims")
 
 
@@ -277,3 +276,12 @@ x3 <- merge(x, v, x)
 z3 <- merge(z, v, z)
 expect_equivalent(coredata(x3), coredata(z3), info = "merge.xts(x_named, vector, x_named) coredata matches merge.zoo()")
 expect_equivalent(index(x3), index(z3), info = "merge.xts(x_named, vector, x_named) index matches merge.zoo()")
+
+# this was throwing a warning because 'dbl' was unnecessarily being converted to integer
+retside <- c(TRUE, FALSE)
+int <- xts(1:10, .Date(1:10))
+dbl <- int + 1e20
+expect_silent(merge(int, dbl, retside = retside),
+              info = "merge.xts(xts_int, xts_dbl) doesn't warn when xts_dbl isn't returned")
+expect_silent(merge(dbl, int, retside = rev(retside)),
+              info = "merge.xts(xts_dbl, xts_int) doesn't warn when xts_dbl isn't returned")

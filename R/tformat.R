@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -19,11 +19,55 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#' Get or Replace the Format of an xts Object's Index
+#' 
+#' Generic functions to get or replace the format that determines how an xts
+#' object's index is printed.
+#' 
+#' Valid values for the `value` argument are the same as specified in the
+#' *Details* section of [`strptime()`].
+#' 
+#' An xts object's `tformat` is `NULL` by default, so the index will be
+#' be formatted according to its [`tclass()`] (e.g. Date, POSIXct, timeDate,
+#' yearmon, etc.).
+#' 
+#' The `tformat` only changes how the index is *printed* and how the row names
+#' are formatted when xts objects are converted to other classes (e.g. matrix
+#' or data.frame). It does not affect the internal index in any way.
+#' 
+#' @param x An xts object.
+#' @param value New index format string (see [`strptime()`] details for valid
+#'   values).
+#' @param \dots Arguments passed to other methods.
+#' 
+#' @return A vector containing the format for the object's index.
+#' 
+#' @note Both `indexFormat()` and `indexFormat<-` are deprecated in
+#' favor of `tformat()` and `tformat<-`, respectively.
+#' 
+#' @author Jeffrey A. Ryan
+#' 
+#' @seealso [`index()`] has more information on the xts index, [`tclass()`]
+#' details how \pkg{xts} handles the class of the index, [`tzone()`] has more
+#' information about the index timezone settings.
+#' 
+#' @keywords ts utilities
+#' @examples
+#' 
+#' x <- timeBasedSeq('2010-01-01/2010-01-02 12:00')
+#' x <- xts(seq_along(x), x)
+#' 
+#' # set a custom index format
+#' head(x)
+#' tformat(x) <- "%Y-%b-%d %H:%M:%OS3"
+#' head(x)
+#' 
 `tformat` <-
 function(x, ...) {
   UseMethod('tformat')
 }
 
+#' @rdname tformat
 `tformat<-` <-
 function(x, value) {
   UseMethod('tformat<-')
@@ -59,12 +103,14 @@ function(x, value) {
   x
 }
 
+#' @rdname tformat
 `indexFormat` <-
 function(x) {
   .Deprecated("tformat", "xts")
   tformat(x)
 }
 
+#' @rdname tformat
 `indexFormat<-` <-
 function(x, value) {
   .Deprecated("tformat<-", "xts")

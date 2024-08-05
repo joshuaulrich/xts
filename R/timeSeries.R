@@ -1,5 +1,5 @@
 #
-#   xts: eXtensible time-series 
+#   xts: eXtensible time-series
 #
 #   Copyright (C) 2008  Jeffrey A. Ryan jeff.a.ryan @ gmail.com
 #
@@ -44,6 +44,7 @@ function(x,...) {
              documentation=x.attr$documentation,...)
 }
 
+#' @rdname as.xts
 `as.xts.timeSeries` <-
 function(x,dateFormat="POSIXct",FinCenter,recordIDs,title,documentation,..., .RECLASS=FALSE) {
 
@@ -88,5 +89,3 @@ as.timeSeries.xts <- function(x, ...) {
 
   timeSeries(data=coredata(x), charvec=as.character(index(x)), ...)
 }
-
-`xts.as.timeSeries` <- function(x,...) {}
