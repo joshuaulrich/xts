@@ -1,3 +1,22 @@
+# xts 0.14.x (202x-xx-xx)
+
+* `plot.xts()` now renders all panels when 'x' has more than 8 columns and
+  `multi.panel = TRUE`. Columns 9 and later didn't render because the default
+  of `plot.xts()` is 'col = 1:8'. Thanks to Ethan Smith for the report and
+  patch.
+  ([#423](https://github.com/joshuaulrich/xts/issues/423))
+  ([#424](https://github.com/joshuaulrich/xts/issues/424))
+
+* `plot.xts()` no longer errors when 'ylim' is constant and negative. Thanks
+  to Ethan Smith for the report.
+  ([#422](https://github.com/joshuaulrich/xts/issues/422))
+
+* Do not use `SET_TYPEOF()` in C because it is not part of the public R API.
+
+* `merge.xts()` no longer converts 'x' or 'y' from double to integer in the C
+  code when they are not used in the result. This avoids an unnecessary and
+  confusing warning. Thanks to Jeff Ryan for the report.
+
 # xts 0.14.0 (2024-06-05)
 
 * `addEventLines()` and `addLegend()` now draw on multiple panels when `on` is
