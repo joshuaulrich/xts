@@ -154,9 +154,10 @@ chart.lines <- function(x,
            if(is.null(col))
              col <- xx$Env$theme$col
 
-           if(length(lty) < NCOL(x)) lty <- rep(lty, length.out = NCOL(x))
-           if(length(lwd) < NCOL(x)) lwd <- rep(lwd, length.out = NCOL(x))
-           if(length(col) < NCOL(x)) col <- rep(col, length.out = NCOL(x))
+           # ensure pars have ncol(x) elements
+           lty <- rep(lty, length.out = NCOL(x))
+           lwd <- rep(lwd, length.out = NCOL(x))
+           col <- rep(col, length.out = NCOL(x))
 
            for(i in NCOL(x):1) {
              # x-coordinates for this column
@@ -360,7 +361,16 @@ plot.xts <- function(x,
                      grid2="#F5F5F5",
                      legend.loc=NULL,
                      extend.xaxis=FALSE){
-  
+
+  # check for colorset or col argument
+  if(hasArg("colorset")) {
+    col <- eval.parent(plot.call$colorset)
+  }
+  # ensure pars have ncol(x) elements
+  col <- rep(col, length.out = NCOL(x))
+  lty <- rep(lty, length.out = NCOL(x))
+  lwd <- rep(lwd, length.out = NCOL(x))
+
   # Small multiples with multiple pages behavior occurs when multi.panel is
   # an integer. (i.e. multi.panel=2 means to iterate over the data in a step
   # size of 2 and plot 2 panels on each page
@@ -369,12 +379,6 @@ plot.xts <- function(x,
     multi.panel <- min(NCOL(x), multi.panel)
     idx <- seq.int(1L, NCOL(x), 1L)
     chunks <- split(idx, ceiling(seq_along(idx)/multi.panel))
-    
-    # allow color and line attributes for each panel in a multi.panel plot
-    if(length(lty) < ncol(x)) lty <- rep(lty, length.out = ncol(x))
-    if(length(lwd) < ncol(x)) lwd <- rep(lwd, length.out = ncol(x))
-    if(length(col) < ncol(x)) col <- rep(col, length.out = ncol(x))
-    
     
     if(!is.null(panels) && nchar(panels) > 0){
       # we will plot the panels, but not plot the data by column
@@ -475,11 +479,6 @@ plot.xts <- function(x,
   # lines of margin to the 4 sides of the plot: c(bottom, left, top, right)
   cs$Env$mar <- if (hasArg("mar")) eval.parent(plot.call$mar) else c(3,2,0,2)
   
-  # check for colorset or col argument
-  # if col has a length of 1, replicate to NCOL(x) so we can keep it simple
-  # and color each line by its index in col
-  if(hasArg("colorset")) col <- eval.parent(plot.call$colorset)
-  if(length(col) < ncol(x)) col <- rep(col, length.out = ncol(x))
   cs$Env$format.labels <- format.labels
   cs$Env$yaxis.ticks <- yaxis.ticks
   cs$Env$major.ticks <- if (isTRUE(major.ticks)) "auto" else major.ticks
@@ -488,11 +487,6 @@ plot.xts <- function(x,
   cs$Env$grid.ticks.lwd <- grid.ticks.lwd
   cs$Env$grid.ticks.lty <- grid.ticks.lty
   cs$Env$type <- type
-  
-  # if lty or lwd has a length of 1, replicate to NCOL(x) so we can keep it 
-  # simple and draw each line with attributes by index
-  if(length(lty) < ncol(x)) lty <- rep(lty, length.out = ncol(x))
-  if(length(lwd) < ncol(x)) lwd <- rep(lwd, length.out = ncol(x))
   cs$Env$lty <- lty
   cs$Env$lwd <- lwd
   
