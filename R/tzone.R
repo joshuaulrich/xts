@@ -148,7 +148,7 @@ function(x, ...)
   # For xts objects created pre-0.10.3
   if (is.null(tzone)) {
     # no tzone on the index
-    sq_tzone <- sQuote("tozne")
+    sq_tzone <- sQuote("tzone")
     sq_both <- paste(sq_tzone, "or", sQuote(".indexTZ"))
 
     warn_msg <-
