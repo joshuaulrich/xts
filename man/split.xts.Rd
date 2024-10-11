@@ -30,11 +30,11 @@ A quick way to break up a large xts object by standard time periods; e.g.
 \code{\link[=endpoints]{endpoints()}} is used to find the start and end of each period (or
 k-periods). See that function for valid arguments.
 
-The inputs are passed to \code{\link[=split.zoo]{split.zoo()}} when \code{f} is not a character vector.
+The inputs are passed to \code{\link[zoo:aggregate.zoo]{split.zoo()}} when \code{f} is not a character vector.
 }
 \note{
-\code{\link[=aggregate.zoo]{aggregate.zoo()}} is more flexible, though not as fast for xts
-objects.
+\code{\link[zoo:aggregate.zoo]{aggregate.zoo()}} is more flexible, though not
+as fast for xts objects.
 }
 \examples{
 
@@ -48,7 +48,8 @@ split(x, f="weeks", k=4)
 
 }
 \seealso{
-\code{\link[=endpoints]{endpoints()}}, \code{\link[zoo:zoo]{split.zoo()}}, \code{\link[zoo:zoo]{aggregate.zoo()}}
+\code{\link[=endpoints]{endpoints()}}, \code{\link[zoo:aggregate.zoo]{split.zoo()}},
+\code{\link[zoo:aggregate.zoo]{aggregate.zoo()}}
 }
 \author{
 Jeffrey A. Ryan

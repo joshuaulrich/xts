@@ -24,7 +24,7 @@
 #' Method for printing an extensible time-series object.
 #' 
 #' @param x An xts object.
-#' @param fmt Passed to [`coredata()`] to format the time index.
+#' @param fmt Passed to [`coredata()`][zoo::coredata] to format the time index.
 #' @param \dots Arguments passed to other methods.
 #' @param show.rows The number of first and last rows to print if the number of
 #'   rows is truncated (default 10, or `getOption("xts.print.show.rows")`).

@@ -154,7 +154,7 @@ sample.xts['2007-01-03'] # just the 3rd of January 2007
 \pkg{zoo}
 }
 \seealso{
-\code{\link[=as.xts]{as.xts()}}, \code{\link[=index]{index()}}, \code{\link[=tclass]{tclass()}}, \code{\link[=tformat]{tformat()}}, \code{\link[=tzone]{tzone()}},
+\code{\link[=as.xts]{as.xts()}}, \code{\link[=index.xts]{index()}}, \code{\link[=tclass]{tclass()}}, \code{\link[=tformat]{tformat()}}, \code{\link[=tzone]{tzone()}},
 \code{\link[=xtsAttributes]{xtsAttributes()}}
 }
 \author{

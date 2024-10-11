@@ -58,7 +58,7 @@ head(x)
 
 }
 \seealso{
-\code{\link[=index]{index()}} has more information on the xts index, \code{\link[=tclass]{tclass()}}
+\code{\link[=index.xts]{index()}} has more information on the xts index, \code{\link[=tclass]{tclass()}}
 details how \pkg{xts} handles the class of the index, \code{\link[=tzone]{tzone()}} has more
 information about the index timezone settings.
 }

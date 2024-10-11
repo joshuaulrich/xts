@@ -57,7 +57,7 @@ indexTZ <- function(x, ...)
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [`index()`] has more information on the xts index, [`tformat()`]
+#' @seealso [`index()`][xts::index.xts] has more information on the xts index, [`tformat()`]
 #' describes how the index values are formatted when printed, and [`tclass()`]
 #' provides details how \pkg{xts} handles the class of the index.
 #' 

@@ -46,7 +46,7 @@ defaults.
 \details{
 The primary motivation for these methods was to take advantage of a faster
 C-level implementation. Another motivation was to make \code{lag()} behave using
-standard sign for \code{k}. Both \code{\link[=lag.zoo]{lag.zoo()}} and \code{\link[=lag.default]{lag.default()}} require a
+standard sign for \code{k}. Both \link[zoo:lag.zoo]{zoo's lag() method} and \code{\link[=lag.default]{lag.default()}} require a
 \emph{negative} value for \code{k} in order to shift a series backward. So \code{k = 1},
 shifts the series \emph{forward} one observation. This is especially confusing
 because \code{k = 1} is the default for those functions. When \code{x} is an xts

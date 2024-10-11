@@ -29,7 +29,7 @@
 #' [`endpoints()`] is used to find the start and end of each period (or
 #' k-periods). See that function for valid arguments.
 #' 
-#' The inputs are passed to [`split.zoo()`] when `f` is not a character vector.
+#' The inputs are passed to [`split.zoo()`][zoo::split.zoo] when `f` is not a character vector.
 #' 
 #' @param x An xts object.
 #' @param f A character vector describing the period to split by.
@@ -39,12 +39,13 @@
 #' 
 #' @return A list of xts objects.
 #' 
-#' @note [`aggregate.zoo()`] is more flexible, though not as fast for xts
-#' objects.
+#' @note [`aggregate.zoo()`][zoo::aggregate.zoo] is more flexible, though not
+#' as fast for xts objects.
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [`endpoints()`], [`split.zoo()`][zoo::zoo], [`aggregate.zoo()`][zoo::zoo]
+#' @seealso [`endpoints()`], [`split.zoo()`][zoo::split.zoo],
+#' [`aggregate.zoo()`][zoo::aggregate.zoo]
 #' 
 #' @keywords utilities
 #' @examples

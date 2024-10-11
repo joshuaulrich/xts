@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{An xts object.}
 
-\item{fmt}{Passed to \code{\link[=coredata]{coredata()}} to format the time index.}
+\item{fmt}{Passed to \code{\link[zoo:coredata]{coredata()}} to format the time index.}
 
 \item{\dots}{Arguments passed to other methods.}
 

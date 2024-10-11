@@ -52,7 +52,7 @@ lagts.xts <- function(x, k=1, na.pad=TRUE, ...) {
 #' 
 #' The primary motivation for these methods was to take advantage of a faster
 #' C-level implementation. Another motivation was to make `lag()` behave using
-#' standard sign for `k`. Both [`lag.zoo()`] and [`lag.default()`] require a
+#' standard sign for `k`. Both [zoo's lag() method][zoo::lag.zoo] and [`lag.default()`] require a
 #' *negative* value for `k` in order to shift a series backward. So `k = 1`,
 #' shifts the series *forward* one observation. This is especially confusing
 #' because `k = 1` is the default for those functions. When `x` is an xts

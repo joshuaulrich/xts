@@ -83,7 +83,7 @@ head(.index(y))  # the internal index is not changed!
 
 }
 \seealso{
-\code{\link[=index]{index()}} has more information on the xts index, \code{\link[=tformat]{tformat()}}
+\code{\link[=index.xts]{index()}} has more information on the xts index, \code{\link[=tformat]{tformat()}}
 describes how the index values are formatted when printed, and \code{\link[=tclass]{tclass()}}
 provides details how \pkg{xts} handles the class of the index.
 }

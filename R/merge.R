@@ -23,7 +23,7 @@
 #' 
 #' Perform merge operations on xts objects by time index.
 #' 
-#' This xts method is compatible with [`merge.zoo()`] but implemented almost
+#' This xts method is compatible with [zoo's merge() method][zoo::merge.zoo] but implemented almost
 #' entirely in C-level code for efficiency.
 #' 
 #' The function can perform all common database join operations along the time

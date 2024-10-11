@@ -47,7 +47,7 @@
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [`index()`] has more information on the xts index, [`tclass()`]
+#' @seealso [`index()`][xts::index.xts] has more information on the xts index, [`tclass()`]
 #' details how \pkg{xts} handles the class of the index, [`tzone()`] has more
 #' information about the index timezone settings.
 #' 

@@ -93,7 +93,7 @@ format for use within \R.
 
 \code{as.xts()} can convert objects of the following classes into an xts object:
 object: \link[timeSeries:timeSeries]{timeSeries}, \link{ts}, \link{matrix}, \link{data.frame},
-and \link{zoo}. \code{xtsible()} safely checks whether an object can be converted to
+and \link[zoo:zoo]{zoo}. \code{xtsible()} safely checks whether an object can be converted to
 an xts object.
 
 Additional \code{name = value} pairs may be passed to the function to be added to

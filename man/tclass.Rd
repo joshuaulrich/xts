@@ -79,7 +79,7 @@ head(.index(y))  # the internal index is truncated
 
 }
 \seealso{
-\code{\link[=index]{index()}} has more information on the xts index, \code{\link[=tformat]{tformat()}}
+\code{\link[=index.xts]{index()}} has more information on the xts index, \code{\link[=tformat]{tformat()}}
 details how the index values are formatted when printed, and \code{\link[=tzone]{tzone()}}
 has more information about the index timezone settings.
 

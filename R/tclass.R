@@ -51,7 +51,7 @@
 #' 
 #' @author Jeffrey A. Ryan
 #' 
-#' @seealso [`index()`] has more information on the xts index, [`tformat()`]
+#' @seealso [`index()`][xts::index.xts] has more information on the xts index, [`tformat()`]
 #' details how the index values are formatted when printed, and [`tzone()`]
 #' has more information about the index timezone settings.
 #' 

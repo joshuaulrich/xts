@@ -129,7 +129,7 @@
 #' 
 #' @author Jeffrey A. Ryan and Joshua M. Ulrich
 #' 
-#' @seealso [`as.xts()`], [`index()`], [`tclass()`], [`tformat()`], [`tzone()`],
+#' @seealso [`as.xts()`], [`index()`][xts::index.xts], [`tclass()`], [`tformat()`], [`tzone()`],
 #' [`xtsAttributes()`]
 #' 
 #' @references \pkg{zoo}
@@ -413,7 +413,7 @@ function(x) {
 #' 
 #' `as.xts()` can convert objects of the following classes into an xts object:
 #' object: [timeSeries][timeSeries::timeSeries], [ts], [matrix], [data.frame],
-#' and [zoo]. `xtsible()` safely checks whether an object can be converted to
+#' and [zoo][zoo::zoo]. `xtsible()` safely checks whether an object can be converted to
 #' an xts object.
 #' 
 #' Additional `name = value` pairs may be passed to the function to be added to
