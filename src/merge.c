@@ -409,8 +409,9 @@ SEXP do_merge_xts (SEXP x, SEXP y,
 
     /* Check for illegal values before looping. Due to ordered index,
      * -Inf must be first, while NA, Inf, and NaN must be last. */
-    if (!R_FINITE(real_xindex[0]) || !R_FINITE(real_xindex[nrx-1]) ||
-        !R_FINITE(real_yindex[0]) || !R_FINITE(real_yindex[nry-1])) {
+    int bad_x_index = nrx > 0 && (!R_FINITE(real_xindex[0]) || !R_FINITE(real_xindex[nrx-1]));
+    int bad_y_index = nry > 0 && (!R_FINITE(real_yindex[0]) || !R_FINITE(real_yindex[nry-1]));
+    if (bad_x_index || bad_y_index) {
       error("'index' cannot contain 'NA', 'NaN', or '+/-Inf'");
     }
 
@@ -450,7 +451,9 @@ SEXP do_merge_xts (SEXP x, SEXP y,
      * results. Note that the NA_integer_ will appear in the last value of
      * the index because of sorting at the R level, even though NA_INTEGER
      * equals INT_MIN at the C level. */
-    if (int_xindex[nrx-1] == NA_INTEGER || int_yindex[nry-1] == NA_INTEGER) {
+    int bad_x_index = nrx > 0 && int_xindex[nrx-1] == NA_INTEGER;
+    int bad_y_index = nry > 0 && int_yindex[nry-1] == NA_INTEGER;
+    if (bad_x_index || bad_y_index) {
       error("'index' cannot contain 'NA'");
     }
 
