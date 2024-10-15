@@ -1,4 +1,4 @@
-# xts 0.14.x (202x-xx-xx)
+# xts 0.14.1 (2024-10-15)
 
 * `plot.xts()` now renders all panels when 'x' has more than 8 columns and
   `multi.panel = TRUE`. Columns 9 and later didn't render because the default
