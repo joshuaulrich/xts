@@ -33,7 +33,7 @@ SEXP tryXts (SEXP x)
     PROTECT(str_xts = mkString("xts")); P++;
     PROTECT(env = R_FindNamespace(str_xts)); P++;
 
-    PROTECT(expr = LCONS(install("try.xts"), x)); P++;
+    PROTECT(expr = lang2(install("try.xts"), x)); P++;
     PROTECT(result = eval(expr, env)); P++;
 
     if( !Rf_asInteger(isXts(result)) ) {

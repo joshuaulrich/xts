@@ -50,3 +50,9 @@ xts_attr <- list("hello" = "world")
 xtsAttributes(y) <- xts_attr
 z <- reclass(x, y)
 expect_equal(xts_attr, xtsAttributes(z), info = info_msg)
+
+# ensure calls to tryXts() C function work
+x <- xts(1:3, .Date(1:3))
+z <- .Call(xts:::C_tryXts, as.zoo(x))
+y <- try.xts(as.zoo(x))
+expect_identical(y, z, info = "calls to C_tryXts() call try.xts()")
