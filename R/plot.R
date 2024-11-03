@@ -362,8 +362,10 @@ plot.xts <- function(x,
                      legend.loc=NULL,
                      extend.xaxis=FALSE){
 
-  if (is.numeric(multi.panel) || (multi.panel == TRUE)){
-    #only for multipanel scenarios. single panel supports colors for each data ppoint in the series
+  if(is.numeric(multi.panel) || isTRUE(multi.panel)) {
+    # Only need to check pars in multipanel scenarios. The single panel
+    # scenarios supports colors for each data point in the series.
+
     # check for colorset or col argument
     if(hasArg("colorset")) {
       col <- eval.parent(plot.call$colorset)
