@@ -362,15 +362,20 @@ plot.xts <- function(x,
                      legend.loc=NULL,
                      extend.xaxis=FALSE){
 
-  # check for colorset or col argument
-  if(hasArg("colorset")) {
-    col <- eval.parent(plot.call$colorset)
-  }
-  # ensure pars have ncol(x) elements
-  col <- rep(col, length.out = NCOL(x))
-  lty <- rep(lty, length.out = NCOL(x))
-  lwd <- rep(lwd, length.out = NCOL(x))
+  if(is.numeric(multi.panel) || isTRUE(multi.panel)) {
+    # Only need to check pars in multipanel scenarios. The single panel
+    # scenarios supports colors for each data point in the series.
 
+    # check for colorset or col argument
+    if(hasArg("colorset")) {
+      col <- eval.parent(plot.call$colorset)
+    }
+    # ensure pars have ncol(x) elements
+    col <- rep(col, length.out = NCOL(x))
+    lty <- rep(lty, length.out = NCOL(x))
+    lwd <- rep(lwd, length.out = NCOL(x))
+  }
+  
   # Small multiples with multiple pages behavior occurs when multi.panel is
   # an integer. (i.e. multi.panel=2 means to iterate over the data in a step
   # size of 2 and plot 2 panels on each page
