@@ -48,8 +48,8 @@ SEXP do_startofyear (SEXP _from, SEXP _to, SEXP _origin)
     //   years also divisible by 100. Leap centuries,
     //   those divisible by 400, also get 366 days.
     int leap = ( (fromto[ i ] % 4 == 0 && fromto[ i ] % 100 != 0)
-                 ||
-                 fromto[ i ] % 400 == 0) ? 1 : 0;
+                ||
+                  fromto[ i ] % 400 == 0) ? 1 : 0;
     fromto[i] = 365 + leap;
   }
   
