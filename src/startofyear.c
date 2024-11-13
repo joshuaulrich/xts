@@ -35,29 +35,31 @@ SEXP do_startofyear (SEXP _from, SEXP _to, SEXP _origin)
   SEXP _fromto = PROTECT(allocVector(INTSXP, to-from+1)); P++;
   int *fromto = INTEGER(_fromto);
 
-  int nyear[1] = { (to - from + 1) };
-  int leap[nyear[0]];
-
+  int nyear = to - from + 1;
+  int *leap = (int *)malloc(nyear * sizeof(int)) ;
+  if (!leap)
+    error("Failed to allocate %d bytes of memory for 'leap'", nyear * sizeof(int));
 
   // generate sequence of dates to work with
   fromto[0] = from;
-  for(i=1; i < nyear[0]; i++) {
+  for(i=1; i < nyear; i++) {
     fromto[i] = fromto[i-1] + 1;
   } 
 
-  for(i = 0; i < nyear[0]; i++) {
+  for(i = 0; i < nyear; i++) {
     leap[ i ] = ( (fromto[ i ] % 4 == 0 && fromto[ i ] % 100 != 0)
                  ||
                    fromto[ i ] % 400 == 0) ? 1 : 0;
   }
 
-  for(i=0; i < nyear[0]; i++) {
+  for(i=0; i < nyear; i++) {
     if(leap[i] == 1) { // a leapyear (366 days)
       fromto[i] = 366;
     } else {           // a non-leapyear (365 days)
       fromto[i] = 365;
     }
   }
+  free(leap);
   
   /*
     fromto now has proper number of days per year
@@ -67,11 +69,11 @@ SEXP do_startofyear (SEXP _from, SEXP _to, SEXP _origin)
   */
 
   int days_before_origin = origin - from;
-  //int days_after_origin  = nyear[0] - days_before_origin - 1; //why is this here?
+  //int days_after_origin  = nyear - days_before_origin - 1; //why is this here?
 
   int tmp=0;
 
-  for(i = days_before_origin; i < nyear[0]; i++) {
+  for(i = days_before_origin; i < nyear; i++) {
     tmp += fromto[i];
     fromto[i] = tmp;
   }
@@ -84,7 +86,7 @@ SEXP do_startofyear (SEXP _from, SEXP _to, SEXP _origin)
 
   /* now insert a 0 at the origin, by going backwards */
 
-  for(i = nyear[0] - 1; i > days_before_origin; i--) 
+  for(i = nyear - 1; i > days_before_origin; i--) 
     fromto[ i ] = fromto[ i-1 ];
 
   fromto[ days_before_origin ] = 0;
