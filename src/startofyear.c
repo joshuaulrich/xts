@@ -36,27 +36,21 @@ SEXP do_startofyear (SEXP _from, SEXP _to, SEXP _origin)
   int *fromto = INTEGER(_fromto);
 
   int nyear[1] = { (to - from + 1) };
-  int leap[nyear[0]];
-
 
   // generate sequence of dates to work with
   fromto[0] = from;
   for(i=1; i < nyear[0]; i++) {
     fromto[i] = fromto[i-1] + 1;
-  } 
-
-  for(i = 0; i < nyear[0]; i++) {
-    leap[ i ] = ( (fromto[ i ] % 4 == 0 && fromto[ i ] % 100 != 0)
-                 ||
-                   fromto[ i ] % 400 == 0) ? 1 : 0;
   }
 
   for(i=0; i < nyear[0]; i++) {
-    if(leap[i] == 1) { // a leapyear (366 days)
-      fromto[i] = 366;
-    } else {           // a non-leapyear (365 days)
-      fromto[i] = 365;
-    }
+    // A leap year is every year divisible by 4 _except_
+    //   years also divisible by 100. Leap centuries,
+    //   those divisible by 400, also get 366 days.
+    int leap = ( (fromto[ i ] % 4 == 0 && fromto[ i ] % 100 != 0)
+                ||
+                  fromto[ i ] % 400 == 0) ? 1 : 0;
+    fromto[i] = 365 + leap;
   }
   
   /*
