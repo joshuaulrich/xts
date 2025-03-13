@@ -22,6 +22,21 @@ rollapply.xts <- function(data, width, FUN, ..., by=1, by.column=TRUE,
   fill=if(na.pad) NA, na.pad=TRUE, partial=TRUE,
   align=c("right","center","left")) {
 
+  # handle width when it has multiple elements
+  if (length(width) > 1) {
+      align. <- match.arg(align)
+      result <-
+          rollapply(as.zoo(data), width, FUN, ..., by = by,
+                    by.column = by.column, fill = fill,
+                    partial = partial, align = align.)
+
+      result <- as.xts(result)
+      return(result)
+  } else {
+      width <- as.integer(width)
+      stopifnot(width > 0, width <= NROW(data))
+  }
+
   if (!missing(na.pad)) {
     warning("na.pad argument is deprecated")
   }
@@ -42,8 +57,6 @@ rollapply.xts <- function(data, width, FUN, ..., by=1, by.column=TRUE,
 
   nr <- NROW(data)
   nc <- NCOL(data)
-  width <- as.integer(width)[1]
-  stopifnot( width > 0, width <= nr )
 
   ## process alignment
   align <- match.arg(align)
