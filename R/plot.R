@@ -1083,6 +1083,10 @@ legend.coords <- function(legend.loc, xrange, yrange) {
 #' @param main Main title for a new panel, if drawn.
 #' @param on Panel number to draw on. A new panel will be drawn if `on = NA`.
 #' @param col Color palette to use, set by default to rational choices.
+#' @param border Color to use for border, default does not draw a border.
+#' @param sides controls whether the vertical sides of the border
+#'   connecting the lower and upper series in x are drawn. Only applies
+#'   if a border color is provided. defaults to TRUE.
 #' @param \dots Any other passthrough parameters to [`par()`].
 #' 
 #' @author Ross Bennett
@@ -1104,8 +1108,8 @@ legend.coords <- function(legend.loc, xrange, yrange) {
 #' # set on = -1 to draw the shaded region *behind* the main series
 #' addPolygon(shade, on = -1, col = "lightgrey")
 #' }
-#' 
-addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
+#'
+addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, border=NA, sides=NA, ...){
   # add polygon to xts plot based on http://dirk.eddelbuettel.com/blog/2011/01/16/
   
   # some simple checks
@@ -1115,7 +1119,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
   
   plot_object <- current.xts_chob()
   lenv <- plot_object$new_environment()
-  lenv$plot_lines <- function(x, ta, on, col, ...){
+  lenv$plot_lines <- function(x, ta, on, col, border, sides, ...){
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
     xDataSubset <- xdata[xsubset]
@@ -1144,15 +1148,27 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, ...){
     # y coordinates upper and lower
     # assume first column is upper and second column is lower y coords for
     # initial prototype
-    yu <- as.vector(coredata(ta.y[,1]))
-    yl <- as.vector(coredata(ta.y[,2]))
-    polygon(x=xx, y=c(yl[1], yu, rev(yl)), border=NA, col=col, ...)
+    yu <- as.vector(ta.y[,1])
+    yl <- as.vector(ta.y[,2])
+    if (!is.na(on) && isTRUE(plot_object$get_panel(on)$use_log_yaxis)) {
+      yu <- log(yu)
+      yl <- log(yl)
+    }
+    if (any(!is.na(border)) && isFALSE(sides)) {
+      polygon(x=xx, y=c(yl[1], yu, rev(yl)), border=NA, col=col, ...)
+      chart.lines(yl, col=border)
+      chart.lines(yu, col=border)
+    } else {
+      polygon(x=xx, y=c(yl[1], yu, rev(yl)), border=border, col=col, ...)
+    }
   }
 
   # get tag/value from dots
   expargs <- substitute(alist(ta=x,
                               col=col,
                               on=on,
+                              border=border,
+                              sides=sides,
                               ...))
   # capture values from caller, so we don't need to copy objects to lenv,
   # since this gives us evaluated versions of all the object values
