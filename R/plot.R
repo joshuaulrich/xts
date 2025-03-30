@@ -1123,7 +1123,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, border=NA, sides=NA,
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
     xDataSubset <- xdata[xsubset]
-    if(is.null(col)) col <- x$Env$theme$fill
+    if(is.null(col)) col <- x$Env$theme$col
 
     # we can add points that are not necessarily at the points
     # on the main series, but need to ensure the new series only
