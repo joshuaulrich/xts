@@ -1123,7 +1123,7 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, border=NA, sides=NA,
     xdata <- x$Env$xdata
     xsubset <- x$Env$xsubset
     xDataSubset <- xdata[xsubset]
-    if(is.null(col)) col <- x$Env$theme$col
+    if(is.null(col)) col <- x$Env$theme$fill
 
     # we can add points that are not necessarily at the points
     # on the main series, but need to ensure the new series only
@@ -1150,14 +1150,14 @@ addPolygon <- function(x, y=NULL, main="", on=NA, col=NULL, border=NA, sides=NA,
     # initial prototype
     yu <- as.vector(ta.y[,1])
     yl <- as.vector(ta.y[,2])
-    if (!is.na(on) && isTRUE(plot_object$get_panel(on)$use_log_yaxis)) {
+    log <- isTRUE(plot_object$get_panel(on)$use_log_yaxis)
+    if (!is.na(on) && log) {
       yu <- log(yu)
       yl <- log(yl)
     }
     if (any(!is.na(border)) && isFALSE(sides)) {
       polygon(x=xx, y=c(yl[1], yu, rev(yl)), border=NA, col=col, ...)
-      chart.lines(yl, col=border)
-      chart.lines(yu, col=border)
+      chart.lines(ta, col=border, log=log, ...) #chartlines expects matrix, so use ta istead of vectors
     } else {
       polygon(x=xx, y=c(yl[1], yu, rev(yl)), border=border, col=col, ...)
     }
