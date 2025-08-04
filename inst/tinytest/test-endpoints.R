@@ -301,3 +301,6 @@ expect_error(endpoints(x, on = "ms", k = -1), info = info_msg)
 
 expect_error(endpoints(x, on = "us", k =  0), info = info_msg)
 expect_error(endpoints(x, on = "us", k = -1), info = info_msg)
+
+# returns c(0, 0) for zero-length index (#434)
+expect_identical(endpoints(xts()), c(0L, 0L), info = "returns c(0, 0) for zero-length index")

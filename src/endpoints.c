@@ -50,85 +50,92 @@ SEXP endpoints (SEXP _x, SEXP _on, SEXP _k, SEXP _addlast /* TRUE */)
   /* endpoints objects. max nr+2 ( c(0,ep,nr) ) */
   SEXP _ep = PROTECT(allocVector(INTSXP,nr+2)); P++;
   int *ep = INTEGER(_ep);
-
   
-  /*switch(TYPEOF(getAttrib(_x, install("index")))) {*/
-  switch(TYPEOF(_x)) {
-    case INTSXP:
-      /* start i at second elem */
-      /*int_index = INTEGER(getAttrib(_x, install("index")));*/
-      int_index = INTEGER(_x);
-      ep[0] = 0;
-      /* special handling if index values < 1970-01-01 00:00:00 UTC */
-      if(int_index[0] < 0) {
-          int_tmp[1] = (int_index[0] + 1) / on / k;
-          for(i=1,j=1; i<nr; i++) {
-            int idx_i0 = int_index[i];
+  if(nr > 0) {
+    /*switch(TYPEOF(getAttrib(_x, install("index")))) {*/
+    switch(TYPEOF(_x)) {
+      case INTSXP:
+        /* start i at second elem */
+        /*int_index = INTEGER(getAttrib(_x, install("index")));*/
+        int_index = INTEGER(_x);
+        ep[0] = 0;
+        /* special handling if index values < 1970-01-01 00:00:00 UTC */
+        if(int_index[0] < 0) {
+            int_tmp[1] = (int_index[0] + 1) / on / k;
+            for(i=1,j=1; i<nr; i++) {
+              int idx_i0 = int_index[i];
 
-            // if index equals epoch
-            int epoch_adj = (idx_i0 == 0);
-            // cast truncates toward zero
-            // (i.e. *forward* in time if index < 0)
-            if(idx_i0 < 0) idx_i0++;
+              // if index equals epoch
+              int epoch_adj = (idx_i0 == 0);
+              // cast truncates toward zero
+              // (i.e. *forward* in time if index < 0)
+              if(idx_i0 < 0) idx_i0++;
 
-            int_tmp[0] = idx_i0 / on / k + epoch_adj;
-            if( int_tmp[0] != int_tmp[1] ) {
-              ep[j] = i;
-              j++;
+              int_tmp[0] = idx_i0 / on / k + epoch_adj;
+              if( int_tmp[0] != int_tmp[1] ) {
+                ep[j] = i;
+                j++;
+              }
+              int_tmp[1] = int_tmp[0] - epoch_adj;
             }
-            int_tmp[1] = int_tmp[0] - epoch_adj;
-          }
-      } else {
-          int_tmp[1] = int_index[0] / on / k;
-          for(i=1,j=1; i<nr; i++) {
-            int_tmp[0] = int_index[i] / on / k;
-            if( int_tmp[0] != int_tmp[1] ) {
-              ep[j] = i;
-              j++;
+        } else {
+            int_tmp[1] = int_index[0] / on / k;
+            for(i=1,j=1; i<nr; i++) {
+              int_tmp[0] = int_index[i] / on / k;
+              if( int_tmp[0] != int_tmp[1] ) {
+                ep[j] = i;
+                j++;
+              }
+              int_tmp[1] = int_tmp[0];
             }
-            int_tmp[1] = int_tmp[0];
-          }
-      }
-      break;
-    case REALSXP:
-      /*real_index = REAL(getAttrib(_x, install("index")));*/
-      real_index = REAL(_x);
-      ep[0] = 0;
-      /* special handling if index values < 1970-01-01 00:00:00 UTC */
-      if(real_index[0] < 0) {
-          int64_tmp[1] = (int64_t)(real_index[0] + 1) / on / k;
-          for(i=1,j=1; i<nr; i++) {
-            double idx_i0 = real_index[i];
+        }
+        break;
+      case REALSXP:
+        /*real_index = REAL(getAttrib(_x, install("index")));*/
+        real_index = REAL(_x);
+        ep[0] = 0;
+        /* special handling if index values < 1970-01-01 00:00:00 UTC */
+        if(real_index[0] < 0) {
+            int64_tmp[1] = (int64_t)(real_index[0] + 1) / on / k;
+            for(i=1,j=1; i<nr; i++) {
+              double idx_i0 = real_index[i];
 
-            // if index equals epoch
-            int epoch_adj = (idx_i0 == 0);
-            // cast truncates toward zero
-            // (i.e. *forward* in time if index < 0)
-            if(idx_i0 < 0) idx_i0 += 1.0;
+              // if index equals epoch
+              int epoch_adj = (idx_i0 == 0);
+              // cast truncates toward zero
+              // (i.e. *forward* in time if index < 0)
+              if(idx_i0 < 0) idx_i0 += 1.0;
 
-            int64_tmp[0] = (int64_t)idx_i0 / on / k + epoch_adj;
-            if( int64_tmp[0] != int64_tmp[1] ) {
-              ep[j] = i;
-              j++;
+              int64_tmp[0] = (int64_t)idx_i0 / on / k + epoch_adj;
+              if( int64_tmp[0] != int64_tmp[1] ) {
+                ep[j] = i;
+                j++;
+              }
+              int64_tmp[1] = int64_tmp[0] - epoch_adj;
             }
-            int64_tmp[1] = int64_tmp[0] - epoch_adj;
-          }
-      } else {
-          int64_tmp[1] = (int64_t)real_index[0] / on / k;
-          for(i=1,j=1; i<nr; i++) {
-            int64_tmp[0] = (int64_t)real_index[i] / on / k;
-            if( int64_tmp[0] != int64_tmp[1] ) {
-              ep[j] = i;
-              j++;
+        } else {
+            int64_tmp[1] = (int64_t)real_index[0] / on / k;
+            for(i=1,j=1; i<nr; i++) {
+              int64_tmp[0] = (int64_t)real_index[i] / on / k;
+              if( int64_tmp[0] != int64_tmp[1] ) {
+                ep[j] = i;
+                j++;
+              }
+              int64_tmp[1] = int64_tmp[0];
             }
-            int64_tmp[1] = int64_tmp[0];
-          }
-      }
-      break;
-    default:
-      error("unsupported 'x' type");
-      break;
+        }
+        break;
+      default:
+        error("unsupported 'x' type");
+        break;
+    }
+  } else {
+    // zero-length index
+    j = 2;
+    ep[0] = 0;
+    ep[1] = 0;
   }
+
   if(ep[j-1] != nr && asLogical(_addlast)) { /* protect against endpoint at NR */
 /* Rprintf("ep[%i-1] != %i\n", j, nr);  */
     ep[j] = nr;

@@ -1,3 +1,9 @@
+# xts 0.14.x (yyyy-mm-dd)
+
+* Fixed crash when `endpoints()` was called on an xts object with a zero-length
+  index (e.g. `endpoints(xts())`).
+  ([#434](https://github.com/joshuaulrich/xts/issues/434))
+
 # xts 0.14.1 (2024-10-15)
 
 * `plot.xts()` now renders all panels when 'x' has more than 8 columns and
