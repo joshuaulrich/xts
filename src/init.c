@@ -29,7 +29,6 @@ static const
 R_CallMethodDef callMethods[] = {
   {"add_class",             (DL_FUNC) &add_class,               2},
   {"coredata_xts",          (DL_FUNC) &coredata_xts,            1},
-  {"do_xtsAttributes",      (DL_FUNC) &do_xtsAttributes,        1},
   {"add_xtsCoreAttributes", (DL_FUNC) &add_xtsCoreAttributes,   6},
   {"lag_xts",               (DL_FUNC) &lag_xts,                 3},
   {"lagXts",                (DL_FUNC) &lagXts,                  3},

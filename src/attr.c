@@ -25,139 +25,86 @@
 #include <Rdefines.h>
 #include "xts.h"
 
-SEXP do_xtsAttributes(SEXP x)
+static SEXP xts_get_attrs(SEXP x)
 {
-  SEXP a, values, names;
-  int i=0, P=0;
-
-  a = ATTRIB(x);
-  if(length(a) <= 0)
-    return R_NilValue;
-  PROTECT(a); P++; /* all attributes */
-  PROTECT(values = allocVector(VECSXP, length(a))); P++;
-  PROTECT(names  = allocVector(STRSXP, length(a))); P++;
-
-  /*
-   CAR gets the first element of the dotted pair list
-   CDR gets the rest of the dotted pair list
-   TAG gets the symbol/name of the first element of dotted pair list
-  */
-  for( /* a=ATTRIB(a) */; a != R_NilValue; a = CDR(a) ) {
-    if(TAG(a) != xts_IndexSymbol &&
-       TAG(a) != xts_ClassSymbol &&
-       TAG(a) != R_ClassSymbol &&
-       TAG(a) != R_DimSymbol &&
-       TAG(a) != R_DimNamesSymbol &&
-       TAG(a) != R_NamesSymbol)
-    {
-      SET_VECTOR_ELT(values, i, CAR(a));
-      SET_STRING_ELT(names,  i, PRINTNAME(TAG(a)));
-      i++;
-    }
-  }
-  if(i == 0) {
-    UNPROTECT(P);
-    return R_NilValue;
-  }
-
-  /* truncate list back to i-size */
-  PROTECT(values = lengthgets(values, i)); P++;
-  PROTECT(names = lengthgets(names, i)); P++;
-  setAttrib(values, R_NamesSymbol, names);
-  UNPROTECT(P);
-  return values;
+    // use attributes() because ATTRIB() is not part of the public API
+    SEXP call = PROTECT(lang2(install("attributes"), x));
+    SEXP attrs = PROTECT(eval(call, R_GlobalEnv));
+    UNPROTECT(2);
+    return(attrs);
 }
 
-SEXP do_xtsCoreAttributes(SEXP x)
+static void xts_copy_attrs(const SEXP from, SEXP to, const SEXP exclude)
 {
-  SEXP a, values, names;
-  int i=0, P=0;
+    SEXP attrs = PROTECT(xts_get_attrs(from));
+    SEXP names = getAttrib(attrs, R_NamesSymbol);
 
-  a = ATTRIB(x);
-  if(length(a) <= 0)
-    return R_NilValue;
-  PROTECT(a); P++; /* all attributes */
-  PROTECT(values = allocVector(VECSXP, length(a))); P++;
-  PROTECT(names  = allocVector(STRSXP, length(a))); P++;
+    int n = LENGTH(attrs);
+    int m = LENGTH(exclude);
 
-  /*
-   CAR gets the first element of the dotted pair list
-   CDR gets the rest of the dotted pair list
-   TAG gets the symbol/name of the first element of dotted pair list
-  */
-  for( /* a=ATTRIB(a) */; a != R_NilValue; a = CDR(a) ) {
-    if(TAG(a) == xts_ClassSymbol ||
-       TAG(a) == R_ClassSymbol)
-    {
-      SET_VECTOR_ELT(values, i, CAR(a));
-      SET_STRING_ELT(names,  i, PRINTNAME(TAG(a)));
-      i++;
+    for (int i = 0; i < n; i++) {
+        SEXP name_symbol = install(CHAR(STRING_ELT(names, i)));
+
+        int include = 1;
+        for (int j = 0; j < m; j++) {
+            if (name_symbol == VECTOR_ELT(exclude, j)) {
+                include = 0;
+                break;
+            }
+        }
+        if (include) {
+            setAttrib(to, name_symbol, VECTOR_ELT(attrs, i));
+        }
+
     }
-  }
-  if(i == 0) {
-    UNPROTECT(P);
-    return R_NilValue;
-  }
-
-  /* truncate list back to i-size */
-  PROTECT(values = lengthgets(values, i)); P++;
-  PROTECT(names = lengthgets(names, i)); P++;
-  setAttrib(values, R_NamesSymbol, names);
-  UNPROTECT(P);
-  return values;
+    UNPROTECT(1);
 }
 
 void copyAttributes(SEXP x, SEXP y)
 {
-  /* similar to copyMostAttr except that we add index
-     to the list of attributes to exclude */
-  SEXP attr;
-  int P=0;
-  attr = ATTRIB(x);  /* this returns a LISTSXP */
+    // similar to copyMostAttr, with index attribute removed
 
-  if(length(attr) > 0 || y != R_NilValue) {
-    PROTECT(attr); P++;
-    for( ; attr != R_NilValue; attr = CDR(attr) ) {
-      if( (TAG(attr) != xts_IndexSymbol) &&
-          (TAG(attr) != R_DimSymbol)      &&
-          (TAG(attr) != R_DimNamesSymbol) &&
-          (TAG(attr) != R_NamesSymbol) ) {
-      setAttrib(y, TAG(attr), CAR(attr));
-      }
-    }
-    UNPROTECT(P);
-  }
+    // list of symbol names to exclude from 'x' attributes
+    SEXP exclude = PROTECT(allocVector(VECSXP, 4));
+    SET_VECTOR_ELT(exclude, 0, xts_IndexSymbol);
+    SET_VECTOR_ELT(exclude, 1, R_DimSymbol);
+    SET_VECTOR_ELT(exclude, 2, R_DimNamesSymbol);
+    SET_VECTOR_ELT(exclude, 3, R_NamesSymbol);
+
+    xts_copy_attrs(x, y, exclude);
+    UNPROTECT(1);
 }
 
 
 void copy_xtsAttributes(SEXP x, SEXP y)
 {
-  SEXP attr;
-  int P=0;
-  attr = PROTECT(do_xtsAttributes(x)); P++;
-  attr = PROTECT(coerceVector(attr, LISTSXP)); P++;
+    // list of symbol names to exclude from 'x' attributes
+    SEXP exclude = PROTECT(allocVector(VECSXP, 6));
+    SET_VECTOR_ELT(exclude, 0, xts_IndexSymbol);
+    SET_VECTOR_ELT(exclude, 1, xts_ClassSymbol);
+    SET_VECTOR_ELT(exclude, 2, R_ClassSymbol);
+    SET_VECTOR_ELT(exclude, 3, R_DimSymbol);
+    SET_VECTOR_ELT(exclude, 4, R_DimNamesSymbol);
+    SET_VECTOR_ELT(exclude, 5, R_NamesSymbol);
 
-  if(length(attr) > 0 || y != R_NilValue) {
-    for( ; attr != R_NilValue; attr = CDR(attr) ) {
-      setAttrib(y, TAG(attr), CAR(attr));
-    }
-  }
-  UNPROTECT(P);
+    xts_copy_attrs(x, y, exclude);
+    UNPROTECT(1);
 }
 
 void copy_xtsCoreAttributes(SEXP x, SEXP y)
 {
-  SEXP attr;
-  int P=0;
-  attr = PROTECT(do_xtsCoreAttributes(x)); P++;
-  attr = PROTECT(coerceVector(attr, LISTSXP)); P++;
+    // only copy xts_ClassSymbol or R_ClassSymbol if present
+    SEXP attrs = PROTECT(xts_get_attrs(x));
+    SEXP names = getAttrib(attrs, R_NamesSymbol);
 
-  if(length(attr) > 0 || y != R_NilValue) {
-    for( ; attr != R_NilValue; attr = CDR(attr) ) {
-      setAttrib(y, TAG(attr), CAR(attr));
+    int n = LENGTH(attrs);
+    for (int i = 0; i < n; i++) {
+        SEXP sym = install(CHAR(STRING_ELT(names, i)));
+        if (sym == xts_ClassSymbol || sym == R_ClassSymbol) {
+            setAttrib(y, sym, VECTOR_ELT(attrs, i));
+        }
     }
-  }
-  UNPROTECT(P);
+    UNPROTECT(1);
 }
 
 
