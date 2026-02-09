@@ -562,7 +562,7 @@ SEXP na_omit_xts (SEXP x)
   for(i=0; i<nc; i++)
     INTEGER(col_index)[i] = i+1;
 
-  PROTECT(result = do_subset_xts(x, not_na_index, col_index, ScalarLogical(0)));
+  PROTECT(result = _do_subset_xts(x, not_na_index, col_index, ScalarLogical(0)));
 
   SEXP class;
   PROTECT(class = allocVector(STRSXP, 1));
