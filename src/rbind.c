@@ -625,8 +625,8 @@ SEXP rbind_append (SEXP x, SEXP y) {
   copyAttributes(x, result); 
 
   SEXP index, xindex, yindex;
-  xindex = getAttrib(x, xts_IndexSymbol);
-  yindex = getAttrib(y, xts_IndexSymbol);
+  xindex = PROTECT(getAttrib(x, xts_IndexSymbol));
+  yindex = PROTECT(getAttrib(y, xts_IndexSymbol));
   int INDEXTYPE = TYPEOF(xindex);
   if(INDEXTYPE != NILSXP) {
     PROTECT(index = allocVector(INDEXTYPE, nr));
@@ -668,6 +668,6 @@ SEXP rbind_append (SEXP x, SEXP y) {
     UNPROTECT(2);
 */
 
-  UNPROTECT(1);
+  UNPROTECT(3);
   return result;
 }

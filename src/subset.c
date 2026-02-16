@@ -118,12 +118,12 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
   int i, j, nr, nc, nrs, ncs;
   int P=0;
 
-  SEXP Dim = getAttrib(x, R_DimSymbol);
+  SEXP Dim = PROTECT(getAttrib(x, R_DimSymbol)); P++;
   nrs = nrows(x);ncs = ncols(x);
   nr = length(sr); nc = length(sc);
 
   SEXP oindex, nindex;
-  oindex = getAttrib(x, xts_IndexSymbol);
+  oindex = PROTECT(getAttrib(x, xts_IndexSymbol)); P++;
   PROTECT(nindex = allocVector(TYPEOF(oindex), nr)); P++;
   PROTECT(result = allocVector(TYPEOF(x), nr*nc)); P++;
   j = 0;
@@ -417,13 +417,12 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
 
 
   if(!isNull(Dim) && nr >= 0 && nc >= 0) {
-  SEXP dim;
-  PROTECT(dim = allocVector(INTSXP,2));P++;
-  INTEGER(dim)[0] = nr;
-  INTEGER(dim)[1] = nc;
-  setAttrib(result, R_DimSymbol, dim);
+    SEXP dim;
+    PROTECT(dim = allocVector(INTSXP,2));P++;
+    INTEGER(dim)[0] = nr;
+    INTEGER(dim)[1] = nc;
+    setAttrib(result, R_DimSymbol, dim);
 
-   if (nr >= 0 && nc >= 0) {
     SEXP dimnames, dimnamesnames, newdimnames;
     dimnames = getAttrib(x, R_DimNamesSymbol);
     dimnamesnames = getAttrib(dimnames, R_NamesSymbol);
@@ -448,7 +447,6 @@ SEXP _do_subset_xts (SEXP x, SEXP sr, SEXP sc, SEXP drop) {
         setAttrib(newdimnames, R_NamesSymbol, dimnamesnames);
         setAttrib(result, R_DimNamesSymbol, newdimnames);
         UNPROTECT(1);
-    }
     }
 
   }

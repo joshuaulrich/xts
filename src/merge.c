@@ -989,11 +989,11 @@ SEXP mergeXts (SEXP args) // mergeXts {{{
                               coerce)); P++;
   }
 
-  SEXP index_tmp = getAttrib(result, xts_IndexSymbol);
-  PROTECT(index_tmp); P++;
+  SEXP index_tmp = PROTECT(getAttrib(result, xts_IndexSymbol)); P++;
   if (isNull(tzone)) {
-    setAttrib(index_tmp, xts_IndexTzoneSymbol,
-              getAttrib(getAttrib(_x,xts_IndexSymbol), xts_IndexTzoneSymbol));
+    SEXP _x_index = PROTECT(getAttrib(_x, xts_IndexSymbol)); P++;
+    SEXP _x_index_tz = PROTECT(getAttrib(_x_index, xts_IndexTzoneSymbol)); P++;
+    setAttrib(index_tmp, xts_IndexTzoneSymbol, _x_index_tz);
   } else {
     setAttrib(index_tmp, xts_IndexTzoneSymbol, tzone);
   }

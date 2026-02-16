@@ -27,29 +27,31 @@
 
 SEXP isXts(SEXP x)
 {
-  int i;
-  SEXP attr, index;
+  int P = 0;
+  SEXP klass = PROTECT(getAttrib(x, R_ClassSymbol)); P++;
+  int n = length(klass);
 
-  index = getAttrib(x, xts_IndexSymbol);
-  PROTECT( attr = coerceVector(getAttrib(x, R_ClassSymbol),STRSXP) );
-  if(length(attr) <= 1) {
+  if (n <= 1) {
     UNPROTECT(1);
     return Rf_ScalarInteger(0);
   }
 
-  for(i = 0; i < length(attr); i++) {
-    if(STRING_ELT(attr, i) == mkChar("xts")) {
+  SEXP char_xts = PROTECT(mkChar("xts")); P++;
+  for (int i = 0; i < n; i++) {
+    if (STRING_ELT(klass, i) == char_xts) {
+      // TODO: check that the next klass element exists and is "zoo"
       /* check for index attribute */
+      SEXP index = PROTECT(getAttrib(x, xts_IndexSymbol)); P++;
       if(TYPEOF(index)==REALSXP || TYPEOF(index)==INTSXP) {
-        UNPROTECT(1);
+        UNPROTECT(P);
         return Rf_ScalarInteger(1);
       } else {
-        UNPROTECT(1);
+        UNPROTECT(P);
         return Rf_ScalarInteger(0);
       }
     }
   }
-  UNPROTECT(1);
+  UNPROTECT(P);
   return Rf_ScalarInteger(FALSE);
 
 }

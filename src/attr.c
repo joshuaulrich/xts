@@ -36,14 +36,20 @@ static SEXP xts_get_attrs(SEXP x)
 
 static void xts_copy_attrs(const SEXP from, SEXP to, const SEXP exclude)
 {
-    SEXP attrs = PROTECT(xts_get_attrs(from));
-    SEXP names = getAttrib(attrs, R_NamesSymbol);
+    int P = 0;
+    SEXP attrs = PROTECT(xts_get_attrs(from)); P++;
+    SEXP names = PROTECT(getAttrib(attrs, R_NamesSymbol)); P++;
 
     int n = LENGTH(attrs);
     int m = LENGTH(exclude);
 
+    /* reprotect name_symbol  inside for loop */
+    SEXP name_symbol = R_NilValue;
+    PROTECT_INDEX RP;
+    PROTECT_WITH_INDEX(name_symbol, &RP); P++;
+
     for (int i = 0; i < n; i++) {
-        SEXP name_symbol = install(CHAR(STRING_ELT(names, i)));
+        REPROTECT(name_symbol = install(CHAR(STRING_ELT(names, i))), RP);
 
         int include = 1;
         for (int j = 0; j < m; j++) {
@@ -57,7 +63,7 @@ static void xts_copy_attrs(const SEXP from, SEXP to, const SEXP exclude)
         }
 
     }
-    UNPROTECT(1);
+    UNPROTECT(P);
 }
 
 void copyAttributes(SEXP x, SEXP y)
@@ -95,16 +101,21 @@ void copy_xtsCoreAttributes(SEXP x, SEXP y)
 {
     // only copy xts_ClassSymbol or R_ClassSymbol if present
     SEXP attrs = PROTECT(xts_get_attrs(x));
-    SEXP names = getAttrib(attrs, R_NamesSymbol);
+    SEXP names = PROTECT(getAttrib(attrs, R_NamesSymbol));
+
+    /* reprotect name_symbol  inside for loop */
+    SEXP name_symbol = R_NilValue;
+    PROTECT_INDEX RP;
+    PROTECT_WITH_INDEX(name_symbol, &RP);
 
     int n = LENGTH(attrs);
     for (int i = 0; i < n; i++) {
-        SEXP sym = install(CHAR(STRING_ELT(names, i)));
-        if (sym == xts_ClassSymbol || sym == R_ClassSymbol) {
-            setAttrib(y, sym, VECTOR_ELT(attrs, i));
+        REPROTECT(name_symbol = install(CHAR(STRING_ELT(names, i))), RP);
+        if (name_symbol == xts_ClassSymbol || name_symbol == R_ClassSymbol) {
+            setAttrib(y, name_symbol, VECTOR_ELT(attrs, i));
         }
     }
-    UNPROTECT(1);
+    UNPROTECT(3);
 }
 
 
