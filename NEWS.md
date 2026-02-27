@@ -1,4 +1,4 @@
-# xts 0.14.2 (2026-02-02)
+# xts 0.14.2 (2026-02-27)
 
 * Removed `ATTRIB()` and `SET_ATTRIB()` from C code, since they are not part
   of the public R API.
