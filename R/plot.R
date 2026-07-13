@@ -362,6 +362,8 @@ plot.xts <- function(x,
                      legend.loc=NULL,
                      extend.xaxis=FALSE){
 
+  plot.call <- match.call(expand.dots=TRUE)
+
   if(is.numeric(multi.panel) || isTRUE(multi.panel)) {
     # Only need to check pars in multipanel scenarios. The single panel
     # scenarios supports colors for each data point in the series.
@@ -451,8 +453,6 @@ plot.xts <- function(x,
   }
 
   # add theme and charting parameters to Env
-  plot.call <- match.call(expand.dots=TRUE)
-
   cs$Env$theme <-
     list(up.col   = up.col,
          dn.col   = dn.col,
