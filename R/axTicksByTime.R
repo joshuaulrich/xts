@@ -83,7 +83,7 @@ function(x, ticks.on = "auto", k = 1, labels = TRUE, format.labels = TRUE,
   if (ticks.on == "auto") {
     tick.k.opts <- c(10, 5, 2, 1, 3, 6, 1, 1, 1, 4, 2, 1, 30, 15, 1, 1)
     tick.opts <- rep(tick.opts, c(4, 1, 2, 1, 1, 3, 3, 1))
-    is <- structure(rep(0, length(tick.opts)), .Names = tick.opts)
+    is <- structure(rep(0, length(tick.opts)),names=tick.opts)
     for (i in 1:length(tick.opts)) {
       ep <- endpoints(x, tick.opts[i], tick.k.opts[i])
       is[i] <- length(ep) - 1

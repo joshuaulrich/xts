@@ -22,7 +22,7 @@
 na.omit.xts <- function(object, ...) {
   xx <- .Call(C_na_omit_xts, object)
   if(length(xx)==0)
-    return(structure(xts(,),.Dim=c(0,NCOL(object))))
+    return(structure(xts(,),dim=c(0,NCOL(object))))
   naa <- attr(xx,'na.action')
   if(length(naa) == 0)
     return(xx)
@@ -69,7 +69,7 @@ na.restore.xts <- function(object, ...) {
     return(object)
   structure(merge(structure(object,na.action=NULL),
             .xts(,attr(na.action(object),"index"))),
-            .Dimnames=list(NULL, colnames(object)))
+            dimnames=list(NULL, colnames(object)))
 }
 
 na.replace <- function(x) {

@@ -28,7 +28,7 @@ xts_no_dim <-
   structure(d[1], class = c("xts", "zoo"),
             index = structure(i[1], tzone = "UTC", tclass = "Date"))
 xts_out <-
-  structure(d, class = c("xts", "zoo"), .Dim = 2:1,
+  structure(d, class = c("xts", "zoo"), dim = 2:1,
             index = structure(i, tzone = "UTC", tclass = "Date"))
 xts_rbind <- rbind(xts_no_dim, xts_no_dim)
 expect_identical(xts_out, xts_rbind, info = info_msg)

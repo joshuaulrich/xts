@@ -4,7 +4,7 @@
 # should have a 'tclass' attribute. Construct xts objects using structure() to
 # test behavior when functions encounter xts objects created before 0.10-3.
 x <-
-structure(1:5, .Dim = c(5L, 1L),
+structure(1:5, dim = c(5L, 1L),
           index = structure(1:5, tzone = "", tclass = c("POSIXct", "POSIXt")),
           .indexCLASS = c("POSIXct", "POSIXt"),
           tclass = c("POSIXct", "POSIXt"),
@@ -62,7 +62,7 @@ y <- x[,0]
 expect_equal(target, tclass(y))
 
 info_msg <- "tclass() on object with no tclass/.indexCLASS returns POSIXct"
-x <- structure(1:5, .Dim = c(5L, 1L), index = 1:5, class = c("xts", "zoo"))
+x <- structure(1:5, dim = c(5L, 1L), index = 1:5, class = c("xts", "zoo"))
 expect_warning(xtc <- tclass(x), "index does not have a 'tclass' attribute")
 expect_identical(c("POSIXct", "POSIXt"), xtc)
 

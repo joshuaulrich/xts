@@ -14,7 +14,7 @@ expect_identical(m1, zero_width_xts)
 ### xts constructors should not allow users to create objects with NA in
 ### the index
 indexHasNA_dbl <-
-structure(1:5, .Dim = c(5L, 1L),
+structure(1:5, dim = c(5L, 1L),
           index = structure(c(1, 2, 3, 4, NA), tzone = "",
                             tclass = c("POSIXct", "POSIXt")),
           .indexCLASS = c("POSIXct", "POSIXt"),
@@ -22,7 +22,7 @@ structure(1:5, .Dim = c(5L, 1L),
           tzone = "", class = c("xts", "zoo"))
 
 indexHasNA_int <-
-structure(1:5, .Dim = c(5L, 1L),
+structure(1:5, dim = c(5L, 1L),
           index = structure(c(1L, 2L, 3L, 4L, NA), tzone = "",
                             tclass = c("POSIXct", "POSIXt")),
           .indexCLASS = c("POSIXct", "POSIXt"),

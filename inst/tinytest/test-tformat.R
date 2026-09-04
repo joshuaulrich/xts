@@ -4,7 +4,7 @@
 # have a 'tformat' attribute. Construct xts objects using structure() to
 # test behavior when functions encounter xts objects created before 0.10-3.
 x <-
-structure(1:5, .Dim = c(5L, 1L),
+structure(1:5, dim = c(5L, 1L),
           index = structure(1:5, tzone = "",
                                  tclass = c("POSIXct", "POSIXt"),
                                  tformat = "%Y-%m-%d"),
