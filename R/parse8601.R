@@ -291,8 +291,8 @@ function(time)
 
     # separate subseconds, then reduce H[M[S]] to colon-free two-digit fields
     parts  <- strsplit(time, ".", fixed = TRUE)[[1L]]
-    frac   <- parts[2L]  # NA when no fractional seconds
-    subsec <- as.numeric(frac)
+    frac   <- parts[2L]                          # NA when no fractional seconds
+    subsec <- as.numeric(frac) / 10^nchar(frac)  # fractional digits to decimal seconds
     digits <- gsub(":", "", parts[1L], fixed = TRUE)
     if (nchar(digits) %% 2L == 1L) {
         digits <- paste0("0", digits)   # hour's leading zero was omitted

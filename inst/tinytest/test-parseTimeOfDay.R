@@ -50,3 +50,10 @@ expect_error(.parseTimeOfDay("0960"), pattern = "minutes must be in 00-59", info
 
 info_msg <- "second out of range"
 expect_error(.parseTimeOfDay("095960"), pattern = "seconds must be in 00-59", info = info_msg)
+
+info_msg <- "subseconds parsed as a positional fraction"
+expect_identical(.parseTimeOfDay("09:30:00.0")$subsec,         0.0,   info = info_msg)
+expect_identical(.parseTimeOfDay("09:30:00.5")$subsec,         0.5,   info = info_msg)
+expect_identical(.parseTimeOfDay("09:30:00.021")$subsec,       0.021, info = info_msg)
+expect_identical(.parseTimeOfDay("09:30:00.500000000")$subsec, 0.5,   info = info_msg)
+expect_identical(.parseTimeOfDay("09:30:00.000000001")$subsec, 1e-9,  info = info_msg)
