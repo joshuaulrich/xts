@@ -20,64 +20,14 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 .subsetTimeOfDay <- function(x, fromTimeString, toTimeString) {
-  validateTimestring <- function(time) {
-    h    <- "(?:[01]?\\d|2[0-3])"
-    hm   <- paste0(h, "(?::?[0-5]\\d)")
-    hms  <- paste0(hm, "(?::?[0-5]\\d)")
-    hmsS <- paste0(hms, "(?:\\.\\d{1,9})?")
-    pattern <- paste(h, hm, hms, hmsS, sep = ")$|^(")
-    pattern <- paste0("^(", pattern, "$)")
 
-    if (!grepl(pattern, time)) {
-      # FIXME: this isn't necessarily true...
-      # colons aren't required, and neither are all of the components
-      stop("Supply time-of-day subsetting in the format of T%H:%M:%OS/T%H:%M:%OS",
-           call. = FALSE)
-    }
-  }
-
-  validateTimestring(fromTimeString)
-  validateTimestring(toTimeString)
-
-  getTimeComponents <- function(time) {
-    # split on decimal point
-    time. <- strsplit(time, ".", fixed = TRUE)[[1]]
-    hms <- time.[1L]
-
-    # ensure hms string has even nchar
-    nocolon <- gsub(":", "", hms, fixed = TRUE)
-    if (nchar(nocolon) %% 2 > 0) {
-      # odd nchar means leading zero is omitted from hours
-      # all other components require zero padding
-      hms <- paste0("0", hms)
-    }
-    # add colons
-    hms <- gsub("(.{2}):?", ":\\1", hms, perl = TRUE)
-    # remove first character (a colon)
-    hms <- substr(hms, 2, nchar(hms))
-
-    # extract components
-    comp <- strsplit(hms, ":", fixed = TRUE)[[1]]
-    complist <-
-      list(hour = comp[1L],
-           min = comp[2L],
-           sec = comp[3L],
-           subsec = time.[2L])
-    # remove all missing components
-    complist <- complist[!vapply(complist, is.na, logical(1))]
-    # convert to numeric
-    complist <- lapply(complist, as.numeric)
-
-    # add timezone and return
-    c(tz = "UTC", complist)
-  }
-
-  # first second in period (no subseconds)
-  from <- do.call(firstof, getTimeComponents(fromTimeString)[-5L])
+  # first instant of the "from" second (firstof() has no subsec parameter)
+  fromParts <- .parseTimeOfDay(fromTimeString)
+  from <- do.call(firstof, fromParts[names(fromParts) != "subsec"])
   secBegin <- as.numeric(from) %% 86400L
 
-  # last second in period
-  to <- do.call(lastof, getTimeComponents(toTimeString))
+  # last instant of the "to" second
+  to <- do.call(lastof, .parseTimeOfDay(toTimeString))
   secEnd <- as.numeric(to) %% 86400L
 
   # do subsetting

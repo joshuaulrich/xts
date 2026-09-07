@@ -264,3 +264,50 @@
 
  list(first.time=as.POSIXct(s),last.time=as.POSIXct(e))
 }
+
+# Parse a single time-of-day string (no 'T' prefix) into the components
+# firstof()/lastof() expect. Accepts H, HM, or HMS with optional colons and an
+# optionally unpadded (single-digit) hour, plus an optional '.subseconds'
+# fraction of 1-9 digits. Minutes and seconds must be zero-padded. Missing
+# trailing components are omitted so firstof()/lastof() supply their defaults.
+.parseTimeOfDay <-
+function(time)
+{
+    if (!is.character(time) || length(time) != 1L) {
+        stop("'time' must be a single character string", call. = FALSE)
+    }
+
+    # valid shapes, built up: H, HM, HMS, HMS.fraction
+    h    <- "[0-9]{1,2}"                     # hour, leading zero optional
+    hm   <- paste0(h,   ":?[0-9]{2}")        # + minute (colon optional, padded)
+    hms  <- paste0(hm,  ":?[0-9]{2}")        # + second (colon optional, padded)
+    hmsS <- paste0(hms, "(\\.[0-9]{1,9})?")  # + fractional seconds
+    pattern <- paste0("^(", paste(h, hm, hms, hmsS, sep = "$|"), "$)")
+
+    if (!grepl(pattern, time)) {
+      stop("'", time, "' is not a valid time of day; expected H, HM, or HMS ",
+           "(e.g. '9', '0930', '09:30:00', '09:30:00.021')", call. = FALSE)
+    }
+
+    # separate subseconds, then reduce H[M[S]] to colon-free two-digit fields
+    parts  <- strsplit(time, ".", fixed = TRUE)[[1L]]
+    frac   <- parts[2L]  # NA when no fractional seconds
+    subsec <- as.numeric(frac)
+    digits <- gsub(":", "", parts[1L], fixed = TRUE)
+    if (nchar(digits) %% 2L == 1L) {
+        digits <- paste0("0", digits)   # hour's leading zero was omitted
+    }
+    starts <- seq.int(1L, nchar(digits), by = 2L)
+    fields <- as.numeric(substring(digits, starts, starts + 1L))
+
+    hh <- fields[1L]
+    mm <- fields[2L]   # NA when no minutes
+    ss <- fields[3L]   # NA when no seconds
+
+    if (isTRUE(hh > 23)) stop("hours must be in 00-23, not ", hh, call. = FALSE)
+    if (isTRUE(mm > 59)) stop("minutes must be in 00-59, not ", mm, call. = FALSE)
+    if (isTRUE(ss > 59)) stop("seconds must be in 00-59, not ", ss, call. = FALSE)
+
+    complist <- list(tz = "UTC", hour = hh, min = mm, sec = ss, subsec = subsec)
+    complist[!is.na(complist)]  # remove NA components
+}
