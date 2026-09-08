@@ -1,3 +1,13 @@
+# xts 0.14.3 (2026-09-26)
+
+* Fix deprecated special names in `structure()` calls.
+  ([#440](https://github.com/joshuaulrich/xts/issues/440))
+
+* Fix time-of-day subsetting (e.g. `x["T18:00/"]`) to create fractional seconds
+  as decimal fractions instead of raw integers. The previous behavior could
+  return incorrect results, and error on R-devel (r90486).
+  ([#441](https://github.com/joshuaulrich/xts/issues/441))
+
 # xts 0.14.2 (2026-02-27)
 
 * Removed `ATTRIB()` and `SET_ATTRIB()` from C code, since they are not part
