@@ -25,6 +25,8 @@
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
+SEXP as_of_indices(SEXP x_idx, SEXP y_idx);
+
 static const
 R_CallMethodDef callMethods[] = {
   {"add_class",             (DL_FUNC) &add_class,               2},
@@ -62,6 +64,7 @@ R_CallMethodDef callMethods[] = {
   {"dimnames_zoo",          (DL_FUNC) &dimnames_zoo,            1},
   {"xts_set_dimnames",      (DL_FUNC) &xts_set_dimnames,        2},
   {"do_startofyear",        (DL_FUNC) &do_startofyear,          3},
+  {"as_of_indices",         (DL_FUNC) &as_of_indices,           2},
   {NULL,                    NULL,                               0}
 };
 
