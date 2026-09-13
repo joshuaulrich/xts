@@ -145,7 +145,7 @@ function(x, match.to, error=FALSE, ...) {
   }
   oldCLASS <- CLASS(x)
   # should this be is.null(oldCLASS)?
-  if(length(oldCLASS) > 0 && !inherits(oldClass,'xts')) {  
+  if(length(oldCLASS) > 0 && !inherits(oldCLASS,'xts')) {  
     if(!is.null(dim(x))) {
       if(!is.null(attr(x,'.ROWNAMES'))) {
         # rownames<- (i.e. dimnames<-.xts) will not set row names
