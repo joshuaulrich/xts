@@ -121,15 +121,23 @@ function(x, INDEX, FUN, ...)
       INDEX <- c(INDEX, NROW(x))
     }
 
-    xx <- sapply(1:(length(INDEX) - 1), function(y) {
+    xx <- lapply(1:(length(INDEX) - 1), function(y) {
                    FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
                 })
-    if(is.vector(xx))
-      xx <- t(xx)
-    xx <- t(xx)
-    if(is.null(colnames(xx)) && NCOL(x)==NCOL(xx))
-      colnames(xx) <- colnames(x)
-    reclass(xx, x[INDEX])
+    
+    # If FUN returns an xts object, do.call(rbind) will use rbind.xts and preserve index.
+    # If FUN returns a vector/matrix, do.call(rbind) returns a matrix.
+    xx <- do.call(rbind, xx)
+    
+    # If xx is an xts object, we shouldn't reclass it to the endpoints.
+    # period.apply() should always rbind() the result when FUN returns a 1-row matrix. 
+    # The index should be set to the last index value in the period.
+    if (!is.xts(xx)) {
+      if(is.null(colnames(xx)) && NCOL(x)==NCOL(xx))
+        colnames(xx) <- colnames(x)
+      xx <- reclass(xx, x[INDEX])
+    }
+    xx
 }
 
 #' @rdname apply.monthly

@@ -125,3 +125,11 @@ expect_message(apply.daily(x, mean), pattern = "apply\\.daily\\(..., FUN = mean\
 expect_message(apply.monthly(x, mean), pattern = "apply\\.monthly\\(..., FUN = mean\\)")
 expect_message(apply.quarterly(x, mean), pattern = "apply\\.quarterly\\(..., FUN = mean\\)")
 expect_message(apply.yearly(x, mean), pattern = "apply\\.yearly\\(..., FUN = mean\\)")
+
+# test for multi-row output from FUN (Issue #382)
+info_msg <- "test.period.apply_multirow_output"
+x <- .xts(1:10, 1:10)
+ep <- c(0, 5, 10)
+res <- period.apply(x, ep, function(y) head(y, 2))
+expect_equal(NROW(res), 4, info = info_msg)
+expect_equal(as.numeric(res), c(1, 2, 6, 7), info = info_msg)
